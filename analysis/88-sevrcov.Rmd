@@ -1,0 +1,954 @@
+---
+title: "Severe Covariates (w/ SEVERE_28nov2014.dta)"
+author: "Andree Valle Campos"
+date: '`r format(Sys.Date(), format="%d %B %Y")`'
+output:
+  html_notebook:
+    toc: yes
+    toc_float:
+      collapsed: yes
+  html_document:
+    fig_caption: yes
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
+bibliography: malaria.bib
+csl: american-medical-association.csl
+---
+
+<!-- last modification: 09set2016 -->
+
+# Introduction
+This report is based on the set of reproducible examples of the R[@R] `Hmisc` package[@Hmisc], put together in an `rmarkdown`[@rmarkdown] notebook using `RStudio`[@rstudio] and `knitr`[@knitr]. Click [here](http://data.vanderbilt.edu/fh/R/Hmisc/examples.nb.html) for more information.
+
+# Setup 
+```{r setup,results='hide', message=FALSE}
+require(Hmisc)
+require(plotly)
+options(#grType='plotly',  # for certain graphics functions
+        width = 110) # to expand the limits of CONSOLE output
+mu <- markupSpecs$html   # markupSpecs is in Hmisc
+
+# The following hidden command (<code>r mu$widescreen()</code>), causes the html notebook to use an entire wide screen.
+#mu$widescreen()
+```
+`r mu$widescreen()`
+
+## Severe dataset input
+```{r sevdata, echo=FALSE}
+# Extended
+sevData<-read.table("SEVERA_covariates_224samples_EXTENDED_18ago2016.csv",row.names=1,header=TRUE, sep=",", 
+                        colClasses = c(rep("factor",5),"numeric","factor","numeric","numeric",rep("factor",5),"numeric","numeric",
+                                       rep("factor",5),rep("numeric",9),"factor","numeric",rep("factor",2),rep("numeric",2)))
+# Extended
+##
+#summary(sevData)
+sampleSEV <- sevData[c( "LIM2048", "LIM1025", "LIM1029", "LIM2035", "LIM1043", "LIM2017", "LIM1054", "LIM2102", "LIM2010", "LIM1038", "LIM2050", "LIM2115", "LIM2043", "LIM1004", "LIM2030", "LIM2071", "LIM1035", "LIM2104", "LIM1051", "LIM2107", "LIM1062", "LIM2072", "LIM2074", "LIM1056", "LIM1050", "LIM2110", "LIM2026", "LIM1047", "LIM1057", "LIM1016", "LIM1063", "LIM1044", "LIM2044", "LIM1037", "LIM2007", "LIM2086", "LIM2042", "LIM2101", "LIM1045", "LIM2085", "LIM1048", "LIM2066", "LIM2067", "LIM1021", "LIM2077", "LIM1061", "LIM2056", "LIM2034", "LIM2016", "LIM2111", "LIM1030", "LIM2096", "LIM1064", "LIM2093", "LIM1041", "LIM2040", "LIM1052", "LIM2013", "LIM1059", "LIM2089"),]
+#summary(sampleSEV)
+#head(sampleSEV)
+#write.csv(sampleSEV, "samples_SEVERE_60_covariates_35.csv")
+```
+
+
+```{r sevdataLOGIC, echo=FALSE}
+# ONE WAY
+#sevFunction <- function(casecontrol) {if (casecontrol == "1") "Severe" else "Non-severe"}
+#sampleSEV$casecontrol <- as.factor(unlist(lapply(sampleSEV$casecontrol, sevFunction)))
+# SIMPLIFIED
+levels(sampleSEV$casecontrol) <- c("Non-severe","Severe") # EVIDENCE: all pregnats were 2
+levels(sampleSEV$sexo) <- c("hombre","mujer") # EVIDENCE: all pregnats were 2
+#levels(sampleSEV$sin_enf_cronica) <- c("1","0") # BECAUSE: here 0 means presence of cronic disease!!! ¿CON O SIN?
+#
+
+# NEW CREATED variables --> WHO CRITERIA
+sampleSEV$jaundice = factor(sampleSEV$bilitot > 2.5, labels= c("0", "1")) # 3 in Quispe, 2014 (paper), 2.5 in Smith(poster)
+sampleSEV$renal = factor(sampleSEV$creatinina > 3, labels= c("0", "1"))
+sampleSEV$sevAnemia = factor(sampleSEV$hemoglobina < 7, labels= c("0", "1")) # 5 if Severe Anemia
+sampleSEV$hipoglicemia = factor(sampleSEV$glucosa < 40, labels= c("0"))
+sampleSEV$cerebralX = factor(sampleSEV$glasgow < 11, labels= c("0", "1"))
+#
+
+
+
+#
+# to avoid 98/99 maintaining "NA"
+PREfunction <- function(covariate) {
+  if (is.na(covariate) == TRUE) {
+    NA
+  } else if (covariate == "1") {
+      "1"
+  } else {
+      "0"
+    }}
+#
+for (i in c(1,3:5,7:ncol(sampleSEV))) {
+  if (class(sampleSEV[,i]) == "factor") {
+    sampleSEV[,i] <- as.factor(unlist(lapply(sampleSEV[,i], PREfunction)))
+    #sampleSEV[,i] <- factor(unlist(lapply(sampleSEV[,i], PREfunction)), exclude = NULL)
+    }
+}
+#
+
+#
+levels(sampleSEV$sdra) <- c("1", "0")
+  sampleSEV$sdra <- relevel(sampleSEV$sdra, ref = "0")
+levels(sampleSEV$postracion) <- c("1", "0")
+  sampleSEV$postracion <- relevel(sampleSEV$postracion, ref = "0")
+levels(sampleSEV$trombocitopenia) <- c("1", "0")
+  sampleSEV$trombocitopenia <- relevel(sampleSEV$trombocitopenia, ref = "0")
+levels(sampleSEV$hipoglicemia) <- c("0", "1")
+#
+
+# WHY THIS METHOD DOES NOT WORK?
+#dfr7df <- subset(sampleSEV, select = c("jaundice", "renal", "sevAnemia", "hipoglicemia", "sdra", "shock", "cerebralX"))
+#sampleSEV$CumSumSevere7 = as.numeric(apply(dfr7, 1, sum, na.rm=TRUE))
+dfr7 <- cbind(sampleSEV$jaundice, sampleSEV$renal, sampleSEV$sevAnemia, sampleSEV$hipoglicemia, 
+              sampleSEV$sdra, sampleSEV$shock, sampleSEV$cerebralX) -1
+colnames(dfr7) <- c("jaundice", "renal", "sevAnemia", "hipoglicemia", "sdra", "shock", "cerebralX")
+#dfr7 <- as.data.frame(dfr7)
+#dfr7df == dfr7 #TRUE
+sampleSEV$CumSumSevere7 = as.numeric(apply(dfr7, 1, sum, na.rm=TRUE))
+#subset(sampleSEV, select = c("jaundice", "renal", "sevAnemia", "hipoglicemia", "sdra", "shock", "cerebralX", "CumSumSevere7"))
+
+#
+dfr10 <- cbind(sampleSEV$jaundice, sampleSEV$renal, sampleSEV$sevAnemia, sampleSEV$hipoglicemia, 
+               sampleSEV$sdra, sampleSEV$shock, sampleSEV$cerebralX, 
+               sampleSEV$postracion, sampleSEV$coma, sampleSEV$convulsion) -1 #
+colnames(dfr10) <- c("jaundice", "renal", "sevAnemia", "hipoglicemia", "sdra", "shock", "cerebralX", 
+                     "postracion", "coma", "convulsion") #
+
+sampleSEV$CumSumSevere10 = as.numeric(apply(dfr10, 1, sum, na.rm=TRUE))
+#
+
+sampleSEVx <- sampleSEV
+sampleSEVx$sample <- rownames(sampleSEVx)
+
+
+#
+# to CHANGE 1/0 to presence/absence
+ONEfunction <- function(covariate) {
+  if (is.na(covariate) == TRUE) {
+    NA
+  } else if (covariate == "1") {
+      "present"
+  } else {
+      "absent"
+    }}
+
+for (i in c(1,3:5,7:ncol(sampleSEV))) {
+  if (class(sampleSEV[,i]) == "factor") {
+    sampleSEV[,i] <- as.factor(unlist(lapply(sampleSEV[,i], ONEfunction)))
+    }
+}
+#
+
+levels(sampleSEV$sdra) <- c("present", "absent")
+  sampleSEV$sdra <- relevel(sampleSEV$sdra, ref = "absent")
+levels(sampleSEV$postracion) <- c("present", "absent")
+  sampleSEV$postracion <- relevel(sampleSEV$postracion, ref = "absent")
+levels(sampleSEV$trombocitopenia) <- c("present", "absent")
+  sampleSEV$trombocitopenia <- relevel(sampleSEV$trombocitopenia, ref = "absent")
+levels(sampleSEV$hipoglicemia) <- c("absent", "present")
+
+#
+# TO EVALUATE
+#table(sampleSEV$sdra, useNA = "ifany") #like trombocitopenia
+#table(sampleSEV$postracion, useNA = "ifany")
+#table(sampleSEV$convulsion, useNA = "ifany") #like coma
+#table(sampleSEV$hipoglicemia, useNA = "ifany")
+#eset$Group <- relevel(eset$Group, ref = "0")
+#
+# rm(list = ls())
+
+
+####### On NUMBER of previous malaria events
+#sampleSEV["LIM2017",]
+#sampleSEV["LIM2017","malaria_pasado_num"] # 98? -> NA
+sampleSEV["LIM2017","malaria_pasado_num"] <- NA      ## deliberate modification. [coincidently, also in "PVX_111175.544", because extremely low value]
+#table(sampleSEV$malaria_pasado_num)
+#summary(sampleSEV$malaria_pasado_num)
+sampleSEV$con_exp = factor(sampleSEV$malaria_pasado_num >= 1, labels= c("Sin exposicion", "Con exposicion"))
+#summary(sampleSEV$con_exp)
+
+
+#summary(sampleSEV)
+```
+
+
+```{r internalTEST, eval=FALSE, echo=FALSE}
+#
+options(digits=3)
+set.seed(3)
+n <- 20
+sex <- factor(sample(c("m","f"), n, rep=TRUE))
+age <- rnorm(n, 50, 5)
+treatment <- factor(sample(c("Drug","Placebo"), n, rep=TRUE))
+# Generate a 3-choice variable; each of 3 variables has 5 possible levels
+symp <- c('Headache','Stomach Ache','Hangnail',
+          'Muscle Ache','Depressed')
+symptom1 <- sample(symp, n, TRUE)
+symptom2 <- sample(symp, n, TRUE)
+symptom3 <- sample(symp, n, TRUE)
+cbind(symptom1, symptom2, symptom3)[1:5,]
+Symptoms <- mChoice(symptom1, symptom2, symptom3, label='Primary Symptoms')
+Symptoms
+print(Symptoms, long=TRUE)
+format(Symptoms[1:5])
+inmChoice(Symptoms,'Headache')
+levels(Symptoms)
+inmChoice(Symptoms, 3)
+inmChoice(Symptoms, c('Headache','Hangnail'))
+# Note: In this example, some subjects have the same symptom checked
+# multiple times; in practice these redundant selections would be NAs
+# mChoice will ignore these redundant selections
+
+meanage <- N <- numeric(5)
+for(j in 1:5) {
+ meanage[j] <- mean(age[inmChoice(Symptoms,j)])
+ N[j] <- sum(inmChoice(Symptoms,j))
+}
+names(meanage) <- names(N) <- levels(Symptoms)
+meanage
+N
+
+# Manually compute mean age for 2 symptoms
+mean(age[symptom1=='Headache' | symptom2=='Headache' | symptom3=='Headache'])
+mean(age[symptom1=='Hangnail' | symptom2=='Hangnail' | symptom3=='Hangnail'])
+
+summary(Symptoms)
+
+#Frequency table sex*treatment, sex*Symptoms
+summary(sex ~ treatment + Symptoms, fun=table)
+# Check:
+ma <- inmChoice(Symptoms, 'Muscle Ache')
+table(sex[ma])
+
+# could also do:
+# summary(sex ~ treatment + mChoice(symptom1,symptom2,symptom3), fun=table)
+
+#Compute mean age, separately by 3 variables
+summary(age ~ sex + treatment + Symptoms)
+
+
+summary(age ~ sex + treatment + Symptoms, method="cross")
+
+f <- summary(treatment ~ age + sex + Symptoms, method="reverse", test=TRUE)
+f
+# trio of numbers represent 25th, 50th, 75th percentile
+print(f, long=TRUE)
+#
+```
+
+```{r mChoice1, echo=FALSE, eval=TRUE}
+
+symptom10 <- subset(sampleSEVx, 
+                  select = c("sdra", "shock", "cerebralX", "renal", "sevAnemia", 
+                             "jaundice", "hipoglicemia", 
+                             "postracion", "coma", "convulsion"))
+
+colnames(symptom10) <- c("Lesion pulmonar", "Shock circulatorio","Malaria cerebral*", "Insuficiencia renal*", "Anemia Severa*", "Ictericia*",  "Hipoglicemia*", "Postracion", "Coma", "Convulsion")
+
+#colnames(symptom10) <- c("Lesion pulmonar (SDRA)", "Shock circulatorio (PA sistolica < 80mmHg)","Malaria cerebral* (Glasgow < 11/15)", "Insuficiencia renal* (creatinina > 3mg/dL)", "Anemia Severa* (hemoglobina < 7g/dL)", "Ictericia* (bilirrubina > 2.5mg/dL)",  "Hipoglicemia* (glucosa < 40mg/dL)", "Postracion", "Coma", "Convulsion")
+
+
+for (i in 1:10) {
+  levels(symptom10[,i]) <- c("",colnames(symptom10)[i])
+  symptom10[,i] <- as.character(symptom10[,i])
+  symptom10[,i][is.na(symptom10[,i])] <- ""
+}
+
+
+#
+CriticalSymp5 <- mChoice(symptom10$`Lesion pulmonar`, symptom10$`Shock circulatorio`, symptom10$`Malaria cerebral*`, symptom10$`Insuficiencia renal*`, symptom10$`Anemia Severa*`, label='Critical illness criteria')
+#CriticalSymp5 <- mChoice(symptom10$`Lesion pulmonar (SDRA)`, symptom10$`Shock circulatorio (PA sistolica < 80mmHg)`, symptom10$`Malaria cerebral* (Glasgow < 11/15)`, symptom10$`Insuficiencia renal* (creatinina > 3mg/dL)`, symptom10$`Anemia Severa* (hemoglobina < 7g/dL)`, label='Critical illness criteria')
+#summary(CriticalSymp5)
+
+CriticalSymp2 <- mChoice(symptom10$`Ictericia*`, symptom10$`Hipoglicemia*`, label='Non-critical illness criteria')
+#CriticalSymp2 <- mChoice(symptom10$`Ictericia* (bilirrubina > 2.5mg/dL)`, symptom10$`Hipoglicemia* (glucosa < 40mg/dL)`, label='Non-critical illness criteria')
+#summary(CriticalSymp2)
+
+CriticalSymp3 <- mChoice(symptom10$Postracion, symptom10$Coma, symptom10$Convulsion, label='Central Nervous System')
+#summary(CriticalSymp3)
+
+CriticalSymp7 <- mChoice(symptom10$`Lesion pulmonar`, symptom10$`Shock circulatorio`, symptom10$`Malaria cerebral*`, symptom10$`Insuficiencia renal*`, symptom10$`Anemia Severa*`, symptom10$`Ictericia*`, symptom10$`Hipoglicemia*`, label='WHO Severe criteria 7')
+
+
+CriticalSymp10 <- mChoice(symptom10$`Lesion pulmonar`, symptom10$`Shock circulatorio`, symptom10$`Malaria cerebral*`, symptom10$`Insuficiencia renal*`, symptom10$`Anemia Severa*`, symptom10$`Ictericia*`, symptom10$`Hipoglicemia*`, symptom10$Postracion, symptom10$Coma, symptom10$Convulsion, label='WHO Severe criteria 10')
+
+
+```
+
+
+# Data Dictionary
+`upData` is used to
+
+- create a new variable from an old one
+- add labels to variables
+- add units to variables
+- remove the old variables
+- automatically move units of measurements from parenthetical expressions in labels to separate `units` attributed used by `Hmisc` and `rms` functions for table making and graphics
+
+`contents` is used to print a data dictionary, run through an `html` method for nicer output.
+```{r sevUPdata, results='asis', echo=FALSE}
+#
+#AGEfunction <- function(x) {
+#  if (x < 18) {
+#    "< 18"
+#  } else if (x >= 65) {
+#      ">= 65"
+#  } else {
+#      "18-64"
+#  }}#
+AGEfunction <- function(x) {cut(x, c(0,15,25,35,45,60,100))}
+#
+# Have upData move units from labels to separate attribute
+pbc <- upData(sampleSEV,
+              cont_plaquetas = cont_plaquetas / 1000,
+              edad_CAT = AGEfunction(edad),
+              
+              labels = c(edad = "Edad", edad_CAT = "Edad*", sexo = "Sexo", sin_enf_cronica = "Sin enfermedad cronica", 
+                         malaria_pasado_num = "Eventos previos de malaria", 
+                         con_exp = "Exposicion previa a malaria", casecontrol = "Sintomatologia",
+                         
+                         hemoglobina = "Hemoglobina", creatinina= "Creatinina", glucosa= "Glucosa",
+                         bilitot= "Bilirrubina total", bilind= "Bilirrubuna indirecta", 
+                         bildirect= "Bilirrubina directa",
+                         parasitemia= "Parasitemia circulante", eritro_parasit = "eritrocitos parasitados",
+                         glasgow = "Glasgow", cont_plaquetas = "Conteo de plaquetas", 
+                         
+                         postracion = "-postracion", coma= "-coma", convulsion = "-convulsion",
+                         
+                         admin_uci = "Admision a UCI", jaundice = "6.Ictericia*", 
+                         shock= "2.Shock circulatorio",
+                         cerebralX = "3.Malaria cerebral?*", renal = "4.Insuficiencia renal*", 
+                         sevAnemia = "5.Anemia Severa*",
+                         sdra= "1.Lesion pulmonar", hipoglicemia = "7.Hipoglicemia*",
+                         
+                         tx_pasado = "¿tx_pasado?", criticalnopros = "[¿criticalnopros?]",
+                         criticos = "[criticos]", cerebral2 = "[cerebral2]",
+                         anemia_severa = "¿anemia severa?", trombocitopenia = "¿trombocitopenia?",
+                         
+                         CumSumSevere7 = "Pacientes con #/7 criterios", 
+                         CumSumSevere10 = "Pacientes con #/10 criterios"),
+              
+              units = c(edad = "años", edad_CAT = "años",
+                        hemoglobina = "g/dL", creatinina= "mg/dL", glucosa= "mg/dL", 
+                        bilitot= "mg/dL", bilind= "mg/dL", bildirect= "mg/dL",
+                        parasitemia= "par/uL", cont_plaquetas = "x1000/uL", 
+                        eritro_parasit = "¿%?",
+                        
+                        shock = "PA sistolica < 80mmHg", sdra= "SDRA", cerebralX = "Glasgow < 11/15", 
+                        jaundice = "bilirrubina > 2.5mg/dL", renal = "creatinina > 3mg/dL",
+                        sevAnemia = "hemoglobina < 7g/dL", hipoglicemia = "glucosa < 40mg/dL",
+                        
+                        criticalnopros = "[¿?]", criticos = "[¿?]", cerebral2 = "[*]",
+                        anemia_severa = "[¿?]", trombocitopenia = "[¿?]"),
+              #moveUnits=TRUE, 
+              html=TRUE)
+#
+html(contents(pbc), maxlevels=10, levelType='table')
+```
+
+```{r sevUPdataLATEX, results='asis', echo=FALSE, eval=FALSE}
+#
+#AGEfunction <- function(x) {
+#  if (x < 18) {
+#    "< 18"
+#  } else if (x >= 65) {
+#      ">= 65"
+#  } else {
+#      "18-64"
+#  }}#
+AGEfunction <- function(x) {cut(x, c(0,15,25,35,45,60,100))}
+#
+# Have upData move units from labels to separate attribute
+pbcLATEX <- upData(sampleSEV,
+              cont_plaquetas = cont_plaquetas / 1000,
+              edad_CAT = AGEfunction(edad),
+              
+              labels = c(cont_plaquetas = "Conteo de plaquetas (x1000/uL)",
+                         hemoglobina = "Hemoglobina (g/dL)",
+                         creatinina= "Creatinina (mg/dL)",
+                         glucosa= "Glucosa (mg/dL)",
+                         bilitot= "Bilirrubina total (mg/dL)",
+                         bilind= "Bilirrubuna indirecta (mg/dL)",
+                         bildirect= "Bilirrubina directa (mg/dL)",
+                         parasitemia= "Parasitemia circulante (par/uL)",
+                         
+                         postracion = "-postracion", 
+                         coma= "-coma", 
+                         convulsion = "-convulsion",
+                         
+                         shock= "2.Shock (PA sistolica < 80mmHg)",
+                         sdra= "1.Lesion pulmonar (SDRA)",
+                         cerebralX = "3.Malaria cerebral?* (Glasgow < 11/15)",
+                         glasgow = "Glasgow",
+                         
+                         tx_pasado = "¿tx_pasado?",
+                         criticalnopros = "[¿criticalnopros?]",
+                         criticos = "[criticos]",
+                         cerebral2 = "[cerebral2]",
+                         
+                         anemia_severa = "¿anemia severa?",
+                         trombocitopenia = "¿trombocitopenia?",
+                         
+                         admin_uci = "Admision a UCI",
+                         sin_enf_cronica = "Sin enfermedad cronica",
+                         malaria_pasado_num = "Eventos previos de malaria", 
+                         con_exp = "Exposicion previa a malaria", casecontrol = "Sintomatologia",
+                         eritro_parasit = "eritrocitos parasitados (%?)",
+                         
+                         edad = "Edad", edad_CAT = "Edad*",
+                         sexo = "Sexo",
+                         
+                         jaundice = "6.Ictericia* (bilirrubina > 2.5mg/dL)",
+                         renal = "4.Insuficiencia renal aguda* (creatinina > 3mg/dL)",
+                         sevAnemia = "5.Anemia Severa* (hemoglobina < 7g/dL)",
+                         hipoglicemia = "7.Hipoglicemia* (glucosa < 40mg/dL)",
+                         CumSumSevere7 = "Pacientes con #/7 criterios",
+                         CumSumSevere10 = "Pacientes con #/10 criterios"),
+              #moveUnits=TRUE, 
+              html=TRUE)
+##
+
+```
+
+
+# Descriptive Statistics Without Stratification
+The html method is used for the `describe` function, and the output is put in a scrollable box.  But the graphical display of the descriptives statistics that follows this is probably better.
+
+```{r sevdescribe, fig.height=8}
+d <- describe(pbc)
+html(d, size=80, scroll=TRUE)
+p <- plot(d)
+prList(p)
+```
+
+
+```{r plotlym, fig.height=8}
+htmltools::tagList(lapply(p, plotly::as.widget))
+```
+
+
+# Stratified Descriptive Statistics
+Stratified quantiles, means/SD, and proportions per group are produced. Results are plotted before rendering as an advanced html table:
+
+- categorical variables: a single dot chart
+- continuous variables: a series of extended box plots
+
+As before, the html method is used to `describe` each group (Severe and Non-severe).
+```{r sevTREATMENTdescribe}
+s <- describe(subset(pbc, casecontrol == "Severe"))
+html(s, size=80, scroll=TRUE)
+
+ns <- describe(subset(pbc, casecontrol != "Severe"))
+html(ns, size=80, scroll=TRUE)
+# EN sampleSEV$malaria_pasado_num --> paciente de 72 años c/ 98 ¿?
+```
+
+
+
+## CLINICAL data
+```{r sev2summaryMa, warning=FALSE, fig.height=4}
+s2 <- summaryM(edad + edad_CAT + sexo + sin_enf_cronica + con_exp + malaria_pasado_num #+ tx_pasado + # general
+                #admin_uci + postracion + coma + convulsion + 
+                 #shock + sdra + glasgow + cerebralX # clinical
+              ~ casecontrol,
+              data=pbc,
+              #pbc$drug!="not randomized",
+							overall=FALSE, test=TRUE)
+plot(s2, which='categorical')
+Key(0,1)
+```
+
+```{r sev2summaryMb, warning=FALSE,  fig.width=8, fig.height=4}
+par(mfrow=c(1,2))
+plot(s2, which='continuous')
+par(mfrow=c(1,1))
+```
+
+```{r sev2summaryM3, eval=TRUE}
+latex(s2, caption='Clinical data',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+     middle.bold=TRUE, long = TRUE,
+     #legend.bottom = TRUE, #insert.bottom = TRUE, 
+     what="%", 
+     html = TRUE) #change here for LaTeX PDF
+```
+
+```{r sev2summaryM3pdf, eval=FALSE, echo=FALSE}
+s2 <- summaryM(edad + edad_CAT + sexo + sin_enf_cronica +  con_exp + malaria_pasado_num #+ tx_pasado + # general
+                #admin_uci + postracion + coma + convulsion + 
+                 #shock + sdra + glasgow + cerebralX # clinical
+              ~ casecontrol,
+              data=pbcLATEX,
+              #pbc$drug!="not randomized",
+							overall=FALSE, test=TRUE)
+# alternative
+y <- latex(s2, caption='Clinical data',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+     middle.bold=TRUE, #long = TRUE,
+     legend.bottom = TRUE, #insert.bottom = TRUE, 
+     what="%", ctable=TRUE,
+     html = FALSE) #change here for LaTeX PDF
+dvi(y, width=7, height=9) # ANY OTHER ALTERNATIVE? Why not a HORIZONTAL page?
+```
+
+***
+### **Previous exposure** to Malaria 
+(Non-severe vs Severe)
+```{r sev3summaryM3perWITHexpo, eval=TRUE, warning=FALSE, fig.height=4}
+
+table(sampleSEV$malaria_pasado_num)
+summary(sampleSEV$con_exp)
+
+s3expo <- summaryM(edad + edad_CAT + sexo + sin_enf_cronica +  casecontrol + malaria_pasado_num 
+                   ~ con_exp,
+              data=pbc,
+							overall=FALSE, test=TRUE)
+plot(s3expo, which='categorical')
+Key(0,0)
+#par(mfrow=c(2,3))
+#plot(s3age1, which='continuous')
+#par(mfrow=c(1,1))
+#
+```
+
+```{r sev3summaryM3perWITHexpob, warning=FALSE,  fig.width=8, fig.height=4}
+par(mfrow=c(1,2))
+plot(s3expo, which='continuous')
+par(mfrow=c(1,1))
+```
+
+```{r sev3summaryM3perWITHexpoc, eval=TRUE}
+latex(s3expo, caption='Clinical data (exposure)',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+     middle.bold=TRUE, long = TRUE,
+     #legend.bottom = TRUE, #insert.bottom = TRUE, 
+     what="%", 
+     html = TRUE) #change here for LaTeX PDF
+```
+
+
+***
+
+## LABORATORY data
+```{r sev3summaryMa}
+s3 <- summaryM(anemia_severa + hemoglobina + creatinina + # lab critical
+                glucosa + bilitot + bilind + bildirect + # lab non-critical
+                parasitemia + eritro_parasit + trombocitopenia + cont_plaquetas  # covariates
+              ~ casecontrol,
+              data=pbc,
+							overall=FALSE, test=TRUE)
+#plot(s3, which='categorical')
+```
+
+```{r sev3summaryMb, warning=FALSE,  fig.width=10, fig.height=10}
+par(mfrow=c(3,3))
+plot(s3, which='continuous')
+par(mfrow=c(1,1))
+```
+
+```{r sev3summaryM3, eval=TRUE}
+latex(s3, caption='Laboratory data',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2,
+     middle.bold=TRUE, long = TRUE,
+     #legend.bottom = TRUE, insert.bottom = TRUE, 
+     what="%", 
+     html = TRUE) #change here for LaTeX PDF
+```
+
+***
+### **Previous exposure**
+```{r sev3summaryMaEXPO}
+s3expoLAB <- summaryM(hemoglobina + creatinina + # lab critical
+                glucosa + bilitot + bilind + bildirect + # lab non-critical
+                parasitemia + eritro_parasit + cont_plaquetas  # covariates
+              ~ con_exp,
+              data=pbc,
+							overall=FALSE, test=TRUE)
+#plot(s3, which='categorical')
+```
+
+```{r sev3summaryMbEXPO, warning=FALSE,  fig.width=10, fig.height=10}
+par(mfrow=c(3,3))
+plot(s3expoLAB, which='continuous')
+par(mfrow=c(1,1))
+```
+
+```{r sev3summaryM3expo, eval=TRUE}
+latex(s3expoLAB, caption='Laboratory data (exposure)',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2,
+     middle.bold=TRUE, long = TRUE,
+     #legend.bottom = TRUE, insert.bottom = TRUE, 
+     what="%", 
+     html = TRUE) #change here for LaTeX PDF
+```
+
+
+***
+### Age distribution 
+(Non-severe vs Severe)
+```{r sev3summaryM3perAGEcat, eval=TRUE, warning=FALSE,  fig.width=10, fig.height=5}
+s3age1 <- summaryM(hemoglobina + creatinina + glucosa
+              ~ casecontrol + edad_CAT,
+              data=pbc,
+              groups = "edad_CAT",
+							overall=FALSE, test=TRUE)
+par(mfrow=c(2,3))
+plot(s3age1, which='continuous')
+#par(mfrow=c(1,1))
+#
+s3age2 <- summaryM(bilitot + bilind + bildirect
+              ~ casecontrol + edad_CAT,
+              data=pbc,
+              groups = "edad_CAT",
+							overall=FALSE, test=TRUE)
+#par(mfrow=c(2,3))
+plot(s3age2, which='continuous')
+#par(mfrow=c(1,1))
+#
+s3age3 <- summaryM(parasitemia + eritro_parasit + cont_plaquetas  # covariates
+              ~ casecontrol + edad_CAT,
+              data=pbc,
+              groups = "edad_CAT",
+							overall=FALSE, test=TRUE)
+#par(mfrow=c(2,3))
+plot(s3age3, which='continuous')
+#par(mfrow=c(1,1))
+```
+
+### < 18
+```{r sev3summaryM3perAGEcatXyoung, eval=FALSE, warning=FALSE, echo=FALSE, fig.width=10, fig.height=6}
+s3ageY <- summaryM(hemoglobina + creatinina + # lab critical
+                glucosa + bilitot + bilind + bildirect + # lab non-critical
+                parasitemia + eritro_parasit + cont_plaquetas  # covariates
+              ~ casecontrol,
+              data=subset(pbc, edad_CAT=="< 18"),
+							overall=FALSE, test=TRUE,
+							continuous = 2)
+
+plot(s3ageY, which='continuous')
+```
+
+### 18-64
+```{r sev3summaryM3perAGEcatXadult, eval=FALSE, warning=FALSE, echo=FALSE, fig.width=10, fig.height=6}
+s3ageA <- summaryM(hemoglobina + creatinina + # lab critical
+                glucosa + bilitot + bilind + bildirect + # lab non-critical
+                parasitemia + eritro_parasit + cont_plaquetas  # covariates
+              ~ casecontrol,
+              data=subset(pbc, edad_CAT=="18-64"),
+							overall=FALSE, test=TRUE)
+
+plot(s3ageA, which='continuous')
+```
+
+### >= 65
+```{r sev3summaryM3perAGEcatXold, eval=FALSE, warning=FALSE, echo=FALSE, fig.width=10, fig.height=6}
+s3ageO <- summaryM(hemoglobina + creatinina + # lab critical
+                glucosa + bilitot + bilind + bildirect + # lab non-critical
+                parasitemia + eritro_parasit + cont_plaquetas  # covariates
+              ~ casecontrol,
+              data=subset(pbc, edad_CAT==">= 65"),
+							overall=FALSE, test=TRUE,
+							continuous = 2)
+
+plot(s3ageO, which='continuous')
+```
+
+***
+```{r sev3summaryM3perAGEcatX, eval=FALSE, warning=FALSE, echo=FALSE}
+s3age <- summaryM(hemoglobina + creatinina + # lab critical
+                glucosa + bilitot + bilind + bildirect + # lab non-critical
+                parasitemia + eritro_parasit + cont_plaquetas  # covariates
+              ~ casecontrol + edad_CAT,
+              data=pbc,
+              groups = "edad_CAT",
+							overall=FALSE, test=TRUE)
+
+#plot(s3age, which='continuous')
+
+latex(s3age, caption='Laboratory data',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2,
+     middle.bold=TRUE, long = TRUE,
+     #legend.bottom = TRUE, insert.bottom = TRUE, 
+     what="%", 
+     html = TRUE) #change here for LaTeX PDF
+
+latex(s3ageY, caption='Laboratory data (< 18)',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2,
+     middle.bold=TRUE, long = TRUE,
+     #legend.bottom = TRUE, insert.bottom = TRUE, 
+     what="%", 
+     html = TRUE) #change here for LaTeX PDF
+
+latex(s3ageA, caption='Laboratory data (18-64)',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2,
+     middle.bold=TRUE, long = TRUE,
+     #legend.bottom = TRUE, insert.bottom = TRUE, 
+     what="%", 
+     html = TRUE) #change here for LaTeX PDF
+
+latex(s3ageO, caption='Laboratory data (>= 65)',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2,
+     middle.bold=TRUE, long = TRUE,
+     #legend.bottom = TRUE, insert.bottom = TRUE, 
+     what="%", 
+     html = TRUE) #change here for LaTeX PDF
+
+```
+***
+### PDF
+```{r sev3summaryM3pdf, eval=FALSE, echo=FALSE}
+s3 <- summaryM(anemia_severa + hemoglobina + creatinina + # lab critical
+                glucosa + bilitot + bilind + bildirect + # lab non-critical
+                parasitemia + eritro_parasit + trombocitopenia + cont_plaquetas  # covariates
+              ~ casecontrol,
+              data=pbcLATEX,
+							overall=FALSE, test=TRUE)
+# alternative
+y <- latex(s3, caption='Laboratory data',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+     middle.bold=TRUE, long = TRUE,
+     legend.bottom = TRUE, #insert.bottom = TRUE, 
+     what="%", ctable=TRUE,
+     html = FALSE) #change here for LaTeX PDF
+print(y)
+dvi(y, width=7, height=9) # ANY OTHER ALTERNATIVE? Why not a HORIZONTAL page?
+```
+
+
+
+
+## WHO criteria
+
+According to the most recent WHO report[@WHOsevere2014], for epidemiological and research purposes, **Severe Malaria** is defined as one or more of the following, occurring in the absence of an identified alternative cause, and in the presence of asexual parasitaemia:
+
+```{r sev1summaryMxx, warning=FALSE, fig.height=9, fig.width=10}
+s1xx <- summaryM(admin_uci + con_exp + # CRITICAL CARE
+                 CriticalSymp3 + CriticalSymp5 + CriticalSymp2 + parasitemia +
+                 CumSumSevere7 + CumSumSevere10
+              ~ casecontrol,
+              data=pbc,
+							overall=FALSE, test=TRUE)
+plot(s1xx, which='categorical')
+Key(0,0)
+#legend("bottomleft", legend = c("Severe", "Non-severe"), col = c("white", "black"), pch = 19) #WHY NOT WORK?
+#plot(s1, which='continuous')
+```
+
+```{r sev1summaryM3xx, warning=FALSE}
+latex(s1xx, caption='WHO criteria for severe malaria: Clinical and Laboratory data',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2,
+     middle.bold=TRUE, long = TRUE,
+     #legend.bottom = TRUE, insert.bottom = TRUE, 
+     what="%", 
+     html = TRUE) #change here for LaTeX PDF
+```
+
+
+### **Previous exposure**
+```{r sev1summaryMexpo, warning=FALSE, fig.height=9, fig.width=10}
+s1expo <- summaryM(admin_uci + casecontrol + # CRITICAL CARE
+                 CriticalSymp3 + CriticalSymp5 + CriticalSymp2 + parasitemia +
+                 CumSumSevere7 + CumSumSevere10
+              ~ con_exp,
+              data=pbc,
+							overall=FALSE, test=TRUE)
+plot(s1expo, which='categorical')
+Key(0,0)
+#plot(s1, which='continuous')
+```
+
+```{r sev1summaryM3expo, warning=FALSE}
+latex(s1expo, caption='WHO criteria for severe malaria: Clinical and Laboratory data (exposure)',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2,
+     middle.bold=TRUE, long = TRUE,
+     #legend.bottom = TRUE, insert.bottom = TRUE, 
+     what="%", 
+     html = TRUE) #change here for LaTeX PDF
+```
+
+
+***
+### NA considered*
+```{r sev1summaryM, warning=FALSE, fig.height=9, fig.width=10}
+s1 <- summaryM(cerebral2 + criticalnopros + criticos + # clasifications
+                 admin_uci + con_exp +# CRITICAL CARE
+                 postracion + coma + convulsion + 
+                 sdra + shock + cerebralX + renal + sevAnemia + 
+                 jaundice + hipoglicemia + 
+                 parasitemia + # NOT-PRACTICAL
+                 CumSumSevere7 + CumSumSevere10
+              ~ casecontrol,
+              data=pbc,
+							overall=FALSE, test=TRUE)
+#plot(s1, which='categorical')
+#plot(s1, which='continuous')
+```
+
+```{r sev1summaryM3, warning=FALSE}
+latex(s1, caption='WHO criteria for severe malaria: Clinical and Laboratory data',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2,
+     middle.bold=TRUE, long = TRUE,
+     #legend.bottom = TRUE, insert.bottom = TRUE, 
+     what="%", 
+     html = TRUE) #change here for LaTeX PDF
+```
+***
+
+
+```{r sev1summaryM3pdf, eval=FALSE, echo=FALSE}
+s1 <- summaryM(#cerebral2 + criticalnopros + criticos + # clasifications
+                 admin_uci + con_exp +# CRITICAL CARE
+                 postracion + coma + convulsion + 
+                 sdra + shock + cerebralX + renal + sevAnemia + 
+                 jaundice + hipoglicemia +  # NON-CRITICAL ILLNESS (more colateral than life threatening)
+                 #parasitemia + # NOT-PRACTICAL
+                 CumSumSevere7 + CumSumSevere10
+              ~ casecontrol,
+              data=pbcLATEX,
+							overall=FALSE, test=TRUE)
+plot(s1, which='categorical')
+
+# alternative -----------------------------------------------------------------------> NOW WORKING!
+y <- latex(s1, caption='WHO criteria for severe malaria: Clinical and Laboratory data',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+     middle.bold=TRUE, long = TRUE,
+     legend.bottom = TRUE, #insert.bottom = TRUE, 
+     what="%", ctable=TRUE,
+     html = FALSE) #change here for LaTeX PDF
+dvi(y, width=7, height=9)
+```
+
+```{r sev1summaryM3pdfII, warning=FALSE, eval=FALSE, echo=FALSE}
+s1xx <- summaryM(admin_uci + con_exp +# CRITICAL CARE
+                 CriticalSymp3 + CriticalSymp5 + CriticalSymp2 +
+                 CumSumSevere7 + CumSumSevere10
+              ~ casecontrol,
+              data=pbc,
+							overall=FALSE, test=TRUE)
+plot(s1xx, which='categorical')
+
+# alternative -----------------------------------------------------------------------> NOW WORKING!
+y <- latex(s1xx, caption='WHO criteria for severe malaria: Clinical and Laboratory data',
+     exclude1=TRUE, npct='both', 
+     digits=3,
+     #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+     middle.bold=TRUE, long = TRUE,
+     legend.bottom = TRUE, #insert.bottom = TRUE, 
+     what="%", ctable=TRUE,
+     html = FALSE) #change here for LaTeX PDF
+dvi(y, width=7, height=9)
+
+```
+
+
+
+### Samples
+```{r review, warning=FALSE}
+# TO EVALUATE
+ssubset <- subset(sampleSEVx, 
+                  casecontrol== "Severe", 
+                  select = c("sample",
+                  "casecontrol","jaundice", "renal", "sevAnemia", "hipoglicemia", "sdra", 
+                  "shock", "cerebralX", "CumSumSevere7", "postracion", "coma", "convulsion", "CumSumSevere10"))
+
+nssubset <- subset(sampleSEVx,
+                   casecontrol!= "Severe", 
+                   select = c("sample",
+                  "casecontrol","jaundice", "renal", "sevAnemia", "hipoglicemia", "sdra", 
+                  "shock", "cerebralX", "CumSumSevere7", "postracion", "coma", "convulsion", "CumSumSevere10"))
+
+
+ssubset
+nssubset
+
+```
+
+### Symptoms
+```{r symptomsCum}
+
+CriticalSymp10
+summary(CriticalSymp10)
+
+CriticalSymp7
+summary(CriticalSymp7)
+
+
+CriticalSymp3
+summary(CriticalSymp3)
+CriticalSymp5
+summary(CriticalSymp5)
+CriticalSymp2
+summary(CriticalSymp2)
+
+
+
+```
+
+## Useful variables
+
+**Symptomatology, Previous experience and Age**
+
+An important missing variable is *time since the last infection*[@Helb2015exposure] or *travel history* (time outside of the endemic area).But, since Iquitos is a *low transmission setting* (EIR?, PR?), lost of exposure to the infection could be more frequent even without living the endemic area (?).
+```{r strates}
+pbc$sample <- rownames(pbc)
+sampleSEVcovariates <- pbc[,c("sample","casecontrol", "CumSumSevere7", "CumSumSevere10", "con_exp", "malaria_pasado_num", "edad_CAT", "edad")]
+#sampleSEVcovariates
+sampleSEVcovariates[order(sampleSEVcovariates$CumSumSevere10, decreasing = TRUE),]
+
+#write.csv(sampleSEVcovariates, file = "sampleSEVcovariates.csv")
+
+```
+
+
+```{r extended}
+bpplt()
+```
+
+
+
+
+# Computing Environment {#compenv}
+`r mu$session()`
+
+
+
+
+# References
+
+
+<!---
+To update html notebook on the server: cdatar examples.nb.html Hmisc
+-->
+

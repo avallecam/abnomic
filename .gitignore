@@ -1,0 +1,16 @@
+.Rhistory
+.Rproj.user
+.RData
+analysis/*.csl
+analysis/*.tex
+analysis/more/*
+analysis/previous/*
+data/*
+data-raw/*
+figure/*
+R/previous/*
+notrack/*
+report/*
+*.docx
+*.pdf
+

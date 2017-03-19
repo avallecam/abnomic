@@ -1,0 +1,55 @@
+---
+output: pdf_document
+---
+
+\clearpage
+\vspace*{\fill}
+
+\begin{centering}
+
+\Large
+{\bf UNIVERSIDAD NACIONAL MAYOR DE SAN MARCOS}
+
+\vspace{2.5 cm}
+
+\Large
+{\bf Facultad de Ciencias Biológicas}
+
+\Large
+{\bf E.A.P. de Genética y Biotecnología}
+
+\vspace{2.5 cm}
+
+\normalsize
+Bach. Andree Adolfo Valle Campos
+
+avallecam@gmail.com
+
+11100074@unmsm.edu.pe
+
+
+\vspace{2.5 cm}
+
+\normalsize
+Proyecto de Tesis para obtar el ttulo de 
+
+Biólogo Genetista y Biotecnólogo
+
+\vspace{2.5 cm}
+
+\normalsize
+
+{\bf Título:}
+
+Perfil de anticuerpos en respuesta a la infección con malaria vivax 
+en pacientes con sintomatología severa y no complicada de la ciudad de Iquitos (Loreto-Perú), 
+mediante un enfoque inmunómico y bioinformático.
+
+\vspace{2.5 cm}
+
+2017
+
+\end{centering}
+
+\vfill
+\clearpage
