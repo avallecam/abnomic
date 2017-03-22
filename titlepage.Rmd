@@ -5,47 +5,70 @@ output: pdf_document
 \clearpage
 \vspace*{\fill}
 
+
+
 \begin{centering}
 
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[width=.8in]{UNMSM_escudo-2000px.png}
+  \end{center}
+\end{figure}
+
+
+
+
 \Large
-{\bf UNIVERSIDAD NACIONAL MAYOR DE SAN MARCOS}
+UNIVERSIDAD NACIONAL MAYOR DE SAN MARCOS
 
-\vspace{2.5 cm}
+\large
+(Universidad del Perú, DECANA DE AMÉRICA)
+
+\vspace{.5 cm}
 
 \Large
-{\bf Facultad de Ciencias Biológicas}
+FACULTAD DE CIENCIAS BIOLÓGICAS
 
-\Large
-{\bf E.A.P. de Genética y Biotecnología}
-
-\vspace{2.5 cm}
+\vspace{.5 cm}
 
 \normalsize
-Bach. Andree Adolfo Valle Campos
+ESCUELA ACADÉMICO PROFESIONAL DE
 
-avallecam@gmail.com
+GENÉTICA Y BIOTECNOLOGÍA
 
-11100074@unmsm.edu.pe
+
 
 
 \vspace{2.5 cm}
 
-\normalsize
-Proyecto de Tesis para obtar el ttulo de 
+\Large
+Perfil de anticuerpos en respuesta a la infección con malaria vivax 
+en pacientes de la ciudad de Iquitos (Loreto - Perú) 
+según su exposición previa 
+mediante un enfoque inmunómico.
+%% con sintomatología severa y no complicada/ pre-inmunes/ semi-inmunes
+
+\vspace{2.5 cm}
+
+
+
+
+\Large
+Proyecto de Tesis para obtar al Título Profesional de 
 
 Biólogo Genetista y Biotecnólogo
 
-\vspace{2.5 cm}
+\vspace{1.5 cm}
 
-\normalsize
 
-{\bf Título:}
+\Large
+Bach. Andree Adolfo Valle Campos
 
-Perfil de anticuerpos en respuesta a la infección con malaria vivax 
-en pacientes con sintomatología severa y no complicada de la ciudad de Iquitos (Loreto-Perú), 
-mediante un enfoque inmunómico y bioinformático.
+\vspace{1 cm}
 
-\vspace{2.5 cm}
+Lima - Perú
+
+\vspace{.5 cm}
 
 2017
 

@@ -11,6 +11,7 @@ header-includes:
 - \usepackage{pdflscape}
 - \usepackage{afterpage}
 - \usepackage{capt-of}
+- \usepackage{array}
 bibliography: analysis/malaria.bib
 csl: analysis/american-medical-association.csl
 ---
@@ -19,7 +20,22 @@ csl: analysis/american-medical-association.csl
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
 
-\renewcommand{\contentsname}{Índice General}
+<!--
+FROM:
+https://es.sharelatex.com/learn/Spanish
+- \usepackage[utf8]{inputenc}
+- \usepackage[spanish, es-tabla]{babel} #Cuadro (default)
+
+OR:
+\renewcommand{\listtablename}{Índice de tablas}
+\renewcommand{\figurename}{Figura}
+\renewcommand{\figureautorefname}{Figure}
+\renewcommand{\equationname}{Ecuación}
+\renewcommand{\equationautorefname}{Ecuación}
+-->
+\renewcommand{\contentsname}{Índice General} 
+\renewcommand{\tablename}{Tabla}
+\renewcommand{\tableautorefname}{Tabla}
 
 \pagenumbering{gobble}
 
@@ -171,12 +187,10 @@ infección.
 
 ## Identificación y clasificación de las variables
 
-  **Identificación de variables**       **Clasificación**
-  ------------------------------------ -------------------
-  Reactividad antígeno-anticuerpo      Cuantitativa
-  Chip del microarreglo de proteínas   Cualitativa
-  Localidad                            Cualitativa
-  Grado de severidad                   Cualitativa
+  **Identificación de variables**    **Clasificación**
+  --------------------------------- -------------------
+  Inmunogenicidad                   Cuantitativa
+  Exposición                        Cualitativa
 
 Respecto a la variable a cuantitativa, para la reactividad
 antígeno-anticuerpo se medirá la intensidad de fluorescencia de esta
@@ -195,17 +209,20 @@ severidad, severa y no-severa.
 
 ## Operacionalización de las variables
 
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Variable**                                   **Dimensión**                                  **Indicador**                                   **Tipo de variable**   **Escala de medición**
-  ---------------------------------------------- ---------------------------------------------- ---------------------------------------------- ---------------------- ------------------------
-  Reactividad antígeno-anticuerpo                Intensidad de fluorescencia                    0 - 6000 pixeles                               Cuantitativa           Razón
-  
-  Chip del microarreglo de proteínas             Posición de proteínas dentro del microarreglo  *P. vivax* / *P. falciparum*                   Cualitativa            Nominal
 
-  Localidad                                      Región                                         Iquitos / Madre de Dios                        Cualitativa            Nominal
-  
-  Grado de severidad                             Sintomatología                                 Severo / No-severo                             Cualitativa            Nominal
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Variable**                       **Dimensión**                      **Indicador**                         **Clasificación**      **Escala de medición**
+  ---------------------------------- ---------------------------------- ------------------------------------ ---------------------- ------------------------
+  Inmunogenicidad                    Reactividad antígeno-anticuerpo    Intensidad de fluorescencia:         Cuantitativa           Razón
+
+                                                                        **0-6000** MFI
+
+  Exposición                         Casos previos de malaria           **0:** sin exposición previa         Cualitativa            Nominal
+
+                                                                        **1 o más:** con exposición previa
+
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 
 # MARCO TEÓRICO
@@ -528,8 +545,8 @@ Dado que las muestras ya han sido colectadas, solo se procederá a
 recolectar lo datos a través del instrumento de medición descrito.
 
   **ACTIVIDAD PROGRAMADA**
-  --------------------------------- ----------- --------- --------- --------- --------- --------- ---------
-                                    **Mar**     **Abr**   **May**   **Jun**   **Jul**   **Ago**   **Sep**
+  --------------------------------- ----------- --------- --------- --------- --------- ---------
+                                    **Abr**     **May**   **Jun**   **Jul**   **Ago**   **Sep**  
   Recolección de datos              X
   Codificación de matriz de datos   X
   Procesamiento de datos                        X
@@ -549,63 +566,28 @@ Universidad Nacional Mayor de San Marcos.
   ---------------------------------------------------------------------------------------
   **DESCRIPCIÓN**                                     **MONTO (S/.)**   **PORCENTAJE** 
   -------------------------------------------------- ----------------- ------------------
-  **Bienes**
-  
-  Alimentos y bebidas para consumo animal                              
+  **Bienes**                             
   
   Papelería en general, útiles y Mat. de oficina     50                2.18%
   Aseo, limpieza y tocador (material de limpieza)                      
-  
-  Electricidad, iluminación y electrónica                              
-  
-  Otros (CD, diskette, USB)                                            
-  
-  Medicamentos                                                         
   
   Mat. Insumos, instrumental y accesorios            200               8.69%
   médicos, quirúrgicos, odontológicos 
   y de laboratorio
   
-  Material biológico                                                   
-  
-  Animales para estudio                                                
-  
-  Productos farmacéuticos de uso animal                                
-  
   Productos químicos                                 25                1.09%
-  
-  Otros bienes                                                         
-  
-  Libros y textos para biblioteca                                      
   
   **Servicios**
   
   Pasajes y gastos de transporte                     2000              86.96%
   (de las muestras al extranjero)
   
-  Viáticos y asignaciones por comisión de servicio                     
-  
-  Otros gastos (movilidad local)                                       
-  
-  Servicio de suministro de gas                                        
-  
-  Servicio de Internet                                                 
-  
   Servicio de impresiones, encuadernación            25                1.09%
   y empastado
-  
-  Servicios diversos                                                   
-  
-  Realizado por personas jurídicas                                     
   
   **TOTAL**                                          2300              100%
   ---------------------------------------------------------------------------------------
 
-
-> Formato extraído del registro de Grupos Estudiantiles dedicados a la
-> investigación, innovación y transferencia 2014, brindado por el
-> Vicerrectorado de Investigación de la Universidad Nacional Mayor de San
-> Marcos.
 
 # BIBLIOGRAFÍA
 
@@ -682,6 +664,8 @@ Universidad Nacional Mayor de San Marcos.
 
 ##  Matriz de consistencia
 
+Ir a la siguiente página en la \autoref{tab:consis}.
+
 <!--
 
 # ADVANCE TABLE
@@ -692,26 +676,81 @@ multi col-row + landscape!!
 
 \afterpage{
     \clearpage
+    \newgeometry{left=7cm,right=7cm,top=1cm,bottom=1cm}
     \thispagestyle{empty}
     \begin{landscape}
         \centering
-          \begin{tabular}{|c|c|c|c|c|c|}
-          \hline
-          \multirow{3}{*}{A} & \multicolumn{2}{c|}{User B} & %
-              \multicolumn{2}{c|}{User C} & \multirow{3}{*}{D}\\
-          \cline{2-5}
-           & \multicolumn{2}{c|}{Value} & \multicolumn{2}{c|}{Value} & \\
-          \cline{2-5}
-           & B1 & B2 & C1 & C2 & \\
-          \hline
-           & & & & & \\
-          \hline
-           & & & & & \\
-          \hline
-          % etc. ...
-          \end{tabular}
-        \captionof{table}{Landscape rotated Table caption}
-        \label{tab:land}
+\begin{center}
+\begin{tabular}{ll c m{2cm}m{2cm}m{2cm}m{1.5cm}m{2cm} @{}m{0pt}@{} }
+  \hline
+  
+  \multirow{2}{*}{Problema} &
+  \multirow{2}{*}{Objetivo} & 
+  \multirow{2}{*}{Variable} & 
+  \multicolumn{5}{c}{Operacionalización de variable} &\\[1ex]
+  \cline{4-8}
+  
+   & 
+   & 
+   & 
+   Dimensión & 
+   Indicador & 
+   Instrumento & 
+   Escala & 
+   Fuente &\\[1ex]
+  \hline
+  
+  \multirow{2}{*}{
+  \begin{minipage}{5cm}
+  \textit{Plasmodium vivax} es responsable del 90\% de los casos 
+  de malaria en el Perú, por los que el desarrollo de una vacuna es 
+  urgente.\\ 
+  El presente estudio identificará los antígenos más inmunogénicos 
+  a partir del perfil de anticuerpos en respuesta a la infección.
+  \end{minipage}
+  } & 
+  
+  \begin{minipage}{4cm}
+  \underline{General}\\
+  Identificar un subconjunto de antígenos inmunodominantes
+  en \textit{P. vivax}
+  \end{minipage} & 
+  
+  Inmunogenicidad & 
+  Reactividad antígeno-anticuerpo & 
+  \begin{minipage}{2cm} 
+  Intensidad de fluorescencia:\\
+  \textbf{0-6000} MFI
+  \end{minipage} & 
+  Lector de microarreglos & 
+  Razón &
+  Plasma sanguíneo &\\[10ex]
+  \cline{2-8}
+  
+   & 
+  \begin{minipage}{4cm}
+  \underline{Sec. 1}\\
+  Identificar antígenos inmunodominantes de \textit{P. vivax} 
+  discriminantes entre pacientes con y sin exposición previa.
+  \end{minipage} & 
+  
+  Exposición & 
+  Infecciones previas de malaria & 
+  \begin{minipage}{2cm} 
+  \textbf{0:} sin exposición previa.\\
+  \textbf{1 o más:} con exposición previa
+  \end{minipage} & 
+  Ficha de registro & 
+  Nominal &
+  Paciente &\\[16ex]
+  \hline
+  
+  % etc. ...
+\end{tabular}
+\end{center}
+        \captionof{table}{Matriz de consistencia}
+        \label{tab:consis}
     \end{landscape}
+    \restoregeometry
     \clearpage
 }

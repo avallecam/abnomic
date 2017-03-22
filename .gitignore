@@ -13,4 +13,5 @@ notrack/*
 report/*
 *.docx
 *.pdf
-
+*.png
+table.Rmd
