@@ -88,20 +88,25 @@ Dios, mediante la plataforma del microarreglo de proteínas.
 
 *General*
 
--   Identificar un subconjunto de antígenos inmunodominantes en P. vivax
-    a partir de un perfil de anticuerpos en pacientes con malaria vivax.
+- Identificar un subconjunto de antígenos inmunogénicos de _P. vivax_
+con relevancia clínica.
+
+<!-- contra la malaria vivax severa -->
+
+*Principales*
+
+- Comparar la amplitud e intensidad de respuesta de anticuerpos según 
+la exposición y severidad de los pacientes con malaria vivax.
+
+- Identificar antígenos con antigenicidad diferenciada según la
+exposición y severidad de los pacientes con malaria vivax.
 
 *Secundarios*
 
--   Identificar los antígenos con reactividad cruzada entre P. vivax
-    y P. falciparum.
+- Identificar los antígenos con mayor antigenicidad en los pacientes 
+con malaria vivax.
 
--   Identificar antígenos inmunodominantes de P. vivax compartidos y
-    discriminantes entre pacientes de Iquitos y Madre de Dios.
-
--   Identificar antígenos inmunodominantes de P. vivax compartidos y
-    discriminantes entre pacientes severos y no-severos de la región
-    de Iquitos.
+- Caracterizar los antígenos identificados según parámetros disponibles en la base de datos PlasmoDB.
 
 ## Justificación
 
@@ -135,14 +140,21 @@ imposibles de reproducir en su integridad en un sistema *in vitro*. En
 tercer lugar, el estudio no tiene la capacidad de identificar
 antígenos no-protéicos, como polisacáridos y glucolípidos.
 
-## Fundamentación y Formulación de la Hipótesis
+## Formulación y Fundamentación de la Hipótesis
 
 ### **General**
 
 *Formulación:*
 
-Los pacientes con malaria vivax reconocen un subconjunto específico de
-antígenos inmunodominantes de *P. vivax*.
+- Los pacientes con malaria vivax reconocen 
+un subconjunto de antígenos inmunogénicos 
+con relevancia clínica en _P. vivax_.
+
+<!--
+Los pacientes con malaria vivax no-severa reconocen 
+un subconjunto de antígenos inmunogénicos 
+con relevancia clínica contra la malaria vivax severa.
+-->
 
 *Fundamentación:*
 
@@ -154,21 +166,27 @@ poseen mayor probabilidad de ser identificadas por el sistema inmune
 como, por ejemplo, las proteínas de membrana, las cuales están más
 expuestas al medio externo. Este estudio pretende identificar de
 manera específica dichas proteínas, también llamados antígenos
-inmunodominantes.
+inmunogénicos.
 
 ### **De diferencia entre grupos**
 
 *Formulación:*
 
-1. Los pacientes con malaria vivax reconocen un subconjunto de antígenos
-que reaccionan equitativamente entre *P.vivax* y *P. falciparum*.
+1. Los pacientes con eventos previos reportados de malaria poseen una 
+amplitud e intensidad de respuesta a la infección distinta a 
+los pacientes sin eventos previos reportados.
 
-2. Los pacientes con malaria vivax reconocen un subconjunto diferente de
-antígenos inmunodominantes de *P. vivax* correspondiente su localidad.
+2. Los pacientes malaria vivax no-severa poseen una 
+amplitud e intensidad de respuesta a la infección distinta a 
+los pacientes con malatia vivax severa.
 
-3. Los pacientes de la región de Iquitos con malaria vivax reconocen un
-subconjunto diferente de antígenos inmunodominantes de *P. vivax*
-correspondiente a la severidad de la enfermedad.
+3. Los pacientes con eventos previos reportados de malaria reconocen 
+antígenos con antigenicidad diferenciada con respecto a 
+los pacientes sin eventos previos reportados.
+
+4. Los pacientes con malaria vivax no-severa reconocen 
+antígenos con antigenicidad diferenciada con respecto a 
+los pacientes con malatia vivax severa.
 
 *Fundamentación:*
 
@@ -189,13 +207,14 @@ infección.
 
   **Identificación de variables**    **Clasificación**
   --------------------------------- -------------------
-  Inmunogenicidad                   Cuantitativa
+  Antigenicidad                     Cuantitativa
   Exposición                        Cualitativa
+  Severidad                         Cualitativa
 
 Respecto a la variable a cuantitativa, para la reactividad
 antígeno-anticuerpo se medirá la intensidad de fluorescencia de esta
 reacción específica y, posteriormente, se seleccionará como
-“inmunodominante” a los antígenos que posean un valor dos veces mayor
+“reactivo” a los antígenos que posean un valor dos veces mayor
 que la media.
 
 Por otro lado, las variables cualitativas del estudio serán tres. En
@@ -211,16 +230,19 @@ severidad, severa y no-severa.
 
 
   ----------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Variable**                       **Dimensión**                      **Indicador**                         **Clasificación**      **Escala de medición**
-  ---------------------------------- ---------------------------------- ------------------------------------ ---------------------- ------------------------
-  Inmunogenicidad                    Reactividad antígeno-anticuerpo    Intensidad de fluorescencia:         Cuantitativa           Razón
+  **Variable**                       **Dimensión**                      **Indicador**                       **Clasificación**      **Escala de medición**
+  ---------------------------------- ---------------------------------- ---------------------------------- ---------------------- ------------------------
+  Antigenicidad                      Reactividad antígeno-anticuerpo    Intensidad de fluorescencia:         Cuantitativa           Razón
 
                                                                         **0-6000** MFI
 
-  Exposición                         Casos previos de malaria           **0:** sin exposición previa         Cualitativa            Nominal
+  Exposición                         Eventos previos reportados       	**0:** sin eventos previos.          Cualitativa            Nominal
 
-                                                                        **1 o más:** con exposición previa
+                                                                        **1 o más:** con eventos previos.
 
+  Severidad                          Criterios OMS de malaria severa    **0:** con malaria no-severa.        Cualitativa            Nominal
+
+                                                                        **1 o más:** con malaria severa.
   ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -322,54 +344,56 @@ b. Características de la malaria vivax
 
 ## Definición conceptual de términos
 
-**Malaria.-** (también llamada paludismo) es causada por un parásito
-del género *Plasmodium* que se transmite de un humano a otro por la
-picadura de mosquitos anofeles infectados.
+**Malaria.-** (también llamada paludismo) es una infección 
+causada por un parásito del género *Plasmodium* que se transmite 
+de un humano a otro por la picadura de mosquitos anofeles infectados.
 
-**Malaria severa.-** Criterio clínico para la clasificación de los
-pacientes según la gravedad de su sintomatología.
+**Malaria severa.-** Clasificación de los
+pacientes con malaria según parámetros clínicos y de laboratorio.
 
-**Antígeno.-** Sustancia que al introducirse en el organismo induce en
-este una respuesta inmunitaria, provocando la formación de
-anticuerpos.
+**Antígeno.-** Molécula que se une con productos de la respuesta inmune, 
+como anticuerpos o receptores de células T o B. [@abbas2012]
+
+**Antigenicidad.-** Capacidad que posee una molécula de combinarse
+específicamente con productos de la respuesta inmune, como
+anticuerpos y receptores de células T o B.
+
+**Inmunógeno.-** Un antígeno que induce una respuesta inmunitaria. [@abbas2012]
+
+**Inmunogenicidad.-** Capacidad que posee un antígeno de inducir 
+por si solo una respuesta inmunitaria.
+
+<!-- 
+
+Para el presente estudio, a mayor antigenicidad, más
+inmunodominante será el antígeno.
 
 **Antígeno inmunodominante.-** Aquella sustancia específica que genera
 una mayor cantidad de anticuerpos en relación a otros de su misma
 especie (por ejemplo, proteínas de membrana en relación a las
 proteínas citoplasmáticas).
+-->
 
-**Antigenicidad.-** Capacidad que posee una sustancia de combinarse
-específicamente con productos de la respuesta inmune, como
-anticuerpos. Para el presente estudio, a mayor antigenicidad, más
-inmunodominante será el antígeno.
-
-**Microarreglo de proteínas.-** Matriz o arreglo de proteínas impresas
+**Microarreglo de proteínas.-** Matriz o arreglo de polipéptidos, representantes de exones o segmentos proteícos entre 100 a 1000 aminoácidos, impresos
 en un chip de dimensiones nanométricas sobre una lámina portaobjetos.
-Aproximadamente cada arreglo posee de 500 a 1800 proteínas,
-representantes del 10% del genoma.
+En este caso, la matriz posee 515 fragmentos protéicos,
+representantes de 446 proteínas, aproximadamente el 8% del genoma de _P. vivax_ (Sal1).
 
-**Anticuerpo.-** Sustancia segregada por los linfocitos de la sangre
-para combatir una infección de virus o bacterias que afecta al
-organismo.
+**Anticuerpo.-** Tipo de molécula glucoprotéica, también llamada inmunoglobulina (Ig), producido por los linfocitos B, que se une a los antígenos, con un grado alto de especificidad y afinidad. [@abbas2012]
 
 **Anticuerpo secundario.-** Anticuerpo específico a todos los
-anticuerpos del hospedero y que posee adherido un fluorocromo, el cual
-será leído por un microscopio láser confocal.
+anticuerpos del hospedero, y en este caso, conjugado con biotina.
 
-**Fluorocromo.-** (o fluoróforo, por analogía con los cromóforos) es
-un componente de una molécula que hace que ésta sea fluorescente.
+**Fluoróforo.-** componente de una molécula que brinda la cualidad 
+de fluorescencia. En este caso, el fluoróforo Cy5 está conjugado 
+con estreptavidina para adherirse en forma específica a los 
+anticuerpos secundarios.
 
-**Fluorescencia.-** Tipo particular de luminiscencia, que caracteriza
-a las sustancias que son capaces de absorber energía en forma de
-radiaciones electromagnéticas y luego emitir parte de esa energía en
-forma de radiación electromagnética de longitud de onda diferente.
+**Fluorescencia.-** luminiscencia causada por la absorción y posterior emisión de radiación por parte un fluoróforo. A diferencia de la fosforescencia, esta tiene un tiempo característico muy corto: de 10^-5^ a 10^-8^ segundos.
 
-**Coinfección.-** Una coinfección se da cuando el organismo se ve
-afectado por dos o más enfermedades al mismo tiempo.
+<!-- -->
 
-**Marcador serológico.-** Anticuerpo específico que permite
-diagnosticar objetivamente la presencia de una infección por virus,
-bacterias o parásitos.
+
 
 # ASPECTOS METODOLÓGICOS DE LA INVESTIGACIÓN
 
@@ -546,7 +570,7 @@ recolectar lo datos a través del instrumento de medición descrito.
 
   **ACTIVIDAD PROGRAMADA**
   --------------------------------- ----------- --------- --------- --------- --------- ---------
-                                    **Abr**     **May**   **Jun**   **Jul**   **Ago**   **Sep**  
+                                    **May**     **Jun**   **Jul**   **Ago**   **Sep**   **Oct**  
   Recolección de datos              X
   Codificación de matriz de datos   X
   Procesamiento de datos                        X
@@ -564,7 +588,7 @@ Biomédicas y Medioambientales (CITBM) en colaboración con la
 Universidad Nacional Mayor de San Marcos.
 
   ---------------------------------------------------------------------------------------
-  **DESCRIPCIÓN**                                     **MONTO (S/.)**   **PORCENTAJE** 
+  **DESCRIPCIÓN**                                     **MONTO (S/)**    **PORCENTAJE** 
   -------------------------------------------------- ----------------- ------------------
   **Bienes**                             
   
@@ -588,8 +612,127 @@ Universidad Nacional Mayor de San Marcos.
   **TOTAL**                                          2300              100%
   ---------------------------------------------------------------------------------------
 
+# ANEXOS
 
-# BIBLIOGRAFÍA
+
+##  Matriz de consistencia
+
+Ver \autoref{tab:consis}.
+
+<!--
+
+# ADVANCE TABLE
+
+multi col-row + landscape!!
+
+-->
+
+\afterpage{
+    \clearpage
+    \newgeometry{left=6cm,right=3cm,top=1cm,bottom=1cm}
+    \thispagestyle{empty}
+    \begin{landscape}
+        \centering
+\begin{center}
+\begin{tabular}{ll c m{2cm}m{2cm}m{2cm}m{1.5cm}m{2cm} @{}m{0pt}@{} }
+  \hline
+  
+  \multirow{2}{*}{Problema} &
+  \multirow{2}{*}{Objetivo} & 
+  \multirow{2}{*}{Variable} & 
+  \multicolumn{5}{c}{Operacionalización de variable} &\\[1ex]
+  \cline{4-8}
+  
+   & 
+   & 
+   & 
+   Dimensión & 
+   Indicador & 
+   Instrumento & 
+   Escala & 
+   Fuente &\\[1ex]
+  \hline
+  
+  \multirow{3}{*}{
+  \begin{minipage}{5cm}
+  \textit{Plasmodium vivax} es responsable del 90\% de los casos 
+  de malaria en el Perú, por los que el desarrollo de una vacuna es 
+  urgente.\\
+  \newline
+  Si bien se conocen marcadores de exposición e inmunidad, 
+  las respuestas de anticuerpos a larga escala aún no están 
+  completamente identificadas.\\
+  \newline
+  El presente estudio identificará los antígenos más inmunogénicos 
+  a partir del perfil de anticuerpos en respuesta a la infección.
+  \end{minipage}
+  } & 
+  
+  \begin{minipage}{4cm}
+  \underline{General}\\
+  Identificar un subconjunto de antígenos inmunogénicos
+  de \textit{P. vivax} con relevancia clínica.
+  \end{minipage} & 
+  
+  Antigenicidad & 
+  Reactividad antígeno-anticuerpo & 
+  \begin{minipage}{2cm} 
+  Intensidad de fluorescencia:\\
+  \textbf{0-6000} MFI
+  \end{minipage} & 
+  Lector de microarreglos & 
+  Razón &
+  Plasma sanguíneo &\\[12ex]
+  \cline{2-8}
+  
+   & 
+  \begin{minipage}{4cm}
+  \underline{Principal}\\
+  Identificar antígenos de \textit{P. vivax} con antigenicidad diferenciada
+  entre pacientes con y sin eventos previos reportados.
+  \end{minipage} & 
+  
+  Exposición & 
+  Eventos previos reportados & 
+  \begin{minipage}{2cm} 
+  \textbf{0:} sin eventos previos.\\
+  \textbf{1 o más:} con eventos previos.
+  \end{minipage} & 
+  Entrevista & 
+  Nominal &
+  Paciente &\\[16ex]
+  \cline{2-8}
+
+   & 
+  \begin{minipage}{4cm}
+  \underline{Principal}\\
+  Identificar antígenos de \textit{P. vivax} con antigenicidad diferenciada
+  entre pacientes con malaria severa y no-severa.
+  \end{minipage} & 
+  
+  Severidad & 
+  Criterios OMS de malaria severa & 
+  \begin{minipage}{2cm} 
+  \textbf{0:} malaria no-severa.\\
+  \textbf{1 o más:} malaria severa.
+  \end{minipage} & 
+  Diagnóstico clínico & 
+  Nominal &
+  Médico &\\[16ex]
+  \hline
+
+  % etc. ...
+\end{tabular}
+\end{center}
+        \captionof{table}{Matriz de consistencia}
+        \label{tab:consis}
+    \end{landscape}
+    \restoregeometry
+    \clearpage
+}
+
+
+# BIBLIOGRAFÍA NO
 
 
 1.  **Referida al tema**
@@ -658,99 +801,4 @@ Universidad Nacional Mayor de San Marcos.
     infectious agents using high-density protein microarrays. Future
     Microbiol 5: 241–251.
 
-
-# ANEXOS
-
-
-##  Matriz de consistencia
-
-Ir a la siguiente página en la \autoref{tab:consis}.
-
-<!--
-
-# ADVANCE TABLE
-
-multi col-row + landscape!!
-
--->
-
-\afterpage{
-    \clearpage
-    \newgeometry{left=7cm,right=7cm,top=1cm,bottom=1cm}
-    \thispagestyle{empty}
-    \begin{landscape}
-        \centering
-\begin{center}
-\begin{tabular}{ll c m{2cm}m{2cm}m{2cm}m{1.5cm}m{2cm} @{}m{0pt}@{} }
-  \hline
-  
-  \multirow{2}{*}{Problema} &
-  \multirow{2}{*}{Objetivo} & 
-  \multirow{2}{*}{Variable} & 
-  \multicolumn{5}{c}{Operacionalización de variable} &\\[1ex]
-  \cline{4-8}
-  
-   & 
-   & 
-   & 
-   Dimensión & 
-   Indicador & 
-   Instrumento & 
-   Escala & 
-   Fuente &\\[1ex]
-  \hline
-  
-  \multirow{2}{*}{
-  \begin{minipage}{5cm}
-  \textit{Plasmodium vivax} es responsable del 90\% de los casos 
-  de malaria en el Perú, por los que el desarrollo de una vacuna es 
-  urgente.\\ 
-  El presente estudio identificará los antígenos más inmunogénicos 
-  a partir del perfil de anticuerpos en respuesta a la infección.
-  \end{minipage}
-  } & 
-  
-  \begin{minipage}{4cm}
-  \underline{General}\\
-  Identificar un subconjunto de antígenos inmunodominantes
-  en \textit{P. vivax}
-  \end{minipage} & 
-  
-  Inmunogenicidad & 
-  Reactividad antígeno-anticuerpo & 
-  \begin{minipage}{2cm} 
-  Intensidad de fluorescencia:\\
-  \textbf{0-6000} MFI
-  \end{minipage} & 
-  Lector de microarreglos & 
-  Razón &
-  Plasma sanguíneo &\\[10ex]
-  \cline{2-8}
-  
-   & 
-  \begin{minipage}{4cm}
-  \underline{Sec. 1}\\
-  Identificar antígenos inmunodominantes de \textit{P. vivax} 
-  discriminantes entre pacientes con y sin exposición previa.
-  \end{minipage} & 
-  
-  Exposición & 
-  Infecciones previas de malaria & 
-  \begin{minipage}{2cm} 
-  \textbf{0:} sin exposición previa.\\
-  \textbf{1 o más:} con exposición previa
-  \end{minipage} & 
-  Ficha de registro & 
-  Nominal &
-  Paciente &\\[16ex]
-  \hline
-  
-  % etc. ...
-\end{tabular}
-\end{center}
-        \captionof{table}{Matriz de consistencia}
-        \label{tab:consis}
-    \end{landscape}
-    \restoregeometry
-    \clearpage
-}
+# BIBLIOGRAFÍA

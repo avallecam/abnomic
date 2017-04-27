@@ -3,6 +3,7 @@
 .RData
 analysis/*.csl
 analysis/*.tex
+analysis/*.html
 analysis/more/*
 analysis/previous/*
 data/*
@@ -16,4 +17,5 @@ report/*
 *.odp
 *.pptx
 *.tex
+*.html
 table.Rmd

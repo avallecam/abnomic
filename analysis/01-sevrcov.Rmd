@@ -1,5 +1,5 @@
 ---
-title: "COVARIATES (update: sep2016)"
+title: "COVARIATES (update: sep2016.dta)"
 author: "Andree Valle Campos"
 date: '`r Sys.Date()`'
 output:
@@ -7,7 +7,7 @@ output:
   html_document:
     fig_caption: yes
     toc: yes
-    toc_depth: 3
+    toc_depth: 4
     toc_float:
       collapsed: yes
     code_folding: "hide"
@@ -29,65 +29,97 @@ mu <- markupSpecs$html   # markupSpecs is in Hmisc
 ```
 `r mu$widescreen()`
 
+# Aim
+
+Retrieve relevant variables from the *Severe Vivax Malaria study* 
+to use them as covariates for the subset of samples provided to the 
+*Protein microarray Ab profile study*.
+
 # Done
 
-- **new** variables `glas_11` and `sev_WHO`
+- **new** variables: 
+    + `glas_11`: Glasgow score lower than 11 (and different from 0)
+    + `sev_WHO_num`: Number of Severe Malaria WHO criterias of the patient
+    + `sev_WHO`: Absence or presence of Severe Malaria WHO criterias of the patient
 - `glas_11` [here](#tidy-data):
     + Glasgow < 11 & !=0
     + **differs** from `cns_malaria`
 - `sev_WHO` [here](#filter-who-criteria):
     + **includes:** 
-        + `glas_11`, `sdra`, `lung_injury`, `ictericia_corr`, `hiperbil`, `shock`, `bleeding`, `glic_normal`, `hiperparasitemia`, `anemia_severa`.
-    + **Not** includes `cns_malaria`
+        + `glas_11`, `sdra`, `lung_injury`, `ictericia_corr`, `hiperbil`, `shock`, 
+        `bleeding`, `glic_normal`, `hiperparasitemia`, `anemia_severa`.
+    + **Not** included `cns_malaria`
     + **differs** from `cas_con_admin2`
+- Inferential statistics [here](#inferential-statistics) (exploratory):
+    + given a stratification, the following variables were significatly different:
+        + **`sev_WHO`**: proportion of `sex` and `malaria_pasado`
+        + **`malaria_pasado`**: mean `age` and proportion of `sev_WHO`
 - Ab profile subset of **60 samples** [here](#ab-profile-subset) :
-    + frequency tables of severe WHO criterias
-    + comparison of clinical variables
+    + frequency tables with respect to severity, previous episodes and combined.
 
 # To do
 
 - **review** new variables `glas_11` and `sev_WHO`
 - `sev_WHO`:
     + **include** as **renal impairment / failure criteria** `hemoglobinuria_corr` or `oliguria_corr`?
-    + **meaning** of `cas_con_admin2`
-- **change** `NA` to `0` among severe [covariates](#symptoms-frequency)
+    + **meaning** of `cas_con_admin2`?
+- **change** `NA` to `0` among severe [covariates](#proportions-per-criteria)?
 
-# Dependencies
-```{r, results='hide', message=FALSE}
+# Notes
+
+- From this dataset:
+    + Since all the cases were reported in a Hospital, can all patients be considered symptomatic?
+    + Although the proportion of `malaria_pasado` significatly differs w.r.t. `sev_WHO`,
+    *previous episodes of malaria* may not be directly associated with `sev_WHO`.
+    + Continuous Exposure (rather than previous reported cases of malaria) could be 
+    a *conditional* factor to achieve immunity (asympomatic),
+    but it may not be *determinant* to protect against severity.
+
+- `malaria_pasado` limitations:
+    + is self-reported.
+    + is not exposure.
+    + could be validated/improved with MSP1 ELISA quantification.
+    + more relevant would be to take into account *time since last exposure (or malaria event)* 
+    in a follow-up longitudinal study.
+
+# Analysis
+
+## Dependencies
+```{r, message=FALSE}
 ##essential
-library(Hmisc)
-library("knitr")      # To display nice tables
-library("tidyverse")
-#ggplot2, tibble, tidyr, readr, purr, dplyyr
+library("tidyverse")  # load dplyr, tidyr, tibble, readr, purr, ggplot2
+library("haven")      # import STATA .dta files
+library("Hmisc")      # Data dictionary + descriptive / stratified statistics
 ##extra
-library("Rmisc")      # multiplot ggplots
-library("haven")      # import STATA df
 library("forcats")    # factor vectors
 library("stringr")    # for strings
+library("knitr")      # To display nice tables
+library("Rmisc")      # multiplot ggplots
 library("viridis")    # color visualization
 
 ```
 
-# Severe dataset
+## Severe dataset
 
-## Input
+### Input
+
+- Read `severe_malaria_vivax SEP2016.dta` file: 
 
 ```{r}
-sevdb <- haven::read_dta("data-raw/severe_malaria_vivax SEP2016.dta") #%>% haven::as_factor()
-#glimpse(sevdb)
-#glimpse(sevdb %>% select(-ends_with("_corr")))
-#glimpse(sevdb %>% select(ends_with("_us_corr")))
-#glimpse(sevdb %>% select(ends_with("_hoy_corr")))
+sevdb <- haven::read_dta("data-raw/severe_malaria_vivax SEP2016.dta") #%>% haven::as_factor() #ERROR
 ```
 
 ### Data dictionary
+
+- Including the **labels** from the `.dta` file:
+
 ```{r}
 #Hmisc::contents(sevdb)
 html(Hmisc::contents(sevdb), maxlevels=10, levelType='table')
 #sevdb %>% select(contains("fiebre")) %>% group_by(fiebre_hoy_corr,fiebre_us_corr) %>% dplyr::count()
 ```
 
-## Tidy data
+### Tidy data
 
 - **create** `glas_11` 
     + Glasgow < 11 & !=0
@@ -138,7 +170,7 @@ sevdb_1 <- sevdb %>%
 sevdb_1 %>% group_by(glas_11, glas_corr, cns_malaria) %>% dplyr::count()
 ```
 
-## Check updates
+#### Check updates
 
 - **CNS malaria** = postracion, coma, convulcion, confusion
 - **LUNG_INJURY** = at least 2 criteria of lung related-injuries (disnea, taquipnea, infiltracion, edema)
@@ -169,14 +201,14 @@ sevdb_1 %>% group_by(ictericia_corr,hiperbil) %>%  dplyr::count()             # 
 sevdb_1 %>% group_by(presenta_comorb, diabetes, enf_cardiac, enf_pulm, enf_renal, enf_snc, enf_otra) %>%  dplyr::count()
 ```
 
-## Filter WHO criteria
+### Filter WHO criteria
 
 Según @WHOsevere2014:
 
 - **create** `sev_WHO`
     + **includes:** 
         + `glas_11`, `sdra`, `lung_injury`, `ictericia_corr`, `hiperbil`, `shock`, `bleeding`, `glic_normal`, `hiperparasitemia`, `anemia_severa`.
-    + **Not** includes `cns_malaria`
+    + **Not** included `cns_malaria`
     + **differs** from `cas_con_admin2`
 
 - deberia incluir como **renal impairment / failure**:
@@ -218,6 +250,7 @@ sevdb_2 <- sevdb_1 %>%
 html(Hmisc::contents(sevdb_2), maxlevels=10, levelType='table')
 #glimpse(sevdb_2)
 
+sevdb_2 %>% group_by(malaria_pasado, malaria_pasado_num) %>% dplyr::count()
 sevdb_2 %>% dplyr::count(malaria_pasado)
 sevdb_2 %>% dplyr::count(sev_WHO)
 sevdb_2 %>% group_by(cas_con_admin2, sev_WHO) %>% dplyr::count()
@@ -227,7 +260,7 @@ sevdb_2 %>% group_by(malaria_pasado, sev_WHO) %>% dplyr::count()
 
 ```
 
-### frequency
+#### proportions per criteria
 
 ```{r}
 s1 <- Hmisc::summaryM(glas_11 +
@@ -256,7 +289,7 @@ latex(s1, caption='Laboratory data',
       ) #change here for LaTeX PDF
 ```
 
-### combinations
+#### combination of criterias
 
 ```{r}
 # SUM SEVERITY CRITERIAS
@@ -323,8 +356,122 @@ sevdb_2 %>%
   labs(title="sevdb_2")
 ```
 
+### Inferential statistics
 
-# Ab profile subset
+- Joint `parasitemia` from `28Nov2014_Ed.dta` **[WARNING]**
+
+```{r}
+sevdb_x <- haven::read_dta("data-raw/malaria severa 28Nov2014_Ed.dta") %>% 
+  select(codigo, parasitemia)%>% 
+  mutate(codigo= str_replace(codigo,"LIM0","LIM"))
+
+sevdb_2x <- sevdb_2 %>% 
+  haven::as_factor() %>% 
+  dplyr::inner_join(sevdb_x,by="codigo")
+```
+
+***
+
+**wrt severity**
+
+- significant differences with respect to 
+    + proportion of previous episodes of malaria,
+    + proportion of women patients towards severe cases
+
+```{r}
+s1 <- Hmisc::summaryM(edad + sexo +
+                        malaria_pasado + #malaria_pasado_num + 
+                        #sev_WHO_num #+ sev_WHO
+                        fiebre_hoy_corr + presenta_comorb +
+                        parasitemia #+
+                      ~ sev_WHO #+ 
+                      #malaria_pasado
+                      ,
+               data=sevdb_2x,
+               overall=FALSE, test=TRUE)
+
+latex(s1, caption='Clinical data',
+      exclude1=TRUE, npct='both', 
+      digits=3,
+      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = TRUE,
+      #legend.bottom = TRUE, #insert.bottom = TRUE, 
+      what="%", html = TRUE
+      ) #change here for LaTeX PDF
+
+```
+
+***
+
+**wrt previouse episodes of malaria**
+
+- significant differences with respect to 
+    + mean age,
+    + proportion of severe patients
+
+```{r}
+s1 <- Hmisc::summaryM(edad + sexo + 
+                        #malaria_pasado_num + #malaria_pasado +
+                        sev_WHO + sev_WHO_num +
+                        fiebre_hoy_corr + presenta_comorb +
+                        parasitemia #+
+                      ~ #sev_WHO #+ 
+                      malaria_pasado
+                      ,
+               data=sevdb_2x,
+               overall=FALSE, test=TRUE)
+
+latex(s1, caption='Clinical data',
+      exclude1=TRUE, npct='both', 
+      digits=3,
+      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = TRUE,
+      #legend.bottom = TRUE, #insert.bottom = TRUE, 
+      what="%", html = TRUE
+      ) #change here for LaTeX PDF
+```
+
+***
+
+**wrt severity by previous episodes of malaria**
+
+- no significant differences with respect to any variable
+
+```{r}
+s1 <- Hmisc::summaryM(edad + sexo +
+                        #malaria_pasado_num + #malaria_pasado +
+                        #sev_WHO_num #+ sev_WHO
+                        fiebre_hoy_corr + presenta_comorb +
+                        parasitemia #+
+                      ~ sev_WHO + 
+                      malaria_pasado
+                      ,
+               data=sevdb_2x,
+               overall=FALSE, test=TRUE)
+
+latex(s1, caption='Clinical data',
+      exclude1=TRUE, npct='both', 
+      digits=3,
+      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = TRUE,
+      #legend.bottom = TRUE, #insert.bottom = TRUE, 
+      what="%", html = TRUE
+      ) #change here for LaTeX PDF
+```
+
+```{r, fig.width=6, fig.height=5, fig.align='center'}
+#plot(s1, which='categorical')
+#Key(0,0)
+```
+
+```{r, fig.width=8, fig.height=4, fig.align='center'}
+#par(mfrow=c(1,2))
+#plot(s1, which='continuous')
+#par(mfrow=c(1,1))
+```
+
+
+## Ab profile subset
 
 - **60 samples** from the Severe study dataset.
 
@@ -342,45 +489,45 @@ subsev <- data_frame(
   abnomic= TRUE
 )
 
-sevdb_3 <- dplyr::inner_join(sevdb_2,subsev)
+sevdb_3 <- dplyr::inner_join(sevdb_2,subsev, by="codigo")
 #html(Hmisc::contents(sevdb_3), maxlevels=10, levelType='table')
 
+sevdb_3 %>% group_by(malaria_pasado, malaria_pasado_num) %>% dplyr::count()
 sevdb_3 %>% dplyr::count(malaria_pasado)
 sevdb_3 %>% dplyr::count(sev_WHO)
 #sevdb_3 %>% group_by(cas_con_admin2, sev_WHO) %>% dplyr::count()
 sevdb_3 %>% group_by(malaria_pasado, sev_WHO) %>% dplyr::count()
 
-sevdb_3 %>% group_by(admin_uci_corr,dias_uci) %>% dplyr::count()
+#sevdb_3 %>% group_by(admin_uci_corr,dias_uci) %>% dplyr::count()
 #sevdb_3 %>% group_by(sdra,lung_injury) %>%  dplyr::count()
 #sevdb_3 %>% group_by(ictericia_corr,hiperbil) %>%  dplyr::count()
 #sevdb_3 %>% group_by(anemia_severa, hemoglobinuria_corr) %>%  dplyr::count()
 ```
 
-## Descriptive statistics
-
-- Add `parasitemia` from `28Nov2014_Ed.dta` **WARNING**
-
-```{r}
-sevdb_x <- haven::read_dta("data-raw/malaria severa 28Nov2014_Ed.dta") %>% 
-  select(codigo, parasitemia)%>% 
-  mutate(codigo= str_replace(codigo,"LIM0","LIM"))
-
-sevdb_4 <- sevdb_3 %>% 
-  dplyr::inner_join(sevdb_x)
-
-html(Hmisc::contents(sevdb_4), maxlevels=10, levelType='table')
-```
+- Joint `parasitemia` from `28Nov2014_Ed.dta` **[WARNING]**
 
 ```{r, eval=FALSE}
 sevdb_4 <- sevdb_3 %>% 
+  dplyr::inner_join(sevdb_x, by="codigo")
+#html(Hmisc::contents(sevdb_4), maxlevels=10, levelType='table')
+```
+```{r, eval=FALSE}
+d <- describe(sevdb_4)
+html(d, size=90, scroll=TRUE)
+```
+
+
+```{r, eval=FALSE}
+# THIS IS IN eval=FALSE !!!!!!!
+sevdb_4 <- sevdb_3 %>% 
   haven::as_factor() %>%
   mutate_at(vars(-c(1:7),-ends_with("_num"),-abnomic), as.factor) %>% 
-  mutate(cns_malaria= fct_recode(cns_malaria,"Si"="1", "No"="0"),
+  mutate(admin_uci_corr= fct_recode(admin_uci_corr,NULL="No sabe"),
+         ictericia_corr= fct_recode(ictericia_corr,NULL="No sabe"),
+         cns_malaria= fct_recode(cns_malaria,"Si"="1", "No"="0"),
          glas_11= fct_recode(glas_11,"Si"="1", "No"="0"),
          sdra= fct_recode(sdra,"Si"="1", "No"="0"),
          lung_injury= fct_recode(lung_injury,"Si"="1", "No"="0"),
-         admin_uci_corr= fct_recode(admin_uci_corr,NULL="No sabe"),
-         ictericia_corr= fct_recode(ictericia_corr,NULL="No sabe"),
          hiperbil= fct_recode(hiperbil,"Si"="1", "No"="0"),
          shock= fct_recode(shock,"Si"="1", "No"="0"),
          bleeding= fct_recode(bleeding,"Si"="1", "No"="0"),
@@ -393,47 +540,7 @@ sevdb_4 <- sevdb_3 %>%
 html(Hmisc::contents(sevdb_4), maxlevels=10, levelType='table')
 ```
 
-```{r}
-d <- describe(sevdb_4)
-html(d, size=90, scroll=TRUE)
-```
-
-## Stratified statistics
-
-### WHO criteria
-
-#### frequency
-
-- patrón variable de síntomas
-
-```{r}
-s1 <- Hmisc::summaryM(glas_11 +
-                        sdra +
-                        lung_injury +
-                        ictericia_corr + hiperbil +
-                        shock +
-                        bleeding +
-                        glic_normal +
-                        anemia_severa +
-                        hiperparasitemia + #parasitemia + 
-                        sev_WHO_num +
-                        fiebre_hoy_corr
-                      ~ sev_WHO
-                      ,
-               data=sevdb_3,
-               overall=FALSE, test=FALSE)
-
-latex(s1, caption='Laboratory data',
-      exclude1=TRUE, npct='both', 
-      digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
-      middle.bold=TRUE, long = TRUE,
-      #legend.bottom = TRUE, #insert.bottom = TRUE, 
-      what="%", html = TRUE
-      ) #change here for LaTeX PDF
-```
-
-#### combinations
+### combinations of criterias
 ```{r}
 # SUM SEVERITY CRITERIAS
 sevdb_o <- sevdb_3 %>% 
@@ -495,21 +602,10 @@ sevdb_3 %>%
   labs(title="sevdb_3")
 ```
 
-
-
-### Clinical
-
-***
-
-**On severity**
-
-- significant differences with respect to 
-    + previous episodes of malaria and 
-    + presence of comorbidities
-
-```{r}
+```{r, eval=FALSE}
+# **On severity**
 s1 <- Hmisc::summaryM(edad + sexo +
-                        malaria_pasado_num + malaria_pasado +
+                        malaria_pasado + #malaria_pasado_num + 
                         #sev_WHO_num #+ sev_WHO
                         fiebre_hoy_corr + presenta_comorb +
                         parasitemia #+
@@ -517,7 +613,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
                       #malaria_pasado
                       ,
                data=sevdb_4,
-               overall=FALSE, test=TRUE)
+               overall=FALSE, test=FALSE)
 
 latex(s1, caption='Clinical data',
       exclude1=TRUE, npct='both', 
@@ -529,81 +625,7 @@ latex(s1, caption='Clinical data',
       ) #change here for LaTeX PDF
 ```
 
-***
-
-**On previouse episodes of malaria**
-
-- significant differences with respect to 
-    + age,
-    + severe category,
-    + parasitemia
-
-```{r}
-s1 <- Hmisc::summaryM(edad + sexo + 
-                        #malaria_pasado_num + #malaria_pasado +
-                        sev_WHO + sev_WHO_num +
-                        fiebre_hoy_corr + presenta_comorb +
-                        parasitemia #+
-                      ~ #sev_WHO #+ 
-                      malaria_pasado
-                      ,
-               data=sevdb_4,
-               overall=FALSE, test=TRUE)
-
-latex(s1, caption='Clinical data',
-      exclude1=TRUE, npct='both', 
-      digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
-      middle.bold=TRUE, long = TRUE,
-      #legend.bottom = TRUE, #insert.bottom = TRUE, 
-      what="%", html = TRUE
-      ) #change here for LaTeX PDF
-```
-
-***
-
-**On severity by previous episodes of malaria**
-
-- significant differences with respect to 
-    + presence of comorbidities among severe patients with previous episodes
-
-```{r}
-s1 <- Hmisc::summaryM(edad + sexo +
-                        #malaria_pasado_num + #malaria_pasado +
-                        #sev_WHO_num #+ sev_WHO
-                        fiebre_hoy_corr + presenta_comorb +
-                        parasitemia #+
-                      ~ sev_WHO + 
-                      malaria_pasado
-                      ,
-               data=sevdb_4,
-               overall=FALSE, test=TRUE)
-
-latex(s1, caption='Clinical data',
-      exclude1=TRUE, npct='both', 
-      digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
-      middle.bold=TRUE, long = TRUE,
-      #legend.bottom = TRUE, #insert.bottom = TRUE, 
-      what="%", html = TRUE
-      ) #change here for LaTeX PDF
-```
-
-```{r, fig.width=6, fig.height=5, fig.align='center'}
-#plot(s1, which='categorical')
-#Key(0,0)
-```
-
-```{r, fig.width=8, fig.height=4, fig.align='center'}
-#par(mfrow=c(1,2))
-#plot(s1, which='continuous')
-#par(mfrow=c(1,1))
-```
-
-
-### Laboratory
-
-```{r}
+```{r, eval=FALSE}
 s1 <- Hmisc::summaryM(glas_11 +
                         sdra +
                         lung_injury +
@@ -614,7 +636,56 @@ s1 <- Hmisc::summaryM(glas_11 +
                         anemia_severa +
                         hiperparasitemia + #parasitemia + 
                         sev_WHO_num +
-                        fiebre_hoy_corr #+
+                        fiebre_hoy_corr
+                      ~ sev_WHO
+                      ,
+               data=sevdb_4,
+               overall=FALSE, test=FALSE)
+
+latex(s1, caption='Laboratory data',
+      exclude1=TRUE, npct='both', 
+      digits=3,
+      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = TRUE,
+      #legend.bottom = TRUE, #insert.bottom = TRUE, 
+      what="%", html = TRUE
+      ) #change here for LaTeX PDF
+```
+
+```{r, eval=FALSE}
+# **On previous episodes of malaria**
+s1 <- Hmisc::summaryM(edad + sexo + 
+                        #malaria_pasado_num + #malaria_pasado +
+                        sev_WHO + sev_WHO_num +
+                        fiebre_hoy_corr + presenta_comorb +
+                        parasitemia #+
+                      ~ #sev_WHO #+ 
+                      malaria_pasado
+                      ,
+               data=sevdb_4,
+               overall=FALSE, test=FALSE)
+
+latex(s1, caption='Clinical data',
+      exclude1=TRUE, npct='both', 
+      digits=3,
+      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = TRUE,
+      #legend.bottom = TRUE, #insert.bottom = TRUE, 
+      what="%", html = TRUE
+      ) #change here for LaTeX PDF
+```
+```{r, eval=FALSE}
+s1 <- Hmisc::summaryM(glas_11 +
+                        sdra +
+                        lung_injury +
+                        ictericia_corr + hiperbil +
+                        shock +
+                        bleeding +
+                        glic_normal +
+                        anemia_severa +
+                        hiperparasitemia + #parasitemia + 
+                        sev_WHO_num +
+                        fiebre_hoy_corr
                       ~ #sev_WHO #+ 
                       malaria_pasado
                       ,
@@ -631,6 +702,56 @@ latex(s1, caption='Laboratory data',
       ) #change here for LaTeX PDF
 ```
 
+```{r, eval=FALSE}
+#**On severity by previous episodes of malaria**
+s1 <- Hmisc::summaryM(edad + sexo +
+                        #malaria_pasado_num + #malaria_pasado +
+                        #sev_WHO_num #+ sev_WHO
+                        fiebre_hoy_corr + presenta_comorb +
+                        parasitemia #+
+                      ~ sev_WHO + 
+                      malaria_pasado
+                      ,
+               data=sevdb_4,
+               overall=FALSE, test=FALSE)
+
+latex(s1, caption='Clinical data',
+      exclude1=TRUE, npct='both', 
+      digits=3,
+      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = TRUE,
+      #legend.bottom = TRUE, #insert.bottom = TRUE, 
+      what="%", html = TRUE
+      ) #change here for LaTeX PDF
+```
+
+```{r, eval=FALSE}
+s1 <- Hmisc::summaryM(glas_11 +
+                        sdra +
+                        lung_injury +
+                        ictericia_corr + hiperbil +
+                        shock +
+                        bleeding +
+                        glic_normal +
+                        anemia_severa +
+                        hiperparasitemia + #parasitemia + 
+                        sev_WHO_num +
+                        fiebre_hoy_corr
+                      ~ sev_WHO + 
+                      malaria_pasado
+                      ,
+               data=sevdb_4,
+               overall=FALSE, test=FALSE)
+
+latex(s1, caption='Laboratory data',
+      exclude1=TRUE, npct='both', 
+      digits=3,
+      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = TRUE,
+      #legend.bottom = TRUE, #insert.bottom = TRUE, 
+      what="%", html = TRUE
+      ) #change here for LaTeX PDF
+```
 
 ```{r, fig.width=7, fig.height=6, fig.align='center'}
 #plot(s1, which='categorical')

@@ -11,7 +11,7 @@ output: pdf_document
 
 \begin{figure}[!ht]
   \begin{center}
-    \includegraphics[width=.8in]{UNMSM_escudo-2000px.png}
+    \includegraphics[width=.8in]{figure/UNMSM_escudo-2000px.png}
   \end{center}
 \end{figure}
 
@@ -43,8 +43,7 @@ GENÉTICA Y BIOTECNOLOGÍA
 
 \Large
 Perfil de anticuerpos en respuesta a la infección con malaria vivax 
-en pacientes de la ciudad de Iquitos (Loreto - Perú) 
-según su exposición previa 
+en pacientes de la ciudad de Iquitos (Loreto - Perú) %con diferente exposición previa
 mediante un enfoque inmunómico.
 %% con sintomatología severa y no complicada/ pre-inmunes/ semi-inmunes
 

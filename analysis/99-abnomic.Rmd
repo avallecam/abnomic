@@ -18,30 +18,20 @@ bibliography: malaria.bib
 csl: american-medical-association.csl
 ---
 
-<!-- last modification: 17nov2016 -->
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, #fig.path = "01-",
+                      warning = FALSE)
+knitr::opts_knit$set(root.dir = '../.')
 
-# Setup 
+options(width = 110) # expand limits of CONSOLE output
 
-This report is writen in **R** [@R] within a `Rmarkdown` [@rmarkdown] notebook using the `RStudio` [@rstudio] IDE software, and employing the `knitr` [@knitr] and `Hmisc` [@Hmisc] packages for the `html` setup.
-
-This *dynamic document* integrates **text**, **code** and **results**. By "clicking" on the tab `Code` at the right of each result, the **code** will be shown. An option to download the whole *script* that generates this document can be activated upon request.
-
-For more information about this dynamic reporting style, I recommend a recent 2016 review in spanish about **Reproducible science: what, why, how** [@CienciaReproducible2016].
-
-```{r, results='hide', message=FALSE}
-require(Hmisc)
-require(plotly)
-options(#grType='plotly',  # for certain graphics functions
-        width = 110) # to expand the limits of CONSOLE output
+require(Hmisc)#require(plotly)
 mu <- markupSpecs$html   # markupSpecs is in Hmisc
-
-# The following hidden command (<code>r mu$widescreen()</code>), causes the html notebook to use an entire wide screen.
-#mu$widescreen()
+# hidden command (<code>r mu$widescreen()</code>) to use an entire wide screen. # mu$widescreen()
 ```
 `r mu$widescreen()`
- 
 
-***
+<!-- last modification: 17nov2016 -->
 
 # Introduction
 
@@ -133,7 +123,7 @@ library(biobroom)
 
 ```{r}
 ###### [IMPORT DATA]
-raw<-read.csv("RawData.csv")
+raw<-read.csv("data-raw/RawData.csv")
 ```
 
 ```{r}
@@ -220,7 +210,7 @@ log2.NA.norm.ANTIGENS<-log2.NA(anti.raw_data/median.ctrl.raw_data.mat)
 ```
 
 ## Data Normalization: Median centering 
-**(I/O) ON**
+**(I/O) OFF**
 
 ```{r}
 
@@ -240,13 +230,6 @@ head(normalized.log2.NA.norm.ANTIGENS)[,1:5]
 ```
 
 ```{r}
-
-# **** [21jul2016] [CRITICAL modification] ****
-normalized.log2.NA.norm.ANTIGENS["PVX_111175.544","LIM2017"] <- 0      ## deliberate modification. 
-# REASON: value equals 21 in raw[525,"LIM2017"] and -9.333741 in log2.NA.norm.ANTIGENS["PVX_111175.544","LIM2017"], which is an extreme lower value
-
-
-
 #### STEP 1 RESULTS ----> [30jun2016 - UPDATE]
 #log2.NA.norm.ANTIGENS            ## NO median centered
 #normalized.log2.NA.norm.ANTIGENS ## MEDIAN CENTERING GOES AFTER FILTERING ? --> YES!!! ---> [30jun2016] THIS SHOULD NOT BE USED ---> INSTEAD, scale by heatmap!!!
@@ -258,9 +241,16 @@ normalized.log2.NA.norm.ANTIGENS["PVX_111175.544","LIM2017"] <- 0      ## delibe
 # THEN MODIFIED: we are not going to use median centered normalization, instead, heatmap.2 Z-SCORE is going to be used
 
 # **** [06jul2016] [CRITICAL EVALUATION]
-#normalized.log2.NA.norm.ANTIGENS <- log2.NA.norm.ANTIGENS 
+#**(I/O) OFF**
+normalized.log2.NA.norm.ANTIGENS <- log2.NA.norm.ANTIGENS # IF READ, MEDIAN CENTERING IS OFF!!
+
 
 ##########################################################
+
+# **** [21jul2016] [CRITICAL modification] ****
+normalized.log2.NA.norm.ANTIGENS["PVX_111175.544","LIM2017"] <- 0      ## deliberate modification. 
+# REASON: value equals 21 in raw[525,"LIM2017"] and -9.333741 in log2.NA.norm.ANTIGENS["PVX_111175.544","LIM2017"], which is an extreme lower value
+
 
 ```
 
@@ -282,7 +272,7 @@ For a single capture of the data structure, take a look at this [image](https://
 
 # BETTER than read.csv:
 ##################### read.table [OBVIOUSLY PREFERED instead of READ.CSV]
-pheno.t <- read.table("samples.csv",row.names=2,header=TRUE, sep=","
+pheno.t <- read.table("data-raw/samples.csv",row.names=2,header=TRUE, sep=","
                     #, 
                     #colClasses = c(rep("factor",10),"numeric","factor","numeric","factor","factor","numeric",rep("factor",2),
                     #"factor",rep("numeric",2),"factor","numeric","factor","numeric")
@@ -529,30 +519,34 @@ colours = hsv(seq(0,1,length=200),0.6,1)                 ## CLEARIFY THIS FUNCTI
 par(mfrow=c(3,4))
 #par(mfcol=c(4,3))
 #
-plotDensities(all.raw_data, legend = FALSE, main = "N6 Raw Intensity")
-plotDensities(log2.NA.norm.ANTIGENS, legend = FALSE, main = "N6 Normalized Intensity (only)")
-plotDensities(normalized.log2.NA.norm.ANTIGENS, legend = FALSE, main = "N6 Normalized + Median Centering")
-plotDensities(exprs(normal.log2.raw.eSet.FILTER), legend = FALSE, main = "AFTER FILTERING")
+plotDensities(all.raw_data, legend = FALSE, main = "Raw Intensity")
+plotDensities(log2.NA(all.raw_data), legend = FALSE, main = "Transformed Intensity")#log2.NA.norm.ANTIGENS
+plotDensities(normalized.log2.NA.norm.ANTIGENS, legend = FALSE, main = "Normalized Intensity")
+plotDensities(exprs(normal.log2.raw.eSet.FILTER), legend = FALSE, main = "Filtered Intensity")
 #
-hist(all.raw_data,breaks=600, col = "black", main = NULL, ylim = c(0,2500))
-hist(log2.NA.norm.ANTIGENS,breaks=600, col = "black", main = NULL, ylim = c(0,2500))
-hist(normalized.log2.NA.norm.ANTIGENS,breaks=600, col = "black", main = NULL, ylim = c(0,2500))
-hist(exprs(normal.log2.raw.eSet.FILTER),breaks=600, col = "black", main = NULL, ylim = c(0,2500))           # THIS IS IT!!
+hist(all.raw_data,breaks=600, col = "black", main = NULL, ylim = c(0,2500),
+     ylab="Raw Intensity")
+hist(log2.NA(all.raw_data),breaks=600, col = "black", main = NULL, ylim = c(0,2500),
+     ylab="Transformed Intensity")#log2.NA.norm.ANTIGENS
+hist(normalized.log2.NA.norm.ANTIGENS,breaks=600, col = "black", main = NULL, ylim = c(0,2500),
+     ylab="Normalized Intensity")
+hist(exprs(normal.log2.raw.eSet.FILTER),breaks=600, col = "black", main = NULL, ylim = c(0,2500),
+     ylab="Filtered Intensity")           # THIS IS IT!!
 #
 boxplot(all.raw_data,col=colours,pch=20, las=2, 
-        ylab="Untransformed intensity")
-boxplot(log2.NA.norm.ANTIGENS,col=colours,                 #JUST log2 NORMALIZATION
-        pch=20, ylim=c(-3,6.3),
+        ylab="Raw Intensity")
+boxplot(log2.NA(all.raw_data),col=colours,                 #JUST log2 NORMALIZATION #log2.NA.norm.ANTIGENS
+        pch=20, #ylim=c(-3,6.3),
         las=2, 
-        ylab="LOG2 intensity")
+        ylab="Transformed Intensity")
 boxplot(normalized.log2.NA.norm.ANTIGENS,col=colours,      #sweep --> MEDIAN CENTERING
         pch=20, ylim=c(-3,6.3),
         las=2, 
-        ylab="LOG2 intensity")                # ¿check this? SINCE output of negative values turns to NA, median gets NULL
+        ylab="Normalized Intensity")                # ¿check this? SINCE output of negative values turns to NA, median gets NULL
 boxplot(exprs(normal.log2.raw.eSet.FILTER),col=colours,
         pch=20, ylim=c(-3,6.3),
         las=2, 
-        ylab="LOG2 intensity")                             # REQUIRED!!
+        ylab="Filtered Intensity")                             # REQUIRED!!
 
 ##### [cool merge pre and post normalization - end]
 
@@ -641,14 +635,14 @@ boxplot(exprs(normal.log2.raw.eSet.FALCIP.SEV.FILTER),col=patientcolors.SEV,
 #library("haven")
 
 #PQ_main<-read_stata("Primaquine base 05apr2014-Meddly_Julio.dta") #----> CONSERVE THE LABELS / AFTER write.csv THEY ARE GONE!
-SV_main<-read_stata("malaria severa 28Nov2014_Ed.dta")             #----> WITHOUT LABELS
+SV_main<-read_stata("data-raw/malaria severa 28Nov2014_Ed.dta")             #----> WITHOUT LABELS
 #
 SV_main$codigo <- gsub('LIM0','LIM',SV_main$codigo) #---> http://stackoverflow.com/questions/7641666/changing-text-in-a-data-frame
 #
 #write.csv(PQ_main, file="PQ_05apr2014-Meddly_Julio.csv")
-write.csv(SV_main, file="SEVERE_28nov2014.csv")
+write.csv(SV_main, file="data/SEVERE_28nov2014.csv")
 #
-tabAll <- read.table("SEVERE_28nov2014.csv", row.names=2, header=TRUE, sep=",")
+tabAll <- read.table("data/SEVERE_28nov2014.csv", row.names=2, header=TRUE, sep=",")
 ##
 
 #sevData<-read.table("SEVERA_covariates_224samples_EXTENDED_18ago2016.csv",row.names=1,header=TRUE, sep=",", 
@@ -672,9 +666,9 @@ tabSELECT <- tabAll[,SELECTEDcovarariates]
 #sapply(tabSELECT, class)
 
 ###################
-write.csv(tabSELECT, file="SEVERE_28nov2014_SELECTEDcovariates.csv")
+write.csv(tabSELECT, file="data/SEVERE_28nov2014_SELECTEDcovariates.csv")
 
-sevData<-read.table("SEVERE_28nov2014_SELECTEDcovariates.csv",row.names=1,header=TRUE, sep=",", 
+sevData<-read.table("data/SEVERE_28nov2014_SELECTEDcovariates.csv",row.names=1,header=TRUE, sep=",", 
                         colClasses = c(rep("factor",5),"numeric","factor","numeric","numeric",rep("factor",5),"numeric","numeric",
                                        rep("factor",5),rep("numeric",9),"factor","numeric",rep("factor",2),rep("numeric",2)))
 #sapply(sevData, class)
@@ -923,17 +917,17 @@ The html method is used for the `describe` function, and the output is put in a 
 ```{r, fig.height=8}
 d <- describe(pbc)
 html(d, size=80, scroll=TRUE)
-p <- plot(d, which="categorical")
-p
+#p <- plot(d, which="categorical")
+#p
 #prList(p)
 ```
 
 #### ggplots
 **useful for continuous data**
 ```{r, message=FALSE, fig.align="center", fig.width=8, fig.height=4}
-a1 <- ggplot(sampleSEV, aes(x=parasitemia)) + 
+a1 <- ggplot(sampleSEV, aes(x=malaria_pasado_num)) + 
   geom_histogram(alpha=.5) + 
-  labs(title="Histograma de Parasitemia") #+
+  labs(title="Histograma de Episodios previos") #+
   #geom_density() #+
   #scale_x_continuous(breaks=seq(0, 85, by = 5))
   #labs(x="Age", y="Count") + 
@@ -960,7 +954,7 @@ ggplot(sampleSEV, aes(x=peso)) + geom_histogram(alpha=.5)
 
 #### ggplot stratification
 
-```{r, message=FALSE, fig.align="center", fig.width=12, fig.height=8}
+```{r, message=FALSE, fig.align="center", fig.width=12, fig.height=4}
 a <- ggplot(sampleSEV, aes(x=edad, fill=casecontrol)) + 
   geom_histogram(
     #aes(y=..density..), 
@@ -988,52 +982,52 @@ b <- ggplot(sampleSEV, aes(x=edad, fill=con_exp)) +
   #scale_y_continuous(limits = c(0,0.05))
 
 
-c <- ggplot(sampleSEV, aes(x=edad, fill=casecontrol)) + 
+#c <- ggplot(sampleSEV, aes(x=edad, fill=casecontrol)) + 
   #geom_histogram(
    # aes(y=..density..), 
     #             breaks=seq(0, 85, by = 5), position = "dodge") + 
   #labs(title="Histograma de Edad") +
-  geom_density(alpha=.3) #+
+  #geom_density(alpha=.3) #+
   #scale_x_continuous(breaks=seq(0, 85, by = 5))
   #labs(x="Age", y="Count") + 
   #xlim(c(18,52)) + 
   #ylim(c(0,30))
 
-d <- ggplot(sampleSEV, aes(x=edad, fill=con_exp)) + 
-  #geom_histogram(
-    #aes(y=..density..), 
-                 #breaks=seq(0, 85, by = 5), position = "dodge") + 
-  #labs(title="Histograma de Edad") +
-  geom_density(alpha=.3) +
-  #scale_x_continuous(breaks=seq(0, 85, by = 5)) +
-  #labs(x="Age", y="Count") + 
-  #xlim(c(18,52)) + 
-  scale_y_continuous(limits = c(0,0.025))
+#d <- ggplot(sampleSEV, aes(x=edad, fill=con_exp)) + 
+  ##geom_histogram(
+    ##aes(y=..density..), 
+                 ##breaks=seq(0, 85, by = 5), position = "dodge") + 
+  ##labs(title="Histograma de Edad") +
+  #geom_density(alpha=.3) +
+  ##scale_x_continuous(breaks=seq(0, 85, by = 5)) +
+  ##labs(x="Age", y="Count") + 
+  ##xlim(c(18,52)) + 
+  #scale_y_continuous(limits = c(0,0.025))
 
 
-multiplot(a,b,c,d,cols=2)
+multiplot(a,b,cols=2)
 ```
 
 
-```{r, message=FALSE, fig.align="center", fig.width=12, fig.height=8}
-a <- ggplot(sampleSEV, aes(x=parasitemia, fill=casecontrol)) + 
+```{r, message=FALSE, fig.align="center", fig.width=12, fig.height=4}
+a <- ggplot(sampleSEV, aes(x=malaria_pasado_num, fill=casecontrol)) + 
   geom_histogram(
     #aes(y=..density..), 
                  #breaks=seq(0, 85, by = 5), 
                  alpha=.5 ,position = "identity") + 
-  labs(title="Histograma de Parasitemia") #+
+  labs(title="Histograma de Episodios previos") #+
   #geom_density() #+
   #scale_x_continuous(breaks=seq(0, 85, by = 5))
   #labs(x="Age", y="Count") + 
   #xlim(c(18,52)) + 
   #ylim(c(0,30))
 
-b <- ggplot(sampleSEV, aes(x=parasitemia, fill=con_exp)) + 
+b <- ggplot(sampleSEV, aes(x=malaria_pasado_num, fill=con_exp)) + 
   geom_histogram(
     #aes(y=..density..), 
                  #breaks=seq(0, 85, by = 5), 
                  alpha=.5 ,position = "identity") + 
-  labs(title="Histograma de Parasitemia") #+
+  labs(title="Histograma de Episodios previos") #+
   #geom_density() #+
   #scale_x_continuous(breaks=seq(0, 85, by = 5))
   #labs(x="Age", y="Count") + 
@@ -1041,30 +1035,30 @@ b <- ggplot(sampleSEV, aes(x=parasitemia, fill=con_exp)) +
   #ylim(c(0,30))
 
 
-c <- ggplot(sampleSEV, aes(x=parasitemia, fill=casecontrol)) + 
+#c <- ggplot(sampleSEV, aes(x=parasitemia, fill=casecontrol)) + 
   #geom_histogram(
     #aes(y=..density..), 
                  #breaks=seq(0, 85, by = 5), position = "dodge") + 
   #labs(title="Histograma de Edad") +
-  geom_density(alpha=.3) #+
+  #geom_density(alpha=.3) #+
   #scale_x_continuous(breaks=seq(0, 85, by = 5))
   #labs(x="Age", y="Count") + 
   #xlim(c(18,52)) + 
   #ylim(c(0,30))
 
-d <- ggplot(sampleSEV, aes(x=parasitemia, fill=con_exp)) + 
+#d <- ggplot(sampleSEV, aes(x=parasitemia, fill=con_exp)) + 
   #geom_histogram(
     #aes(y=..density..), 
                  #breaks=seq(0, 85, by = 5), position = "dodge") + 
   #labs(title="Histograma de Edad") +
-  geom_density(alpha=.3) +
+  #geom_density(alpha=.3) +
   #scale_x_continuous(breaks=seq(0, 85, by = 5))
   #labs(x="Age", y="Count") + 
   #xlim(c(18,52)) + 
-  scale_y_continuous(limits = c(0,0.00025))
+  #scale_y_continuous(limits = c(0,0.00025))
 
 
-multiplot(a,b,c,d,cols=2)
+multiplot(a,b,cols=2)
 ###
 ```
 
@@ -1083,7 +1077,8 @@ s2 <- summaryM(edad + edad_CAT + expo_CAT + sexo + sin_enf_cronica + con_exp + m
               ~ casecontrol,
               data=pbc,
               #pbc$drug!="not randomized",
-							overall=FALSE, test=TRUE)
+							overall=FALSE, test=FALSE
+							)
 plot(s2, which='categorical')
 Key(0,1)
 ```
@@ -1112,17 +1107,18 @@ s3 <- summaryM(hemoglobina + creatinina + # lab critical
                 parasitemia + eritro_parasit + cont_plaquetas  # covariates
               ~ casecontrol,
               data=pbc,
-							overall=FALSE, test=TRUE)
+							overall=FALSE, test=FALSE
+							)
 #plot(s3, which='categorical')
 ```
 
-```{r, warning=FALSE,  fig.width=10, fig.height=10}
+```{r, warning=FALSE,  fig.width=10, fig.height=10, eval=FALSE}
 par(mfrow=c(3,3))
 plot(s3, which='continuous')
 par(mfrow=c(1,1))
 ```
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 latex(s3, caption='Laboratory data',
      exclude1=TRUE, npct='both', 
      digits=3,
@@ -1135,7 +1131,7 @@ latex(s3, caption='Laboratory data',
 
 #### WHO criteria
 
-According to the most recent WHO report[@WHOsevere2014], for epidemiological and research purposes, **Severe Malaria** is defined as one or more of the following, occurring in the absence of an identified alternative cause, and in the presence of asexual parasitaemia:
+According to the most recent WHO report[@WHO2014severe], for epidemiological and research purposes, **Severe Malaria** is defined as one or more of the following, occurring in the absence of an identified alternative cause, and in the presence of asexual parasitaemia:
 
 ```{r, warning=FALSE, fig.height=9, fig.width=10}
 s1xx <- summaryM(admin_uci + con_exp + # CRITICAL CARE
@@ -1143,9 +1139,10 @@ s1xx <- summaryM(admin_uci + con_exp + # CRITICAL CARE
                  CumSumSevere7 + CumSumSevere10
               ~ casecontrol,
               data=pbc,
-							overall=FALSE, test=TRUE)
-plot(s1xx, which='categorical')
-Key(0,0)
+							overall=FALSE, test=FALSE
+							)
+#plot(s1xx, which='categorical')
+#Key(0,0)
 #legend("bottomleft", legend = c("Severe", "Non-severe"), col = c("white", "black"), pch = 19) #WHY NOT WORK?
 #plot(s1, which='continuous')
 ```
@@ -1174,7 +1171,8 @@ s1 <- summaryM(cerebral2 + criticalnopros + criticos + # clasifications
                  CumSumSevere7 + CumSumSevere10
               ~ casecontrol,
               data=pbc,
-							overall=FALSE, test=TRUE)
+							overall=FALSE, test=FALSE
+							)
 #plot(s1, which='categorical')
 #plot(s1, which='continuous')
 ```
@@ -1205,7 +1203,8 @@ summary(sampleSEV$con_exp)
 s3expo <- summaryM(edad + edad_CAT + expo_CAT + sexo + sin_enf_cronica +  casecontrol + malaria_pasado_num 
                    ~ con_exp,
               data=pbc,
-							overall=FALSE, test=TRUE)
+							overall=FALSE, test=FALSE
+							)
 plot(s3expo, which='categorical')
 Key(0,0)
 #par(mfrow=c(2,3))
@@ -1242,13 +1241,13 @@ s3expoLAB <- summaryM(hemoglobina + creatinina + # lab critical
 #plot(s3, which='categorical')
 ```
 
-```{r, warning=FALSE,  fig.width=10, fig.height=10}
+```{r, warning=FALSE,  fig.width=10, fig.height=10, eval=FALSE}
 par(mfrow=c(3,3))
 plot(s3expoLAB, which='continuous')
 par(mfrow=c(1,1))
 ```
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 latex(s3expoLAB, caption='Laboratory data (exposure)',
      exclude1=TRUE, npct='both', 
      digits=3,
@@ -1261,10 +1260,10 @@ latex(s3expoLAB, caption='Laboratory data (exposure)',
 
 #### WHO criteria
 
-According to the most recent WHO report [@WHOsevere2014], for epidemiological and research purposes, **Severe Malaria** is defined as one or more of the following, occurring in the absence of an identified alternative cause, and in the presence of asexual parasitaemia:
+According to the most recent WHO report [@WHO2014severe], for epidemiological and research purposes, **Severe Malaria** is defined as one or more of the following, occurring in the absence of an identified alternative cause, and in the presence of asexual parasitaemia:
 
 
-```{r, warning=FALSE, fig.height=9, fig.width=10}
+```{r, warning=FALSE, fig.height=9, fig.width=10, eval=FALSE}
 s1expo <- summaryM(admin_uci + casecontrol + # CRITICAL CARE
                  CriticalSymp3 + CriticalSymp5 + CriticalSymp2 + parasitemia +
                  CumSumSevere7 + CumSumSevere10
@@ -1276,7 +1275,7 @@ Key(0,0)
 #plot(s1, which='continuous')
 ```
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, eval=FALSE}
 latex(s1expo, caption='WHO criteria for severe malaria: Clinical and Laboratory data (exposure)',
      exclude1=TRUE, npct='both', 
      digits=3,
@@ -1305,7 +1304,7 @@ s1 <- summaryM(cerebral2 + criticalnopros + criticos + # clasifications
 #plot(s1, which='continuous')
 ```
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, eval=FALSE}
 latex(s1, caption='WHO criteria for severe malaria: Clinical and Laboratory data',
      exclude1=TRUE, npct='both', 
      digits=3,
@@ -1359,7 +1358,7 @@ levels(normal.log2.raw.eSet.VIVAX.SEV.FILTER$con_exp)
 
 #### Correlations
 
-```{r, fig.align="center", fig.height=6, fig.width=10, warning=FALSE}
+```{r, fig.align="center", fig.height=6, fig.width=10, warning=FALSE, eval=FALSE}
 #str(sampleSEVcovariates)
 example <- sampleSEVcovariates
 example$casecontrol <- as.numeric(example$casecontrol)
@@ -1375,7 +1374,7 @@ example$edad <- as.numeric(example$edad)
 chart.Correlation(example, pch=16)
 ```
 
-```{r, fig.align="center", fig.height=8, fig.width=10, warning=FALSE}
+```{r, fig.align="center", fig.height=8, fig.width=10, warning=FALSE, eval=FALSE}
 #str(sampleSEV)
 example <- sampleSEV[,c(1:9,14,22:28,31,41:43)]
 #str(example)
@@ -1412,7 +1411,7 @@ plot(sampleSEVcovariates$malaria_pasado_num, sampleSEVcovariates$CumSumSevere10,
 plot(sampleSEVcovariates$malaria_pasado_num, sampleSEVcovariates$CumSumSevere7, xlab="Eventos previos de malaria", ylab="#/10 síntomas")
 ```
 
-```{r, fig.height=6, fig.width=6, fig.align='center', warning=FALSE, message=FALSE}
+```{r, fig.height=6, fig.width=6, fig.align='center', warning=FALSE, message=FALSE, eval=FALSE}
 #library(ggplot2)
 #library(Rmisc)
 edexp1<- ggplot(sampleSEVcovariates, aes(x=edad,y=malaria_pasado_num, colour=casecontrol)) + geom_point() #+ ggtitle("xx") + geom_line() + # group=con_exp
@@ -1437,7 +1436,7 @@ multiplot(edexp1x,expSymp71x,edexp3,expSymp101x,cols=2)
 
 ```
 
-```{r, fig.height=6, fig.width=6, fig.align='center', warning=FALSE, message=FALSE}
+```{r, fig.height=6, fig.width=6, fig.align='center', warning=FALSE, message=FALSE, eval=FALSE}
 #library(ggplot2)
 #library(Rmisc)
 edexp1<- ggplot(sampleSEVcovariates, aes(x=edad_CAT,y=malaria_pasado_num, fill=casecontrol)) + geom_boxplot() #+ geom_point() #+ ggtitle("xx") + geom_line() + # group=con_exp
@@ -1708,7 +1707,7 @@ aheatmap(exprs(eset), Rowv = NA, Colv = NA, annCol = pData(eset))
 #
 ```
 
-```{r, fig.height=4, fig.width=9, fig.align='center', warning=FALSE, message=FALSE}
+```{r, fig.height=4, fig.width=9, fig.align='center', warning=FALSE, message=FALSE, eval=FALSE}
 bindAGE <- t(as.matrix(tapply(exprs(eset)[1,], eset$edad_CAT, mean)))
 for (i in 2:dim(exprs(eset))[1]) {
   bindAGE <- rbind(bindAGE,t(as.matrix(tapply(exprs(eset)[i,], eset$edad_CAT, mean, na.rm=TRUE))))
@@ -1776,7 +1775,7 @@ aheatmap(exprs(eset), Rowv = NA, Colv = NA, annCol = pData(eset))
 ```
 
 
-```{r, fig.height=4, fig.width=9, fig.align='center', warning=FALSE, message=FALSE}
+```{r, fig.height=4, fig.width=9, fig.align='center', warning=FALSE, message=FALSE, eval=FALSE}
 bindEXPO <- t(as.matrix(tapply(exprs(eset)[1,], eset$expo_CAT, mean)))
 for (i in 2:dim(exprs(eset))[1]) {
   bindEXPO <- rbind(bindEXPO,t(as.matrix(tapply(exprs(eset)[i,], eset$expo_CAT, mean, na.rm=TRUE))))
@@ -1932,7 +1931,7 @@ rawk <- as.data.frame(rawk)
 colnames(rawk) <- c("RAW.sample.median.int", "RAW.No.DNA.median.int")
 b2 <- ggplot(rawk, aes(x=RAW.sample.median.int,y=RAW.No.DNA.median.int)) + geom_point() + geom_smooth()
 #
-multiplot(t1,b2,t2,b1, cols=2)
+#multiplot(t1,b2,t2,b1, cols=2)
 #
 ```
 
@@ -1944,8 +1943,8 @@ eset<-normal.log2.raw.eSet
 #
 eset <- eset[feature_sort_meanXX,sample_sort_mean_FIRSTXX] ## REORDER samples and features inside the ExpressionSet
 
-aheatmap(exprs(eset), Rowv = NA, Colv = NA, main = "LOG2")
-aheatmap(rbind(rawhm,ctrlhm), Rowv = NA, Colv = NA, main = "RAW")
+aheatmap(rbind(rawhm,ctrlhm), Rowv = NA, Colv = NA, main = "Raw Intensities")
+aheatmap(exprs(eset), Rowv = NA, Colv = NA, main = "Transformed and Normalized Intensities")
 ```
 
 
@@ -2126,14 +2125,14 @@ multiplot(v11, v41, v31, #v21, v61,
 #plot(EBA175)
 #hist(EBA175)
 
-cor(EBA175, method = "pearson")
-cor.test(~ PF3D7_0731500_e1s2.361 + EBA175_0.3.23, EBA175, method = "pearson")
+cor(EBA175, method = "spearman")
+cor.test(~ PF3D7_0731500_e1s2.361 + EBA175_0.3.23, EBA175, method = "spearman")
 
 #library(PerformanceAnalytics)
-chart.Correlation(EBA175, method = "pearson")
-chart.Correlation(MSP2, method = "pearson")
-chart.Correlation(CSP, method = "pearson")
-chart.Correlation(PvAMA1, method = "pearson")
+chart.Correlation(EBA175, method = "spearman")
+chart.Correlation(MSP2, method = "spearman")
+chart.Correlation(CSP, method = "spearman")
+chart.Correlation(PvAMA1, method = "spearman")
 
 #table.Correlation(EBA175[,2:3],EBA175[,1, drop=FALSE], conf.level=.95)
 #table.Correlation(managers[,2:3],managers[,8, drop=FALSE], conf.level=.95)
@@ -2152,16 +2151,271 @@ multiplot(v21, v61,
 ```
 
 ```{r, warning=FALSE, fig.align="center", fig.height=6, fig.width=10}
-chart.Correlation(MSP1s1, method = "pearson")
-chart.Correlation(MSP1s2, method = "pearson")
+chart.Correlation(MSP1s1, method = "spearman")
+chart.Correlation(MSP1s2, method = "spearman")
 ```
 
+#### **MSP1_S1 distribution**
+
+```{r, fig.height=12, fig.width=10, fig.align="center", message=FALSE}
+# PF3D7_0620400.974	falciparum	IVTT.AG	PF3D7_0620400	merozoite surface protein 10 (MSP10)
+# PVX_114145_1o1.272	vivax	IVTT.AG	PVX_114145	Merozoite surface protein 10, MSP10
+
+# PVX_099980_1o1_S1.793	IVTT.AG	Pv	PVX_099980	major blood-stage surface antigen Pv200 [PvMSP1-S1]
+# PVX_099980_1o1_S2.504	IVTT.AG	Pv	PVX_099980	major blood-stage surface antigen Pv200 [PvMSP1-S2]
+# PF3D7_0930300_s1.67	IVTT.AG	Pf	PF3D7_0930300	merozoite surface protein 1 (MSP1) [PfMSP1-S1]
+# PF3D7_0930300_s2.941	IVTT.AG	Pf	PF3D7_0930300	merozoite surface protein 1 (MSP1) [PfMSP1-S2]
+# MSP1, 0.3mg/mL.601	PURIFIED.PROTEIN	Pf	NA	MSP1, 0.3mg/mL
+# MSP1, 0.1mg/mL.602	PURIFIED.PROTEIN	Pf	NA	MSP1, 0.1mg/mL
+
+
+MSP1_S1 <- as.data.frame(cbind(as.matrix(exprs(normal.log2.raw.eSet)["PF3D7_0930300_s1.67",]),
+                             as.matrix(exprs(normal.log2.raw.eSet)["PVX_099980_1o1_S1.793",])))
+MSP1_S1 <- cbind(MSP1_S1,rownames(MSP1_S1),pData(normal.log2.raw.eSet)[,"Study"])
+colnames(MSP1_S1) <- c("PfMSP1_S1", "PvMSP1_S1", "sample.ID", "Study")
+
+MSP1_S1$Study <- factor(MSP1_S1$Study)
+
+#length(rownames(MSP1_S1))
+#phenoData(normal.log2.raw.eSet)
+#pData(normal.log2.raw.eSet)
+#varLabels(normal.log2.raw.eSet)
+
+MSP1_S1.x <- MSP1_S1 %>%
+  gather(specie, intensity, PfMSP1_S1:PvMSP1_S1) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(con_exp=="CON") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=specie)) + 
+  geom_histogram(alpha=.5 ,position = "identity") + 
+  #geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S1 per specie")
+MSP1_S1.xd <- MSP1_S1 %>%
+  gather(specie, intensity, PfMSP1_S1:PvMSP1_S1) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(con_exp=="CON") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=specie)) + 
+  #geom_histogram(alpha=.5 ,position = "identity") + 
+  geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S1 per specie")
+
+
+#
+MSP1_S1 <- subset(MSP1_S1, Study!="Primaquine")
+MSP1_S1 <- cbind(MSP1_S1, pData(normal.log2.raw.eSet.VIVAX.SEV.FILTER)[,c("casecontrol","con_exp")])
+#levels(MSP1_S1$con_exp) <- c("CON","SIN")
+#MSP1_S1$Study <- factor(MSP1_S1$Study)
+#varLabels(normal.log2.raw.eSet.VIVAX.SEV.FILTER) #,
+#phenoData(normal.log2.raw.eSet.VIVAX.SEV.FILTER)
+
+#
+MSP1_S1.z <- MSP1_S1 %>%
+  gather(specie, intensity, PfMSP1_S1:PvMSP1_S1) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(Study!="Primaquine") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=specie)) + 
+  geom_histogram(alpha=.5 ,position = "identity") + 
+  #geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S1 per specie \n only Severe study")
+MSP1_S1.zd <- MSP1_S1 %>%
+  gather(specie, intensity, PfMSP1_S1:PvMSP1_S1) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(Study!="Primaquine") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=specie)) + 
+  #geom_histogram(alpha=.5 ,position = "identity") + 
+  geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S1 per specie \n only Severe study")
+#
+#str(MSP1_S1)
+#
+MSP1_S1.w <- MSP1_S1 %>%
+  gather(specie, intensity, PfMSP1_S1:PvMSP1_S1) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(Study!="Primaquine") %>%
+  filter(specie=="PvMSP1_S1") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=con_exp)) + 
+  geom_histogram(alpha=.5 ,position = "identity") + 
+  #geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S1 per specie \n only Severe study and PvMSP1_S1")
+MSP1_S1.wd <- MSP1_S1 %>%
+  gather(specie, intensity, PfMSP1_S1:PvMSP1_S1) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(Study!="Primaquine") %>%
+  filter(specie=="PvMSP1_S1") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=con_exp)) + 
+  #geom_histogram(alpha=.5 ,position = "identity") + 
+  geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S1 per specie \n only Severe study and PvMSP1_S1")
+#
+MSP1_S1.y <- MSP1_S1 %>%
+  gather(specie, intensity, PfMSP1_S1:PvMSP1_S1) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(Study!="Primaquine") %>%
+  filter(specie=="PvMSP1_S1") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=casecontrol)) + 
+  geom_histogram(alpha=.5 ,position = "identity") + 
+  #geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S1 per specie \n only Severe study and PvMSP1_S1")
+MSP1_S1.yd <- MSP1_S1 %>%
+  gather(specie, intensity, PfMSP1_S1:PvMSP1_S1) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(Study!="Primaquine") %>%
+  filter(specie=="PvMSP1_S1") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=casecontrol)) + 
+  #geom_histogram(alpha=.5 ,position = "identity") + 
+  geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S1 per specie \n only Severe study and PvMSP1_S1")
+
+multiplot(MSP1_S1.x, MSP1_S1.z, MSP1_S1.w, #MSP1_S1.y,
+          MSP1_S1.xd, MSP1_S1.zd, MSP1_S1.wd, #MSP1_S1.yd,
+          cols = 2)
+```
+
+#### **MSP1_S2 distribution**
+
+```{r, fig.height=12, fig.width=10, fig.align="center", message=FALSE}
+# PF3D7_0620400.974	falciparum	IVTT.AG	PF3D7_0620400	merozoite surface protein 10 (MSP10)
+# PVX_114145_1o1.272	vivax	IVTT.AG	PVX_114145	Merozoite surface protein 10, MSP10
+
+# PVX_099980_1o1_S1.793	IVTT.AG	Pv	PVX_099980	major blood-stage surface antigen Pv200 [PvMSP1-S1]
+# PVX_099980_1o1_S2.504	IVTT.AG	Pv	PVX_099980	major blood-stage surface antigen Pv200 [PvMSP1-S2]
+# PF3D7_0930300_s1.67	IVTT.AG	Pf	PF3D7_0930300	merozoite surface protein 1 (MSP1) [PfMSP1-S1]
+# PF3D7_0930300_s2.941	IVTT.AG	Pf	PF3D7_0930300	merozoite surface protein 1 (MSP1) [PfMSP1-S2]
+# MSP1, 0.3mg/mL.601	PURIFIED.PROTEIN	Pf	NA	MSP1, 0.3mg/mL
+# MSP1, 0.1mg/mL.602	PURIFIED.PROTEIN	Pf	NA	MSP1, 0.1mg/mL
+
+
+MSP1_S2 <- as.data.frame(cbind(as.matrix(exprs(normal.log2.raw.eSet)["PF3D7_0930300_s2.941",]),
+                               as.matrix(exprs(normal.log2.raw.eSet)["PVX_099980_1o1_S2.504",])))
+MSP1_S2 <- cbind(MSP1_S2,rownames(MSP1_S2),pData(normal.log2.raw.eSet)[,"Study"])
+colnames(MSP1_S2) <- c("PfMSP1_S2", "PvMSP1_S2", "sample.ID", "Study")
+
+MSP1_S2$Study <- factor(MSP1_S2$Study)
+
+#length(rownames(MSP1_S2))
+#phenoData(normal.log2.raw.eSet)
+#pData(normal.log2.raw.eSet)
+#varLabels(normal.log2.raw.eSet)
+
+MSP1_S2.x <- MSP1_S2 %>%
+  gather(specie, intensity, PfMSP1_S2:PvMSP1_S2) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(con_exp=="CON") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=specie)) + 
+  geom_histogram(alpha=.5 ,position = "identity") + 
+  #geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S2 per specie")
+MSP1_S2.xd <- MSP1_S2 %>%
+  gather(specie, intensity, PfMSP1_S2:PvMSP1_S2) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(con_exp=="CON") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=specie)) + 
+  #geom_histogram(alpha=.5 ,position = "identity") + 
+  geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S2 per specie")
+
+
+#
+MSP1_S2 <- subset(MSP1_S2, Study!="Primaquine")
+MSP1_S2 <- cbind(MSP1_S2, pData(normal.log2.raw.eSet.VIVAX.SEV.FILTER)[,c("casecontrol","con_exp")])
+#levels(MSP1_S2$con_exp) <- c("CON","SIN")
+#MSP1_S2$Study <- factor(MSP1_S2$Study)
+#varLabels(normal.log2.raw.eSet.VIVAX.SEV.FILTER) #,
+#phenoData(normal.log2.raw.eSet.VIVAX.SEV.FILTER)
+
+#
+MSP1_S2.z <- MSP1_S2 %>%
+  gather(specie, intensity, PfMSP1_S2:PvMSP1_S2) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(Study!="Primaquine") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=specie)) + 
+  geom_histogram(alpha=.5 ,position = "identity") + 
+  #geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S2 per specie \n only Severe study")
+MSP1_S2.zd <- MSP1_S2 %>%
+  gather(specie, intensity, PfMSP1_S2:PvMSP1_S2) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(Study!="Primaquine") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=specie)) + 
+  #geom_histogram(alpha=.5 ,position = "identity") + 
+  geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S2 per specie \n only Severe study")
+#
+#str(MSP1_S2)
+#
+MSP1_S2.w <- MSP1_S2 %>%
+  gather(specie, intensity, PfMSP1_S2:PvMSP1_S2) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(Study!="Primaquine") %>%
+  filter(specie=="PvMSP1_S2") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=con_exp)) + 
+  geom_histogram(alpha=.5 ,position = "identity") + 
+  #geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S2 per specie \n only Severe study and PvMSP1_S2")
+MSP1_S2.wd <- MSP1_S2 %>%
+  gather(specie, intensity, PfMSP1_S2:PvMSP1_S2) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(Study!="Primaquine") %>%
+  filter(specie=="PvMSP1_S2") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=con_exp)) + 
+  #geom_histogram(alpha=.5 ,position = "identity") + 
+  geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S2 per specie \n only Severe study and PvMSP1_S2")
+#
+MSP1_S2.y <- MSP1_S2 %>%
+  gather(specie, intensity, PfMSP1_S2:PvMSP1_S2) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(Study!="Primaquine") %>%
+  filter(specie=="PvMSP1_S2") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=casecontrol)) + 
+  geom_histogram(alpha=.5 ,position = "identity") + 
+  #geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S2 per specie \n only Severe study and PvMSP1_S2")
+MSP1_S2.yd <- MSP1_S2 %>%
+  gather(specie, intensity, PfMSP1_S2:PvMSP1_S2) %>%
+  mutate(specie=factor(specie)) %>%
+  #filter(Study!="Primaquine") %>%
+  filter(specie=="PvMSP1_S2") %>%
+  #mutate(feature=factor(feature)) %>%
+  ggplot(aes(x=intensity,fill=casecontrol)) + 
+  #geom_histogram(alpha=.5 ,position = "identity") + 
+  geom_density(alpha=.3) +
+  labs(title="Normalized intensity against MSP1_S2 per specie \n only Severe study and PvMSP1_S2")
+
+multiplot(MSP1_S2.x, MSP1_S2.z, MSP1_S2.w, #MSP1_S2.y,
+          MSP1_S2.xd, MSP1_S2.zd, MSP1_S2.wd, #MSP1_S2.yd,
+          cols = 2)
+```
 #### **MSP10 distribution**
 
 ```{r, fig.height=12, fig.width=10, fig.align="center", message=FALSE}
 # PF3D7_0620400.974	falciparum	IVTT.AG	PF3D7_0620400	merozoite surface protein 10 (MSP10)
 # PVX_114145_1o1.272	vivax	IVTT.AG	PVX_114145	Merozoite surface protein 10, MSP10
-MSP10 <- as.data.frame(cbind(as.matrix(anti.raw_data["PF3D7_0620400.974",]), as.matrix(anti.raw_data["PVX_114145_1o1.272",])))
+
+# PVX_099980_1o1_S1.793	IVTT.AG	Pv	PVX_099980	major blood-stage surface antigen Pv200 [PvMSP1-S1]
+# PVX_099980_1o1_S2.504	IVTT.AG	Pv	PVX_099980	major blood-stage surface antigen Pv200 [PvMSP1-S2]
+# PF3D7_0930300_s1.67	IVTT.AG	Pf	PF3D7_0930300	merozoite surface protein 1 (MSP1) [PfMSP1-S1]
+# PF3D7_0930300_s2.941	IVTT.AG	Pf	PF3D7_0930300	merozoite surface protein 1 (MSP1) [PfMSP1-S2]
+# MSP1, 0.3mg/mL.601	PURIFIED.PROTEIN	Pf	NA	MSP1, 0.3mg/mL
+# MSP1, 0.1mg/mL.602	PURIFIED.PROTEIN	Pf	NA	MSP1, 0.1mg/mL
+
+
+MSP10 <- as.data.frame(cbind(as.matrix(exprs(normal.log2.raw.eSet)["PF3D7_0620400.974",]),
+                               as.matrix(exprs(normal.log2.raw.eSet)["PVX_114145_1o1.272",])))
 MSP10 <- cbind(MSP10,rownames(MSP10),pData(normal.log2.raw.eSet)[,"Study"])
 colnames(MSP10) <- c("PfMSP10", "PvMSP10", "sample.ID", "Study")
 
@@ -2180,7 +2434,7 @@ MSP10.x <- MSP10 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Raw Ab intensity against MSP10 per specie")
+  labs(title="Normalized intensity against MSP10 per specie")
 MSP10.xd <- MSP10 %>%
   gather(specie, intensity, PfMSP10:PvMSP10) %>%
   mutate(specie=factor(specie)) %>%
@@ -2189,7 +2443,7 @@ MSP10.xd <- MSP10 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Raw Ab intensity against MSP10 per specie")
+  labs(title="Normalized intensity against MSP10 per specie")
 
 
 #
@@ -2209,7 +2463,7 @@ MSP10.z <- MSP10 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Raw Ab intensity against MSP10 per specie \n only Severe study")
+  labs(title="Normalized intensity against MSP10 per specie \n only Severe study")
 MSP10.zd <- MSP10 %>%
   gather(specie, intensity, PfMSP10:PvMSP10) %>%
   mutate(specie=factor(specie)) %>%
@@ -2218,7 +2472,7 @@ MSP10.zd <- MSP10 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Raw Ab intensity against MSP10 per specie \n only Severe study")
+  labs(title="Normalized intensity against MSP10 per specie \n only Severe study")
 #
 #str(MSP10)
 #
@@ -2231,7 +2485,7 @@ MSP10.w <- MSP10 %>%
   ggplot(aes(x=intensity,fill=con_exp)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Raw Ab intensity against MSP10 per specie \n only Severe study and PvMSP10")
+  labs(title="Normalized intensity against MSP10 per specie \n only Severe study and PvMSP10")
 MSP10.wd <- MSP10 %>%
   gather(specie, intensity, PfMSP10:PvMSP10) %>%
   mutate(specie=factor(specie)) %>%
@@ -2241,7 +2495,7 @@ MSP10.wd <- MSP10 %>%
   ggplot(aes(x=intensity,fill=con_exp)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Raw Ab intensity against MSP10 per specie \n only Severe study and PvMSP10")
+  labs(title="Normalized intensity against MSP10 per specie \n only Severe study and PvMSP10")
 #
 MSP10.y <- MSP10 %>%
   gather(specie, intensity, PfMSP10:PvMSP10) %>%
@@ -2252,7 +2506,7 @@ MSP10.y <- MSP10 %>%
   ggplot(aes(x=intensity,fill=casecontrol)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Raw Ab intensity against MSP10 per specie \n only Severe study and PvMSP10")
+  labs(title="Normalized intensity against MSP10 per specie \n only Severe study and PvMSP10")
 MSP10.yd <- MSP10 %>%
   gather(specie, intensity, PfMSP10:PvMSP10) %>%
   mutate(specie=factor(specie)) %>%
@@ -2262,7 +2516,7 @@ MSP10.yd <- MSP10 %>%
   ggplot(aes(x=intensity,fill=casecontrol)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Raw Ab intensity against MSP10 per specie \n only Severe study and PvMSP10")
+  labs(title="Normalized intensity against MSP10 per specie \n only Severe study and PvMSP10")
 
 multiplot(MSP10.x, MSP10.z, MSP10.w, #MSP10.y,
           MSP10.xd, MSP10.zd, MSP10.wd, #MSP10.yd,
@@ -2419,39 +2673,190 @@ esetEXTRA <- eset
 ############################## 
 ```
 
-#### Correlations
+#### Distributions
+
+**Hypothesis Generation**, but not confirmation due to low statistical power.
+
+##### Per age and exposure
+```{r, fig.height=6, fig.width=7, fig.align='center', warning=FALSE, message=FALSE}
+corrXX <- subset(pData(esetEXTRA),select= c(casecontrol,con_exp,expo_CAT,edad_CAT:mean.intensity))
+#kable(head(corrX[order(corrX$edad, decreasing = TRUE),]), align = "c")
+
+#corrX
+EdadBreadth1x <- ggplot(corrXX, aes(x=edad_CAT,y=breadth.percentage
+                                  #, fill=casecontrol
+                                  )) +geom_boxplot() #+ geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+#ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2,size=.1) #+ ggtitle("xx") + geom_line() + # group=con_exp
+EdadBreadth2x <- ggplot(corrXX, aes(x=edad_CAT,y=mean.intensity
+                                  #, fill=casecontrol
+                                  )) +geom_boxplot() # + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+
+EdadBreadth3x <- ggplot(corrXX, aes(x=expo_CAT,y=breadth.percentage
+                                  #, fill=con_exp
+                                  )) +geom_boxplot() # + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+#ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2,size=.1) #+ ggtitle("xx") + geom_line() + # group=con_exp
+EdadBreadth4x <- ggplot(corrXX, aes(x=expo_CAT,y=mean.intensity
+                                  #, fill=con_exp
+                                  )) +geom_boxplot() # + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+
+
+multiplot(EdadBreadth1x,EdadBreadth3x,EdadBreadth2x,EdadBreadth4x,cols=2)
+```
+
+```{r,fig.height=6, fig.width=8, fig.align='center', eval=FALSE}
+#corrXX
+
+a <- ggplot(corrXX, aes(x=breadth.percentage#,y=
+                                  , fill=edad_CAT
+                                  )) +
+  #geom_histogram(alpha=.5 ,position = "identity") +
+  geom_density(alpha=.3) #+
+
+b <- ggplot(corrXX, aes(x=breadth.percentage#,y=
+                                  , fill=expo_CAT
+                                  )) +
+  #geom_histogram(alpha=.5 ,position = "identity") +
+  geom_density(alpha=.3) #+
+
+c <- ggplot(corrXX, aes(x=mean.intensity#,y=
+                                  , fill=edad_CAT
+                                  )) +
+  #geom_histogram(alpha=.5 ,position = "identity") +
+  geom_density(alpha=.3) #+
+
+d <- ggplot(corrXX, aes(x=mean.intensity#,y=
+                                  , fill=expo_CAT
+                                  )) +
+  #geom_histogram(alpha=.5 ,position = "identity") +
+  geom_density(alpha=.3) #+
+
+multiplot(a,b,c,d,cols = 2)
+```
+```{r,fig.height=6, fig.width=8, fig.align='center', eval=FALSE}
+#corrXX
+
+a <- ggplot(corrXX, aes(x=breadth.percentage#,y=
+                        , fill=edad_CAT
+)) +
+  geom_histogram(alpha=.5 ,position = "identity")# +
+  #geom_density(alpha=.3) #+
+
+b <- ggplot(corrXX, aes(x=breadth.percentage#,y=
+                        , fill=expo_CAT
+)) +
+  geom_histogram(alpha=.5 ,position = "identity")# +
+  #geom_density(alpha=.3) #+
+
+c <- ggplot(corrXX, aes(x=mean.intensity#,y=
+                        , fill=edad_CAT
+)) +
+  geom_histogram(alpha=.5 ,position = "identity")# +
+  #geom_density(alpha=.3) #+
+
+d <- ggplot(corrXX, aes(x=mean.intensity#,y=
+                        , fill=expo_CAT
+)) +
+  geom_histogram(alpha=.5 ,position = "identity")# +
+  #geom_density(alpha=.3) #+
+
+multiplot(a,b,c,d,cols = 2)
+```
+
+##### Along age
 ```{r, fig.height=6, fig.width=14, fig.align='center', warning=FALSE, message=FALSE}
 corrX <- subset(pData(esetEXTRA),select= c(casecontrol,con_exp,edad:mean.intensity))
 kable(head(corrX[order(corrX$edad, decreasing = TRUE),]), align = "c")
 
 #corrX
-EdadBreadth1 <- ggplot(corrX, aes(x=edad,y=breadth.score, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+EdadBreadth1 <- ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 #ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2,size=.1) #+ ggtitle("xx") + geom_line() + # group=con_exp
 EdadBreadth2 <- ggplot(corrX, aes(x=edad,y=mean.intensity, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 
-EdadBreadth3 <- ggplot(corrX, aes(x=edad,y=breadth.score, colour=con_exp)) + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+EdadBreadth3 <- ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=con_exp)) + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 #ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2,size=.1) #+ ggtitle("xx") + geom_line() + # group=con_exp
 EdadBreadth4 <- ggplot(corrX, aes(x=edad,y=mean.intensity, colour=con_exp)) + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 
 
 multiplot(EdadBreadth1,EdadBreadth3,EdadBreadth2,EdadBreadth4,cols=2)
 ```
-
+##### Per age
 ```{r, fig.height=6, fig.width=14, fig.align='center', warning=FALSE, message=FALSE}
 corrX <- subset(pData(esetEXTRA),select= c(casecontrol,con_exp,edad_CAT:mean.intensity))
 #kable(head(corrX[order(corrX$edad, decreasing = TRUE),]), align = "c")
 
 #corrX
-EdadBreadth1 <- ggplot(corrX, aes(x=edad_CAT,y=breadth.score, fill=casecontrol)) +geom_boxplot() #+ geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+EdadBreadth1 <- ggplot(corrX, aes(x=edad_CAT,y=breadth.percentage, fill=casecontrol)) +geom_boxplot() #+ geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 #ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2,size=.1) #+ ggtitle("xx") + geom_line() + # group=con_exp
 EdadBreadth2 <- ggplot(corrX, aes(x=edad_CAT,y=mean.intensity, fill=casecontrol)) +geom_boxplot() # + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 
-EdadBreadth3 <- ggplot(corrX, aes(x=edad_CAT,y=breadth.score, fill=con_exp)) +geom_boxplot() # + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+EdadBreadth3 <- ggplot(corrX, aes(x=edad_CAT,y=breadth.percentage, fill=con_exp)) +geom_boxplot() # + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 #ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2,size=.1) #+ ggtitle("xx") + geom_line() + # group=con_exp
 EdadBreadth4 <- ggplot(corrX, aes(x=edad_CAT,y=mean.intensity, fill=con_exp)) +geom_boxplot() # + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 
 
 multiplot(EdadBreadth1,EdadBreadth3,EdadBreadth2,EdadBreadth4,cols=2)
+```
+```{r,fig.height=4, fig.width=14, fig.align='center', eval=FALSE}
+a <- ggplot(corrX, aes(x=breadth.percentage#,y=
+                                  , fill=casecontrol
+                                  )) +
+  #geom_histogram(alpha=.5 ,position = "identity") +
+  geom_density(alpha=.3) +
+  facet_grid(. ~ edad_CAT)
+
+b <- ggplot(corrX, aes(x=breadth.percentage#,y=
+                                  , fill=con_exp
+                                  )) +
+  #geom_histogram(alpha=.5 ,position = "identity") +
+  geom_density(alpha=.3) +
+  facet_grid(. ~ edad_CAT)
+
+c <- ggplot(corrX, aes(x=mean.intensity#,y=
+                                  , fill=casecontrol
+                                  )) +
+  #geom_histogram(alpha=.5 ,position = "identity") +
+  geom_density(alpha=.3) +
+  facet_grid(. ~ edad_CAT)
+
+d <- ggplot(corrX, aes(x=mean.intensity#,y=
+                                  , fill=con_exp
+                                  )) +
+  #geom_histogram(alpha=.5 ,position = "identity") +
+  geom_density(alpha=.3) +
+  facet_grid(. ~ edad_CAT)
+
+multiplot(a,b,c,d,cols = 2)
+```
+```{r,fig.height=4, fig.width=14, fig.align='center', eval=FALSE}
+a <- ggplot(corrX, aes(x=breadth.percentage#,y=
+                       , fill=casecontrol
+)) +
+  geom_histogram(alpha=.5 ,position = "identity") +
+  #geom_density(alpha=.3) +
+  facet_grid(. ~ edad_CAT)
+
+b <- ggplot(corrX, aes(x=breadth.percentage#,y=
+                       , fill=con_exp
+)) +
+  geom_histogram(alpha=.5 ,position = "identity") +
+  #geom_density(alpha=.3) +
+  facet_grid(. ~ edad_CAT)
+
+c <- ggplot(corrX, aes(x=mean.intensity#,y=
+                       , fill=casecontrol
+)) +
+  geom_histogram(alpha=.5 ,position = "identity") +
+  #geom_density(alpha=.3) +
+  facet_grid(. ~ edad_CAT)
+
+d <- ggplot(corrX, aes(x=mean.intensity#,y=
+                       , fill=con_exp
+)) +
+  geom_histogram(alpha=.5 ,position = "identity") +
+  #geom_density(alpha=.3) +
+  facet_grid(. ~ edad_CAT)
+
+multiplot(a,b,c,d,cols = 2)
 ```
 
 
@@ -2747,7 +3152,7 @@ kable(head(sero.posit.SUMMARY[,4:9]), align = "c") # ALL the 515 antigens-------
 **Frequency of Response per Group (per feature)**
 
 *No se rechaza la $H_{o}$ de igualdad de medias. No se rechaza la $H_{o}$ de igualdad de varianzas*
-```{r, fig.height=4, fig.width=16, message=FALSE}
+```{r, fig.height=4, fig.width=16, message=FALSE, eval=FALSE}
 # (1.5) GRAPHIC: Venn-diagram --> [MANUALLY done]
 #
 # (1.6) TEST DIFFERENCES
@@ -2790,7 +3195,7 @@ kable(glance(varSevFREQ1), align = "c")
 **Magnitud of Response per Group (per feature)**
 
 *No se rechaza la $H_{o}$ de igualdad de medias. No se rechaza la $H_{o}$ de igualdad de varianzas*
-```{r, fig.height=4, fig.width=16, message=FALSE}
+```{r, fig.height=4, fig.width=16, message=FALSE, eval=FALSE}
 #
 par(mfrow=c(1,4))
 #
@@ -2823,7 +3228,7 @@ kable(glance(varSevMAG1), align = "c")
 **Breadth (percentage) of Response per Group (per sample)**
 
 *No se rechaza la $H_{o}$ de igualdad de medias. Sí se rechaza la $H_{o}$ de igualdad de varianzas*
-```{r, fig.height=4, fig.width=16, message=FALSE}
+```{r, fig.height=4, fig.width=4, message=FALSE}
 # GRAPHIC: Bee-swarm scatter plot
 #summary(subset(pData(esetEXTRA),Group=="D", breadth.score:mean.intensity))
 #summary(subset(pData(esetEXTRA),Group=="E", breadth.score:mean.intensity))
@@ -2834,14 +3239,14 @@ kable(glance(varSevMAG1), align = "c")
 #    res = 300,            # 300 pixels per inch (RESOLUTION)
 #    pointsize = 8)        # smaller font size
 #
-par(mfrow=c(1,4))
+par(mfrow=c(1,1))
 #
-boxplot(breadth.percentage ~ Group, data= pData(eset), main= "Breadth of Response", ylab= "Percentage of reactive antigens per sample")
-stripchart(breadth.percentage ~ Group, data= pData(eset), pch = 1, vertical = TRUE, add = TRUE, method = "jitter", col = c(2,4))
-boxplot(breadth.percentage ~ Group, data= pData(eset), main= "Breadth of Response", ylab= "Percentage of reactive antigens per sample")
+#boxplot(breadth.percentage ~ Group, data= pData(eset), main= "Breadth of Response", ylab= "Percentage of reactive antigens per sample")
+#stripchart(breadth.percentage ~ Group, data= pData(eset), pch = 1, vertical = TRUE, add = TRUE, method = "jitter", col = c(2,4))
+boxplot(breadth.percentage ~ Group, data= pData(eset), main= "Breadth of Response", ylab= "Percent reactive", names=c("D: Severe","E: Non-Severe"))# of reactive antigens per sample
 beeswarm(breadth.percentage ~ Group, data= pData(eset), col = c(2,4), add=TRUE) #, pwcol = 
-vioplot(subset(pData(eset),Group=="D")$breadth.percentage,subset(pData(eset),Group=="E")$breadth.percentage, col = "grey80", names = c("D","E"))
-beanplot(breadth.percentage ~ Group, data= pData(eset), overallline ="mean")
+#vioplot(subset(pData(eset),Group=="D")$breadth.percentage,subset(pData(eset),Group=="E")$breadth.percentage, col = "grey80", names = c("D","E"))
+#beanplot(breadth.percentage ~ Group, data= pData(eset), overallline ="mean")
 # TEST for differences
 wtSev1 <- wilcox.test(subset(pData(eset),Group=="D")$breadth.percentage,subset(pData(eset),Group=="E")$breadth.percentage,exact = FALSE, correct = FALSE)
 varSev1 <- var.test(subset(pData(eset),Group=="D")$breadth.percentage,subset(pData(eset),Group=="E")$breadth.percentage)
@@ -2853,16 +3258,16 @@ kable(glance(varSev1), align = "c")
 **Breadth (intensity) of Response per Group (per sample)**
 
 *No se rechaza la $H_{o}$ de igualdad de medias. Sí se rechaza la $H_{o}$ de igualdad de varianzas*
-```{r, fig.height=4, fig.width=16, message=FALSE}
+```{r, fig.height=4, fig.width=4, message=FALSE}
 #
-par(mfrow=c(1,4))
+par(mfrow=c(1,1))
 #
-boxplot(mean.intensity ~ Group, data= pData(eset), main= "Intensity of Response", ylab= "Mean Intensity of reactive antigens per sample")
-stripchart(mean.intensity ~ Group, data= pData(eset), pch = 1, vertical = TRUE, add = TRUE, method = "jitter", col = c(2,4))
-boxplot(mean.intensity ~ Group, data= pData(eset), main= "Intensity of Response", ylab= "Mean Intensity of reactive antigens per sample")
+#boxplot(mean.intensity ~ Group, data= pData(eset), main= "Intensity of Response", ylab= "Mean Intensity of reactive antigens per sample")
+#stripchart(mean.intensity ~ Group, data= pData(eset), pch = 1, vertical = TRUE, add = TRUE, method = "jitter", col = c(2,4))
+boxplot(mean.intensity ~ Group, data= pData(eset), main= "Intensity of Response", ylab= "Mean Intensity", names=c("D: Severe","E: Non-Severe"))# of reactive antigens per sample
 beeswarm(mean.intensity ~ Group, data= pData(eset), col = c(2,4), add = TRUE)
-vioplot(subset(pData(eset),Group=="D")$mean.intensity,subset(pData(eset),Group=="E")$mean.intensity, col = "grey80", names = c("D","E"))
-beanplot(mean.intensity ~ Group, data= pData(eset), overallline ="mean")
+#vioplot(subset(pData(eset),Group=="D")$mean.intensity,subset(pData(eset),Group=="E")$mean.intensity, col = "grey80", names = c("D","E"))
+#beanplot(mean.intensity ~ Group, data= pData(eset), overallline ="mean")
 #
 # TEST for differences
 wtSev2 <- wilcox.test(subset(pData(eset),Group=="D")$mean.intensity,subset(pData(eset),Group=="E")$mean.intensity,exact = FALSE, correct = FALSE)
@@ -3030,7 +3435,7 @@ topTable(fit, coef = 2, sort.by ="AveExpr", resort.by ="logFC", genelist = fit$g
 #------------------------------
 ```
 **p_value distribution [required evaluation prior to FDR]**
-```{r, eval=FALSE, fig.align="center", fig.height=2, fig.width=4}
+```{r, eval=TRUE, fig.align="center", fig.height=4, fig.width=8}
 # [31ago2016] before any FDR in MULTIPLE COMPARISONS
 # suggested by: http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
 test <- topTable(fit, coef = 2,
@@ -3119,11 +3524,11 @@ limmares <- data.frame(Gene.ID=fit$genes$ID,logFC=coef(fit)[,2],AveExpr=h$AveExp
 #
 par(mfrow=c(1,2))
 with(limmares, plot(logFC, -log10(p.value),cex=.7, pch=20,
-                    main = "Volcano plot",
+                    main = "no complicada vs severa",
                     #col=cols,
-                    xlim=c(-1.5,1.5), ylim=c(0,12),
+                    xlim=c(-2,2), ylim=c(0,15),
                     xlab="log Fold Change"))
-abline(h=c(-log10(0.05),-log10(0.001)),
+abline(h=-log10(0.05),#,-log10(0.001)
        v=c(-1,1),
        lty=2, col= "grey55")
 
@@ -3134,10 +3539,10 @@ abline(h=c(-log10(0.05),-log10(0.001)),
 #with(subset(limmares, abs(AveExpr)>2), points(logFC, -log10(p.value), pch=20, col="orange"))
 #with(subset(limmares, p.value<.0224), points(logFC, -log10(p.value), pch=19, col="red"))
 
-with(subset(limmares, padj<.05 ), points(logFC, -log10(p.value), pch=19, col="blue"))
+#with(subset(limmares, padj<.05 ), points(logFC, -log10(p.value), pch=19, col="blue"))
 #with(subset(limmares, p.value<.05 ), points(logFC, -log10(p.value), pch=19, col="blue"))
-with(subset(limmares, abs(AveExpr)>1.738), points(logFC, -log10(p.value), pch=20, col="green"))
-with(subset(limmares, abs(AveExpr)>2), points(logFC, -log10(p.value), pch=20, col="orange"))
+#with(subset(limmares, abs(AveExpr)>2), points(logFC, -log10(p.value), pch=20, col="green"))
+#with(subset(limmares, abs(AveExpr)>2.40), points(logFC, -log10(p.value), pch=20, col="orange"))
 with(subset(limmares, B>0 ), points(logFC, -log10(p.value), pch=20, col="red"))
 
 # (2.2) Volcano plot: Log Fold Change x AveExpr
@@ -3145,10 +3550,11 @@ with(subset(limmares, B>0 ), points(logFC, -log10(p.value), pch=20, col="red"))
 
 #
 with(limmares, plot(logFC, AveExpr,cex=.7, pch=20,
-                    main = "logFC x AveExpr plot",
+                    main = "no complicada vs severa",
                     #col=cols,
-                    xlim=c(-1.5,1.5), #ylim=c(-1,2.5),
-                    xlab="log Fold Change"))
+                    xlim=c(-2,2), #ylim=c(-1,2.5),
+                    xlab="log Fold Change",
+                    ylab="mean.intensity"))
 abline(h=c(0,2,-2),
        v=c(-1,0,1),
        lty=2, col= "grey55")
@@ -3157,13 +3563,13 @@ abline(h=c(0,2,-2),
 ###source: http://www.gettinggeneticsdone.com/2014/05/r-volcano-plots-to-visualize-rnaseq-microarray.html
 
 #with(subset(limmares, p.value<.05 ), points(logFC, AveExpr, pch=20, col="blue"))
-with(subset(limmares, padj<.05 ), points(logFC, AveExpr, pch=20, col="blue"))
+#with(subset(limmares, padj<.05 ), points(logFC, AveExpr, pch=20, col="blue"))
 with(subset(limmares, B>0 ), points(logFC, AveExpr, pch=20, col="red"))
 #with(subset(limmares, abs(logFC)>1), points(logFC, -log10(p.value), pch=20, col="orange"))
 #with(subset(limmares, p.value<.05 & abs(logFC)>1), points(logFC, -log10(p.value), pch=20, col="green"))
 
-with(subset(limmares, abs(AveExpr)>1.738), points(logFC, AveExpr, pch=19, col="green"))
-with(subset(limmares, abs(AveExpr)>2), points(logFC, AveExpr, pch=19, col="orange"))
+#with(subset(limmares, abs(AveExpr)>2), points(logFC, AveExpr, pch=19, col="green"))
+#with(subset(limmares, abs(AveExpr)>2.40), points(logFC, AveExpr, pch=19, col="orange"))
 #with(subset(limmares, p.value<.0224), points(logFC, AveExpr, pch=20, col="red"))
 
 
@@ -3207,7 +3613,7 @@ Using `dplyr`[@dplyr], `ggplot2`[@ggplot2], `ggrepel`[@ggrepel] and `Rmisc`[@Rmi
 #library(dplyr)
 #library(ggplot2)
 
-results <- mutate(limmares, sig=ifelse(limmares$p.value<.0224, "diff rve","below Top10"))
+results <- mutate(limmares, sig=ifelse(limmares$p.value<.0154, "diff rve","below Top10"))
 
 p <- ggplot(results, aes(logFC, -log10(p.value))) + 
   geom_point(aes(col=sig)) +
@@ -3223,7 +3629,7 @@ p <- ggplot(results, aes(logFC, -log10(p.value))) +
 #library(ggrepel)
 
 #p+geom_text_repel(data=filter(results, p.value<.0224), aes(label=Gene.ID))+xlim(-1,1)
-p_rep<-p+geom_text_repel(data=filter(results, p.value<.0224), aes(label=Gene.ID))#+xlim=c(-1.5,1.5)
+p_rep<-p+geom_text_repel(data=filter(results, p.value<.0154), aes(label=Gene.ID))#+xlim=c(-1.5,1.5)
 
 
 # (3.2) Volcano plot: Log Fold Change x AveExprs [W/ ANNOTATION]
@@ -3231,7 +3637,7 @@ p_rep<-p+geom_text_repel(data=filter(results, p.value<.0224), aes(label=Gene.ID)
 #library(dplyr)
 #library(ggplot2)
 
-resultsq <- mutate(limmares, sigq=ifelse(limmares$AveExpr>1.738, "highly rve","below Top10"))
+resultsq <- mutate(limmares, sigq=ifelse(limmares$AveExpr>2.40, "highly rve","below Top10"))
 
 q <- ggplot(resultsq, aes(logFC, AveExpr)) + 
   geom_point(aes(col=sigq)) +
@@ -3248,7 +3654,7 @@ q <- ggplot(resultsq, aes(logFC, AveExpr)) +
 #library(ggrepel)
 
 #q+geom_text_repel(data=filter(resultsq, AveExpr>1.738), aes(label=Gene.ID))+xlim(-1,1)
-q_rep<-q+geom_text_repel(data=filter(resultsq, AveExpr>1.738), aes(label=Gene.ID))#+xlim=c(-1.5,1.5)
+q_rep<-q+geom_text_repel(data=filter(resultsq, AveExpr>2.40), aes(label=Gene.ID))#+xlim=c(-1.5,1.5)
 
 #library(Rmisc)   #multiploting ggplots
 
@@ -4018,7 +4424,7 @@ kable(head(sero.posit.SUMMARY[,7:9]), align = "c") # ALL the 515 antigens-------
 **Frequency of Response per Group (per feature)**
 
 *No se rechaza la $H_{o}$ de igualdad de medias. No se rechaza la $H_{o}$ de igualdad de varianzas*
-```{r, fig.height=4, fig.width=16, message=FALSE}
+```{r, fig.height=4, fig.width=16, message=FALSE, eval=FALSE}
 # (1.5) GRAPHIC: Venn-diagram --> [MANUALLY done]
 #
 # (1.6) TEST DIFFERENCES
@@ -4062,7 +4468,7 @@ kable(glance(varSevFREQ1), align = "c")
 **Magnitud of Response per Group (per feature)**
 
 *No se rechaza la $H_{o}$ de igualdad de medias. No se rechaza la $H_{o}$ de igualdad de varianzas*
-```{r, fig.height=4, fig.width=16, message=FALSE}
+```{r, fig.height=4, fig.width=16, message=FALSE, eval=FALSE}
 #
 par(mfrow=c(1,4))
 #
@@ -4095,7 +4501,7 @@ kable(glance(varSevMAG1), align = "c")
 **Breadth (percentage) of Response per Group (per sample)**
 
 *No se rechaza la $H_{o}$ de igualdad de medias. Sí se rechaza la $H_{o}$ de igualdad de varianzas*
-```{r, fig.height=4, fig.width=16, message=FALSE}
+```{r, fig.height=4, fig.width=4, message=FALSE}
 # GRAPHIC: Bee-swarm scatter plot
 #summary(subset(pData(esetEXTRA),Group=="D", breadth.score:mean.intensity))
 #summary(subset(pData(esetEXTRA),Group=="E", breadth.score:mean.intensity))
@@ -4106,14 +4512,14 @@ kable(glance(varSevMAG1), align = "c")
 #    res = 300,            # 300 pixels per inch (RESOLUTION)
 #    pointsize = 8)        # smaller font size
 #
-par(mfrow=c(1,4))
+par(mfrow=c(1,1))
 #
-boxplot(breadth.percentage ~ con_exp, data= pData(eset), main= "Breadth of Response", ylab= "Percentage of reactive antigens per sample")
-stripchart(breadth.percentage ~ con_exp, data= pData(eset), pch = 1, vertical = TRUE, add = TRUE, method = "jitter", col = c(2,4))
-boxplot(breadth.percentage ~ con_exp, data= pData(eset), main= "Breadth of Response", ylab= "Percentage of reactive antigens per sample")
+#boxplot(breadth.percentage ~ con_exp, data= pData(eset), main= "Breadth of Response", ylab= "Percentage of reactive antigens per sample")
+#stripchart(breadth.percentage ~ con_exp, data= pData(eset), pch = 1, vertical = TRUE, add = TRUE, method = "jitter", col = c(2,4))
+boxplot(breadth.percentage ~ con_exp, data= pData(eset), main= "Breadth of Response", ylab= "Percent reactive")
 beeswarm(breadth.percentage ~ con_exp, data= pData(eset), col = c(2,4), add=TRUE) #, pwcol = 
-vioplot(subset(pData(eset),con_exp=="CON")$breadth.percentage,subset(pData(eset),con_exp=="SIN")$breadth.percentage, col = "grey80", names = c("CON","SIN"))
-beanplot(breadth.percentage ~ con_exp, data= pData(eset), overallline ="mean")
+#vioplot(subset(pData(eset),con_exp=="CON")$breadth.percentage,subset(pData(eset),con_exp=="SIN")$breadth.percentage, col = "grey80", names = c("CON","SIN"))
+#beanplot(breadth.percentage ~ con_exp, data= pData(eset), overallline ="mean")
 # TEST for differences
 wtSev1 <- wilcox.test(subset(pData(eset),con_exp=="CON")$breadth.percentage,subset(pData(eset),con_exp=="SIN")$breadth.percentage,exact = FALSE, correct = FALSE)
 varSev1 <- var.test(subset(pData(eset),con_exp=="CON")$breadth.percentage,subset(pData(eset),con_exp=="SIN")$breadth.percentage)
@@ -4125,16 +4531,16 @@ kable(glance(varSev1), align = "c")
 **Breadth (intensity) of Response per Group (per sample)**
 
 *No se rechaza la $H_{o}$ de igualdad de medias. Sí se rechaza la $H_{o}$ de igualdad de varianzas*
-```{r, fig.height=4, fig.width=16, message=FALSE}
+```{r, fig.height=4, fig.width=4, message=FALSE}
 #
-par(mfrow=c(1,4))
+par(mfrow=c(1,1))
 #
-boxplot(mean.intensity ~ con_exp, data= pData(eset), main= "Intensity of Response", ylab= "Mean Intensity of reactive antigens per sample")
-stripchart(mean.intensity ~ con_exp, data= pData(eset), pch = 1, vertical = TRUE, add = TRUE, method = "jitter", col = c(2,4))
-boxplot(mean.intensity ~ con_exp, data= pData(eset), main= "Intensity of Response", ylab= "Mean Intensity of reactive antigens per sample")
+#boxplot(mean.intensity ~ con_exp, data= pData(eset), main= "Intensity of Response", ylab= "Mean Intensity of reactive antigens per sample")
+#stripchart(mean.intensity ~ con_exp, data= pData(eset), pch = 1, vertical = TRUE, add = TRUE, method = "jitter", col = c(2,4))
+boxplot(mean.intensity ~ con_exp, data= pData(eset), main= "Intensity of Response", ylab= "Mean Intensity")
 beeswarm(mean.intensity ~ con_exp, data= pData(eset), col = c(2,4), add = TRUE)
-vioplot(subset(pData(eset),con_exp=="CON")$mean.intensity,subset(pData(eset),con_exp=="SIN")$mean.intensity, col = "grey80", names = c("CON","SIN"))
-beanplot(mean.intensity ~ con_exp, data= pData(eset), overallline ="mean")
+#vioplot(subset(pData(eset),con_exp=="CON")$mean.intensity,subset(pData(eset),con_exp=="SIN")$mean.intensity, col = "grey80", names = c("CON","SIN"))
+#beanplot(mean.intensity ~ con_exp, data= pData(eset), overallline ="mean")
 #
 # TEST for differences
 wtSev2 <- wilcox.test(subset(pData(eset),con_exp=="CON")$mean.intensity,subset(pData(eset),con_exp=="SIN")$mean.intensity,exact = FALSE, correct = FALSE)
@@ -4277,7 +4683,7 @@ fit <- eBayes(fit)                               # empirical Bayes for moderate 
 #-----------standard-----------
 # DIFFERENTIALLY rve [sorted by p.value] (SAME as default)
 #topTable(fit, coef = 2, sort.by ="P", genelist = fit$genes$ID, number = 15)
-ed <- topTable(fit, coef = 2,sort.by ="P", genelist = fit$genes$Description, number = 15)
+ed <- topTable(fit, coef = 2,sort.by ="P", genelist = fit$genes$Description, number = 30)
 ed <- format(ed, digits=3)
 #htmlTable(ed, col.rgroup = c("none", "#F7F7F7"), col.columns = c("none", "#F7F7F7"))
 kable(ed, align = "c")
@@ -4311,7 +4717,7 @@ topTable(fit, coef = 2, sort.by ="AveExpr", resort.by ="logFC", genelist = fit$g
 ```
 
 **p_value distribution [required evaluation prior to FDR]**
-```{r, eval=FALSE, fig.align="center", fig.height=2, fig.width=4}
+```{r, eval=TRUE, fig.align="center", fig.height=4, fig.width=8}
 # [31ago2016] before any FDR in MULTIPLE COMPARISONS
 # suggested by: http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
 test <- topTable(fit, coef = 2,
@@ -4400,11 +4806,11 @@ limmares <- data.frame(Gene.ID=fit$genes$ID,logFC=coef(fit)[,2],AveExpr=h$AveExp
 #
 par(mfrow=c(1,2))
 with(limmares, plot(logFC, -log10(p.value),cex=.7, pch=20,
-                    main = "Volcano plot",
+                    main = "CON vs SIN episodio previo",
                     #col=cols,
-                    xlim=c(-1.5,1.5), ylim=c(0,12),
+                    xlim=c(-2,2), ylim=c(0,15),
                     xlab="log Fold Change"))
-abline(h=c(-log10(0.05),-log10(0.001)),
+abline(h=-log10(0.05),#,-log10(0.001)
        v=c(-1,1),
        lty=2, col= "grey55")
 
@@ -4418,9 +4824,9 @@ abline(h=c(-log10(0.05),-log10(0.001)),
 #with(subset(limmares, B>0 ), points(logFC, -log10(p.value), pch=20, col="yellow"))
 
 #with(subset(limmares, p.value<.05 ), points(logFC, -log10(p.value), pch=19, col="blue"))
-with(subset(limmares, padj<.05 ), points(logFC, -log10(p.value), pch=20, col="blue"))
-with(subset(limmares, abs(AveExpr)>1.738), points(logFC, -log10(p.value), pch=20, col="green"))
-with(subset(limmares, abs(AveExpr)>2), points(logFC, -log10(p.value), pch=20, col="orange"))
+#with(subset(limmares, padj<.05 ), points(logFC, -log10(p.value), pch=20, col="blue"))
+#with(subset(limmares, abs(AveExpr)>2), points(logFC, -log10(p.value), pch=20, col="green"))
+#with(subset(limmares, abs(AveExpr)>2.40), points(logFC, -log10(p.value), pch=20, col="orange"))
 with(subset(limmares, B>0 ), points(logFC, -log10(p.value), pch=19, col="red"))
 
 
@@ -4430,10 +4836,11 @@ with(subset(limmares, B>0 ), points(logFC, -log10(p.value), pch=19, col="red"))
 
 #
 with(limmares, plot(logFC, AveExpr,cex=.7, pch=20,
-                    main = "logFC x AveExpr plot",
+                    main = "CON vs SIN episodio previo",
                     #col="grey40",
-                    xlim=c(-1.5,1.5), #ylim=c(-1,2.5),
-                    xlab="log Fold Change"))
+                    xlim=c(-2,2), #ylim=c(-1,2.5),
+                    xlab="log Fold Change",
+                    ylab="mean.intensity"))
 abline(h=c(0,2,-2),
        v=c(-1,0,1),
        lty=2, col= "grey55")
@@ -4447,10 +4854,10 @@ abline(h=c(0,2,-2),
 #with(subset(limmares, padj<.05 ), points(logFC, AveExpr, pch=19, col="red"))
 #with(subset(limmares, B>0 ), points(logFC, AveExpr, pch=20, col="yellow"))
 
-with(subset(limmares, abs(AveExpr)>1.738), points(logFC, AveExpr, pch=19, col="green"))
-with(subset(limmares, abs(AveExpr)>2), points(logFC, AveExpr, pch=19, col="orange"))
+#with(subset(limmares, abs(AveExpr)>2), points(logFC, AveExpr, pch=19, col="green"))
+#with(subset(limmares, abs(AveExpr)>2.40), points(logFC, AveExpr, pch=19, col="orange"))
 #with(subset(limmares, p.value<.05 ), points(logFC, AveExpr, pch=20, col="blue"))
-with(subset(limmares, padj<.05 ), points(logFC, AveExpr, pch=20, col="blue"))
+#with(subset(limmares, padj<.05 ), points(logFC, AveExpr, pch=20, col="blue"))
 with(subset(limmares, B>0 ), points(logFC, AveExpr, pch=19, col="red"))
 
 ```
@@ -4490,7 +4897,7 @@ Using `dplyr`[@dplyr], `ggplot2`[@ggplot2], `ggrepel`[@ggrepel] and `Rmisc`[@Rmi
 #library(dplyr)
 #library(ggplot2)
 
-results <- mutate(limmares, sig=ifelse(limmares$padj<.004, "diff rve","below Top10"))
+results <- mutate(limmares, sig=ifelse(limmares$B>0, "diff rve","below Top10"))
 
 p <- ggplot(results, aes(logFC, -log10(p.value))) + 
   geom_point(aes(col=sig)) +
@@ -4506,7 +4913,7 @@ p <- ggplot(results, aes(logFC, -log10(p.value))) +
 #library(ggrepel)
 
 #p+geom_text_repel(data=filter(results, p.value<.0224), aes(label=Gene.ID))+xlim(-1,1)
-p_rep<-p+geom_text_repel(data=filter(results, padj<.004), aes(label=Gene.ID))#+xlim=c(-1.5,1.5)
+p_rep<-p+geom_text_repel(data=filter(results, B>0), aes(label=Gene.ID))#+xlim=c(-1.5,1.5)
 
 
 # (3.2) Volcano plot: Log Fold Change x AveExprs [W/ ANNOTATION]
@@ -4514,7 +4921,7 @@ p_rep<-p+geom_text_repel(data=filter(results, padj<.004), aes(label=Gene.ID))#+x
 #library(dplyr)
 #library(ggplot2)
 
-resultsq <- mutate(limmares, sigq=ifelse(limmares$AveExpr>1.738, "highly rve","below Top10"))
+resultsq <- mutate(limmares, sigq=ifelse(limmares$AveExpr>2.40, "highly rve","below Top10"))
 
 q <- ggplot(resultsq, aes(logFC, AveExpr)) + 
   geom_point(aes(col=sigq)) +
@@ -4531,7 +4938,7 @@ q <- ggplot(resultsq, aes(logFC, AveExpr)) +
 #library(ggrepel)
 
 #q+geom_text_repel(data=filter(resultsq, AveExpr>1.738), aes(label=Gene.ID))+xlim(-1,1)
-q_rep<-q+geom_text_repel(data=filter(resultsq, AveExpr>1.738), aes(label=Gene.ID))#+xlim=c(-1.5,1.5)
+q_rep<-q+geom_text_repel(data=filter(resultsq, AveExpr>2.40), aes(label=Gene.ID))#+xlim=c(-1.5,1.5)
 
 #library(Rmisc)   #multiploting ggplots
 
@@ -4655,7 +5062,7 @@ corrEXP$ID <- rownames(corrEXP)
 ```
 
 
-```{r, fig.height=6, fig.width=8, fig.align='center', warning=FALSE, message=FALSE}
+```{r, fig.height=6, fig.width=8, fig.align='center', warning=FALSE, message=FALSE, eval=FALSE}
 #library(tidyr)
 #library(dplyr)
 
@@ -4666,7 +5073,7 @@ corrEXP$ID <- rownames(corrEXP)
 
 #12
 corrEXPcon1 <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(con_exp=="CON" & feature!="PVX_085025_1o1_S2.1143" & feature!="PVX_099080_2o2.439" & feature!="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4674,7 +5081,7 @@ corrEXPcon1 <- corrEXP %>%
 corrEXPcon1
 
 corrEXPcon1 <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(con_exp=="CON" & feature!="PVX_085025_1o1_S2.1143" & feature!="PVX_099080_2o2.439" & feature!="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4682,7 +5089,7 @@ corrEXPcon1 <- corrEXP %>%
 corrEXPcon1
 
 corrEXPcon1 <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(con_exp=="CON" & feature!="PVX_085025_1o1_S2.1143" & feature!="PVX_099080_2o2.439" & feature!="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4691,12 +5098,12 @@ corrEXPcon1
 
 ```
 
-```{r, fig.height=6, fig.width=9, fig.align='center', warning=FALSE, message=FALSE}
+```{r, fig.height=6, fig.width=9, fig.align='center', warning=FALSE, message=FALSE, eval=FALSE}
 #
 ##### CAMBIAR A BOXPLOT POR CATEGORIAS
 #
 corrEXPcon1x <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(con_exp=="CON" & feature!="PVX_085025_1o1_S2.1143" & feature!="PVX_099080_2o2.439" & feature!="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4704,7 +5111,7 @@ corrEXPcon1x <- corrEXP %>%
 corrEXPcon1x
 
 corrEXPcon1x <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(con_exp=="CON" & feature!="PVX_085025_1o1_S2.1143" & feature!="PVX_099080_2o2.439" & feature!="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4712,7 +5119,7 @@ corrEXPcon1x <- corrEXP %>%
 corrEXPcon1x
 
 corrEXPcon1x <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(con_exp=="CON" & feature!="PVX_085025_1o1_S2.1143" & feature!="PVX_099080_2o2.439" & feature!="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4720,7 +5127,7 @@ corrEXPcon1x <- corrEXP %>%
 corrEXPcon1x
 
 corrEXPcon1xx <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(con_exp=="CON" & feature!="PVX_085025_1o1_S2.1143" & feature!="PVX_099080_2o2.439" & feature!="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4728,7 +5135,7 @@ corrEXPcon1xx <- corrEXP %>%
 corrEXPcon1xx
 
 corrEXPcon1xx <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(con_exp=="CON" & feature!="PVX_085025_1o1_S2.1143" & feature!="PVX_099080_2o2.439" & feature!="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4739,7 +5146,7 @@ corrEXPcon1xx
 
 ```{r, fig.height=12, fig.width=8, fig.align='center', warning=FALSE, message=FALSE, eval=FALSE}
 corrEXPcon2 <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(con_exp=="CON" & feature!="PVX_085025_1o1_S2.1143" & feature!="PVX_099080_2o2.439" & feature!="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4747,13 +5154,13 @@ corrEXPcon2 <- corrEXP %>%
 corrEXPcon2
 ```
 
-```{r, fig.height=2, fig.width=6, fig.align='center', warning=FALSE, message=FALSE}
+```{r, fig.height=2, fig.width=6, fig.align='center', warning=FALSE, message=FALSE, eval=FALSE}
 #
 ##### CAMBIAR A BOXPLOT POR CATEGORIAS
 #
 #3
 corrEXPsin1 <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(con_exp=="SIN" & feature=="PVX_085025_1o1_S2.1143" | con_exp=="SIN" & feature=="PVX_099080_2o2.439" | con_exp=="SIN" & feature=="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4761,7 +5168,7 @@ corrEXPsin1 <- corrEXP %>%
 corrEXPsin1
 
 corrEXPsin1 <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(con_exp=="SIN" & feature=="PVX_085025_1o1_S2.1143" | con_exp=="SIN" & feature=="PVX_099080_2o2.439" | con_exp=="SIN" & feature=="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4769,7 +5176,7 @@ corrEXPsin1 <- corrEXP %>%
 corrEXPsin1
 
 corrEXPsin1 <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(con_exp=="SIN" & feature=="PVX_085025_1o1_S2.1143" | con_exp=="SIN" & feature=="PVX_099080_2o2.439" | con_exp=="SIN" & feature=="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4782,7 +5189,7 @@ corrEXPsin1
 #
 #3
 corrEXPsin1x <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(con_exp=="SIN" & feature=="PVX_085025_1o1_S2.1143" | con_exp=="SIN" & feature=="PVX_099080_2o2.439" | con_exp=="SIN" & feature=="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4791,7 +5198,7 @@ corrEXPsin1x
 
 #weird graph -> does not work with geom_smooth
 corrEXPsin1x <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(con_exp=="SIN" & feature=="PVX_085025_1o1_S2.1143" | con_exp=="SIN" & feature=="PVX_099080_2o2.439" | con_exp=="SIN" & feature=="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4802,7 +5209,7 @@ corrEXPsin1x
 
 ```{r, fig.height=2, fig.width=7, fig.align='center', warning=FALSE, message=FALSE, eval=FALSE}
 corrEXPsin37 <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(casecontrol=="Severe" & feature=="PVX_085025_1o1_S2.1143" | casecontrol=="Severe" & feature=="PVX_099080_2o2.439" | casecontrol=="Severe" &  feature=="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4810,7 +5217,7 @@ corrEXPsin37 <- corrEXP %>%
 corrEXPsin37
 
 corrEXPsin310 <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(casecontrol=="Severe" & feature=="PVX_085025_1o1_S2.1143" | casecontrol=="Severe" & feature=="PVX_099080_2o2.439" | casecontrol=="Severe" &  feature=="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4818,7 +5225,7 @@ corrEXPsin310 <- corrEXP %>%
 corrEXPsin310
 
 corrEXPsin310 <- corrEXP %>%
-  gather(feature, reactivity, PVX_003775_2o2.150:PVX_085025_1o1_S2.1143) %>%
+  gather(feature, reactivity, dplyr::contains("PVX_")) %>%
   mutate(feature=factor(feature)) %>%
   filter(casecontrol=="Severe" & feature=="PVX_085025_1o1_S2.1143" | casecontrol=="Severe" & feature=="PVX_099080_2o2.439" | casecontrol=="Severe" &  feature=="PVX_085590_1o1_S5.814") %>%
   mutate(feature=factor(feature)) %>%
@@ -4834,7 +5241,7 @@ corrEXPsin310
 
 ### PlasmoDB protein data
 ```{r, eval=TRUE}
-plasmoDBdiff <- read.csv("EXPOSURE_DiffRve_REDUCED.csv")
+plasmoDBdiff <- read.csv("data-raw/EXPOSURE_DiffRve_REDUCED.csv")
 #colnames(plasmoDBdiff)
 
 #htmlTable(plasmoDBdiff[,1:4], col.rgroup = c("none", "#F7F7F7"))
@@ -4971,7 +5378,7 @@ eset <- eset[feature_sort_mean,sample_sort_mean] ## REORDER samples and features
 #write.csv(subset(limmares[order(limmares$B, decreasing = TRUE),], B>0), file = "EXPOSURE_DiffRve.csv")
 
 #library(NMF)
-aheatmap(exprs(eset)[rownames(subset(limmares[order(limmares$AveExpr, decreasing = TRUE),], abs(AveExpr)>1.738)),], 
+aheatmap(exprs(eset)[rownames(subset(limmares[order(limmares$AveExpr, decreasing = TRUE),], abs(AveExpr)>2.40)),], 
          Rowv = NA, Colv = NA, annCol = pData(eset), layout = "_")
 ```
 
@@ -4989,7 +5396,7 @@ corrHIGH$ID <- rownames(corrHIGH)
 #str(corrHIGH)
 ```
 
-```{r, fig.height=6, fig.width=8, fig.align='center', warning=FALSE, message=FALSE}
+```{r, fig.height=6, fig.width=8, fig.align='center', warning=FALSE, message=FALSE, eval=FALSE}
 #library(tidyr)
 #library(dplyr)
 
@@ -5005,7 +5412,7 @@ corrHIGHedad <- corrHIGH %>%
 corrHIGHedad
 ```
 
-```{r, fig.height=6, fig.width=9, fig.align='center', warning=FALSE, message=FALSE}
+```{r, fig.height=6, fig.width=9, fig.align='center', warning=FALSE, message=FALSE, eval=FALSE}
 #library(tidyr)
 #library(dplyr)
 
@@ -5050,7 +5457,7 @@ corrHIGHedad3
 
 ### PlasmoDB protein data
 ```{r, eval=TRUE}
-plasmoDBhigh <- read.csv("HIGHLY_Rve_REDUCED.csv")
+plasmoDBhigh <- read.csv("data-raw/HIGHLY_Rve_REDUCED.csv")
 #colnames(plasmoDBdiff)
 #htmlTable(plasmoDBhigh[,1:4], col.rgroup = c("none", "#F7F7F7"))
 kable(plasmoDBhigh[,1:4], align = "c") #TMD and SP
