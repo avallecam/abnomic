@@ -5,8 +5,10 @@
 ## Project
 
 - Severe DB
-- OddsRatio plot!
 - Magnitude and Frequency plots (lattice | ggplot2)
+
+### extra?
+- OddsRatio/B-statistic in plot?
 - Cumulative distribution?
 
 ### ADi request

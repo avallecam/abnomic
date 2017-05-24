@@ -1329,7 +1329,7 @@ In both Brazilian and Peruvian Amazonia, transmission is considered to be *hypoe
 
 ```{r}
 #pbc$sample <- rownames(pbc)
-sampleSEVcovariates <- pbc[,c("casecontrol", "CumSumSevere7", "CumSumSevere10", "con_exp","expo_CAT", "malaria_pasado_num", "edad_CAT", "edad")]
+sampleSEVcovariates <- pbc[,c("casecontrol", "CumSumSevere7", "CumSumSevere10", "con_exp","expo_CAT", "malaria_pasado_num", "edad_CAT", "edad", "parasitemia")]
 #levels(sampleSEVcovariates$edad_CAT) <- c("menor a 18", "18-64", "mayor o igual a 65")
 #sampleSEVcovariates
 kable(sampleSEVcovariates[order(sampleSEVcovariates$CumSumSevere10, decreasing = TRUE),], align = "c")
@@ -2157,7 +2157,7 @@ chart.Correlation(MSP1s2, method = "spearman")
 
 #### **MSP1_S1 distribution**
 
-```{r, fig.height=12, fig.width=10, fig.align="center", message=FALSE}
+```{r, fig.height=8, fig.width=8, fig.align="center", message=FALSE}
 # PF3D7_0620400.974	falciparum	IVTT.AG	PF3D7_0620400	merozoite surface protein 10 (MSP10)
 # PVX_114145_1o1.272	vivax	IVTT.AG	PVX_114145	Merozoite surface protein 10, MSP10
 
@@ -2189,7 +2189,7 @@ MSP1_S1.x <- MSP1_S1 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S1 per specie")
+  labs(title="Normalized intensity against MSP1_S1 \n per specie")
 MSP1_S1.xd <- MSP1_S1 %>%
   gather(specie, intensity, PfMSP1_S1:PvMSP1_S1) %>%
   mutate(specie=factor(specie)) %>%
@@ -2198,7 +2198,7 @@ MSP1_S1.xd <- MSP1_S1 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S1 per specie")
+  labs(title="Normalized intensity against MSP1_S1 \n per specie")
 
 
 #
@@ -2218,7 +2218,7 @@ MSP1_S1.z <- MSP1_S1 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S1 per specie \n only Severe study")
+  labs(title="Normalized intensity against MSP1_S1 \n per specie \n only Severe study")
 MSP1_S1.zd <- MSP1_S1 %>%
   gather(specie, intensity, PfMSP1_S1:PvMSP1_S1) %>%
   mutate(specie=factor(specie)) %>%
@@ -2227,7 +2227,7 @@ MSP1_S1.zd <- MSP1_S1 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S1 per specie \n only Severe study")
+  labs(title="Normalized intensity against MSP1_S1 \n per specie \n only Severe study")
 #
 #str(MSP1_S1)
 #
@@ -2240,7 +2240,7 @@ MSP1_S1.w <- MSP1_S1 %>%
   ggplot(aes(x=intensity,fill=con_exp)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S1 per specie \n only Severe study and PvMSP1_S1")
+  labs(title="Normalized intensity \n only Severe study and PvMSP1_S1")
 MSP1_S1.wd <- MSP1_S1 %>%
   gather(specie, intensity, PfMSP1_S1:PvMSP1_S1) %>%
   mutate(specie=factor(specie)) %>%
@@ -2250,7 +2250,7 @@ MSP1_S1.wd <- MSP1_S1 %>%
   ggplot(aes(x=intensity,fill=con_exp)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S1 per specie \n only Severe study and PvMSP1_S1")
+  labs(title="Normalized intensity \n only Severe study and PvMSP1_S1")
 #
 MSP1_S1.y <- MSP1_S1 %>%
   gather(specie, intensity, PfMSP1_S1:PvMSP1_S1) %>%
@@ -2261,7 +2261,7 @@ MSP1_S1.y <- MSP1_S1 %>%
   ggplot(aes(x=intensity,fill=casecontrol)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S1 per specie \n only Severe study and PvMSP1_S1")
+  labs(title="Normalized intensity \n only Severe study and PvMSP1_S1")
 MSP1_S1.yd <- MSP1_S1 %>%
   gather(specie, intensity, PfMSP1_S1:PvMSP1_S1) %>%
   mutate(specie=factor(specie)) %>%
@@ -2271,7 +2271,7 @@ MSP1_S1.yd <- MSP1_S1 %>%
   ggplot(aes(x=intensity,fill=casecontrol)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S1 per specie \n only Severe study and PvMSP1_S1")
+  labs(title="Normalized intensity \n only Severe study and PvMSP1_S1")
 
 multiplot(MSP1_S1.x, MSP1_S1.z, MSP1_S1.w, #MSP1_S1.y,
           MSP1_S1.xd, MSP1_S1.zd, MSP1_S1.wd, #MSP1_S1.yd,
@@ -2280,7 +2280,7 @@ multiplot(MSP1_S1.x, MSP1_S1.z, MSP1_S1.w, #MSP1_S1.y,
 
 #### **MSP1_S2 distribution**
 
-```{r, fig.height=12, fig.width=10, fig.align="center", message=FALSE}
+```{r, fig.height=8, fig.width=8, fig.align="center", message=FALSE}
 # PF3D7_0620400.974	falciparum	IVTT.AG	PF3D7_0620400	merozoite surface protein 10 (MSP10)
 # PVX_114145_1o1.272	vivax	IVTT.AG	PVX_114145	Merozoite surface protein 10, MSP10
 
@@ -2312,7 +2312,7 @@ MSP1_S2.x <- MSP1_S2 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S2 per specie")
+  labs(title="Normalized intensity against MSP1_S2 \n per specie")
 MSP1_S2.xd <- MSP1_S2 %>%
   gather(specie, intensity, PfMSP1_S2:PvMSP1_S2) %>%
   mutate(specie=factor(specie)) %>%
@@ -2321,7 +2321,7 @@ MSP1_S2.xd <- MSP1_S2 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S2 per specie")
+  labs(title="Normalized intensity against MSP1_S2 \n per specie")
 
 
 #
@@ -2341,7 +2341,7 @@ MSP1_S2.z <- MSP1_S2 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S2 per specie \n only Severe study")
+  labs(title="Normalized intensity against MSP1_S2 \n per specie \n only Severe study")
 MSP1_S2.zd <- MSP1_S2 %>%
   gather(specie, intensity, PfMSP1_S2:PvMSP1_S2) %>%
   mutate(specie=factor(specie)) %>%
@@ -2350,7 +2350,7 @@ MSP1_S2.zd <- MSP1_S2 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S2 per specie \n only Severe study")
+  labs(title="Normalized intensity against MSP1_S2 \n per specie \n only Severe study")
 #
 #str(MSP1_S2)
 #
@@ -2363,7 +2363,7 @@ MSP1_S2.w <- MSP1_S2 %>%
   ggplot(aes(x=intensity,fill=con_exp)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S2 per specie \n only Severe study and PvMSP1_S2")
+  labs(title="Normalized intensity \n only Severe study and PvMSP1_S2")
 MSP1_S2.wd <- MSP1_S2 %>%
   gather(specie, intensity, PfMSP1_S2:PvMSP1_S2) %>%
   mutate(specie=factor(specie)) %>%
@@ -2373,7 +2373,7 @@ MSP1_S2.wd <- MSP1_S2 %>%
   ggplot(aes(x=intensity,fill=con_exp)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S2 per specie \n only Severe study and PvMSP1_S2")
+  labs(title="Normalized intensity \n only Severe study and PvMSP1_S2")
 #
 MSP1_S2.y <- MSP1_S2 %>%
   gather(specie, intensity, PfMSP1_S2:PvMSP1_S2) %>%
@@ -2384,7 +2384,7 @@ MSP1_S2.y <- MSP1_S2 %>%
   ggplot(aes(x=intensity,fill=casecontrol)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S2 per specie \n only Severe study and PvMSP1_S2")
+  labs(title="Normalized intensity \n only Severe study and PvMSP1_S2")
 MSP1_S2.yd <- MSP1_S2 %>%
   gather(specie, intensity, PfMSP1_S2:PvMSP1_S2) %>%
   mutate(specie=factor(specie)) %>%
@@ -2394,15 +2394,16 @@ MSP1_S2.yd <- MSP1_S2 %>%
   ggplot(aes(x=intensity,fill=casecontrol)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP1_S2 per specie \n only Severe study and PvMSP1_S2")
+  labs(title="Normalized intensity \n only Severe study and PvMSP1_S2")
 
 multiplot(MSP1_S2.x, MSP1_S2.z, MSP1_S2.w, #MSP1_S2.y,
           MSP1_S2.xd, MSP1_S2.zd, MSP1_S2.wd, #MSP1_S2.yd,
           cols = 2)
 ```
+
 #### **MSP10 distribution**
 
-```{r, fig.height=12, fig.width=10, fig.align="center", message=FALSE}
+```{r, fig.height=8, fig.width=8, fig.align="center", message=FALSE, eval=FALSE}
 # PF3D7_0620400.974	falciparum	IVTT.AG	PF3D7_0620400	merozoite surface protein 10 (MSP10)
 # PVX_114145_1o1.272	vivax	IVTT.AG	PVX_114145	Merozoite surface protein 10, MSP10
 
@@ -2434,7 +2435,7 @@ MSP10.x <- MSP10 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP10 per specie")
+  labs(title="Normalized intensity against MSP10 \n per specie")
 MSP10.xd <- MSP10 %>%
   gather(specie, intensity, PfMSP10:PvMSP10) %>%
   mutate(specie=factor(specie)) %>%
@@ -2443,7 +2444,7 @@ MSP10.xd <- MSP10 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP10 per specie")
+  labs(title="Normalized intensity against MSP10 \n per specie")
 
 
 #
@@ -2463,7 +2464,7 @@ MSP10.z <- MSP10 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP10 per specie \n only Severe study")
+  labs(title="Normalized intensity against MSP10 \n per specie \n only Severe study")
 MSP10.zd <- MSP10 %>%
   gather(specie, intensity, PfMSP10:PvMSP10) %>%
   mutate(specie=factor(specie)) %>%
@@ -2472,7 +2473,7 @@ MSP10.zd <- MSP10 %>%
   ggplot(aes(x=intensity,fill=specie)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP10 per specie \n only Severe study")
+  labs(title="Normalized intensity against MSP10 \n per specie \n only Severe study")
 #
 #str(MSP10)
 #
@@ -2485,7 +2486,7 @@ MSP10.w <- MSP10 %>%
   ggplot(aes(x=intensity,fill=con_exp)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP10 per specie \n only Severe study and PvMSP10")
+  labs(title="Normalized intensity \n only Severe study and PvMSP10")
 MSP10.wd <- MSP10 %>%
   gather(specie, intensity, PfMSP10:PvMSP10) %>%
   mutate(specie=factor(specie)) %>%
@@ -2495,7 +2496,7 @@ MSP10.wd <- MSP10 %>%
   ggplot(aes(x=intensity,fill=con_exp)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP10 per specie \n only Severe study and PvMSP10")
+  labs(title="Normalized intensity \n only Severe study and PvMSP10")
 #
 MSP10.y <- MSP10 %>%
   gather(specie, intensity, PfMSP10:PvMSP10) %>%
@@ -2506,7 +2507,7 @@ MSP10.y <- MSP10 %>%
   ggplot(aes(x=intensity,fill=casecontrol)) + 
   geom_histogram(alpha=.5 ,position = "identity") + 
   #geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP10 per specie \n only Severe study and PvMSP10")
+  labs(title="Normalized intensity \n only Severe study and PvMSP10")
 MSP10.yd <- MSP10 %>%
   gather(specie, intensity, PfMSP10:PvMSP10) %>%
   mutate(specie=factor(specie)) %>%
@@ -2516,7 +2517,7 @@ MSP10.yd <- MSP10 %>%
   ggplot(aes(x=intensity,fill=casecontrol)) + 
   #geom_histogram(alpha=.5 ,position = "identity") + 
   geom_density(alpha=.3) +
-  labs(title="Normalized intensity against MSP10 per specie \n only Severe study and PvMSP10")
+  labs(title="Normalized intensity \n only Severe study and PvMSP10")
 
 multiplot(MSP10.x, MSP10.z, MSP10.w, #MSP10.y,
           MSP10.xd, MSP10.zd, MSP10.wd, #MSP10.yd,
@@ -2685,19 +2686,35 @@ corrXX <- subset(pData(esetEXTRA),select= c(casecontrol,con_exp,expo_CAT,edad_CA
 #corrX
 EdadBreadth1x <- ggplot(corrXX, aes(x=edad_CAT,y=breadth.percentage
                                   #, fill=casecontrol
-                                  )) +geom_boxplot() #+ geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+                                  )) +
+  geom_boxplot() + 
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=1) + theme_bw()
+
+#+ geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 #ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2,size=.1) #+ ggtitle("xx") + geom_line() + # group=con_exp
 EdadBreadth2x <- ggplot(corrXX, aes(x=edad_CAT,y=mean.intensity
                                   #, fill=casecontrol
-                                  )) +geom_boxplot() # + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+                                  )) +
+  geom_boxplot() + 
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=1) + theme_bw()
+
+# + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 
 EdadBreadth3x <- ggplot(corrXX, aes(x=expo_CAT,y=breadth.percentage
                                   #, fill=con_exp
-                                  )) +geom_boxplot() # + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+                                  )) +
+  geom_boxplot() + 
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=1) + theme_bw()
+
+# + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 #ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2,size=.1) #+ ggtitle("xx") + geom_line() + # group=con_exp
 EdadBreadth4x <- ggplot(corrXX, aes(x=expo_CAT,y=mean.intensity
                                   #, fill=con_exp
-                                  )) +geom_boxplot() # + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+                                  )) +
+  geom_boxplot() + 
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=1) + theme_bw()
+
+# + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 
 
 multiplot(EdadBreadth1x,EdadBreadth3x,EdadBreadth2x,EdadBreadth4x,cols=2)
@@ -2763,35 +2780,63 @@ multiplot(a,b,c,d,cols = 2)
 ```
 
 ##### Along age
-```{r, fig.height=6, fig.width=14, fig.align='center', warning=FALSE, message=FALSE}
+
+```{r, fig.height=6, fig.width=10, fig.align='center', warning=FALSE, message=FALSE}
 corrX <- subset(pData(esetEXTRA),select= c(casecontrol,con_exp,edad:mean.intensity))
 kable(head(corrX[order(corrX$edad, decreasing = TRUE),]), align = "c")
 
 #corrX
-EdadBreadth1 <- ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+EdadBreadth1i <- ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + 
+  geom_point() + geom_smooth(alpha=.2)  + theme_bw()
+#+ ggtitle("xx") + geom_line() + # group=con_exp
 #ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2,size=.1) #+ ggtitle("xx") + geom_line() + # group=con_exp
-EdadBreadth2 <- ggplot(corrX, aes(x=edad,y=mean.intensity, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+EdadBreadth2i <- ggplot(corrX, aes(x=edad,y=mean.intensity, colour=casecontrol)) + 
+  geom_point() + geom_smooth(alpha=.2)  + theme_bw()
+#+ ggtitle("xx") + geom_line() + # group=con_exp
 
-EdadBreadth3 <- ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=con_exp)) + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+EdadBreadth3i <- ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=con_exp)) + 
+  geom_point() + geom_smooth(alpha=.2)  + theme_bw()
+#+ ggtitle("xx") + geom_line() + # group=con_exp
 #ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2,size=.1) #+ ggtitle("xx") + geom_line() + # group=con_exp
-EdadBreadth4 <- ggplot(corrX, aes(x=edad,y=mean.intensity, colour=con_exp)) + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+EdadBreadth4i <- ggplot(corrX, aes(x=edad,y=mean.intensity, colour=con_exp)) + 
+  geom_point() + geom_smooth(alpha=.2)  + theme_bw()
+#+ ggtitle("xx") + geom_line() + # group=con_exp
 
 
-multiplot(EdadBreadth1,EdadBreadth3,EdadBreadth2,EdadBreadth4,cols=2)
+multiplot(EdadBreadth1i,EdadBreadth3i,EdadBreadth2i,EdadBreadth4i,cols=2)
 ```
+
 ##### Per age
-```{r, fig.height=6, fig.width=14, fig.align='center', warning=FALSE, message=FALSE}
+
+```{r, fig.height=6, fig.width=10, fig.align='center', warning=FALSE, message=FALSE}
 corrX <- subset(pData(esetEXTRA),select= c(casecontrol,con_exp,edad_CAT:mean.intensity))
 #kable(head(corrX[order(corrX$edad, decreasing = TRUE),]), align = "c")
 
 #corrX
-EdadBreadth1 <- ggplot(corrX, aes(x=edad_CAT,y=breadth.percentage, fill=casecontrol)) +geom_boxplot() #+ geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+EdadBreadth1 <- ggplot(corrX, aes(x=edad_CAT,y=breadth.percentage, fill=casecontrol)) +
+  geom_boxplot(#aes(colour=casecontrol),
+               position=position_dodge(0.8), outlier.color = NA) + 
+  geom_dotplot(aes(fill=casecontrol), binaxis='y', stackdir='center', dotsize=1, position=position_dodge(0.8)) + theme_bw()
+#scale_fill_grey()
+#+ geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 #ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2,size=.1) #+ ggtitle("xx") + geom_line() + # group=con_exp
-EdadBreadth2 <- ggplot(corrX, aes(x=edad_CAT,y=mean.intensity, fill=casecontrol)) +geom_boxplot() # + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+EdadBreadth2 <- ggplot(corrX, aes(x=edad_CAT,y=mean.intensity, fill=casecontrol)) +
+  geom_boxplot(#aes(colour=casecontrol),
+               position=position_dodge(0.8), outlier.color = NA) + 
+  geom_dotplot(aes(fill=casecontrol), binaxis='y', stackdir='center', dotsize=1, position=position_dodge(0.8)) + theme_bw()
+# + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 
-EdadBreadth3 <- ggplot(corrX, aes(x=edad_CAT,y=breadth.percentage, fill=con_exp)) +geom_boxplot() # + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+EdadBreadth3 <- ggplot(corrX, aes(x=edad_CAT,y=breadth.percentage, fill=con_exp)) +
+  geom_boxplot(#aes(colour=con_exp),
+               position=position_dodge(0.8), outlier.color = NA) + 
+  geom_dotplot(aes(fill=con_exp), binaxis='y', stackdir='center', dotsize=1, position=position_dodge(0.8)) + theme_bw()
+# + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 #ggplot(corrX, aes(x=edad,y=breadth.percentage, colour=casecontrol)) + geom_point() + geom_smooth(alpha=.2,size=.1) #+ ggtitle("xx") + geom_line() + # group=con_exp
-EdadBreadth4 <- ggplot(corrX, aes(x=edad_CAT,y=mean.intensity, fill=con_exp)) +geom_boxplot() # + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
+EdadBreadth4 <- ggplot(corrX, aes(x=edad_CAT,y=mean.intensity, fill=con_exp)) +
+  geom_boxplot(#aes(colour=con_exp),
+               position=position_dodge(0.8), outlier.color = NA) + 
+  geom_dotplot(aes(fill=con_exp), binaxis='y', stackdir='center', dotsize=1, position=position_dodge(0.8)) + theme_bw()
+# + geom_point() + geom_smooth(alpha=.2) #+ ggtitle("xx") + geom_line() + # group=con_exp
 
 
 multiplot(EdadBreadth1,EdadBreadth3,EdadBreadth2,EdadBreadth4,cols=2)
@@ -5005,7 +5050,7 @@ dev.off()
 
 **Differentially reactive features**
 *using `NMF` package*[@Gaujoux2010NMF]
-```{r, eval=TRUE, fig.height=5, fig.width=10, fig.align="center"}
+```{r, eval=TRUE, fig.height=8, fig.width=10, fig.align="center"}
 #
 #eset<-normal.log2.raw.eSet.VIVAX.SEV.FILTER
 pData(eset) <- pData(eset)[,9:ncol(pData(eset))]
@@ -5016,13 +5061,17 @@ eset <- eset[feature_sort_mean,sample_sort_mean] ## REORDER samples and features
 #write.csv(subset(limmares[order(limmares$B, decreasing = TRUE),], B>0), file = "EXPOSURE_DiffRve.csv")
 
 #library(NMF)
-aheatmap(exprs(eset)[rownames(subset(limmares[order(limmares$B, decreasing = TRUE),], B>0)),], Rowv = NA, Colv = NA, annCol = pData(eset), layout = "_")
+aheatmap(exprs(eset)[rownames(subset(limmares[order(limmares$B, decreasing = TRUE),], B>0 & padj<0.001)),], 
+         Rowv = NA, Colv = NA, annCol = pData(eset), layout = "_")
+aheatmap(exprs(eset)[rownames(subset(limmares[order(limmares$B, decreasing = TRUE),], B>0 & padj<0.001)),], 
+         Rowv = TRUE, Colv = TRUE, annCol = pData(eset), layout = "_")
 ```
 
 
 **Magnitud and Frequency per feature**
 
 ### Correlations
+<!--
 **Correlation between Magnitud and Exposure**
 
 Resumen:
@@ -5047,9 +5096,9 @@ En relación a la edad:
 
 - PVX_085590_101_S5.814 es **(i)** el antígeno de mayor magnitud en el grupo de los 3 antígenos diferencialmente reactivos en pacientes sin previa exposición (*naive*), y **(ii)** el antígeno con mayor decadencia con respecto a la edad de los pacientes.
 - Los 2 antígenos restantes tienen una magnitud independiente con respecto a la edad.
+-->
 
-
-```{r}
+```{r, eval=FALSE}
 messz <- exprs(eset)[rownames(subset(limmares, B>0 )),]
 dim(t(messz))
 doom <- pData(eset)#[,c(9:ncol(pData(eset)))]
@@ -5258,7 +5307,10 @@ Null hypothesis of equal mean per antigen among groups is not rejected, neither 
 However, a 22-22 comparison between exposed and non-severe against unexposed and severe reject the null hypothesis with fewer antigens (9 antigens) than the complete comparison based on exposure (15 antigens).
 
 ### Exp/NoSev vs NoExp/Sev
-```{r}
+
+23 exp+no-severe, 22 no-exp+severe
+
+```{r, eval=FALSE}
 eset<-normal.log2.raw.eSet.VIVAX.SEV.FILTER
 #head(pData(eset))
 eset <- eset[, phenoData(eset)$con_exp=="Sin exposicion" & phenoData(eset)$casecontrol=="Severe" | 
@@ -5277,7 +5329,7 @@ fit <- lmFit(eset, design)                    # fit the model
 fit <- eBayes(fit)                               # empirical Bayes for moderate t-statistics
 ```
 **Differentially reactive features**
-```{r}
+```{r, eval=FALSE}
 #-----------standard-----------
 # DIFFERENTIALLY rve [sorted by p.value] (SAME as default)
 #topTable(fit, coef = 2,sort.by ="P", genelist = fit$genes$Description)
@@ -5286,7 +5338,10 @@ kable(format(topTable(fit, coef = 2,sort.by ="P", genelist = fit$genes$Descripti
 
 
 ### NoExp: NoSev vs Sev
-```{r}
+
+7 no-exp+no-severe, 22 no-exp+severe
+
+```{r, eval=FALSE}
 eset<-normal.log2.raw.eSet.VIVAX.SEV.FILTER
 eset <- eset[, phenoData(eset)$con_exp=="Sin exposicion"]
 eset$Group <- factor(eset$Group)
@@ -5303,7 +5358,7 @@ fit <- lmFit(eset, design)                    # fit the model
 fit <- eBayes(fit)                               # empirical Bayes for moderate t-statistics
 ```
 **Differentially reactive features**
-```{r}
+```{r, eval=FALSE}
 #-----------standard-----------
 # DIFFERENTIALLY rve [sorted by p.value] (SAME as default)
 #topTable(fit, coef = 2,sort.by ="P", genelist = fit$genes$Description)
@@ -5311,7 +5366,10 @@ kable(format(topTable(fit, coef = 2,sort.by ="P", genelist = fit$genes$Descripti
 ```
 
 ### Exp: NoSev vs Sev
-```{r}
+
+23 exp+no-severe, 8 exp+severe
+
+```{r, eval=FALSE}
 eset<-normal.log2.raw.eSet.VIVAX.SEV.FILTER
 eset <- eset[, phenoData(eset)$con_exp=="Con exposicion"]
 eset$Group <- factor(eset$Group)
@@ -5328,7 +5386,7 @@ fit <- lmFit(eset, design)                    # fit the model
 fit <- eBayes(fit)                               # empirical Bayes for moderate t-statistics
 ```
 **Differentially reactive features**
-```{r}
+```{r, eval=FALSE}
 #-----------standard-----------
 # DIFFERENTIALLY rve [sorted by p.value] (SAME as default)
 #topTable(fit, coef = 2,sort.by ="P", genelist = fit$genes$Description)
@@ -5380,11 +5438,13 @@ eset <- eset[feature_sort_mean,sample_sort_mean] ## REORDER samples and features
 #library(NMF)
 aheatmap(exprs(eset)[rownames(subset(limmares[order(limmares$AveExpr, decreasing = TRUE),], abs(AveExpr)>2.40)),], 
          Rowv = NA, Colv = NA, annCol = pData(eset), layout = "_")
+aheatmap(exprs(eset)[rownames(subset(limmares[order(limmares$AveExpr, decreasing = TRUE),], abs(AveExpr)>2.40)),], 
+         Rowv = TRUE, Colv = TRUE, annCol = pData(eset), layout = "_")
 ```
 
 ### Correlations
 **Correlation between Magnitud and Exposure**
-```{r}
+```{r, eval=FALSE}
 messz <- exprs(eset)[rownames(subset(limmares, abs(AveExpr)>1.738)),]
 dim(t(messz))
 doom <- pData(eset)#[,c(9:ncol(pData(eset)))]
@@ -5479,14 +5539,17 @@ kable(ed[edtd,], align = "c")
 kable(td[edtd,], align = "c")
 ```
 
-**between Symptomatology and Highly** non
+**between Symptomatology and Highly** 
 
-```{r, eval=FALSE}
+non
+```{r, eval=TRUE}
 tdh <- intersect(rownames(td),rownames(t))
 kable(td[tdh,], align = "c")
 ```
 
 **between Exposed and Highly** 
+
+non
  
 ```{r}
 edh <- intersect(rownames(ed),rownames(t))
@@ -5495,15 +5558,23 @@ kable(ed[edh,], align = "c")
 
 **On MSP1**
 
-The differentially reactive protein segment (by symptomatology and exposure, respectively) is different from the highly reactive protein segment
+The differentially reactive protein segment w.r.t. exposure is different from the highly reactive protein segment
 ```{r}
-kable(rbind(subset(td,td$ID=="major blood-stage surface antigen Pv200"),subset(ed,ed$ID=="major blood-stage surface antigen Pv200"),t[2,]), align = "c")
+kable(
+  rbind(
+    #subset(td,td$ID=="major blood-stage surface antigen Pv200"),
+    subset(ed,ed$ID=="major blood-stage surface antigen Pv200"),
+    #subset(t,t$ID=="major blood-stage surface antigen Pv200"),
+    t[2,]), 
+  align = "c")
 ```
 
-**Heatmap of shared features between Symptomatology Exposure and Highly reactive subsets**
+**Heatmap of joined features from exposure differentialy and highly reactive subsets**
 
-*Row clustered y Columns sorted by Exposure*
-```{r, eval=TRUE, echo=TRUE, fig.height=4, fig.width=10, fig.align="center"}
+- *Row sorted by adj.p.val; Columns sorted by Exposure*
+- *Row clustered; Columns sorted by Exposure*
+- *Row clustered; Columns clustered*
+```{r, eval=TRUE, echo=TRUE, fig.height=8, fig.width=10, fig.align="center"}
 ########################### SAMPLE ORDER per group
 
 # [START FROM THE BEGINNNING]
@@ -5521,7 +5592,9 @@ pData(eset) <- pData(eset)[,9:ncol(pData(eset))]
 sample_sort_EXPOSURE <- rownames(pData(eset)[order(pData(eset)$malaria_pasado_num, decreasing = FALSE),])
 eset <- eset[feature_sort_mean,sample_sort_EXPOSURE] ## REORDER samples and features inside the ExpressionSet
 #library(NMF)
-aheatmap(exprs(eset)[c(edtd, edh),], Rowv = FALSE, Colv = NA, annCol = pData(eset), layout = "_")
+edt <- union(rownames(t),rownames(ed))
+aheatmap(exprs(eset)[edt,], Rowv = NA, Colv = NA, annCol = pData(eset), layout = "_")
+aheatmap(exprs(eset)[edt,], Rowv = TRUE, Colv = TRUE, annCol = pData(eset), layout = "_")
 ```
 
 ```{r, eval=FALSE, echo=FALSE, fig.height=5, fig.width=10, fig.align="center"}
@@ -5552,7 +5625,7 @@ aheatmap(exprs(eset), Rowv = NA, Colv = NA, annCol = pData(eset))
 - Severity
     + No differencially reactive peptides according to severity in P.vivax
 - Exposure
-    + 15 differencially reactive peptides according to exposure in P.vivax
+    + 30 differencially reactive peptides according to exposure in P.vivax
 
 ***
 ***
@@ -5626,8 +5699,8 @@ kable(ha, align = "c")
 
 # Computer environment
 
-```{r, echo=FALSE}
-sessionInfo()
+```{r}
+devtools::session_info()
 ```
 
 # References

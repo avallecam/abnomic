@@ -3,9 +3,13 @@ output:
 #  word_document:
 #    reference_docx: Ecosistemas_template.docx
   pdf_document:
+    #keep_md: TRUE
+    keep_tex: TRUE
     toc_depth: 4
     number_sections: TRUE
     fig_caption: yes
+    include:
+      after_body: tabconsis.tex
 header-includes:
 - \usepackage{multirow}
 - \usepackage{pdflscape}
@@ -14,6 +18,9 @@ header-includes:
 - \usepackage{array}
 bibliography: analysis/malaria.bib
 csl: analysis/american-medical-association.csl
+#UNMSM: http://crai.ub.edu/es/pmf/iso-esp
+link-citations: yes
+biblio-style: apalike
 ---
 
 ```{r setup, include=FALSE}
@@ -48,148 +55,362 @@ OR:
 \newpage
 \pagenumbering{arabic}
 
+# RESUMEN
+
+<!-- 
+## Descripción del proyecto {#resumen}
+RESUMEN: CORRIGELO AL FINAL 
+-->
+
+> RESUMEN A CORREGIR AL FINAL!!!!
+> El presente proyecto tiene como objetivo identificar 
+> antígenos con relevancia clínica contra la malaria vivax.
+> Para ello, se realizará un perfil a larga escala de anticuerpos
+> en pacientes sintomáticos a través de microarreglos de 
+> 500 proteínas de *Plasmodium vivax* y 500 de *P. falciparum*. 
+> Se contrastarán parámetros generales de la respuesta humoral 
+> y evaluará la reactividad diferenciada de antígenos en pacientes estratificados 
+> por exposición previa y severidad. 
+> Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
+> con posible aplicación en la vigilancia serológica 
+> de malaria vivax.
+
 
 # PLANTEAMIENTO DEL ESTUDIO
 
-## Descripción del proyecto
+## Fundamentación del problema {#intro}
 
-El presente proyecto tiene como objetivo identificar los principales
-marcadores proteicos que generan una mayor cantidad de anticuerpos
-contra *Plasmodium vivax* de una población expuesta constantemente a
-la infección. Para ello, se realizará un perfil de los anticuerpos
-presentes en el plasma sanguíneo a través de un microarreglo de 500
-proteínas de *P. vivax* y 500 de *P. falciparum*. Posteriormente, se
-analizarán los diferentes patrones de anticuerpos encontrados de
-acuerdo a la localidad y severidad de sus síntomas dada las diferentes
-características epidemiológicas entre las regiones de Iquitos y Madre
-de Dios. Finalmente, se propondrán nuevos candidatos a vacunas y
-diagnóstico serológico, los cuales serán muy importantes para la
-reducción de las tasas de infección y mortalidad en la población en
-riesgo del Perú amazónico.
+<!-- 
+INTRODUCCIÓN
+Escribir la introducción en tres párrafos:
+¿Qué se sabe del tema?
+¿Qué no se sabe del tema?
+¿Qué se va a investigar? 
 
-## Fundamentación del problema
+JUSTIFICACIÓN
+¿Qué es lo que se va a hacer con los resultados de la investigación?
+-->
 
-En el 2014, en Perú ha habido \~65,000 casos notificados de malaria,
-de los cuales *Plasmodium vivax* es responsable del 90% de ellos. Si
-bien se genera una inmunidad contra malaria luego de exposiciones
-repetidas al parásito, aún no están completamente identificados los
-antígenos contra los cuales se generan anticuerpos por adquisición
-natural, sobretodo en zonas de baja endemicidad donde *P. vivax*
-predomina.
+Malaria es una enfermedad infecciosa de importancia mundial,
+causada por protozoarios parásitos del género _Plasmodium_ 
+y transmitida por mosquitos del género _Anopheles_. 
+En el 2015, se estimaron 212 millones de casos y 429,000 muertes 
+atribuidas a esta infección a nivel mundial. [@WHO2016world] 
+Si bien _P. falciparum_ representó el 96 y 99% de estas cifras,
+fuera de África se estimó que _P. vivax_ fue responsable 
+del 41 y 86%, respectivamente.
+Más aún, la región de las Américas tuvo la mayor proporción 
+de estos casos (69%)
+donde el Perú fue el tercer país con más reportes de malaria (19%), 
+detrás de Brasil y Venezuela, 
+atribuidos en un 80% (62,220 en total) a dicha especie. [@rosas2016peru]
 
-Con el objetivo de identificar antígenos inmunodomiantes específicos
-de infecciones por *P. vivax* en humanos, el presente trabajo
-analizará muestras de plasmas sanguíneos de pacientes con malaria
-aguda provenientes de dos regiones con distinta epidemiología de la
-cuenca amazónica del Perú, como son las regiones de Iquitos y Madre de
-Dios, mediante la plataforma del microarreglo de proteínas.
+<!--  por _P. vivax_ (24%) (30%) -->
 
-## Objetivos
+Es por estas cifras que en la última década se ha reconocido que la malaria causada por 
+_P. vivax_ también presenta enfermedad severa 
+y fatal. [@WHO2016world; @howes2016global; @wassmer2015; @rosas2016peru]
+Incluso, con una patogénesis similar a la desarrollada 
+por _P. falciparum_. [@barber2015]
+Con respecto a sus factores condicionantes, entre ellos la respuesta 
+del hospedero, Moreno et al. [@Moreno2013] sugirió un rol 
+de la inmunidad en la reducción de 
+la severidad luego de una subsecuente exposición a la infección.
+Por una parte, se sabe que la malaria induce potentes respuestas de anticuerpos 
+que incrementan con exposiciones consecutivas [@King2015FOC].
+Sin embargo, ningún estudio hasta el momento ha contrastado la respuesta 
+inmune humoral entre pacientes con malaria vivax no complicada y severa. [@rosas2016peru]
 
-*General*
+ <!-- 
+ un reciente estudio sugirió que su
+ 
+ Incluso, se ha demostrado una mayor contribución 
+de la parasitemia oculta en su patogénesis, al igual que con _P. falciparum_ 
+pero con acumulación tisular en órganos sin endotelio. [@barber2015]
+ Además, debido al incremento conocido
+de la respuesta inmune humoral ante una segunda exposición al patógeno, se ejecutará la misma comparación
+con los pacientes estratificados por eventos previos de malari
+ biomasa parasitaria total y no la circulante 
+ 
+ Si bien se estima que la malaria severa representa menos del 
+3% de los casos a nivel mundial [@WHO2016world], 
+se han logrado identificar heterogeneidades geográficas 
+con respecto a las manifestaciones clínicas casuadas por _P. vivax_. [@rahimi2014meta]
+ --> 
 
-- Identificar un subconjunto de antígenos inmunogénicos de _P. vivax_
-con relevancia clínica.
+Por esta razón,
+el presente estudio contrastará el perfil de anticuerpos
+contra más de 500 antígenos de _P. vivax_
+en respuesta a la infección de 60 pacientes con malaria vivax sintomática
+estratificados por su severidad,
+provenientes de un estudio prospectivo conducido en la ciudad de Iquitos entre marzo del 2012 y junio del 2013. 
+Además, debido a que las respuestas de anticuerpos secundarias 
+son mayores a las de una infección primaria, 
+se ejecutará la misma comparación con los pacientes estratificados 
+por exposición previa a la malaria.
+Finalmente, se describirán las características proteícas 
+de los antígenos diferencialmente reactivos descubiertos en ambas comparaciones.
 
-<!-- contra la malaria vivax severa -->
+<!--
+debido al incremento conocido de la respuesta inmune humoral ante
+una segunda infección con el patógeno
 
-*Principales*
+Para ello, se hará uso de microarreglos de proteínas 
+con más de 500 antígenos de _P. vivax_ expresados en el estadio 
+asexual sanguíneo de la infección en el humano.
 
-- Comparar la amplitud e intensidad de respuesta de anticuerpos según 
-la exposición y severidad de los pacientes con malaria vivax.
+El presente estudio tiene el objetivo de identificar antígenos de *P. vivax*
+discriminantes de condiciones clínicas relevantes como severidad o exposición previa.
+Para ello se 
+Se hará uso de microarreglos de proteínas los cuales incluyen 
+más de 500 antígenos de _P. vivax_ expresados en estadío asexual sanguíneo 
+en el humano.
+-->
 
-- Identificar antígenos con antigenicidad diferenciada según la
-exposición y severidad de los pacientes con malaria vivax.
 
-*Secundarios*
+## Justificación e importancia {#justif}
 
-- Identificar los antígenos con mayor antigenicidad en los pacientes 
-con malaria vivax.
+<!-- 
+El descubrimiento de antígenos
+discriminantes de condiciones clínicas relevantes como severidad o exposición
+permitirá optimizar la ejecución de vigilancias sero-epidemiológicas [@hotspots2015]
+y evaluación de políticas de salud contra la malaria en el Perú, 
+en miras a su eliminación. [@accelerate2016]
+-->
 
-- Caracterizar los antígenos identificados según parámetros disponibles en la base de datos PlasmoDB.
+Reemergencias repetitivas de malaria en la amazonía peruana han demostrado que las 
+estrategias convensionales de monitoreo y control ya no son sostenibles. [@rosas2016peru]
+En contextos de transmisión baja y estacional como en el Perú, el uso de 
+anticuerpos especie-específicos como biomarcadores para el monitoreo de la exposición e inmunidad, 
+a través de la sero-vigilancia, poseen una mayor sensibilidad y menor gasto económico 
+en comparación a estimaciones entomológicas o prevalencias por parasitemia. [@elliott2014]
+Es por ello que la implementación de herramientas serológicas de vigilancia es una necesidad que permitirá 
+incrementar la efectividad de políticas públicas destinadas a controlar y eliminar la malaria.
 
-## Justificación
+<!-- 
+AGREGA IMPORTANCIA DE: 
+- BAJA transmisión y consecuente importancia de
+- vigilar EXPOSICIÓN y 
+- CARACTERIZAR respuesta de pacientes SEVEROS!!  INMUNIDAD? -->
 
-Dado que *Plasmodium vivax* es responsable del 75% y 90% de casos de
-malaria en Latinoamérica y Perú, respectivamente, el desarrollo de una
-vacuna efectiva contra malaria vivax es de urgente necesidad para la
-región. La implementación de un método con enfoque sistémico para el
-estudio de la inmunología permitirá acelerar significativamente el
-descubrimiento de nuevas proteínas que puedan ser usadas como blancos
-de nuevos métodos de diagnóstico (marcadores serológicos), nuevas
-drogas o vacunas.
+En este sentido, el análisis de respuestas serológicas ha surgido como una alternativa con el potencial de 
+identificar _hotspots_ de transmisión [@hotspots2015] y así
+direccionalizar la ejecución de intervenciones, en combinación con estudios geoespaciales. 
+Sin embargo, aún existen brechas técnicas y de conocimiento que limitan el desarrollo 
+y optimización de ensayos serológicos para el desarrollo de vigilancias programáticas. [@rosas2016peru]
+Una de ellas es la selección de antígenos de _P. vivax_ en base a su rendimiento, 
+tomando en cuenta parámetros como inmunogenicidad, polimorfismo, 
+magnitud de respuesta, duración, especificidad por especie, sensibilidad y razón de adquicisión. [@elliott2014]
 
-## Alcances y limitaciones
+<!--Por ello, el Proyecto para la Eliminación de Malaria en el Perú tiene como objetivo optimizar ensayos serológicos complementarios a test de diagnóstico rápido con el fin de identificar a portadores asintomáticos [@accelerate2016]-->
 
-El principal alcance de esta investigación está en la identificación
-de nuevos candidatos a vacunas contra la malaria. Una vacuna efectiva
+La identificación de biomarcadores de exposición y severidad, junto a 
+la implementación de un flujo de trabajo reproducible para el análisis de 
+la respuesta serológica a larga escala, permitirá acortar las brechas mencionadas y
+acelerar el descubrimiento de nuevas proteínas que puedan ser usadas como 
+futuros marcadores serológicos óptimos en la ejecución de vigilancia sero-epidemiológica
+y evaluación de políticas de salud contra la malaria vivax.
+
+## Consecuencia de la investigación {#consec}
+
+<!--
+limita: natraleza vigilancia pasiva
+exposición reportada, mas no registrada en historial clínico -->
+
+La principal consecuencia de esta investigación estará en la identificación
+de nuevos candidatos a marcadores serológicos en programas de vigilancia contra la malaria vivax. 
+En contraste a lo identificado en estudios seroepidemiológicos a nivel poblacional [@cutts2014meta], 
+los estudios de perfiles de anticuerpos a larga escala han reportado antígenos 
+asociados a exposición o inmunidad distintos a los tradicionales
+(PvCSP, PvMSP-1~19~, PvMSP-1~NT~ y PvAMA-1)
+y con mayor resolución en la discriminación de pacientes. [@crompton2010]
+
+Una segunda consecuencia estará en la metodología de análisis empleando el software libre 
+de computación estadística R. 
+Este procedimiento permitirá que el flujo de trabajo ejecutado sea reproducible y, 
+potencialmente, una plantilla estándar para el análisis de próximos trabajos 
+con nuevos diseños experimentales y a su vez flexible para la generación de nuevas hipótesis, 
+en comparación a recientes servidores web. [@gmine2016]
+
+<!--
+Una vacuna efectiva
 permitirá disminuir los índices de infección y mortalidad en niños de
 la región amazónica a causa de esta infección parasitaria. Una vez
 conocida cómo es la respuesta inmune y qué anticuerpos son adquiridos
 naturalmente, se podrá evaluar nuevos candidatos a diagnóstico, dianas
 para drogas y vacunas, tanto en modelos animales como en estudios
 epidemiológicos.
+-->
 
-Las principales limitaciones del presente proyecto son propias de la
-herramienta empleada en el estudio. Primero, está la dificultad en la
-purificación de proteínas de un sistema de expresión
-trascripción/traducción libre de célula. En segundo lugar, tanto la
-complejidad del plegamiento de proteínas, sus especies multiméricas, y
-las modificaciones post-transcriptacionales son, por el momento,
-imposibles de reproducir en su integridad en un sistema *in vitro*. En
-tercer lugar, el estudio no tiene la capacidad de identificar
-antígenos no-protéicos, como polisacáridos y glucolípidos.
 
-## Formulación y Fundamentación de la Hipótesis
+## Limitación de la investigación {#limit}
 
-### **General**
+La primera limitante es inherente a la herramienta a emplear en el estudio. [@vigil2010]
+Cada paso en la fabricación del microareglo de proteínas 
+(amplificación, clonamiento y expresión de genes a larga escala) posee una eficiencia límite 
+que afectará la expresión completa de las proteínas inicialmente planificadas en el diseño.
+Además, el plegamiento y formación de complejos multiméricos no será 
+posible de verificar a dicha escala.
+Por último, la identificación de antígenos con modificaciones post-transcriptacionales,
+particularmente relevantes en _Plasmodium_ [@leroch2009postmod], y
+antígenos no-protéicos, como polisacáridos y glucolípidos,
+no serán posibles de reproducir en su integridad en el sistema de expresión procarionte *in vitro* a emplear.
+
+<!-- Es por ello que parámetros 
+de eficiencia en la producción del arreglo serán reportados 
+(ver la sección de [validez y confiabilidad del instrumento](#validez)).  
+- amplificación,
+- clonamiento,
+- expresión,
+
+CORRELACIÓN entre proteínas purificadas VS proteínas IVTT
+para evaluar el plegamiento/purificación
+
+ESPECIES MULTIMÉRICAS???????
+-->
+
+Por otro lado, una última limitante está en el
+diseño experimental y las variables recolectadas 
+del estudio en el que se obtuvieron las muestras.
+La baja incidencia de la malaria vivax severa justificó 
+el empleo de una vigilancia pasiva para ejecución de un 
+estudio transversal. Esto implicó la auscencia de un seguimiento activo o
+el registro de la historia clínica de los pacientes con variables relevantes para 
+la caracterización de la severidad en base a la exposición de los 
+pacientes a malaria durante el último año.
+
+<!--
+SUGERENCIA DE NUEVOS DISEÑOS!
+Con respecto a la exposición, variables claves como el tiempo desde la última infección y, 
+con respecto a la severidad, manifestaciones clínicas en los episodios previos
+-->
+
+<!--
+## Viabilidad de la investigación
+X
+-->
+
+# PREGUNTA DE INVESTIGACIÓN
+
+¿Cuáles son las diferencias en el perfil de anticuerpos contra antígenos de _P. vivax_ en respuesta a la infección entre pacientes de la ciudad de Iquitos (Loreto-Perú) con malaria sintomática estratificados por severidad y exposición previa?
+
+<!--
+Enuncie la pregunta de investigación que se va tratar en este estudio en una oración corta y directa.
+La pregunta de investigación propuesta debe estar completa. Asegúrese de mencionar los siguientes elementos en la pregunta de investigación:
+
+Mencionar los componentes del acrónimo PECO:
+Población: ¿En qué población se quiere hacer el estudio?
+Exposición: ¿Cuál es la intervención/exposición de interés?
+Comparador: ¿Cuál es el grupo de comparación?
+Outcome: ¿Cuál es el resultado o desenlace de interés?
+-->
+
+# OBJETIVOS E HIPÓTESIS {#objetivo}
+
+<!-- 
+Objetivos:
+¿Cuáles son los objetivos que piensas explorar en este estudio? 
+Usualmente se definen después de tener clara la pregunta de investigación y de haber elaborado el marco teórico. Deben ser pocos y enfocarse sólo en el tema de interés.
+Hipótesis:
+Describa la respuesta esperada a la pregunta de investigación.
+-->
+
+## Objetivos
+
+### General
+
+- Identificar un subconjunto de antígenos con reactividad serológica 
+y relevancia clínica en _P. vivax_.
+
+<!-- contra la malaria vivax severa -->
+
+### Específicos
+
+- Comparar la amplitud e intensidad de respuesta de anticuerpos según 
+la exposición y severidad de los pacientes con malaria vivax.
+
+- Identificar antígenos con reactividad diferenciada según la
+exposición y severidad de los pacientes con malaria vivax.
+
+- Identificar los antígenos con mayor reactividad en los pacientes 
+con malaria vivax sintomática.
+
+- Caracterizar los antígenos identificados según 
+parámetros disponibles en la base de datos PlasmoDB.
+
+
+## Hipótesis
+
+<!-- 
+Hipótesis:
+Describa la respuesta esperada a la pregunta de investigación.
+-->
+
+### General
+
+*Fundamentación:*
+
+Ante una infección parasitaria, el sistema inmune responde a la infección
+mediante el reconocimiento de inmunógenos del patógeno por parte de los linfocitos B.
+Esta acción gatilla su diferenciación y la consecuente producción de 
+células plasmáticas encargadas de la secreción de anticuerpos 
+con afinidad o reactividad específica
+contra los antígenos desencadenantes. [@abbas2012]
+
+Generalmente, se reconoce que los antígenos protéicos poseen 
+características generales que permite seleccionarlos de acuerdo a 
+sus propiedades físicas, función y localización celular.
+Este subgrupo suele estar estar directamente relacionado 
+a los niveles de expresión protéica [@vigil2010],
+más aún en patógenos con ciclos de vida complejos, como _P. vivax_,
+quien presentan perfiles de expresión únicos por cada estadio de 
+infección. [@bozdech2008; @westenberger2010; @bozdech2016]
 
 *Formulación:*
 
 - Los pacientes con malaria vivax reconocen 
-un subconjunto de antígenos inmunogénicos 
-con relevancia clínica en _P. vivax_.
+un subconjunto de antígenos con reactividad serológica 
+y relevancia clínica en _P. vivax_.
 
 <!--
 Los pacientes con malaria vivax no-severa reconocen 
-un subconjunto de antígenos inmunogénicos 
-con relevancia clínica contra la malaria vivax severa.
+un subconjunto de antígenos con reactividad serológica 
+y relevancia clínica contra la malaria vivax severa.
 -->
 
-*Fundamentación:*
-
-Ante una infección parasitaria, el sistema inmune reconoce proteínas
-específicas del patógeno para la producción de anticuerpos, con los
-cuales una próxima infección es rápidamente identificada y
-adecuadamente controlada. Se conoce que hay ciertas proteínas que
-poseen mayor probabilidad de ser identificadas por el sistema inmune
-como, por ejemplo, las proteínas de membrana, las cuales están más
-expuestas al medio externo. Este estudio pretende identificar de
-manera específica dichas proteínas, también llamados antígenos
-inmunogénicos.
-
-### **De diferencia entre grupos**
-
-*Formulación:*
-
-1. Los pacientes con eventos previos reportados de malaria poseen una 
-amplitud e intensidad de respuesta a la infección distinta a 
-los pacientes sin eventos previos reportados.
-
-2. Los pacientes malaria vivax no-severa poseen una 
-amplitud e intensidad de respuesta a la infección distinta a 
-los pacientes con malatia vivax severa.
-
-3. Los pacientes con eventos previos reportados de malaria reconocen 
-antígenos con antigenicidad diferenciada con respecto a 
-los pacientes sin eventos previos reportados.
-
-4. Los pacientes con malaria vivax no-severa reconocen 
-antígenos con antigenicidad diferenciada con respecto a 
-los pacientes con malatia vivax severa.
+### De diferencia entre grupos
 
 *Fundamentación:*
 
+En contraste a estudios seroepidemiológicos basados en un solo antígeno protéico [@cutts2014meta], 
+los perfiles de anticuerpos a larga escala han demostrado la amplitud y heterogeneidad 
+de las respuestas humorales [@crompton2010].
+
+Los dos principales parámetros de comparación entre grupos, 
+con respecto a la respuesta general de anticuerpos, 
+son la proporción de antígenos reactivos y el promedio de sus intensidades 
+por individuo o amplitud e intensidad de respuesta, respectivamente. [@crompton2010; @King2015FOC; @Helb2015exposure]
+Infecciones experimentales de _P. vivax_ en Colombia con seguimiento longitudinal 
+por 145 días han demostrado que la dinámica de la respuesta humoral 
+diverge entre individuos sin exposición previa (_naive_) y semi-inmunes, 
+en base estos dos parámetros. [@arevalo2016]
+
+Además, la comparación de la intensidad de respuesta por antígenos individuales 
+ha permitido seleccionar proteínas discriminantes entre grupos
+con manifestaciones clínicas relevantes y priorizar su experimentación en ensayos confirmatorios.
+Esta evaluación ha sido ejecutada en la identificación de antígenos diferencialmente reactivos 
+en pacientes con malaria falciparum asintomática en Perú, [@Torres2014asymptomatic]
+o predictores de incidencia y dias desde la última infección con malaria falciparum por 
+individuo en Uganda. [@@Helb2015exposure]
+
+Un reporte preliminar con las muestras a emplear en el presente estudio concluyó que 
+los episodios previos eran secundarios para la severidad. [@baldevi2013] 
+Además, la cuantificación de títulos de anticuerpos IgG anti-PvMSP1 
+sugirió un grado similar de exposición previa entre grupos según severidad.
+Una comparación del perfil a larga escala permitirá 
+poner a prueba dichas hipótesis nuevamente frente a 500 antígenos protéicos.
+
+<!--
 Existe la probabilidad que los pacientes generen anticuerpos contra
 proteínas que sean muy similares entre *P. vivax* y *P. falciparum*, a
 pesar de nunca haber sido infectados por *P. falciparum*. Es por ello
@@ -202,48 +423,25 @@ diferentes localidades con el fin de averiguar alguna influencia de la
 epidemiología sobre el patrón de anticuerpos, y también se buscará una
 posible relación entre el patrón de anticuerpos y la severidad de la
 infección.
+-->
 
-## Identificación y clasificación de las variables
+*Formulación:*
 
-  **Identificación de variables**    **Clasificación**
-  --------------------------------- -------------------
-  Antigenicidad                     Cuantitativa
-  Exposición                        Cualitativa
-  Severidad                         Cualitativa
+1. Los pacientes con eventos previos reportados de malaria poseen una 
+amplitud e intensidad de respuesta a la infección distinta a 
+los pacientes sin eventos previos reportados.
 
-Respecto a la variable a cuantitativa, para la reactividad
-antígeno-anticuerpo se medirá la intensidad de fluorescencia de esta
-reacción específica y, posteriormente, se seleccionará como
-“reactivo” a los antígenos que posean un valor dos veces mayor
-que la media.
+2. Los pacientes malaria vivax no-severa poseen una 
+amplitud e intensidad de respuesta a la infección distinta a 
+los pacientes con malatia vivax severa.
 
-Por otro lado, las variables cualitativas del estudio serán tres. En
-primer lugar, cada muestra de paciente con malaria vivax será
-enfrentada a dos microarreglos de proteínas que serán *P. falciparum*
-y *P. vivax*. En segundo lugar, las muestras pertenecerán a dos
-localidades distintas, ambas con características epidemiológicas
-distintas, que serán Iquitos y Madre de Dios. Por último, dentro de
-las muestras de Iquitos, se poseen muestras con diferente grado de
-severidad, severa y no-severa.
+3. Los pacientes con eventos previos reportados de malaria reconocen 
+antígenos con reactividad diferenciada con respecto a 
+los pacientes sin eventos previos reportados.
 
-## Operacionalización de las variables
-
-
-  ----------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Variable**                       **Dimensión**                      **Indicador**                       **Clasificación**      **Escala de medición**
-  ---------------------------------- ---------------------------------- ---------------------------------- ---------------------- ------------------------
-  Antigenicidad                      Reactividad antígeno-anticuerpo    Intensidad de fluorescencia:         Cuantitativa           Razón
-
-                                                                        **0-6000** MFI
-
-  Exposición                         Eventos previos reportados       	**0:** sin eventos previos.          Cualitativa            Nominal
-
-                                                                        **1 o más:** con eventos previos.
-
-  Severidad                          Criterios OMS de malaria severa    **0:** con malaria no-severa.        Cualitativa            Nominal
-
-                                                                        **1 o más:** con malaria severa.
-  ----------------------------------------------------------------------------------------------------------------------------------------------------------
+4. Los pacientes con malaria vivax no-severa reconocen 
+antígenos con reactividad diferenciada con respecto a 
+los pacientes con malatia vivax severa.
 
 
 
@@ -342,143 +540,236 @@ b. Características de la malaria vivax
     totalidad como causa única de una enfermedad grave (Alexandre MA, et
     al. 2010).
 
-## Definición conceptual de términos
+## Definición conceptual de acrónimos y términos
 
-**Malaria.-** (también llamada paludismo) es una infección 
-causada por un parásito del género *Plasmodium* que se transmite 
-de un humano a otro por la picadura de mosquitos anofeles infectados.
+### Acrónimos
 
-**Malaria severa.-** Clasificación de los
-pacientes con malaria según parámetros clínicos y de laboratorio.
+__RTS:__
+Sistema rápido de expresión de proteínas recombinantes líbre de células.
 
-**Antígeno.-** Molécula que se une con productos de la respuesta inmune, 
-como anticuerpos o receptores de células T o B. [@abbas2012]
+__IVTT:__
+(Proteína) transcrita/traducida _in vitro_.
 
-**Antigenicidad.-** Capacidad que posee una molécula de combinarse
-específicamente con productos de la respuesta inmune, como
-anticuerpos y receptores de células T o B.
+__MFI:__
+Unidad de lectura cruda expresada como
+_Mean Fluorescence Intensity_ o
+    intensidad fluorescente promedio 
+    de todos los pixeles de cada _spot_, 
+    normalizada localmente mediante la
+    sustracción de la intensidad de fondo presente 
+    a su alrededor.
 
-**Inmunógeno.-** Un antígeno que induce una respuesta inmunitaria. [@abbas2012]
+<!--
+__FOC:__
+_Fold-Over-Control_ o Razón sobre el control.
+-->
 
-**Inmunogenicidad.-** Capacidad que posee un antígeno de inducir 
-por si solo una respuesta inmunitaria.
+### Términos
+
+**Malaria.-** Enfermedad transmitida por mosquitos, 
+predominantemente _Anopheles darlingi_ en América del Sur, 
+causada por un parásito del género _Plasmodium_.
+
+**Malaria severa.-** Clasificación de los pacientes con malaria 
+según parámetros clínicos y de laboratorio.
 
 <!-- 
 
-Para el presente estudio, a mayor antigenicidad, más
-inmunodominante será el antígeno.
-
-**Antígeno inmunodominante.-** Aquella sustancia específica que genera
-una mayor cantidad de anticuerpos en relación a otros de su misma
-especie (por ejemplo, proteínas de membrana en relación a las
-proteínas citoplasmáticas).
 -->
 
-**Microarreglo de proteínas.-** Matriz o arreglo de polipéptidos, representantes de exones o segmentos proteícos entre 100 a 1000 aminoácidos, impresos
-en un chip de dimensiones nanométricas sobre una lámina portaobjetos.
+**Antígeno.-** Molécula que se une con productos de la respuesta inmune, 
+como anticuerpos o receptores de lifocitos T o B. [@abbas2012]
+
+**Inmunógeno.-** Un antígeno que induce una respuesta inmunitaria. [@abbas2012]
+
+**Inmunoma.-** Conjunto de todos los inmunógenos que interactúan con 
+el sistema inmune de determinado hospedero [@immunomics2016; @sette2005]
+
+**Inmunómica.-** Estudio del inmunoma. [@immunomics2016]
+
+**Anticuerpo.-** Tipo de molécula glucoprotéica, también llamada inmunoglobulina (Ig), producida por los linfocitos B, que se une a antígenos con un grado alto de especificidad y afinidad. [@abbas2012]
+
+**Anticuerpo secundario.-** Anticuerpo de unión específica a la fracción constante de los anticuerpos de un hospedero y, en este caso, conjugado con biotina.
+
+**Fluoróforo.-** Componente de una molécula que brinda la cualidad 
+de fluorescencia y, en este caso, conjugado con estreptavidina.
+
+<!-- 
+
+-->
+
+**Microarreglo de proteínas.-** 
+1. Técnica de larga escala para rastrear las interacciones o  actividades de proteínas.
+2. Matriz con _spots_ de polipéptidos IVTT, 
+impresos en una lámina portaobjetos y 
+organizados en 8 bloques paralelos, 
+cada uno con 4 arreglos compuestos por cuadrículas de 17x17 _spots_.
+
+<!-- 
+DNA 300-3000 aa
+entre 100 y 1000 aminoácidos de longitud, 
 En este caso, la matriz posee 515 fragmentos protéicos,
 representantes de 446 proteínas, aproximadamente el 8% del genoma de _P. vivax_ (Sal1).
+ -->
 
-**Anticuerpo.-** Tipo de molécula glucoprotéica, también llamada inmunoglobulina (Ig), producido por los linfocitos B, que se une a los antígenos, con un grado alto de especificidad y afinidad. [@abbas2012]
+__Antígeno-IVTT:__
+Antígeno objetivo o 
+_spot_ con proteína IVTT a partir de un plásmido con DNA insertado 
+del polipéptido, segmento o exón de interés.
 
-**Anticuerpo secundario.-** Anticuerpo específico a todos los
-anticuerpos del hospedero, y en este caso, conjugado con biotina.
+__Control-IVTT:__
+Control negativo o 
+_spot_ con mix de expresión RTS y plásmido sin DNA insertado,
+representante de la intensidad de fondo específica del paciente.
 
-**Fluoróforo.-** componente de una molécula que brinda la cualidad 
-de fluorescencia. En este caso, el fluoróforo Cy5 está conjugado 
-con estreptavidina para adherirse en forma específica a los 
-anticuerpos secundarios.
+__Proteína purificada:__
+Control de comparación o 
+_spot_ con proteína de antigenicidad conocida expresada dentro de célula.
 
-**Fluorescencia.-** luminiscencia causada por la absorción y posterior emisión de radiación por parte un fluoróforo. A diferencia de la fosforescencia, esta tiene un tiempo característico muy corto: de 10^-5^ a 10^-8^ segundos.
+__Transformación:__
+Logaritmo en base dos de la lectura cruda en MFI de antígenos-IVTT y control-IVTT.
 
-<!-- -->
+__Normalización:__
+Sustracción de la mediana de los control-IVTT a cada antígeno-IVTT por individuo.
 
+__Intensidad de antígeno:__
+Lectura normalizada de cada antígeno-IVTT entre individuos. También llamada "Reactividad de anticuerpos".
 
+<!-- y expresada como _Fold over control (FOC)_. -->
+
+__Antígeno reactivo:__
+Antígenos-IVTT con una lectura transformada mayor o igual a 
+dos veces la mediana de los control-IVTT por individuo.
+
+<!-- 
+con una intensidad de antígeno mayor o igual a uno
+y calculado como $log_2(FOC) \geq 1$ 
+-->
+
+__Frecuencia del antígeno:__
+Porcentaje de individuos con antígeno reactivo por antígeno-IVTT. 
+
+__Filtrado:__
+Remoción de todo antígeno que posea una frecuencia menor al 10% de todas las muestras.
+
+__Intensidad de respuesta:__
+Promedio de intensidades de antígenos reactivos por individuo
+
+__Amplitud de respuesta:__
+Porcentaje de antígenos reactivos por individuo.
 
 # ASPECTOS METODOLÓGICOS DE LA INVESTIGACIÓN
 
+<!-- 
+Diseño del estudio
 
-## Tipificación de la investigación
+Especificar el diseño de tu estudio. (transversal, cohorte, casos y controles) y tipo de estudio (descriptivo, analítico). 
 
-### **Por el tipo de conocimiento previo usado en la investigación: **
+Población, muestra y muestreo
 
-Científica
+	Población
 
-### **Por la naturaleza del objeto de estudio: **
+Describir el contexto del estudio y los sujetos a estudiar
+Especificar el lugar/ámbito en que se hará el estudio.
+Características de la población de estudio
 
-Factual Natural
+Criterios de inclusión
 
-### **Por el tipo de pregunta planteada: **
+Especificar los criterios de inclusión  del estudio.
 
-Teórica Descriptiva de Relaciones no causales, esto debido a que el
-estudio, a partir de la descripción de los patrones de anticuerpos,
-analizará las diferencias en distintos microarreglos, en distintas
-regiones y, finalmente, su relación con la severidad de la infección.
+Criterios de exclusión
 
-### **Por el método de contrastación de la hipótesis:**
+Especificar los criterios de exclusión del estudio. No deben repetir lo establecido en los criterios de inclusión.
 
-No experimental, dado que se describirá al evento bajo diferentes
+Selección de participantes
+
+Describir cómo se hará la selección de los participantes para el estudio. Por ejemplo: Se tomaran aleatoriamente a un grupo de alumnos que estén matriculados en el curso de Patología.
+
+Variables del estudio
+
+Describir las variable principales del estudio (variable dependiente e independiente)
+Especificar lo siguiente para cada variable:
+Variable (indicar el nombre de la variable y si es la variable dependiente o independiente del estudio)
+Definición operativa
+Medición (cómo se medirá y/o cómo se recolectará el dato)
+Valores posibles
+Fuente de la variable
+
+Luego de hacer una descripción detallada, es útil resumir las variables de estudio en una tabla.
+-->
+
+## Diseño de la investigación
+
+Analítico y Descriptivo
+
+### Tipo de investigación
+
+prospectivo, caso-control
+hospital-based
+
+**Por el tipo de conocimiento previo usado en la investigación:** Científica
+
+**Por la naturaleza del objeto de estudio:** Factual Natural
+
+**Por el tipo de pregunta planteada:** Teórica Descriptiva de Relaciones no causales
+
+El estudio analizará las diferencias en una misma población 
+con respecto a dos variables de interés.
+
+**Por el método de contrastación de la hipótesis:** No experimental
+
+Se describirá al evento bajo diferentes
 variables para la organización de la información, mas no para
 determinar una causalidad.
 
-### **Por el método de estudio de las variables:**
+**Por el método de estudio de las variables:** Cuantitativa
 
-Investigación cuantitativa, principalmente por la medición de la
+Evidenciado en la medición de la
 intensidad de fluorescencia en la reacción antígeno-anticuerpo
 
-### **Por el número de variables:**
+**Por el número de variables:** Univariada
 
-Univariada, debido a que el estudio, a pesar de poseer varias
-variables, no buscará una relación entre ellas y su relación en con el
-efecto.
+El estudio, a pesar de poseer varias variables, 
+no establecerá relación de efecto entre ellas.
 
-### **Por el ambiente en que se realizan:**
+**Por el ambiente en que se realizan:** De laboratorio
 
-De laboratorio, en este caso, computacional.
+La data será generada en laboratorio. 
+El presente trabajo se centrará en el análisis de la data.
 
-### **Por el enfoque utilitario predominante:**
+**Por el enfoque utilitario predominante:** Teórica
 
-Teórica, cuyos resultados permitirán conocer nuevas alternativas para
-el diseño de vacunas.
+Cuyos resultados permitirán conocer nuevas alternativas para
+el uso de biomarcadores en sero-vigilancia.
 
-### **Por la profundidad:**
+**Por la profundidad:** Exploratorio
 
-Es un estudio exploratorio, debido a que deseamos validar las
-hipótesis formuladas.
+Se validarán las hipótesis formuladas.
 
-### **Por el tiempo de aplicación de la variable:**
+**Por el tiempo de aplicación de la variable:** Transversal
 
-Transversal, dado que no se realizará una seguimiento de la población.
+No se realizará una seguimiento de la población.
 
-## Propuesta de la estrategia que permita probar la hipótesis
+## Selección de la población y muestra
 
-El presente estudio hará uso del microarreglo de proteínas, una
-tecnología de screening de amplio alcance, que permitirá identificar
-nuevos antígenos de *P. vivax* en las poblaciones de Iquitos y Madre
-de Dios, endémicas de malaria. A través de esta, se cuantificará la
-antigenicidad de la respuesta antígeno-anticuerpo de pacientes con
-malaria vivax, ante microarreglos de las dos especies de parásitos con
-el fin de identificar marcadores de reactividad cruzada, encontrar
-diferencias en la respuesta de pacientes de la distintas regiones, y
-anotar marcadores de protección inmunológica en pacientes con
-enfermedad no-severa.
+### Población
 
-## Identificación de la población y muestra
+Pacientes diagnosticados con malaria vivax provenientes de 
+la ciudad de Iquitos (Loreto - Perú).
 
-*Población:*
+### Muestra
 
-Pacientes diagnosticados con malaria vivax provenientes de las
-regiones de Iquitos y Madre de Dios.
+*Criterios de inclusión y exclusión*
 
 *Tipo de muestra:*
 
 No probabilística: La adquisición de la muestra será mediante la
-elección controlada de sujetos voluntarios homogéneos inmediatamente
+vigilancia pasiva e inclusión voluntaria inmediatamente
 después de un diagnóstico positivo para malaria.
 
-## Instrumentos para recolección de datos
+## Recolección de los datos
 
-### **Técnica para recolectar datos**
+### Técnica para recolectar datos
 
 Los individuos diagnosticados con malaria vivax serán enrolados por
 detección pasiva de los casos, es decir, los pacientes con síntomas
@@ -500,7 +791,7 @@ dificultad respiratoria aguda (SDRA), edema pulmonar), Shock (presión
 sanguínea sistólica < 80 mmHg), Daño renal (creatinina > 3
 mg/dl), o malaria cerebral (puntaje Glasgow $\le$ 9/14).
 
-### **Instrumento de medición y recolección de datos**
+### Instrumento de medición y recolección de datos
 
 La plataforma de microarreglo de proteínas a utilizar fue desarrollado
 por el Dr. Phil Felgner y el Dr. Huw Davis de la Universidad de
@@ -511,57 +802,291 @@ de proteoma del parásito. Las proteínas fueron impresos en un
 portaobjetos y se probaron con plasma diluido 1/200 después de
 bloquear con tampón de bloqueo (Whatman).
 
-### **Validez y confiabilidad del instrumento de medición y recolección**
+### Validez y confiabilidad del instrumento de medición y recolección {#validez}
 
-Para la normalización y control de experimentación, con el fin de
-cuantificar la validez y confiabilidad del instrumento de medición, se
-agregarán diluciones de proteínas recombinantes expresadas en un
-sistema celular de antigenicidad conocida, controles positivos para
+Se agregarán diluciones de proteínas recombinantes expresadas en un
+sistema celular de reactividad conocida, controles positivos para
 anticuerpos secundarios, control positivo de anticuerpos específicos
 anti-hospedero, antígenos de extracción del parásito, control negativo
 sin plásmidos de DNA y control negativo con solo buffer. Se colectarán
 individuos controles de origen norteamericano que no hayan tenido
 contacto alguno con la infección.
 
-### **Aplicación de los instrumentos de recolección de datos**
+### Aplicación de los instrumentos de recolección de datos
 
 Las muestras de plasma sanguíneo (2uL de plasma por microarreglo) se
-depositarán en los microarreglos. La fluorescencia se detectará
-utilizando anticuerpos secundarios conjugados con fluorocromo. Los
-valores de fluorescencia serán medidos a través de un scaner de
+depositarán en las lámina con microarreglos, una muestra por bloque. 
+
+. 
+Los valores de fluorescencia serán medidos a través de un lector de
 microarreglo con láser confocal, la cual otorgará valores para cada
 uno de los arreglos de interacción proteína-anticuerpo, obteniéndose
 una matriz final con valores numéricos.
 
-### **Codificar y crear archivo de los datos**
+### Codificación y creación del archivo de datos
 
-La codificación se realizará de la siguiente manera: Cada paciente de
-Madre de Dios será identificado con `MDD-0##` y los de Iquitos poseerá
-el código `LIM-0##-SEV` o `LIM-0##-noSEV`, de acuerdo a su severidad;
-las proteínas poseerán su código asignado en la base de datos PlasmoDB
-como `PF3D7_0202500` o `PVX_091315`, ya sea una proteína de P.
-falciparum o P. vivax, respectivamente; los controles serán
-identificados como GCRC indistintamente.
+Cada paciente del estudio será identificado con un código de estructura `LIM####`, e.g.: `LIM1063`.
+Los antígenos protéicos serán identificadas el código asignado 
+a sus genes en la base de datos PlasmoDB, e.g.: 
+`PF3D7_0202500` o `PVX_091315`, ya sea un gen de _P. falciparum_ o _P. vivax_, respectivamente.
+En caso los genes poseean multiples exones, 
+se amplificarán por separado y se extenderá el código
+con el número del exón y el total de exones, e.g.: `_1o2` exón 1 de un gen con 2 exones.
+En caso los genes poseean una longitud mayor a 3000 nucleótidos,
+se dividirán en segmentos sobrelapantes entre 300 y 3000 nt y
+se extenderá el código con su respectivo número, e.g.: `_S1` para el primer segmento de un gen.
 
-### **Procesamiento de datos**
+Los datos serán organizados en dos matrices: 
+(i) archivo `samples.csv` con los códigos de los pacientes y sus covariables epidemiológicas y 
+(ii) archivo `RawData.csv` con los códigos de las proteínas, sus lecturas crudas por código de paciente.
 
-Todo el análisis estadístico se realizará en el programa R (CRAN) con
-el paquete Bioconductor. Se realizará una normalización de los datos
-de intensidad, posterior a una transformación mediante el logaritmo de
-base 2, a través del método vsn, con el fin de estabilizar la
-varianza, dada la heteroskedasticidad de los datos. Se corregirán los
-efectos de ruido en la lectura del microscopio de laser confocal. Se
-ejecutará un test-T usando una regularización bayesiana, con el fin de
-evaluar los antígenos con mayor diferencia de medias de intensidad de
-fluorescencia entre los dos grupos de severidad, mediante el método
-Benjamini-Hochberg para estimar la razón de falso-descubrimiento y
-corrección de los valores de p. Finalmente, se caracterizará a las
-proteínas con mayor inmunodominancia para la fase del ciclo de vida de
-malaria en el que se expresan, a través de la herramienta Blast2GO
-para evaluar la ontología génica.
+## Variables del estudio
+
+<!--
+### Identificación y clasificación
+  **Variables**                      **Clasificación**
+  --------------------------------- -------------------
+  Reactividad serológica            Cuantitativa
+  Exposición previa                 Cualitativa
+  Severidad                         Cualitativa
+-->
+
+La reactividad serológica cuantificará la interacción específica 
+de antígeno y anticuerpo.
+El producto será una lectura cruda, con MFI como unidades, 
+la cual será previamente procesada para el análisis.
+Esta cuantificación permitirá conocer las dianas de los anticuerpos
+secretados por células plasmáticas en respuesta a la infección.
+
+Los pacientes serán clasificados según episodios previos reportados o criterios OMS de malaria severa,
+y ambas variables por presencia o auscencia de dichos criterios.
+Con esta estratificación se podrá a prueba la hipótesis de un perfil de anticuerpos 
+dependiente de los eventos previos y posteriormente de un perfil dependiente de la severidad.
+
+### Operacionalización
+
+Ver \autoref{tab:opera}.
+
+<!--
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------
+  **Variable**                       **Dimensión**                      **Indicador**                       **Clasificación**      **Escala de medición**
+  ---------------------------------- ---------------------------------- ---------------------------------- ---------------------- ------------------------
+  Reactividad serolóǵica             Reactividad antígeno-anticuerpo    Intensidad de fluorescencia:         Cuantitativa           Razón
+
+                                                                        **0-6000** MFI
+
+  Exposición                         Eventos previos reportados       	**0:** sin eventos previos.          Cualitativa            Nominal
+
+                                                                        **1 o más:** con eventos previos.
+
+  Severidad                          Criterios OMS de malaria severa    **0:** con malaria no-severa.        Cualitativa            Nominal
+
+                                                                        **1 o más:** con malaria severa.
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------
+-->
+
+\begin{table}[ht]
+\begin{center}
+\hspace*{-1cm}
+\begin{tabular}{>{\centering}m{2.4cm} m{2.2cm}m{2.2cm}m{2cm}m{2.2cm}m{1.7cm}m{1.5cm}m{1.6cm} @{}m{0pt}@{} }
+  
+  \hline
+  \multirow{2}{*}{Variable}
+  & 
+  \multicolumn{2}{c}{Definición} 
+  %&
+  %\begin{minipage}{2.2cm}
+  %Definición\\conceptual
+  %\end{minipage}
+  %&
+  %\begin{minipage}{2.2cm}
+  %Definición\\operacional
+  %\end{minipage}
+  & 
+  \multirow{2}{*}{
+  \begin{minipage}{2.2cm}
+  Instrumento\\de medición
+  \end{minipage}
+  }
+  &
+  \multirow{2}{*}{
+  \begin{minipage}{2.2cm}
+  Criterios\\de medición
+  \end{minipage}
+  }
+  &
+  \multirow{2}{*}{
+  \begin{minipage}{1.7cm}
+  Tipo de\\variable
+  \end{minipage}
+  }
+  &
+  \multirow{2}{*}{
+  \begin{minipage}{1.5cm}
+  Escala de \\medición
+  \end{minipage}
+  }
+  &
+  \multirow{2}{*}{
+  Fuente
+  } &\\[0ex]
+  %\hline
+  \cline{2-3}
+  
+  &
+  Conceptual
+  &
+  Operacional
+  & 
+  &
+  &
+  & &\\[1ex]
+  \hline
+  
+  \textbf{Dependiente} Reactividad serológica
+  & 
+  % esCONCEPTUAL: 
+  Reactividad antígeno-anticuerpo
+  &
+  % aOPERACIONAL: 
+  Medida de la reacción entre anticuerpo secundario y fluoróforo por spot
+  % aDETALLES: medida indirecta de la reacción antígeno-anticuerpo 
+  % mediante la lectura de la reacción fluorescente entre 
+  % anticuerpo secundario y fluoroforo por spot
+  & 
+  \begin{minipage}{2.2cm} 
+  Lector de\\
+  microarreglos
+  \end{minipage}
+  & 
+  \begin{minipage}{2.2cm} 
+  \textbf{0-6000} MFI o unidades de\\
+  intensidad de \\fluorescencia.
+  \end{minipage} 
+  &
+  Numérica contínua
+  & 
+  Razón
+  &
+  Plasma sanguíneo &\\[10ex]
+  \hline
+
+  \textbf{Independiente} Severidad
+  & 
+  % aCONCEPTUAL: 
+  Presencia de manifestaciones clínicas severas y complicaciones sistémicas
+  &
+  % aOPERACIONAL:
+  Número de criterios OMS para malaria severa
+  & 
+  \begin{minipage}{2.2cm} 
+  Diagnóstico \\clínico \\y exámenes de \\laboratorio 
+  \end{minipage}
+  & 
+  \begin{minipage}{2.2cm} 
+  \textbf{No-severa:} 0 criterios.\\
+  \textbf{Severa:} 1 o más criterios.
+  \end{minipage}
+  &
+  Categórica dicotómica
+  & 
+  Nominal
+  &
+  Historia clínica y muestra de sangre &\\[10ex]
+  \hline
+  
+  \textbf{Independiente} Exposición previa
+  & 
+  % aCONCEPTUAL: 
+  Presencia de infecciones de malaria en el pasado
+  &
+  % aOPERACIONAL:
+  Número de eventos previos reportados 
+  & 
+  Encuesta
+  & 
+  \begin{minipage}{2.2cm} 
+  \textbf{Sin:} 0 eventos.\\
+  \textbf{Con:} 1 o más eventos.
+  \end{minipage}
+  &
+  Categórica dicotómica
+  & 
+  Nominal
+  &
+  Historia clínica &\\[10ex]
+  \hline
+
+
+  % etc. ...
+\end{tabular}
+\hspace*{-1cm}
+\end{center}
+        \captionof{table}{Operacionalización de variables}
+        \label{tab:opera}
+\end{table}
+
+
+# PROCESAMIENTO Y ANÁLISIS DE DATOS
+
+Todo el análisis estadístico se realizará en el software de computación estadística R [@R],
+el cual se complementará con funciones provenientes de distintos paquetes. 
+
+<!--
+El informe final será generado por un formato que integrará texto, código y resultados, 
+siguiendo principios de reproducibilidad. [@CienciaReproducible2016]
+
+Para ello se hará empleo de los siguientes paquetes:
+`Rmarkdown`, `knitr`, `bookdown`, 
+`tidyverse` (`broom`, `dplyr`, `forcats`, 
+`ggplot2`, `haven`, `stringr`, `tibble`, `tidyr`),
+`Hmisc`, `Biobase`, `limma`, 
+`genefilter`, `NMF`, 
+`PerformanceAnalytics`, `beeswarm`, `Rmisc`, `htmlTable` y `biobroom`.
+-->
+
+## Procesamiento
+
+Preliminarmente, describirá la distribución y proporción de las
+covariables epidemiológicas, clínicas y de laboratorio 
+de los pacientes de la muestra.
+Luego, con las lecturas crudas en MFI se evaluará la validez y 
+reproducibilidad del ensayo mediante un
+test de asociación entre variables contínuas, 
+usando correlación de Pearson ($r$) o Spearman ($\rho$), dependiendo de la distribución.
+Posteriormente, se procederá con su transformación a escala logarítmica, 
+normalización entre muestras y filtrado en base al punto de corte establecido. 
+Por último, se asociarán ambas matrices de datos en un `ExpressionSet`, 
+a través de los códigos de pacientes, 
+empleando el paquete `Biobase`. [@Biobase]
+
+## Confirmación de hipótesis
+
+Se pondrán a prueba las hipótesis con el siguiente protocolo.
+Primero, se contrastará la amplitud e intensidad de respuesta con 
+un test de diferencias entre variables contínuas y no pareadas de dos grupos, 
+usando t-Student o Mann-Whitney, dependiendo de la distribución.
+Segundo, se realizará un test de reactividad diferenciada de anticuerpos entre dos grupos, 
+usando el test t-moderado empírico de Bayes o eBayes [@smyth2004ebayes] 
+con corrección por comparación múltiple de la razón de falsos descubrimientos 
+por el método de Benjamini-Hochberg, disponible en el paquete `limma`. [@limma]
+Tercero, se realizará un _clustering_ jerárquico para agrupar a los
+antígenos identificados en base a su distancia euclidiana, disponible en el paquete `NMF`. [@Gaujoux2010NMF]
+Finalmente, se mostrarán las siguiente características protéicas de los
+antígenos identificados: presencia de dominios transmembrana, péptido señal, 
+número de ortólogos en _Plasmodium_ y ontología génica, disponibles en la base de datos PlasmoDB. [@plasmodb]
+
+## Visualización de resultados
+
+Los resultados se visualizarán mediante cinco tipos de gráficos.
+Diagrama de dispersión para mostrar la correlación entre dos variables contínuas, 
+Diagramas de cajas para variables contínuas,
+Diagrama de barras para frecuencias,
+_Volcano plots_ para mostrar la reactividad diferenciada de antígenos entre grupos 
+contra el valor P no ajustado y resaltar los antígenos con valor P ajustado significativo, y
+_Heatmaps_ para el perfil serológico en escala de dos colores segmentado por clusters.
 
 # ASPECTOS ADMINISTRATIVOS DE LA INVESTIGACIÓN
-
 
 ## Cronograma de actividades
 
@@ -570,9 +1095,8 @@ recolectar lo datos a través del instrumento de medición descrito.
 
   **ACTIVIDAD PROGRAMADA**
   --------------------------------- ----------- --------- --------- --------- --------- ---------
-                                    **May**     **Jun**   **Jul**   **Ago**   **Sep**   **Oct**  
-  Recolección de datos              X
-  Codificación de matriz de datos   X
+                                    **Jun**     **Jul**   **Ago**   **Sep**   **Oct**   **Nov**  
+  Aprovación del proyecto de tesis  X
   Procesamiento de datos                        X
   Interpretación de resultados                            X
   Redacción final                                                   X
@@ -582,42 +1106,49 @@ recolectar lo datos a través del instrumento de medición descrito.
 ## Presupuesto y financiamiento
 
 El proyecto será realizado en El Centro de Enfermedades Tropicales
-de la Marina de los Estados Unidos NAMRU-6 y financiado como
-proyecto integrante del Centro de Investigaciones Tecnológicas,
-Biomédicas y Medioambientales (CITBM) en colaboración con la
-Universidad Nacional Mayor de San Marcos.
+de la Marina de los Estados Unidos NAMRU-6 y financiado por ****.
 
-  ---------------------------------------------------------------------------------------
-  **DESCRIPCIÓN**                                     **MONTO (S/)**    **PORCENTAJE** 
-  -------------------------------------------------- ----------------- ------------------
+```{r, eval=TRUE, echo=FALSE}
+a <- c(50,200,25,
+       60*150*3.29,
+       2000,25)
+b <- format((a*100/sum(a)), digits = 1)
+#sum(a)
+#rbind(a,b)
+#`r a[4]` do not works
+```
+
+  ------------------------------------------------------------------------------------------
+  **DESCRIPCIÓN**                                 **MONTO (S/)**        **PORCENTAJE (%)** 
+  ---------------------------------------------- --------------------- ---------------------
   **Bienes**                             
   
-  Papelería en general, útiles y Mat. de oficina     50                2.18%
-  Aseo, limpieza y tocador (material de limpieza)                      
+  Papelería, útiles y material de oficina            50                    `r b[1]`
   
-  Mat. Insumos, instrumental y accesorios            200               8.69%
-  médicos, quirúrgicos, odontológicos 
-  y de laboratorio
+  Insumos, instrumental y accesorios                 200                   `r b[2]`
+  de laboratorio
   
-  Productos químicos                                 25                1.09%
+  Productos químicos                                 25                    `r b[3]`
   
   **Servicios**
+
+  Compra, sondeo y lectura                           29610                 `r b[4]`
+  de microarreglos
   
-  Pasajes y gastos de transporte                     2000              86.96%
-  (de las muestras al extranjero)
+  Gastos en el transporte de muestras                2000                  `r b[5]`
   
-  Servicio de impresiones, encuadernación            25                1.09%
+  Impresiones, encuadernación                        25                    `r b[6]`
   y empastado
   
-  **TOTAL**                                          2300              100%
-  ---------------------------------------------------------------------------------------
+  **TOTAL**                                          31910                 100
+  ------------------------------------------------------------------------------------------
 
 # ANEXOS
 
 
 ##  Matriz de consistencia
 
-Ver \autoref{tab:consis}.
+Ver \autoref{tab:consis} al final del documento.
 
 <!--
 
@@ -627,113 +1158,7 @@ multi col-row + landscape!!
 
 -->
 
-\afterpage{
-    \clearpage
-    \newgeometry{left=6cm,right=3cm,top=1cm,bottom=1cm}
-    \thispagestyle{empty}
-    \begin{landscape}
-        \centering
-\begin{center}
-\begin{tabular}{ll c m{2cm}m{2cm}m{2cm}m{1.5cm}m{2cm} @{}m{0pt}@{} }
-  \hline
-  
-  \multirow{2}{*}{Problema} &
-  \multirow{2}{*}{Objetivo} & 
-  \multirow{2}{*}{Variable} & 
-  \multicolumn{5}{c}{Operacionalización de variable} &\\[1ex]
-  \cline{4-8}
-  
-   & 
-   & 
-   & 
-   Dimensión & 
-   Indicador & 
-   Instrumento & 
-   Escala & 
-   Fuente &\\[1ex]
-  \hline
-  
-  \multirow{3}{*}{
-  \begin{minipage}{5cm}
-  \textit{Plasmodium vivax} es responsable del 90\% de los casos 
-  de malaria en el Perú, por los que el desarrollo de una vacuna es 
-  urgente.\\
-  \newline
-  Si bien se conocen marcadores de exposición e inmunidad, 
-  las respuestas de anticuerpos a larga escala aún no están 
-  completamente identificadas.\\
-  \newline
-  El presente estudio identificará los antígenos más inmunogénicos 
-  a partir del perfil de anticuerpos en respuesta a la infección.
-  \end{minipage}
-  } & 
-  
-  \begin{minipage}{4cm}
-  \underline{General}\\
-  Identificar un subconjunto de antígenos inmunogénicos
-  de \textit{P. vivax} con relevancia clínica.
-  \end{minipage} & 
-  
-  Antigenicidad & 
-  Reactividad antígeno-anticuerpo & 
-  \begin{minipage}{2cm} 
-  Intensidad de fluorescencia:\\
-  \textbf{0-6000} MFI
-  \end{minipage} & 
-  Lector de microarreglos & 
-  Razón &
-  Plasma sanguíneo &\\[12ex]
-  \cline{2-8}
-  
-   & 
-  \begin{minipage}{4cm}
-  \underline{Principal}\\
-  Identificar antígenos de \textit{P. vivax} con antigenicidad diferenciada
-  entre pacientes con y sin eventos previos reportados.
-  \end{minipage} & 
-  
-  Exposición & 
-  Eventos previos reportados & 
-  \begin{minipage}{2cm} 
-  \textbf{0:} sin eventos previos.\\
-  \textbf{1 o más:} con eventos previos.
-  \end{minipage} & 
-  Entrevista & 
-  Nominal &
-  Paciente &\\[16ex]
-  \cline{2-8}
-
-   & 
-  \begin{minipage}{4cm}
-  \underline{Principal}\\
-  Identificar antígenos de \textit{P. vivax} con antigenicidad diferenciada
-  entre pacientes con malaria severa y no-severa.
-  \end{minipage} & 
-  
-  Severidad & 
-  Criterios OMS de malaria severa & 
-  \begin{minipage}{2cm} 
-  \textbf{0:} malaria no-severa.\\
-  \textbf{1 o más:} malaria severa.
-  \end{minipage} & 
-  Diagnóstico clínico & 
-  Nominal &
-  Médico &\\[16ex]
-  \hline
-
-  % etc. ...
-\end{tabular}
-\end{center}
-        \captionof{table}{Matriz de consistencia}
-        \label{tab:consis}
-    \end{landscape}
-    \restoregeometry
-    \clearpage
-}
-
-
-# BIBLIOGRAFÍA NO
-
+# BIBLIOGRAFÍA
 
 1.  **Referida al tema**
 
@@ -801,4 +1226,4 @@ multi col-row + landscape!!
     infectious agents using high-density protein microarrays. Future
     Microbiol 5: 241–251.
 
-# BIBLIOGRAFÍA
+**De acuerdo al orden en el que han sido citadas:**

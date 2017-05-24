@@ -176,11 +176,13 @@ con mayor efecto en el __norte costero__ [@gagnon2002enso]:
     <!-- + 28 cumplieron un criterio de _enfermedad crítica_.-->
     + anemia severa (57%), shock (25%), daño pulmonar (21%), daño renal agudo (14%), malaria cerebral (11%).
     + pacientes severos fueron mayores (38 vs 26 años, P<0.001).
-- En el __noreste amazónico__, un último estudio __prospectivo__ (NAMRU-6, 2012-2013) identificó 74/226 casos:
+- En el __noreste amazónico__, un último estudio __prospectivo__ (NAMRU-6 2012-2013, no publicado) identificó 67/164 casos:
     + asociación entre __severidad__ y __episodios previos de malaria__ (P=0.007).
     + SDRA (94%), hiperbilirubina (80%), shock (46%), sangrado (12%), ictericia conjuntiva (12%).
     + pacientes con __episodios previos de malaria__ fueron mayores (39 vs 26 años, P<0.001) 
     <!-- + mayor proporción de pacientes mujeres (54% vs 37%, P=0.013) -->
+
+<!-- ACTUALIZAR NAMRU-6 RESULTADOS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 
 ## Malaria Severa e Inmunidad
 
@@ -211,10 +213,10 @@ con mayor efecto en el __norte costero__ [@gagnon2002enso]:
 ## Introducción
 
 - Contexto
-    + La malaria vivax severa ya es reconocida como una manifestación 
-    clínica relevante a nivel mundial. [@howes2016global]
+    + En la última década se ha reconocido que la malaria causada por 
+    _Plasmodium vivax_ puede presentar enfermedad severa. [@howes2016global, @wassmer2015, @rosas2016peru]
     + Si bien representa menos del 3% de los casos, se han logrado identificar 
-    patrones geográficos con respecto a sus manifestaciones clínicas. [@rahimi2014meta]
+    heterogeneidades geográficos con respecto a sus manifestaciones clínicas. [@rahimi2014meta]
     + Incluso, hay una mayor contribución de la parasitemia oculta en su 
     patogénesis con respecto a la de otras especies. [@barber2015]
 
@@ -231,9 +233,9 @@ con mayor efecto en el __norte costero__ [@gagnon2002enso]:
     de pacientes con malaria vivax severa (n=30) y no-severa (n=30), 
     provenientes de un reciente estudio prospectivo en la ciudad de Iquitos, 
     con el objetivo de 
-    + identificar los antígenos de mayor inmunogenicidad de pacientes sintomáticos, y
-    + comparar la amplitud, intensidad y reactividad diferenciada de 
-    antígenos inmunogénicos con respecto a la severidad y episodios previos reportados.
+    + identificar los antígenos de mayor reactividad de pacientes sintomáticos, y
+    + comparar la amplitud e intensidad de respuesta y reactividad diferenciada de 
+    anticuerpos con respecto a la severidad y episodios previos reportados.
     
 
 ## Acrónimos
@@ -306,8 +308,8 @@ mediante la sustracción de la mediana de
     por cada individuo. 
 -->
 
-- __Reactividad del antígeno:__
-    + cualidad de antígenos-IVTT con intensidad mayor o igual a 
+- __Antígeno reactivo:__
+    + antígenos-IVTT con intensidad mayor o igual a 
     dos veces la mediana del control-IVTT por individuo. 
     __$$log_2(FOC) \geq 1$$__
 
@@ -322,7 +324,7 @@ Razón de seropositividad
 -->
 
 - __Frecuencia del antígeno:__
-    + número de individuos con reactividad por el antígeno-IVTT. 
+    + porcentaje de individuos con antígeno reactivo por antígeno. 
 
 <!-- 
 - __Seroprevalencia:__
@@ -383,10 +385,10 @@ Razón de seropositividad
     - episodio previo: sin-epi, con-epi
     - severidad: Sev, no-Sev
 7. Identificar los antígenos Pv 
-    - con inmunogenicidad diferenciada:
+    - con reactividad diferenciada:
         + con-epi vs sin-epi
         + no-Sev vs Sev
-    - con mayor inmunogenicidad en la población
+    - con mayor reactividad en la población
 8. Describir los antígenos identificados según:
     - presencia de Dominios transmembrana y Peptidos señal
     - proporción de Componentes Celulares por Ontología génica
@@ -417,10 +419,10 @@ Razón de seropositividad
 - Microarreglo:
     + con-epi vs sin-epi:
         - Los pacientes __con eventos previos reportados de malaria__ reconocen antígenos con 
-        inmunogenicidad diferenciada __con respecto a__ los pacientes __sin eventos previos reportados__.
+        reactividad diferenciada __con respecto a__ los pacientes __sin eventos previos reportados__.
     + Sev vs no-Sev:
         - Los pacientes con __malaria vivax no-severa__  reconocen antígenos con 
-        inmunogenicidad diferenciada __con respecto a__ los pacientes con __malatia vivax severa__.
+        reactividad diferenciada __con respecto a__ los pacientes con __malatia vivax severa__.
 
 ## Confirmación de Hipótesis | Métodos estadísticos
 

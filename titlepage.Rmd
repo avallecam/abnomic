@@ -3,9 +3,8 @@ output: pdf_document
 ---
 
 \clearpage
+\newgeometry{top=1cm,bottom=1cm}
 \vspace*{\fill}
-
-
 
 \begin{centering}
 
@@ -14,9 +13,6 @@ output: pdf_document
     \includegraphics[width=.8in]{figure/UNMSM_escudo-2000px.png}
   \end{center}
 \end{figure}
-
-
-
 
 \Large
 UNIVERSIDAD NACIONAL MAYOR DE SAN MARCOS
@@ -36,10 +32,7 @@ ESCUELA ACADÉMICO PROFESIONAL DE
 
 GENÉTICA Y BIOTECNOLOGÍA
 
-
-
-
-\vspace{2.5 cm}
+\vspace{1.5 cm}
 
 \Large
 Perfil de anticuerpos en respuesta a la infección con malaria vivax 
@@ -47,21 +40,27 @@ en pacientes de la ciudad de Iquitos (Loreto - Perú) %con diferente exposición
 mediante un enfoque inmunómico.
 %% con sintomatología severa y no complicada/ pre-inmunes/ semi-inmunes
 
-\vspace{2.5 cm}
-
-
-
+\vspace{1.5 cm}
 
 \Large
 Proyecto de Tesis para obtar al Título Profesional de 
 
 Biólogo Genetista y Biotecnólogo
 
-\vspace{1.5 cm}
-
+\vspace{1 cm}
 
 \Large
 Bach. Andree Adolfo Valle Campos
+
+\vspace{1 cm}
+
+\Large
+Asesores
+
+Prof. Walter Cabrera-Febolá
+
+PhD. G. Christian Baldeviano
+
 
 \vspace{1 cm}
 
@@ -74,4 +73,5 @@ Lima - Perú
 \end{centering}
 
 \vfill
+\restoregeometry
 \clearpage
