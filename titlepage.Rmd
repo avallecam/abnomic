@@ -35,9 +35,13 @@ GENÉTICA Y BIOTECNOLOGÍA
 \vspace{1.5 cm}
 
 \Large
-Perfil de anticuerpos en respuesta a la infección con malaria vivax 
-en pacientes de la ciudad de Iquitos (Loreto - Perú) %con diferente exposición previa
-mediante un enfoque inmunómico.
+Comparación de la respuesta de anticuerpos ante la %infección con 
+malaria vivax 
+en pacientes de la ciudad de Iquitos (Loreto - Perú)
+según su severidad y exposición previa
+mediante microarreglos de proteínas
+% aPerfil de anticuerpos en respuesta a la infección con malaria vivax
+%mediante un enfoque inmunómico .
 %% con sintomatología severa y no complicada/ pre-inmunes/ semi-inmunes
 
 \vspace{1.5 cm}

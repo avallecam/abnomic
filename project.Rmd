@@ -55,7 +55,7 @@ OR:
 \newpage
 \pagenumbering{arabic}
 
-# RESUMEN
+# RESUMEN EJECUTIVO
 
 <!-- 
 ## Descripción del proyecto {#resumen}
@@ -76,11 +76,13 @@ RESUMEN: CORRIGELO AL FINAL
 > de malaria vivax.
 
 
-# PLANTEAMIENTO DEL ESTUDIO
+# PLANTEAMIENTO DEL PROBLEMA
 
-## Fundamentación del problema {#intro}
+## Introducción {#intro}
 
 <!-- 
+## Fundamentación del problema {#intro}
+
 INTRODUCCIÓN
 Escribir la introducción en tres párrafos:
 ¿Qué se sabe del tema?
@@ -105,21 +107,32 @@ donde el Perú fue el tercer país con más reportes de malaria (19%),
 detrás de Brasil y Venezuela, 
 atribuidos en un 80% (62,220 en total) a dicha especie. [@rosas2016peru]
 
-<!--  por _P. vivax_ (24%) (30%) -->
+<!--  por _P. vivax_ (24%) (30%) 
+[@WHO2016world; WHO world report
+@howes2016global; VIVAX world
+@wassmer2015; SEVERE world
+@rosas2016peru VIVAX peru
+] 
+-->
 
-Es por estas cifras que en la última década se ha reconocido que la malaria causada por 
-_P. vivax_ también presenta enfermedad severa 
-y fatal. [@WHO2016world; @howes2016global; @wassmer2015; @rosas2016peru]
+La malaria por _P. vivax_ han desafiado 
+su tradicional condición de enfermedad benigna debido a 
+reportes recientes de enfermedad severa y fatal. [@quispe2014]
 Incluso, con una patogénesis similar a la desarrollada 
 por _P. falciparum_. [@barber2015]
-Con respecto a sus factores condicionantes, entre ellos la respuesta 
-del hospedero, Moreno et al. [@Moreno2013] sugirió un rol 
+Con respecto a sus factores condicionantes,
+Moreno et al. [@Moreno2013] sugirió un rol 
 de la inmunidad en la reducción de 
 la severidad luego de una subsecuente exposición a la infección.
-Por una parte, se sabe que la malaria induce potentes respuestas de anticuerpos 
-que incrementan con exposiciones consecutivas [@King2015FOC].
-Sin embargo, ningún estudio hasta el momento ha contrastado la respuesta 
-inmune humoral entre pacientes con malaria vivax no complicada y severa. [@rosas2016peru]
+Por una parte, los enfoques a larga escala han demostrado que
+la malaria induce potentes respuestas de anticuerpos 
+que incrementan con exposiciones consecutivas [@crompton2010].
+Por otra, la cuantificación de títulos de anticuerpos IgG anti- _Pv_ MSP1 
+entre pacientes según su severidad a la malaria vivax
+sugirió un grado similar de exposición previa. [@baldevi2013] 
+Sin embargo, ningún estudio hasta el momento ha contrastado a una mayor escala 
+la respuesta inmune humoral entre pacientes con malaria vivax 
+severa y no complicada. <!--[@rosas2016peru]-->
 
  <!-- 
  un reciente estudio sugirió que su
@@ -139,19 +152,42 @@ con respecto a las manifestaciones clínicas casuadas por _P. vivax_. [@rahimi20
  --> 
 
 Por esta razón,
-el presente estudio contrastará el perfil de anticuerpos
-contra más de 500 antígenos de _P. vivax_
-en respuesta a la infección de 60 pacientes con malaria vivax sintomática
-estratificados por su severidad,
-provenientes de un estudio prospectivo conducido en la ciudad de Iquitos entre marzo del 2012 y junio del 2013. 
-Además, debido a que las respuestas de anticuerpos secundarias 
+el presente estudio tiene el objetivo de comparar la respuesta de anticuerpos
+ante la infección con malaria vivax en pacientes
+con malaria severa y no-severa
+provenientes de un estudio prospectivo conducido en la 
+ciudad de Iquitos entre marzo del 2012 y junio del 2013, 
+mediante la tecnología del microarreglo de proteínas
+con más de 500 antígenos de _P. vivax_ expresados en el estadio 
+eritrocítico de la infección. 
+Primero, se identificarán los antígenos con reactividad serológica diferenciada 
+entre ambos grupos.
+Luego, con el fin de discriminar entre respuestas humorales secundarias y primarias,
+se determinarán los antígenos con mayor reactividad en pacientes
+con exposición previa a la malaria.
+Finalmente, se describirán sus características protéicas junto 
+a los antígenos con mayor reactividad en toda la muestra 
+con el propósito proponerlos como candidatos a vigilancia sero-epidemiológica.
+
+<!--
+dada la diferencia entre respuestas humorales secundarias y primarias,
+
+Para ello, se hará uso de microarreglos de proteínas 
+con más de 500 antígenos de _P. vivax_ presentes en el estadio 
+sanguíneo de la infección en el humano.
+
+y se emplearán a tres parámetros: 
+reactividad serológica, amplitud e intensidad de respuesta
+
+
+debido a que las respuestas de anticuerpos secundarias 
 son mayores a las de una infección primaria, 
 se ejecutará la misma comparación con los pacientes estratificados 
 por exposición previa a la malaria.
-Finalmente, se describirán las características proteícas 
-de los antígenos diferencialmente reactivos descubiertos en ambas comparaciones.
 
-<!--
+
+en base a su amplitud, intensidad y reactividad serológica
+
 debido al incremento conocido de la respuesta inmune humoral ante
 una segunda infección con el patógeno
 
@@ -167,31 +203,156 @@ más de 500 antígenos de _P. vivax_ expresados en estadío asexual sanguíneo
 en el humano.
 -->
 
+## Preguntas de investigación
 
-## Justificación e importancia {#justif}
+1. ¿Cuáles son los antígenos de _P. vivax_ con reactividad serológica diferenciada
+ante la infección con malaria vivax entre pacientes severos y no-severos, 
+de la ciudad de Iquitos (Loreto-Perú)?
 
-<!-- 
-El descubrimiento de antígenos
-discriminantes de condiciones clínicas relevantes como severidad o exposición
-permitirá optimizar la ejecución de vigilancias sero-epidemiológicas [@hotspots2015]
-y evaluación de políticas de salud contra la malaria en el Perú, 
-en miras a su eliminación. [@accelerate2016]
+2. ¿Cuáles son los antígenos de _P. vivax_ con reactividad serológica diferenciada
+ante la infección con malaria vivax entre pacientes con y sin exposición previa, 
+de la ciudad de Iquitos (Loreto-Perú)?
+
+3. ¿Cuáles son las características protéicas de los antígenos de _P. vivax_
+con reactividad diferenciada o alta reactividad
+en pacientes con malaria vivax?
+
+<!--
+Enuncie la pregunta de investigación que se va tratar en este estudio en una oración corta y directa.
+La pregunta de investigación propuesta debe estar completa. Asegúrese de mencionar los siguientes elementos en la pregunta de investigación:
+
+Mencionar los componentes del acrónimo PECO:
+Población: ¿En qué población se quiere hacer el estudio?
+Exposición: ¿Cuál es la intervención/exposición de interés?
+Comparador: ¿Cuál es el grupo de comparación?
+Outcome: ¿Cuál es el resultado o desenlace de interés?
 -->
 
-Reemergencias repetitivas de malaria en la amazonía peruana han demostrado que las 
-estrategias convensionales de monitoreo y control ya no son sostenibles. [@rosas2016peru]
-En contextos de transmisión baja y estacional como en el Perú, el uso de 
-anticuerpos especie-específicos como biomarcadores para el monitoreo de la exposición e inmunidad, 
-a través de la sero-vigilancia, poseen una mayor sensibilidad y menor gasto económico 
-en comparación a estimaciones entomológicas o prevalencias por parasitemia. [@elliott2014]
-Es por ello que la implementación de herramientas serológicas de vigilancia es una necesidad que permitirá 
-incrementar la efectividad de políticas públicas destinadas a controlar y eliminar la malaria.
+## Hipótesis
 
 <!-- 
+Hipótesis:
+Describa la respuesta esperada a la pregunta de investigación.
+-->
+
+<!--
+### General
+
+- Los pacientes con malaria vivax reconocen 
+un subconjunto de antígenos con reactividad serológica 
+y relevancia clínica en _P. vivax_.
+
+.-.-.-.-.-..-.---.-
+
+Los pacientes con malaria vivax no-severa reconocen 
+un subconjunto de antígenos con reactividad serológica 
+y relevancia clínica contra la malaria vivax severa.
+-->
+
+### De diferencia entre grupos
+
+1. Los pacientes con malaria vivax no-severa poseen 
+mayor reactividad serológica contra un subconjunto de antígenos de _P. vivax_
+ante la infección que los pacientes con malatia vivax severa.
+
+2. Los pacientes con exposición previa a malaria poseen
+mayor reactividad serológica contra un subconjunto de antígenos de _P. vivax_
+ante la infección que los pacientes sin exposición previa.
+
+### Descriptiva
+
+3. Los antígenos con reactividad diferenciada o alta ractividad
+poseen características propias de proteínas con localización extracelular y bajo presión selectiva por el sistema inmune, entre ellas la presencia de dominios transmembrana, péptidos señal y razón de mutaciones no-sinónimas/sinónimas mayor a 1.
+
+<!-- 4 HIPOTESIS
+1. Los pacientes con malaria vivax no-severa poseen una 
+amplitud e intensidad de respuesta de anticuerpos mayor a 
+los pacientes con malatia vivax severa.
+
+2. Los pacientes con malaria vivax no-severa reconocen 
+un subconjunto de antígenos con mayor reactividad que 
+los pacientes con malatia vivax severa.
+
+3. Los pacientes con eventos previos reportados de malaria poseen una 
+amplitud e intensidad de respuesta de anticuerpos mayor a 
+los pacientes sin eventos previos reportados.
+
+4. Los pacientes con eventos previos reportados de malaria reconocen 
+un subconjunto de antígenos con mayor reactividad que
+los pacientes sin eventos previos reportados.
+-->
+
+<!-- 6 HIPOTESIS ESTADÍSTICAS
+1. Los pacientes con malaria vivax no-severa poseen una 
+amplitud de respuesta de anticuerpos mayor a 
+los pacientes con malatia vivax severa.
+
+1. Los pacientes con malaria vivax no-severa poseen una 
+intensidad de respuesta de anticuerpos mayor a 
+los pacientes con malatia vivax severa.
+
+2. Los pacientes con malaria vivax no-severa reconocen 
+un subconjunto de antígenos con mayor reactividad serológica que 
+los pacientes con malatia vivax severa.
+
+
+3. Los pacientes con eventos previos reportados de malaria poseen una 
+amplitud de respuesta de anticuerpos mayor a 
+los pacientes sin eventos previos reportados.
+
+3. Los pacientes con eventos previos reportados de malaria poseen una 
+intensidad de respuesta de anticuerpos mayor a 
+los pacientes sin eventos previos reportados.
+
+4. Los pacientes con eventos previos reportados de malaria reconocen 
+un subconjunto de antígenos con mayor reactividad serológica que
+los pacientes sin eventos previos reportados.
+-->
+
+## Justificación {#justif}
+
+<!-- e importancia -->
+
+El presente estudio se justifica en el descubrimiento de antígenos
+discriminantes de condiciones clínicas relevantes como severidad o exposición.
+Estos permitirán optimizar y acelerar
+la ejecución de vigilancias sero-epidemiológicas [@hotspots2015]
+y evaluación de programas de salud pública contra la malaria en el Perú, 
+en miras a su eliminación. [@accelerate2016]
+
+Históricamente, reemergencias repetitivas de malaria en la amazonía peruana 
+han demostrado que las estrategias convensionales de monitoreo y control 
+ya no son sostenibles. [@rosas2016peru]
+Una solución a este problema está en el uso de anticuerpos 
+especie-específicos como biomarcadores para el monitoreo activo
+de la exposición e inmunidad. En zonas de baja transmisión, 
+estos ensayos poseen una 
+mayor sensibilidad y menor gasto económico en comparación a las
+estimaciones entomológicas o prevalencias por parasitemia. [@elliott2014]
+
+Por otro lado, un aspecto novedoso del presente trabajo estará en el desarrollo 
+de un flujo de trabajo reproducible con el software libre de computación estadística R 
+para el análisis de respuestas serológicas a larga escala. 
+Su implementación otorgará ventajas al desarrollo, corrección y reporte final 
+del proyecto.
+Además, la publicación del código escrito facilitará su reutilización, 
+estimulando la contribución de otros grupos 
+y acelerando el progreso en esta área de investigación. [@CienciaReproducible2016]
+
+Como conclusión, tanto la implementación de novedosas herramientas de análisis 
+con software libre como 
+el descubrimiento de biomarcadores con relevancia clínica
+permitirán reducir las brechas técnicas y de conocimiento que continúan limitando 
+el desarrollo de vigilancias serológicas programáticas en el Perú. 
+<!--[@rosas2016peru]-->
+
+<!-- 
+Dada su transmisión baja y estacional, 
+
 AGREGA IMPORTANCIA DE: 
 - BAJA transmisión y consecuente importancia de
 - vigilar EXPOSICIÓN y 
-- CARACTERIZAR respuesta de pacientes SEVEROS!!  INMUNIDAD? -->
+- CARACTERIZAR respuesta de pacientes SEVEROS!!  INMUNIDAD? 
 
 En este sentido, el análisis de respuestas serológicas ha surgido como una alternativa con el potencial de 
 identificar _hotspots_ de transmisión [@hotspots2015] y así
@@ -202,8 +363,6 @@ Una de ellas es la selección de antígenos de _P. vivax_ en base a su rendimien
 tomando en cuenta parámetros como inmunogenicidad, polimorfismo, 
 magnitud de respuesta, duración, especificidad por especie, sensibilidad y razón de adquicisión. [@elliott2014]
 
-<!--Por ello, el Proyecto para la Eliminación de Malaria en el Perú tiene como objetivo optimizar ensayos serológicos complementarios a test de diagnóstico rápido con el fin de identificar a portadores asintomáticos [@accelerate2016]-->
-
 La identificación de biomarcadores de exposición y severidad, junto a 
 la implementación de un flujo de trabajo reproducible para el análisis de 
 la respuesta serológica a larga escala, permitirá acortar las brechas mencionadas y
@@ -211,11 +370,15 @@ acelerar el descubrimiento de nuevas proteínas que puedan ser usadas como
 futuros marcadores serológicos óptimos en la ejecución de vigilancia sero-epidemiológica
 y evaluación de políticas de salud contra la malaria vivax.
 
-## Consecuencia de la investigación {#consec}
+<!--Por ello, el Proyecto para la Eliminación de Malaria en el Perú tiene como objetivo optimizar ensayos serológicos complementarios a test de diagnóstico rápido con el fin de identificar a portadores asintomáticos [@accelerate2016]-->
+
 
 <!--
+
+## Consecuencia de la investigación {#consec}
+
 limita: natraleza vigilancia pasiva
-exposición reportada, mas no registrada en historial clínico -->
+exposición reportada, mas no registrada en historial clínico 
 
 La principal consecuencia de esta investigación estará en la identificación
 de nuevos candidatos a marcadores serológicos en programas de vigilancia contra la malaria vivax. 
@@ -232,6 +395,10 @@ potencialmente, una plantilla estándar para el análisis de próximos trabajos
 con nuevos diseños experimentales y a su vez flexible para la generación de nuevas hipótesis, 
 en comparación a recientes servidores web. [@gmine2016]
 
+
+-->
+
+
 <!--
 Una vacuna efectiva
 permitirá disminuir los índices de infección y mortalidad en niños de
@@ -243,6 +410,7 @@ epidemiológicos.
 -->
 
 
+<!-- 
 ## Limitación de la investigación {#limit}
 
 La primera limitante es inherente a la herramienta a emplear en el estudio. [@vigil2010]
@@ -255,6 +423,17 @@ Por último, la identificación de antígenos con modificaciones post-transcript
 particularmente relevantes en _Plasmodium_ [@leroch2009postmod], y
 antígenos no-protéicos, como polisacáridos y glucolípidos,
 no serán posibles de reproducir en su integridad en el sistema de expresión procarionte *in vitro* a emplear.
+
+Por otro lado, una última limitante está en el
+diseño experimental y las variables recolectadas 
+del estudio en el que se obtuvieron las muestras.
+La baja incidencia de la malaria vivax severa justificó 
+el empleo de una vigilancia pasiva para ejecución de un 
+estudio transversal. Esto implicó la auscencia de un seguimiento activo o
+el registro de la historia clínica de los pacientes con variables relevantes para 
+la caracterización de la severidad en base a la exposición de los 
+pacientes a malaria durante el último año.
+-->
 
 <!-- Es por ello que parámetros 
 de eficiencia en la producción del arreglo serán reportados 
@@ -269,19 +448,10 @@ para evaluar el plegamiento/purificación
 ESPECIES MULTIMÉRICAS???????
 -->
 
-Por otro lado, una última limitante está en el
-diseño experimental y las variables recolectadas 
-del estudio en el que se obtuvieron las muestras.
-La baja incidencia de la malaria vivax severa justificó 
-el empleo de una vigilancia pasiva para ejecución de un 
-estudio transversal. Esto implicó la auscencia de un seguimiento activo o
-el registro de la historia clínica de los pacientes con variables relevantes para 
-la caracterización de la severidad en base a la exposición de los 
-pacientes a malaria durante el último año.
-
 <!--
 SUGERENCIA DE NUEVOS DISEÑOS!
-Con respecto a la exposición, variables claves como el tiempo desde la última infección y, 
+Con respecto a la exposición, variables claves como el tiempo 
+desde la última infección y, 
 con respecto a la severidad, manifestaciones clínicas en los episodios previos
 -->
 
@@ -290,64 +460,17 @@ con respecto a la severidad, manifestaciones clínicas en los episodios previos
 X
 -->
 
-# PREGUNTA DE INVESTIGACIÓN
 
-¿Cuáles son las diferencias en el perfil de anticuerpos contra antígenos de _P. vivax_ en respuesta a la infección entre pacientes de la ciudad de Iquitos (Loreto-Perú) con malaria sintomática estratificados por severidad y exposición previa?
 
-<!--
-Enuncie la pregunta de investigación que se va tratar en este estudio en una oración corta y directa.
-La pregunta de investigación propuesta debe estar completa. Asegúrese de mencionar los siguientes elementos en la pregunta de investigación:
-
-Mencionar los componentes del acrónimo PECO:
-Población: ¿En qué población se quiere hacer el estudio?
-Exposición: ¿Cuál es la intervención/exposición de interés?
-Comparador: ¿Cuál es el grupo de comparación?
-Outcome: ¿Cuál es el resultado o desenlace de interés?
--->
-
-# OBJETIVOS E HIPÓTESIS {#objetivo}
+# ANTECEDENTES
 
 <!-- 
-Objetivos:
-¿Cuáles son los objetivos que piensas explorar en este estudio? 
-Usualmente se definen después de tener clara la pregunta de investigación y de haber elaborado el marco teórico. Deben ser pocos y enfocarse sólo en el tema de interés.
-Hipótesis:
-Describa la respuesta esperada a la pregunta de investigación.
+teoría/conceptos
+metodología
+hallazgos/resultados
 -->
 
-## Objetivos
-
-### General
-
-- Identificar un subconjunto de antígenos con reactividad serológica 
-y relevancia clínica en _P. vivax_.
-
-<!-- contra la malaria vivax severa -->
-
-### Específicos
-
-- Comparar la amplitud e intensidad de respuesta de anticuerpos según 
-la exposición y severidad de los pacientes con malaria vivax.
-
-- Identificar antígenos con reactividad diferenciada según la
-exposición y severidad de los pacientes con malaria vivax.
-
-- Identificar los antígenos con mayor reactividad en los pacientes 
-con malaria vivax sintomática.
-
-- Caracterizar los antígenos identificados según 
-parámetros disponibles en la base de datos PlasmoDB.
-
-
-## Hipótesis
-
-<!-- 
-Hipótesis:
-Describa la respuesta esperada a la pregunta de investigación.
--->
-
-### General
-
+<!-- HIPOTESIS 1
 *Fundamentación:*
 
 Ante una infección parasitaria, el sistema inmune responde a la infección
@@ -360,26 +483,16 @@ contra los antígenos desencadenantes. [@abbas2012]
 Generalmente, se reconoce que los antígenos protéicos poseen 
 características generales que permite seleccionarlos de acuerdo a 
 sus propiedades físicas, función y localización celular.
-Este subgrupo suele estar estar directamente relacionado 
+Este subconjunto suele estar estar directamente relacionado 
 a los niveles de expresión protéica [@vigil2010],
 más aún en patógenos con ciclos de vida complejos, como _P. vivax_,
 quien presentan perfiles de expresión únicos por cada estadio de 
 infección. [@bozdech2008; @westenberger2010; @bozdech2016]
 
 *Formulación:*
-
-- Los pacientes con malaria vivax reconocen 
-un subconjunto de antígenos con reactividad serológica 
-y relevancia clínica en _P. vivax_.
-
-<!--
-Los pacientes con malaria vivax no-severa reconocen 
-un subconjunto de antígenos con reactividad serológica 
-y relevancia clínica contra la malaria vivax severa.
 -->
 
-### De diferencia entre grupos
-
+<!-- HIPOTESIS 2
 *Fundamentación:*
 
 En contraste a estudios seroepidemiológicos basados en un solo antígeno protéico [@cutts2014meta], 
@@ -410,7 +523,10 @@ sugirió un grado similar de exposición previa entre grupos según severidad.
 Una comparación del perfil a larga escala permitirá 
 poner a prueba dichas hipótesis nuevamente frente a 500 antígenos protéicos.
 
-<!--
+*Formulación:*
+
+.-.-..-.-.-..-.-.-.-.-.-..
+
 Existe la probabilidad que los pacientes generen anticuerpos contra
 proteínas que sean muy similares entre *P. vivax* y *P. falciparum*, a
 pesar de nunca haber sido infectados por *P. falciparum*. Es por ello
@@ -424,28 +540,6 @@ epidemiología sobre el patrón de anticuerpos, y también se buscará una
 posible relación entre el patrón de anticuerpos y la severidad de la
 infección.
 -->
-
-*Formulación:*
-
-1. Los pacientes con eventos previos reportados de malaria poseen una 
-amplitud e intensidad de respuesta a la infección distinta a 
-los pacientes sin eventos previos reportados.
-
-2. Los pacientes malaria vivax no-severa poseen una 
-amplitud e intensidad de respuesta a la infección distinta a 
-los pacientes con malatia vivax severa.
-
-3. Los pacientes con eventos previos reportados de malaria reconocen 
-antígenos con reactividad diferenciada con respecto a 
-los pacientes sin eventos previos reportados.
-
-4. Los pacientes con malaria vivax no-severa reconocen 
-antígenos con reactividad diferenciada con respecto a 
-los pacientes con malatia vivax severa.
-
-
-
-# MARCO TEÓRICO
 
 
 ## Antecedentes de la investigación
@@ -658,9 +752,50 @@ Promedio de intensidades de antígenos reactivos por individuo
 __Amplitud de respuesta:__
 Porcentaje de antígenos reactivos por individuo.
 
-# ASPECTOS METODOLÓGICOS DE LA INVESTIGACIÓN
+# OBJETIVOS
+<!-- 
+Objetivos:
+¿Cuáles son los objetivos que piensas explorar en este estudio? 
+Usualmente se definen después de tener clara la pregunta de investigación y de haber elaborado el marco teórico. Deben ser pocos y enfocarse sólo en el tema de interés.
+Hipótesis:
+Describa la respuesta esperada a la pregunta de investigación.
+-->
+
+## General
+
+- Identificar un subconjunto de antígenos de _P. vivax_ con alta reactividad serológica 
+o discriminante de condiciones clínicas ante infecciones con malaria vivax.
+
+<!-- contra la malaria vivax severa -->
+
+## Específicos
+
+- Identificar antígenos con reactividad diferenciada según la
+severidad y exposición previa de los pacientes con malaria vivax.
+
+- Identificar los antígenos con mayor reactividad en los pacientes 
+con malaria vivax sintomática.
+
+- Describir las características protéicas de los antígenos identificados según 
+parámetros disponibles en la base de datos PlasmoDB.
+
+
+## Exploratorios
+
+- Comparar la amplitud e intensidad de respuesta de anticuerpos según 
+la exposición y severidad de los pacientes con malaria vivax.
+
+- Comparar la amplitud e intensidad de respuesta de anticuerpos
+por rangos de edad de los pacientes con malaria vivax.
+
+- Comparar la amplitud e intensidad de respuesta de anticuerpos según 
+la exposición y severidad por rangos de edad de los pacientes con malaria vivax.
+
+# METODOLOGÍA
 
 <!-- 
+# ASPECTOS METODOLÓGICOS DE LA INVESTIGACIÓN
+
 Diseño del estudio
 
 Especificar el diseño de tu estudio. (transversal, cohorte, casos y controles) y tipo de estudio (descriptivo, analítico). 
@@ -740,7 +875,7 @@ El presente trabajo se centrará en el análisis de la data.
 **Por el enfoque utilitario predominante:** Teórica
 
 Cuyos resultados permitirán conocer nuevas alternativas para
-el uso de biomarcadores en sero-vigilancia.
+el uso de biomarcadores en vigilancia sero-epidemiológica.
 
 **Por la profundidad:** Exploratorio
 
@@ -757,9 +892,11 @@ No se realizará una seguimiento de la población.
 Pacientes diagnosticados con malaria vivax provenientes de 
 la ciudad de Iquitos (Loreto - Perú).
 
-### Muestra
+### Criterios de inclusión
 
-*Criterios de inclusión y exclusión*
+### Criterios de exclusión
+
+### Muestra
 
 *Tipo de muestra:*
 
@@ -867,6 +1004,10 @@ dependiente de los eventos previos y posteriormente de un perfil dependiente de 
 
 Ver \autoref{tab:opera}.
 
+<!-- 
+VARIABLE INTERVINIENTE con OBJETIVO EXPLORATORIO: EDAD (hipotesis sin poder estadístico)
+-->
+
 <!--
   ----------------------------------------------------------------------------------------------------------------------------------------------------------
   **Variable**                       **Dimensión**                      **Indicador**                       **Clasificación**      **Escala de medición**
@@ -946,10 +1087,10 @@ Ver \autoref{tab:opera}.
   \textbf{Dependiente} Reactividad serológica
   & 
   % esCONCEPTUAL: 
-  Reactividad antígeno-anticuerpo
+  Especificidad de los anticuerpos de respuesta contra un antígeno
   &
   % aOPERACIONAL: 
-  Medida de la reacción entre anticuerpo secundario y fluoróforo por spot
+  Medida indirecta de la reacción antígeno-anticuerpo
   % aDETALLES: medida indirecta de la reacción antígeno-anticuerpo 
   % mediante la lectura de la reacción fluorescente entre 
   % anticuerpo secundario y fluoroforo por spot
@@ -1017,6 +1158,27 @@ Ver \autoref{tab:opera}.
   Historia clínica &\\[10ex]
   \hline
 
+  \textbf{Interviniente} Edad %Confusora
+  & 
+  % aCONCEPTUAL: 
+  Edad del paciente
+  &
+  % aOPERACIONAL:
+  Años de vida reportados
+  & 
+  Encuesta
+  & 
+  \begin{minipage}{2.2cm} 
+  \textbf{0-90} años.
+  \end{minipage}
+  &
+  Numérica discreta
+  & 
+  Razón
+  &
+  Historia clínica &\\[10ex]
+  \hline
+
 
   % etc. ...
 \end{tabular}
@@ -1027,7 +1189,7 @@ Ver \autoref{tab:opera}.
 \end{table}
 
 
-# PROCESAMIENTO Y ANÁLISIS DE DATOS
+## Procesamiento y Análisis de datos
 
 Todo el análisis estadístico se realizará en el software de computación estadística R [@R],
 el cual se complementará con funciones provenientes de distintos paquetes. 
@@ -1045,7 +1207,7 @@ Para ello se hará empleo de los siguientes paquetes:
 `PerformanceAnalytics`, `beeswarm`, `Rmisc`, `htmlTable` y `biobroom`.
 -->
 
-## Procesamiento
+### Procesamiento
 
 Preliminarmente, describirá la distribución y proporción de las
 covariables epidemiológicas, clínicas y de laboratorio 
@@ -1060,7 +1222,7 @@ Por último, se asociarán ambas matrices de datos en un `ExpressionSet`,
 a través de los códigos de pacientes, 
 empleando el paquete `Biobase`. [@Biobase]
 
-## Confirmación de hipótesis
+### Confirmación de hipótesis
 
 Se pondrán a prueba las hipótesis con el siguiente protocolo.
 Primero, se contrastará la amplitud e intensidad de respuesta con 
@@ -1076,7 +1238,7 @@ Finalmente, se mostrarán las siguiente características protéicas de los
 antígenos identificados: presencia de dominios transmembrana, péptido señal, 
 número de ortólogos en _Plasmodium_ y ontología génica, disponibles en la base de datos PlasmoDB. [@plasmodb]
 
-## Visualización de resultados
+### Visualización de resultados
 
 Los resultados se visualizarán mediante cinco tipos de gráficos.
 Diagrama de dispersión para mostrar la correlación entre dos variables contínuas, 
@@ -1086,7 +1248,7 @@ _Volcano plots_ para mostrar la reactividad diferenciada de antígenos entre gru
 contra el valor P no ajustado y resaltar los antígenos con valor P ajustado significativo, y
 _Heatmaps_ para el perfil serológico en escala de dos colores segmentado por clusters.
 
-# ASPECTOS ADMINISTRATIVOS DE LA INVESTIGACIÓN
+# ASPECTOS ADMINISTRATIVOS
 
 ## Cronograma de actividades
 
