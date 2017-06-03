@@ -1,31 +1,80 @@
 \afterpage{
     \clearpage
-    \newgeometry{left=6cm,right=3cm,top=1cm,bottom=1cm}
+    \newgeometry{left=3cm,right=3cm,top=0.5cm,bottom=0.5cm}
     \thispagestyle{empty}
     \begin{landscape}
         \centering
 \begin{center}
-\begin{tabular}{ll >{\centering}m{2cm} m{2cm}m{2cm}m{2cm}m{1.5cm}m{1.6cm} @{}m{0pt}@{} }
+
+\begin{tabular}{ll >{\centering}m{2.4cm} m{2.2cm}m{2.2cm}m{2cm}m{2.2cm}m{1.7cm}m{1.5cm}m{1.6cm} @{}m{0pt}@{} }
+  
   \hline
+
   
-  \multirow{2}{*}{Problema} &
-  \multirow{2}{*}{Objetivo} & 
-  \multirow{2}{*}{Variable} & 
-  \multicolumn{5}{c}{Operacionalización de variable} &\\[1ex]
-  \cline{4-8}
+  \multirow{3}{*}{Problema} &
+  \multirow{3}{*}{Objetivo} & 
+  \multicolumn{8}{c}{Operacionalización de variable} &\\[1ex]
+  \cline{3-10}
+
+
+  &
+  &
+  \multirow{2}{*}{Variable}
+  & 
+  \multicolumn{2}{c}{Definición} 
+  %&
+  %\begin{minipage}{2.2cm}
+  %Definición\\conceptual
+  %\end{minipage}
+  %&
+  %\begin{minipage}{2.2cm}
+  %Definición\\operacional
+  %\end{minipage}
+  & 
+  \multirow{2}{*}{
+  \begin{minipage}{2.2cm}
+  Instrumento\\de medición
+  \end{minipage}
+  }
+  &
+  \multirow{2}{*}{
+  \begin{minipage}{2.2cm}
+  Criterios\\de medición
+  \end{minipage}
+  }
+  &
+  \multirow{2}{*}{
+  \begin{minipage}{1.7cm}
+  Tipo de\\variable
+  \end{minipage}
+  }
+  &
+  \multirow{2}{*}{
+  \begin{minipage}{1.5cm}
+  Escala de \\medición
+  \end{minipage}
+  }
+  &
+  \multirow{2}{*}{
+  Fuente
+  } &\\[0ex]
+  %\hline
+  \cline{4-5}
   
-   & 
-   & 
-   & 
-   Dimensión & 
-   Indicador & 
-   Instrumento & 
-   Escala & 
-   Fuente &\\[1ex]
+  &
+  &
+  &
+  Conceptual
+  &
+  Operacional
+  & 
+  &
+  &
+  & &\\[1ex]
   \hline
-  
+ 
   \multirow{3}{*}{
-  \begin{minipage}{5cm}
+  \begin{minipage}{4cm}
   \textit{Plasmodium vivax} es responsable del 90\% de los casos 
   de malaria en el Perú, por los que el desarrollo de una vacuna es 
   urgente.\\
@@ -39,63 +88,137 @@
   a partir del perfil de anticuerpos en respuesta a la infección.
   \end{minipage}
   } & 
-  
-  \begin{minipage}{4cm}
+
+  \begin{minipage}{3cm}
   \underline{General}\\
-  Identificar un subconjunto de antígenos con reactividad serológica
-  y relevancia clínica en \textit{P. vivax}.
+  Identificar un subconjunto de antígenos de \textit{P. vivax} 
+  con reactividad serológica 
+  predominante o discriminante de condiciones clínicas
+  ante infecciones con malaria vivax.
   \end{minipage} & 
-  
-  
-  Reactividad serológica & 
-  Reactividad antígeno-anticuerpo & 
-  \begin{minipage}{2cm} 
-  Intensidad de fluorescencia:\\
-  \textbf{0-6000} MFI
-  \end{minipage} & 
-  Lector de microarreglos & 
-  Razón &
-  Plasma sanguíneo &\\[14ex]
-  \cline{2-8}
-  
-   & 
-  \begin{minipage}{4cm}
-  \underline{Específico}\\
-  Identificar antígenos de \textit{P. vivax} con reactividad diferenciada
-  entre pacientes con y sin eventos previos reportados.
-  \end{minipage} & 
-  
-  Exposición & 
-  Eventos previos reportados & 
-  \begin{minipage}{2cm} 
-  \textbf{0:} sin eventos previos.\\
-  \textbf{1 o más:} con eventos previos.
-  \end{minipage} & 
-  Entrevista & 
-  Nominal &
-  Paciente &\\[16ex]
-  \cline{2-8}
+
+  \textbf{Dependiente} Reactividad serológica
+  & 
+  % esCONCEPTUAL: 
+  \begin{minipage}{2.2cm} 
+  Especificidad \\de anticuerpos \\de respuesta contra un antígeno
+  \end{minipage} 
+  &
+  % aOPERACIONAL: 
+  \begin{minipage}{2.2cm} 
+  Medida \\indirecta de \\la reacción antígeno-anticuerpo
+  \end{minipage} 
+  % aDETALLES: medida indirecta de la reacción antígeno-anticuerpo 
+  % mediante la lectura de la reacción fluorescente entre 
+  % anticuerpo secundario y fluoroforo por spot
+  & 
+  \begin{minipage}{2.2cm} 
+  Lector de\\
+  microarreglos
+  \end{minipage}
+  & 
+  \begin{minipage}{2.2cm} 
+  \textbf{0-6000} MFI o intensidad\\
+  fluorescente \\promedio.
+  \end{minipage} 
+  &
+  Numérica contínua
+  & 
+  Razón
+  &
+  Plasma sanguíneo &\\[28ex]
+  \cline{2-10}
 
    & 
-  \begin{minipage}{4cm}
+  \begin{minipage}{3cm}
   \underline{Específico}\\
-  Identificar antígenos de \textit{P. vivax} con reactividad diferenciada
-  entre pacientes con malaria severa y no-severa.
+  Identificar antígenos con reactividad diferenciada según 
+  la severidad de los pacientes con 
+  malaria vivax.
   \end{minipage} & 
+
+
+  \textbf{Independiente} Severidad
+  & 
+  % aCONCEPTUAL: 
+  Presencia de manifestaciones clínicas severas o complicaciones sistémicas
+  &
+  % aOPERACIONAL:
+  Número de criterios OMS para malaria severa
+  & 
+  \begin{minipage}{2.2cm} 
+  Diagnóstico \\clínico \\y exámenes de \\laboratorio 
+  \end{minipage}
+  & 
+  \begin{minipage}{2.2cm} 
+  \textbf{No-severa:} 0 criterios.\\
+  \textbf{Severa:} 1 o más criterios.
+  \end{minipage}
+  &
+  Categórica dicotómica
+  & 
+  Nominal
+  &
+  Historia clínica y muestra de sangre &\\[20ex]
+  \cline{2-10}
+
+   & 
+  \begin{minipage}{3cm}
+  \underline{Específico}\\
+  Identificar antígenos con reactividad diferenciada según 
+  la exposición previa de los pacientes con 
+  malaria vivax.
+  \end{minipage} & 
+
   
-  Severidad & 
-  Criterios OMS de malaria severa & 
-  \begin{minipage}{2cm} 
-  \textbf{0:} malaria no-severa.\\
-  \textbf{1 o más:} malaria severa.
-  \end{minipage} & 
-  Diagnóstico clínico y exámenes de laboratorio & 
-  Nominal &
-  Médico y muestra de sangre &\\[16ex]
+  \textbf{Independiente} Exposición previa
+  & 
+  % aCONCEPTUAL: 
+  Presencia de infecciones de malaria en el pasado
+  &
+  % aOPERACIONAL:
+  Número de eventos previos reportados 
+  & 
+  Encuesta
+  & 
+  \begin{minipage}{2.2cm} 
+  \textbf{Sin:} 0 eventos.\\
+  \textbf{Con:} 1 o más eventos.
+  \end{minipage}
+  &
+  Categórica dicotómica
+  & 
+  Nominal
+  &
+  Historia clínica &\\[20ex]
   \hline
+  %\cline{2-10}
+
+%  \textbf{Interviniente} Edad %Confusora
+%  & 
+%  % aCONCEPTUAL: 
+%  Edad del paciente
+%  &
+%  % aOPERACIONAL:
+%  Años de vida reportados
+%  & 
+%  Encuesta
+%  & 
+%  \begin{minipage}{2.2cm} 
+%  \textbf{0-90} años.
+%  \end{minipage}
+%  &
+%  Numérica discreta
+%  & 
+%  Razón
+%  &
+%  Historia clínica &\\[10ex]
+%  \hline
+
 
   % etc. ...
 \end{tabular}
+
 \end{center}
         \captionof{table}{Matriz de consistencia}
         \label{tab:consis}
