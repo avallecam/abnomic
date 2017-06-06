@@ -3,7 +3,7 @@ output: pdf_document
 ---
 
 \clearpage
-\newgeometry{top=1cm,bottom=1cm}
+\newgeometry{top=0.2cm,bottom=1cm}
 \vspace*{\fill}
 
 \begin{centering}
@@ -56,17 +56,17 @@ Biólogo Genetista y Biotecnólogo
 \Large
 Bach. Andree Adolfo Valle Campos
 
-\vspace{1 cm}
+\vspace{1.2 cm}
 
 \Large
 Asesores
 
-Prof. Walter Cabrera-Febolá
+<por confirmar>%Prof. Walter Cabrera-Febolá
 
 PhD. G. Christian Baldeviano
 
 
-\vspace{1 cm}
+\vspace{1.2 cm}
 
 Lima - Perú
 

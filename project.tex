@@ -37,6 +37,9 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\usepackage[normalem]{ulem}
+% avoid problems with \sout in headers with hyperref:
+\pdfstringdefDisableCommands{\renewcommand{\sout}{}}
 \IfFileExists{parskip.sty}{%
 \usepackage{parskip}
 }{% else
@@ -85,6 +88,7 @@
 \usepackage{afterpage}
 \usepackage{capt-of}
 \usepackage{array}
+\usepackage{color}
 
 \begin{document}
 
@@ -95,7 +99,7 @@
 \pagenumbering{gobble}
 
 \clearpage
-\newgeometry{top=1cm,bottom=1cm} \vspace*{\fill}
+\newgeometry{top=0.2cm,bottom=1cm} \vspace*{\fill}
 
 \begin{centering}
 
@@ -147,17 +151,17 @@ Biólogo Genetista y Biotecnólogo
 \Large
 Bach. Andree Adolfo Valle Campos
 
-\vspace{1 cm}
+\vspace{1.2 cm}
 
 \Large
 Asesores
 
-Prof. Walter Cabrera-Febolá
+<por confirmar>%Prof. Walter Cabrera-Febolá
 
 PhD. G. Christian Baldeviano
 
 
-\vspace{1 cm}
+\vspace{1.2 cm}
 
 Lima - Perú
 
@@ -183,9 +187,9 @@ Lima - Perú
 \addcontentsline{toc}{section}{RESUMEN EJECUTIVO}
 
 \begin{quote}
-RESUMEN A ESCRIBIR Y CORREGIR AL FINAL!!!! El presente proyecto tiene
-como objetivo identificar antígenos con relevancia clínica contra la
-malaria vivax. Para ello, se realizará un perfil a larga escala de
+\sout{RESUMEN A ESCRIBIR Y CORREGIR AL FINAL!!!! El presente proyecto
+tiene como objetivo identificar antígenos con relevancia clínica contra
+la malaria vivax. Para ello, se realizará un perfil a larga escala de
 anticuerpos en pacientes sintomáticos a través de microarreglos de 500
 proteínas de \emph{Plasmodium vivax} y 500 de \emph{P. falciparum}. Se
 contrastarán parámetros generales de la respuesta humoral y evaluará la
@@ -194,7 +198,11 @@ exposición previa y severidad. Finalmente, se propondrán nuevos
 antígenos de \emph{P. vivax} con posible aplicación en la vigilancia
 sero-epidemiológica. Finalmente, se propondrán nuevos antígenos de
 \emph{P. vivax} con posible aplicación en la vigilancia
-sero-epidemiológica.
+sero-epidemiológica. Finalmente, se propondrán nuevos antígenos de
+\emph{P. vivax} con posible aplicación en la vigilancia
+sero-epidemiológica. Finalmente, se propondrán nuevos antígenos de
+\emph{P. vivax} con posible aplicación en la vigilancia
+sero-epidemiológica.}
 \end{quote}
 
 \section{PLANTEAMIENTO DEL PROBLEMA}\label{planteamiento-del-problema}
@@ -214,10 +222,10 @@ reportes (19\%), detrás de Brasil y Venezuela, atribuidos en un 80\%
 (62,220 en total) a dicha
 especie.\textsuperscript{\protect\hyperlink{ref-rosas2016peru}{2}}
 
-La malaria por \emph{P. vivax} ha desafiado su tradicional condición de
-enfermedad benigna debido a reportes recientes de enfermedad severa y
-fatal.\textsuperscript{\protect\hyperlink{ref-quispe2014}{3}} A pesar de
-este reconocimiento, factores condicionantes como la respuesta del
+Reportes recientes de enfermedad severa y fatal causados por \emph{P.
+vivax} han desafiado su tradicional condición de enfermedad
+benigna.\textsuperscript{\protect\hyperlink{ref-quispe2014}{3}} A pesar
+de este reconocimiento, factores condicionantes como la respuesta del
 hospedero aún no han sido explorados. Por un lado, modelos
 experimentales han sugerido un rol de la inmunidad en la reducción de la
 severidad.\textsuperscript{\protect\hyperlink{ref-Moreno2013}{4}} Sin
@@ -251,12 +259,11 @@ investigación}\label{preguntas-de-investigacion}
 \item
   ¿Cuáles son los antígenos de \emph{P. vivax} con reactividad
   serológica diferenciada ante la infección con malaria vivax entre
-  pacientes severos y no-severos, de la ciudad de Iquitos (Loreto-Perú)?
+  pacientes severos y no-severos?
 \item
   ¿Cuáles son los antígenos de \emph{P. vivax} con reactividad
   serológica diferenciada ante la infección con malaria vivax entre
-  pacientes con y sin exposición previa, de la ciudad de Iquitos
-  (Loreto-Perú)?
+  pacientes con y sin exposición previa?
 \item
   ¿Cuáles son las características protéicas de los antígenos de \emph{P.
   vivax} con reactividad diferenciada o predominante en pacientes con
@@ -271,37 +278,33 @@ investigación}\label{preguntas-de-investigacion}
 \tightlist
 \item
   Identificar un subconjunto de antígenos de \emph{P. vivax} con
-  reactividad serológica predominante o discriminante de condiciones
-  clínicas ante infecciones con malaria vivax.
+  reactividad serológica discriminante de condiciones clínicas
+  relevantes ante la infección con malaria vivax.
 \end{itemize}
 
 \subsubsection{Específicos}\label{especificos}
 
 \begin{itemize}
 \item
-  Identificar antígenos con reactividad diferenciada según la severidad
-  y exposición previa de los pacientes con malaria vivax.
+  Identificar antígenos de \emph{P. vivax} con reactividad serológica
+  diferenciada ante la infección con malaria vivax entre pacientes
+  severos y no-severos.
 \item
-  Identificar los antígenos con mayor reactividad en los pacientes con
-  malaria vivax sintomática.
+  Identificar antígenos de \emph{P. vivax} con reactividad serológica
+  diferenciada ante la infección con malaria vivax entre pacientes con y
+  sin exposición previa.
 \item
-  Describir las características protéicas de los antígenos identificados
-  según parámetros disponibles en la base de datos PlasmoDB.
+  Describir las características protéicas de los antígenos con
+  reactividad diferenciada o predominante.
 \end{itemize}
 
-\subsubsection{Exploratorios}\label{exploratorios}
+\subsubsection{Exploratorio}\label{exploratorio}
 
 \begin{itemize}
+\tightlist
 \item
   Comparar la amplitud e intensidad de respuesta de anticuerpos según la
-  exposición y severidad de los pacientes con malaria vivax.
-\item
-  Comparar la amplitud e intensidad de respuesta de anticuerpos por
-  rangos de edad de los pacientes con malaria vivax.
-\item
-  Comparar la amplitud e intensidad de respuesta de anticuerpos según la
-  exposición y severidad por rangos de edad de los pacientes con malaria
-  vivax.
+  edad de los pacientes con malaria vivax.
 \end{itemize}
 
 \subsection{Justificación}\label{justif}
@@ -314,65 +317,70 @@ zonas con baja transmisión, estos ensayos poseen una mayor sensibilidad
 y representan un menor gasto económico en comparación a las estrategias
 convensionales de monitoreo y
 control.\textsuperscript{\protect\hyperlink{ref-elliott2014}{9}} Por
-esta razón, el descubrimiento de antígenos potencialmente discriminantes
-de condiciones clínicas como severidad o exposición permitirá optimizar
-su ejecución en programas de salud pública contra la malaria en el Perú
-en miras a su
+esta razón, el presente estudio se justifica en el descubrimiento de
+antígenos potencialmente discriminantes de condiciones clínicas como
+severidad o exposición que permitirán optimizar y acelerar su ejecución
+en programas de salud pública contra la malaria en el Perú en miras a su
+control y posterior
 eliminación.\textsuperscript{\protect\hyperlink{ref-accelerate2016}{10}}
-
-En segundo lugar, un aspecto novedoso del presente estudio estará en el
-desarrollo de un flujo de trabajo reproducible empleando el lenguaje de
-programación y software libre
-R\textsuperscript{\protect\hyperlink{ref-R}{11}} para el análisis de
-respuestas serológicas a larga escala. Su implementación otorgará
-ventajas en su desarrollo, corrección, reporte final y reutilización,
-estimulando así la contribución de otros grupos y acelerando el progreso
-en esta área de
-investigación.\textsuperscript{\protect\hyperlink{ref-CienciaReproducible2016}{12}}
-Este enfoque de análisis permitirá reducir las brechas técnicas que
-continúan limitando el desarrollo de esta tecnología en nuestro país.
 
 \subsection{Limitaciones}\label{limit}
 
-Diseño Caso Control Entre sus debilidades está su suceptibilidad a
-errores sistemáticos de selección y clasificación, su dificultad para
-establecer relaciones causa-efecto y la imposibilidad de calcular
-prevalencias o incidencias.
+Resumimos tres limitaciones el estudio.
 
-Infecciones no sincronizadas. Evaluados en etapa sintomática,
-manifestada por fiebre, momento en el que acuden al centro de salud.
+Primero, las muestras a evaluar provienen de pacientes con infecciones
+no sincronizadas. El muestreo se ejecutó en la fase sintomática, momento
+en el que acuden al Hospital, con un desconocimiento del inicio de la
+infección por paciente. Sin embargo, infecciones experimentales han
+estimado que dicha fase ocurre normalmente entre los 11 y 13 días de
+infección.\textsuperscript{\protect\hyperlink{ref-arevalo2016}{11}}
 
-La primera limitante es inherente a la herramienta a emplear en el
-estudio.\textsuperscript{\protect\hyperlink{ref-vigil2010}{13}} Cada
-paso en la fabricación del microareglo de proteínas (amplificación,
-clonamiento y expresión de genes a larga escala) posee una eficiencia
-límite que afectará la expresión completa de las proteínas inicialmente
-planificadas en el diseño. Además, el plegamiento y formación de
-complejos multiméricos no será posible de verificar a dicha escala. Por
-último, la identificación de antígenos con modificaciones
-post-transcriptacionales, particularmente relevantes en
-\emph{Plasmodium}\textsuperscript{\protect\hyperlink{ref-leroch2009postmod}{14}},
-y antígenos no-protéicos, como polisacáridos y glucolípidos, no serán
-posibles de reproducir en su integridad en el sistema de expresión
-procarionte \emph{in vitro} a emplear.
+Segundo, el estudio posee debilidades propias del diseño experimental a
+emplear. El diseño de tipo Caso Control es suceptible a errores
+sistemáticos de selección y clasificación, posee dificultad para
+establecer relaciones causa-efecto y a través de él no se pueden
+calcular prevalencias o incidencias. Además, la auscencia de un
+seguimiento activo impidió el registro de covariables relevantes para la
+caracterización de la enfermedad.
 
-Por otro lado, una última limitante está en el diseño experimental y las
-variables recolectadas del estudio en el que se obtuvieron las muestras.
-La baja incidencia de la malaria vivax severa justificó el empleo de una
-vigilancia pasiva para ejecución de un estudio transversal. Esto implicó
-la auscencia de un seguimiento activo o el registro de la historia
-clínica de los pacientes con variables relevantes para la
-caracterización de la severidad en base a la exposición de los pacientes
-a malaria durante el último año.
+Tercero, los microarreglos de proteínas poseen limitantes propias a su
+fabricación.\textsuperscript{\protect\hyperlink{ref-vigil2010}{12}} Cada
+paso (amplificación, clonamiento y expresión de genes a larga escala)
+posee una eficiencia límite que afectará la calidad final de las
+proteínas. Además, el plegamiento protéico no será posible de verificar
+a dicha escala. Por último, la identificación de antígenos con
+modificaciones post-transcriptacionales, particularmente relevantes en
+\emph{Plasmodium}\textsuperscript{\protect\hyperlink{ref-leroch2009postmod}{13}},
+no serán posibles de reproducir en su integridad en el sistema de
+expresión procarionte. A pesar de ello, se evaluará la validez y
+reproducibilidad del ensayo con controles internos a detallar en la
+\protect\hyperlink{validez}{sección 4.3.2}.
 
 \subsection{Viabilidad}\label{viabilidad}
 
-El diseño del estudio es de tipo Caso-Control, ideal para el estudio de
-casos infrecuentes, la evaluación de multiples factores para el mismo
-resultado y eficiente en recursos por tiempo.
+El proyecto es viable dada la factibilidad de su ejecución y el nivel de
+interés para el área de conocimiento.
 
-pequeños volumenes de suero, posibilidad de incremental tamaño muestral
-a escala epidemiológica
+En primer lugar, su factibilidad se sustenta en que el proyecto se
+ejecutará sobre los resultados de un estudio prospectivo ya realizado,
+facilitando el proceso de muestreo y limitándolo al planteamiento del
+problema y análisis de los datos. Además, dado que los microarreglos de
+proteínas requieren de pequeño volúmen de plasma por paciente
+(\textasciitilde{}2\(\mu\)L), se contará con un adecuado tamaño muestral
+(n=60) el cual permitirá poner a prueba las hipótesis formuladas con
+suficiente poder estadístico.
+
+Finalmente, un aspecto novedoso del proyecto será el uso del lenguaje de
+programación y software libre
+R\textsuperscript{\protect\hyperlink{ref-R}{14}} para el análisis de
+datos. Esta plataforma facilitará la reproducibilidad del estudio,
+promoviendo su reutilización y contribución por otros
+grupos.\textsuperscript{\protect\hyperlink{ref-CienciaReproducible2016}{15}}
+Este enfoque de análisis permitirá acelerar el progreso en esta área de
+investigación, automatizar procesos de análisis y reducir las brechas
+técnicas que que continúan limitando el descubrimiento de biomarcadores
+relevantes para la aplicación de vigilancias sero-epidemiológicas en
+nuestro país.
 
 \section{FORMULACIÓN DE HIPÓTESIS Y
 VARIABLES}\label{formulacion-de-hipotesis-y-variables}
@@ -401,26 +409,40 @@ grupos}\label{de-diferencia-entre-grupos}
 \setcounter{enumi}{2}
 \tightlist
 \item
-  Los antígenos con reactividad diferenciada o predominante en pacientes
-  con malaria vivax poseen características propias de proteínas con
-  localización extracelular y bajo presión selectiva por el sistema
-  inmune.
+  Los antígenos con reactividad diferenciada o predominante se
+  caracterizan por poseer una localización extracelular y estar bajo
+  presión selectiva por el sistema inmune.
 \end{enumerate}
 
 \subsection{Variables}\label{variables}
 
-La reactividad serológica cuantificará la interacción específica de
-antígeno y anticuerpo. El producto será una lectura cruda, con MFI como
-unidades, la cual será previamente procesada para el análisis. Esta
-cuantificación permitirá conocer las dianas de los anticuerpos
-secretados por células plasmáticas en respuesta a la infección.
+El presente estudio busca contrastar la respuesta de anticuerpos ante la
+infección con malaria vivax entre pacientes clasificados según su
+severidad y exposición previa. Para ello se medirá la variable de
+reactividad serológica de antígenos de \emph{P. vivax} luego de sondear
+plasma de pacientes en un microarreglo de proteínas. Además se
+clasificará a los pacientes como severos o no-severos de acuerdo a
+diagnóstico clínico y bioquímico, y como con o sin exposición previa de
+acuerdo a lo reportado en la encuesta con el médico tratante.
 
-Los pacientes serán clasificados según episodios previos reportados o
-criterios OMS de malaria severa, y ambas variables por presencia o
-auscencia de dichos criterios. Con esta estratificación se podrá a
-prueba la hipótesis de un perfil de anticuerpos dependiente de los
-eventos previos y posteriormente de un perfil dependiente de la
-severidad.
+Primero, la reactividad serológica cuantificará la especificidad de los
+anticuerpos de respuesta contra los antígenos del patógeno \emph{P.
+vivax}. Esta variable medirá indirectamente la intensidad fluorescente
+producto de la interacción entre antígeno y anticuerpo, a través de un
+lector de microarreglos.
+
+Segundo, la clasificación de pacientes como severos representará la
+presencia de manifestaciones clínicas severas o complicaciones
+sistémicas. Esta variable será asignada con el cumplimiento de al menos
+dos criterios clínicos o de laboratorio para malaria severa, tal como lo
+recomienda la OMS.
+
+Tercero, la clasificación por episodios previos reportados representará
+la presencia de infecciones previas con malaria y, consecuentemente, la
+presencia de una respuesta inmune humoral secundaria. Esta variable será
+reportada por el paciente como el número de eventos previos. Dada la
+incertidumbre de dicho dato, la variable será dicotomizada con el fin de
+facilitar su inclusión.
 
 \subsubsection{Operacionalización de
 variables}\label{operacionalizacion-de-variables}
@@ -531,7 +553,7 @@ Ver \autoref{tab:opera}.
   & 
   \begin{minipage}{2.2cm} 
   \textbf{No-severa:} 0 criterios.\\
-  \textbf{Severa:} 1 o más criterios.
+  \textbf{Severa:} 2 o más criterios.
   \end{minipage}
   &
   Categórica dicotómica
@@ -598,21 +620,29 @@ Ver \autoref{tab:opera}.
 \subsection{Antecedentes de la
 investigación}\label{antecedentes-de-la-investigacion}
 
+\begin{quote}
+\textcolor{red}{pendiente: máximo media cara}
+\end{quote}
+
 \subsection{Bases teóricas}\label{bases-teoricas}
+
+\begin{quote}
+\textcolor{red}{pendiente: máximo media cara}
+\end{quote}
 
 \subsection{Definiciones conceptuales}\label{definiciones-conceptuales}
 
 \subsubsection{Acrónimos}\label{acronimos}
 
-\textbf{RTS:} Sistema rápido de expresión de proteínas recombinantes
+\textbf{RTS:} Sistema rápido de traducción de proteínas recombinantes
 líbre de células.
 
 \textbf{IVTT:} (Proteína) transcrita/traducida \emph{in vitro}.
 
-\textbf{MFI:} Unidad de lectura cruda expresada como \emph{Mean
-Fluorescence Intensity} o intensidad fluorescente promedio de todos los
-pixeles de cada \emph{spot}, normalizada localmente mediante la
-sustracción de la intensidad de fondo presente a su alrededor.
+\textbf{MFI:} Unidad de lectura cruda expresada como intensidad
+fluorescente promedio de todos los pixeles de cada \emph{spot},
+normalizada localmente mediante la sustracción de la intensidad de fondo
+presente a su alrededor.
 
 \subsubsection{Términos}\label{terminos}
 
@@ -625,29 +655,30 @@ sustracción de la intensidad de fondo presente a su alrededor.
 
 \textbf{Antígeno.-} Molécula que se une con productos de la respuesta
 inmune, como anticuerpos o receptores de lifocitos T o
-B.\textsuperscript{\protect\hyperlink{ref-abbas2012}{15}}
+B.\textsuperscript{\protect\hyperlink{ref-abbas2012}{16}}
 
 \textbf{Inmunógeno.-} Un antígeno que induce una respuesta
-inmunitaria.\textsuperscript{\protect\hyperlink{ref-abbas2012}{15}}
+inmunitaria.\textsuperscript{\protect\hyperlink{ref-abbas2012}{16}}
 
 \textbf{Inmunoma.-} Conjunto de todos los inmunógenos que interactúan
 con el sistema inmune de determinado
-hospedero\textsuperscript{\protect\hyperlink{ref-immunomics2016}{16},\protect\hyperlink{ref-sette2005}{17}}
+hospedero\textsuperscript{\protect\hyperlink{ref-immunomics2016}{17},\protect\hyperlink{ref-sette2005}{18}}
 
 \textbf{Inmunómica.-} Estudio del
-inmunoma.\textsuperscript{\protect\hyperlink{ref-immunomics2016}{16}}
+inmunoma.\textsuperscript{\protect\hyperlink{ref-immunomics2016}{17}}
 
 \textbf{Anticuerpo.-} Tipo de molécula glucoprotéica, también llamada
 inmunoglobulina (Ig), producida por los linfocitos B, que se une a
 antígenos con un grado alto de especificidad y
-afinidad.\textsuperscript{\protect\hyperlink{ref-abbas2012}{15}}
+afinidad.\textsuperscript{\protect\hyperlink{ref-abbas2012}{16}}
 
 \textbf{Anticuerpo secundario.-} Anticuerpo de unión específica a la
-fracción constante de los anticuerpos de un hospedero y, en este caso,
+fracción constante de los anticuerpos de un hospedero, comúnmente
 conjugado con biotina.
 
 \textbf{Fluoróforo.-} Componente de una molécula que brinda la cualidad
-de fluorescencia y, en este caso, conjugado con estreptavidina.
+de fluorescencia, comúnmente conjugada con estreptavidina para la
+detección de moléculas biotiniladas.
 
 \begin{enumerate}
 \def\labelenumi{\alph{enumi}.}
@@ -684,8 +715,8 @@ mayor o igual a dos veces la mediana de los control-IVTT por individuo.
 \textbf{Frecuencia del antígeno:} Porcentaje de individuos con antígeno
 reactivo por antígeno-IVTT.
 
-\textbf{Filtrado:} Remoción de todo antígeno que posea una frecuencia
-menor al 10\% de todas las muestras.
+\textbf{Filtrado:} Remoción de todo antígeno que posea una frecuencia de
+reactividad menor al 10\%.
 
 \textbf{Intensidad de respuesta:} Promedio de intensidades de antígenos
 reactivos por individuo
@@ -744,7 +775,7 @@ En el estudio prospectivo mencionado, 164 pacientes con malaria vivax
 fueron enrolados mediante vigilancia pasiva. Bajo los criterios clínicos
 y de laboratorio de la Organización Mundial de la Salud (OMS o WHO por
 sus siglas en inglés) para la Malaria
-Severa\textsuperscript{\protect\hyperlink{ref-WHO2014severe}{18}}, 67
+Severa\textsuperscript{\protect\hyperlink{ref-WHO2014severe}{19}}, 67
 fueron clasificados como severos y 97 como no-severos.
 
 Los criterios clínicos empleados fueron: Shock circulatorio (presión
@@ -793,60 +824,64 @@ su uso.
 
 El microarreglo de proteínas es una herramienta que permite medir a
 larga escala los anticuerpos reactivos a determinados antígenos de un
-patógeno presentes en suero. Cada microarreglo ha sido diseñado con 1014
-fragmentos protéicos recombinantes (498 de \emph{P. falciparum} y 516 de
-\emph{P. vivax}, o expresado como Pf498/Pv516) representando 873
-proteínas predichas (427 de \emph{P. falciparum} y 446 de \emph{P.
-vivax}, \textasciitilde{}8\% del total predicho para el genoma de
-\emph{P. vivax} Sal1) seleccionadas luego de una extensiva evaluación
-serológica con un microarreglo de mayor escala (Pf2208/Pv2233). Las
-proteínas del presente microarreglo han sido transcritas/traducidas
-\emph{in vitro} empleando un sistema de expresión libre de células de
-\emph{E. coli} e impresas en bloques de nitrocelulosa sobre una lámina
+patógeno presentes en plasma. El presente estudio hará uso de
+microarreglos diseñados con 1014 fragmentos protéicos recombinantes (498
+de \emph{P. falciparum} y 516 de \emph{P. vivax}, expresado como
+Pf498/Pv516) representando 873 proteínas predichas (427 de \emph{P.
+falciparum} y 446 de \emph{P. vivax}, \textasciitilde{}8\% del total
+predicho para el genoma de \emph{P. vivax} Sal1) seleccionadas luego de
+una extensiva evaluación serológica con uno de mayor escala
+(Pf2208/Pv2233). Las proteínas son transcritas/traducidas \emph{in
+vitro} empleando un sistema de expresión libre de células de \emph{E.
+coli} e impresas en bloques de nitrocelulosa sobre una lámina
 portaobjetos con 8 bloques paralelos, cada uno con 4 arreglos paralelos
-compuestos por cuadrículas de 17x17 \emph{spots}. Este microarreglo ha
-sido validado mediante el sondeo con suero colectado de pacientes con
+compuestos por cuadrículas de 17x17 \emph{spots}. Este diseño ha sido
+validado mediante el sondeo con plasma colectado de pacientes con
 malaria y controles sanos alrededor del
-mundo.\textsuperscript{\protect\hyperlink{ref-King2015FOC}{19}}
+mundo.\textsuperscript{\protect\hyperlink{ref-King2015FOC}{20}}
 
 \paragraph{Aplicación}\label{aplicacion}
 
 La aplicación del instrumento consiste en tres pasos: sondeo, escaneo y
 análisis, tal como ha sido publicado
-previamente.\textsuperscript{\protect\hyperlink{ref-Driguez2015}{20}}
-Primero, dentro de una cámara de incubación, los microarreglos son
-hidratados con buffer de bloqueo. Segundo, el suero se diluye con buffer
-de bloqueo en 1:100 y se pre-absorbe con lisado de \emph{E. coli} en
-10\%(w/v), con el objetivo de reducir ruido de fondo producto de
-anticuerpos reactivos con antígenos bacterianos presentes en el extracto
-protéico empleado en el sistema de expresión. Tercero, se aspira el
-buffer de bloqueo del microarreglo y se agrega el suero pre-absorbido.
-Luego de una incubación \emph{overnight} en cámara húmeda a 4°C y en
-leve agitación, se agrega la solución con anticuerpos secundarios
-conjugados con biotina y posteriormente la solución con fluoróforo
-conjugada con estreptavidina, con lavados y aspirado repetitivos entre
-cada paso. A continuación, ya centrifugadas las láminas son escaneadas
-con lectores de microarreglos de laser confocal (e.g., Genepix 4300A) y
-sus medidas finales obtenidas luego de normalizarlas localmente mediante
-la sustracción de la intensidad de fondo presente alrededor de cada
-\emph{spot}. Finalmente, se procede al análisis de los datos el cual
-será detallado \protect\hyperlink{procanal}{líneas abajo}.
+previamente.\textsuperscript{\protect\hyperlink{ref-Driguez2015}{21}}
+Primero, previo al sondeo los microarreglos se hidratan con buffer de
+bloqueo dentro de cámaras de incubación. Paralelamente, el plasma de los
+pacientes se diluye con buffer de bloqueo en 1:100 y se pre-absorbe con
+lisado de \emph{E. coli} en 10\%(w/v), con el objetivo de reducir ruido
+de fondo en las mediciones tanto por uniones inespecíficas con el
+sustrato como por antígenos bacterianos del sistema de expresión RTS.
+Segundo, aspirado el buffer de bloqueo del microarreglo, se procede con
+el sondeo al agregar el plasma pre-absorbido e incubar \emph{overnight}
+en cámara húmeda a 4°C con leve agitación. Tercero, luego de lavados y
+aspirado repetitivos antes y después de cada paso, se agrega la solución
+con anticuerpos secundarios biotinilados y posteriormente la solución
+con fluoróforos conjugados con estreptavidina. Cuarto, luego de
+centrifugar las láminas, se procede al escaneo de las fluorescencias con
+lectores de microarreglos de laser confocal (e.g., Genepix 4300A). Las
+medidas crudas se obtienen luego de una normalización local mediante la
+sustracción de la intensidad de fondo presente alrededor de cada
+\emph{spot}, ejecutada en el software del lector (Genepix Pro 7).
+Finalmente, se procede al análisis de los datos el cual será detallado
+en \protect\hyperlink{procanal}{la sección 4.4}.
 
-\paragraph{Validez y confiabilidad}\label{validez}
+\hypertarget{validez}{\paragraph{Validez y
+confiabilidad}\label{validez}}
 
-Los métodos aquí empleados seguirán la metodología previamente reportada
-para el presente intrumento de
-medición.\textsuperscript{\protect\hyperlink{ref-crompton2010}{6}}
+Ambos parámetros será evaluados seguiendo la metodología empleada en
+estudios
+previos\textsuperscript{\protect\hyperlink{ref-crompton2010}{6}} y
+estará incluido en la \protect\hyperlink{procanal}{sección 4.4}.
 
-En primer lugar, la validez o exactitud del experimento será evaluada
-mediante la correlación entre las lecturas de los antígenos-IVTT y sus
+Primero, la validez o exactitud del experimento será evaluada mediante
+la correlación lineal entre las lecturas de los antígenos-IVTT y sus
 correspondientes proteínas purificadas por muestra, compuestas por
 proteínas de inmunogenicidad conocida y expresadas por un sistema dentro
 de célula.
 
-En segundo lugar, la confiabilidad o reproducibilidad será evaluada
-mediante la correlación entre controles positivos agregados a las
-lecturas del primer y segundo día de sondeo de las muestras.
+Segundo, la confiabilidad o reproducibilidad será evaluada mediante la
+correlación lineal entre controles positivos agregados a las lecturas
+del primer y segundo día de sondeo de las muestras.
 
 \subsubsection{Codificación y creación del archivo de
 datos}\label{codificacion-y-creacion-del-archivo-de-datos}
@@ -873,7 +908,7 @@ las proteínas y sus lecturas crudas en MFI por código de paciente.
 datos}\label{procanal}}
 
 Todo el análisis estadístico se realizará en el software de computación
-estadística R\textsuperscript{\protect\hyperlink{ref-R}{11}}, el cual se
+estadística R\textsuperscript{\protect\hyperlink{ref-R}{14}}, el cual se
 complementará con funciones provenientes de distintos paquetes.
 
 \subsubsection{Procesamiento}\label{procesamiento}
@@ -889,7 +924,7 @@ entre muestras y filtrado en base al punto de corte establecido. Por
 último, se asociarán ambas matrices de datos en un
 \texttt{ExpressionSet}, a través de los códigos de pacientes, empleando
 el paquete
-\texttt{Biobase}.\textsuperscript{\protect\hyperlink{ref-Biobase}{21}}
+\texttt{Biobase}.\textsuperscript{\protect\hyperlink{ref-Biobase}{22}}
 
 \subsubsection{Confirmación de
 hipótesis}\label{confirmacion-de-hipotesis}
@@ -900,20 +935,20 @@ diferencias entre variables contínuas y no pareadas de dos grupos,
 usando t-Student o Mann-Whitney, dependiendo de la distribución.
 Segundo, se realizará un test de reactividad diferenciada de anticuerpos
 entre dos grupos, usando el test t-moderado empírico de Bayes o
-eBayes\textsuperscript{\protect\hyperlink{ref-smyth2004ebayes}{22}} con
+eBayes\textsuperscript{\protect\hyperlink{ref-smyth2004ebayes}{23}} con
 corrección por comparación múltiple de la razón de falsos
 descubrimientos por el método de Benjamini-Hochberg, disponible en el
 paquete
-\texttt{limma}.\textsuperscript{\protect\hyperlink{ref-limma}{23}}
+\texttt{limma}.\textsuperscript{\protect\hyperlink{ref-limma}{24}}
 Tercero, se realizará un \emph{clustering} jerárquico para agrupar a los
 antígenos identificados en base a su distancia euclidiana, disponible en
 el paquete
-\texttt{NMF}.\textsuperscript{\protect\hyperlink{ref-Gaujoux2010NMF}{24}}
+\texttt{NMF}.\textsuperscript{\protect\hyperlink{ref-Gaujoux2010NMF}{25}}
 Finalmente, se mostrarán las siguiente características protéicas de los
 antígenos identificados: presencia de dominios transmembrana, péptido
 señal, número de ortólogos en \emph{Plasmodium}, ontología génica y
 razón de mutaciones no-sinónimas sobre sinónimas, disponibles en la base
-de datos PlasmoDB.\textsuperscript{\protect\hyperlink{ref-plasmodb}{25}}
+de datos PlasmoDB.\textsuperscript{\protect\hyperlink{ref-plasmodb}{26}}
 
 \subsubsection{Visualización de
 resultados}\label{visualizacion-de-resultados}
@@ -930,9 +965,6 @@ segmentado por clusters.
 \section{ASPECTOS ADMINISTRATIVOS}\label{aspectos-administrativos}
 
 \subsection{Cronograma de actividades}\label{cronograma-de-actividades}
-
-Dado que las muestras ya han sido colectadas, solo se procederá a
-recolectar lo datos a través del instrumento de medición descrito.
 
 \begin{longtable}[]{@{}lllllll@{}}
 \toprule
@@ -954,7 +986,8 @@ Correcciones & & & & & X &\tabularnewline
 financiamiento}\label{presupuesto-y-financiamiento}
 
 El proyecto será realizado en El Centro de Enfermedades Tropicales de la
-Marina de los Estados Unidos NAMRU-6 y financiado por ****.
+Marina de los Estados Unidos NAMRU-6 y
+\textcolor{red}{financiado por ****}.
 
 \begin{longtable}[]{@{}lcc@{}}
 \toprule
@@ -1100,79 +1133,86 @@ American Journal of Tropical Medicine and Hygiene}.
 2016;94(6):1200-1207.
 doi:\href{https://doi.org/https://doi.org/10.4269/ajtmh.15-0369}{https://doi.org/10.4269/ajtmh.15-0369}.
 
-\hypertarget{ref-R}{}
-11. R Core Team. \emph{R: A Language and Environment for Statistical
-Computing}. Vienna, Austria: R Foundation for Statistical Computing;
-2016. \url{https://www.R-project.org/}.
-
-\hypertarget{ref-CienciaReproducible2016}{}
-12. Rodríguez-Sanchez F, Pérez-Luque AJ, Bartomeus I, Varela S. Ciencia
-reproducible: qué, por qué, cómo? \emph{ECOS}. 2016;25(2):83-92.
-doi:\href{https://doi.org/10.7818/ecos.2016.25-2.11}{10.7818/ecos.2016.25-2.11}.
+\hypertarget{ref-arevalo2016}{}
+11. Arévalo-Herrera M, Lopez-Perez M, Dotsey E, et al. Antibody
+profiling in naïve and semi-immune individuals experimentally challenged
+with plasmodium vivax sporozoites. \emph{PLOS Neglected Tropical
+Diseases}. 2016;10(3):1-15.
+doi:\href{https://doi.org/10.1371/journal.pntd.0004563}{10.1371/journal.pntd.0004563}.
 
 \hypertarget{ref-vigil2010}{}
-13. Vigil A, Davies DH, Felgner PL. Defining the humoral immune response
+12. Vigil A, Davies DH, Felgner PL. Defining the humoral immune response
 to infectious agents using high-density protein microarrays.
 \emph{Future microbiology}. 2010;5(2):241-251.
 
 \hypertarget{ref-leroch2009postmod}{}
-14. Chung D-WD, Ponts N, Cervantes S, Le Roch KG. Post-translational
+13. Chung D-WD, Ponts N, Cervantes S, Le Roch KG. Post-translational
 modifications in plasmodium: More than you think! \emph{Molecular and
 biochemical parasitology}. 2009;168(2):123-134.
 
+\hypertarget{ref-R}{}
+14. R Core Team. \emph{R: A Language and Environment for Statistical
+Computing}. Vienna, Austria: R Foundation for Statistical Computing;
+2016. \url{https://www.R-project.org/}.
+
+\hypertarget{ref-CienciaReproducible2016}{}
+15. Rodríguez-Sanchez F, Pérez-Luque AJ, Bartomeus I, Varela S. Ciencia
+reproducible: qué, por qué, cómo? \emph{ECOS}. 2016;25(2):83-92.
+doi:\href{https://doi.org/10.7818/ecos.2016.25-2.11}{10.7818/ecos.2016.25-2.11}.
+
 \hypertarget{ref-abbas2012}{}
-15. Abbas A, Lichtman A, Pillai S. \emph{Inmunología Celular Y Molecular
+16. Abbas A, Lichtman A, Pillai S. \emph{Inmunología Celular Y Molecular
 + Student Consult}. Elsevier Health Sciences Spain; 2012.
 \url{https://books.google.es/books?id=iQCupVehIXQC}.
 
 \hypertarget{ref-immunomics2016}{}
-16. De Sousa KP, Doolan DL. Immunomics: A 21st century approach to
+17. De Sousa KP, Doolan DL. Immunomics: A 21st century approach to
 vaccine development for complex pathogens. \emph{Parasitology}.
 2016;143(02):236-244.
 
 \hypertarget{ref-sette2005}{}
-17. Sette A, Fleri W, Peters B, Sathiamurthy M, Bui H-H, Wilson S. A
+18. Sette A, Fleri W, Peters B, Sathiamurthy M, Bui H-H, Wilson S. A
 roadmap for the immunomics of category a--C pathogens. \emph{Immunity}.
 2005;22(2):155-161.
 
 \hypertarget{ref-WHO2014severe}{}
-18. WHO. Severe malaria. \emph{Trop Med Int Health}. 2014;19:7-131.
+19. WHO. Severe malaria. \emph{Trop Med Int Health}. 2014;19:7-131.
 doi:\href{https://doi.org/10.1111/tmi.12313_2}{10.1111/tmi.12313\_2}.
 
 \hypertarget{ref-King2015FOC}{}
-19. King CL, Davies DH, Felgner P, et al. Biosignatures of
+20. King CL, Davies DH, Felgner P, et al. Biosignatures of
 exposure/transmission and immunity. \emph{American Journal of Tropical
 Medicine and Hygiene}. 2015;93(3 Suppl):16-27.
 doi:\href{https://doi.org/10.4269/ajtmh.15-0037}{10.4269/ajtmh.15-0037}.
 
 \hypertarget{ref-Driguez2015}{}
-20. Driguez P, Doolan DL, Molina DM, et al. Protein microarrays for
+21. Driguez P, Doolan DL, Molina DM, et al. Protein microarrays for
 parasite antigen discovery. In: Peacock C, ed. \emph{Parasite Genomics
 Protocols}. New York, NY: Springer New York; 2015:221-233.
 doi:\href{https://doi.org/10.1007/978-1-4939-1438-8_13}{10.1007/978-1-4939-1438-8\_13}.
 
 \hypertarget{ref-Biobase}{}
-21. Huber, W., Carey, et al. Orchestrating high-throughput genomic
+22. Huber, W., Carey, et al. Orchestrating high-throughput genomic
 analysis with Bioconductor. \emph{Nature Methods}. 2015;12(2):115-121.
 \url{http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html}.
 
 \hypertarget{ref-smyth2004ebayes}{}
-22. Smyth GK, others. Linear models and empirical bayes methods for
+23. Smyth GK, others. Linear models and empirical bayes methods for
 assessing differential expression in microarray experiments. \emph{Stat
 Appl Genet Mol Biol}. 2004;3(1):3.
 
 \hypertarget{ref-limma}{}
-23. Ritchie ME, Phipson B, Wu D, et al. limma powers differential
+24. Ritchie ME, Phipson B, Wu D, et al. limma powers differential
 expression analyses for RNA-sequencing and microarray studies.
 \emph{Nucleic Acids Research}. 2015;43(7):e47.
 
 \hypertarget{ref-Gaujoux2010NMF}{}
-24. Gaujoux R, Seoighe C. A flexible r package for nonnegative matrix
+25. Gaujoux R, Seoighe C. A flexible r package for nonnegative matrix
 factorization. \emph{BMC Bioinformatics}. 2010;11(1):367.
 doi:\href{https://doi.org/10.1186/1471-2105-11-367}{10.1186/1471-2105-11-367}.
 
 \hypertarget{ref-plasmodb}{}
-25. Aurrecoechea C, Brestelli J, Brunk BP, et al. PlasmoDB: A functional
+26. Aurrecoechea C, Brestelli J, Brunk BP, et al. PlasmoDB: A functional
 genomic database for malaria parasites. \emph{Nucleic acids research}.
 2009;37(suppl 1):D539-D543.
 
