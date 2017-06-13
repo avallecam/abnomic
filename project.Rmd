@@ -63,23 +63,25 @@ OR:
 RESUMEN: CORRIGELO AL FINAL 
 -->
 
-> ~~RESUMEN A ESCRIBIR Y CORREGIR AL FINAL!!!!
-> El presente proyecto tiene como objetivo identificar 
-> antígenos con relevancia clínica contra la malaria vivax.
-> Para ello, se realizará un perfil a larga escala de anticuerpos
-> en pacientes sintomáticos a través de microarreglos de 
-> 500 proteínas de *Plasmodium vivax* y 500 de *P. falciparum*. 
-> Se contrastarán parámetros generales de la respuesta humoral 
-> y evaluará la reactividad diferenciada de antígenos en pacientes estratificados 
-> por exposición previa y severidad. 
-> Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
-> con posible aplicación en la vigilancia sero-epidemiológica.
-> Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
-> con posible aplicación en la vigilancia sero-epidemiológica.
-> Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
-> con posible aplicación en la vigilancia sero-epidemiológica.
-> Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
-> con posible aplicación en la vigilancia sero-epidemiológica.~~
+~~RESUMEN A ESCRIBIR Y CORREGIR AL FINAL!!!!
+El presente proyecto tiene como objetivo identificar 
+antígenos con relevancia clínica contra la malaria vivax.
+Para ello, se realizará un perfil a larga escala de anticuerpos
+en pacientes sintomáticos a través de microarreglos de 
+500 proteínas de *Plasmodium vivax* y 500 de *P. falciparum*. 
+Se contrastarán parámetros generales de la respuesta humoral 
+y evaluará la reactividad diferenciada de antígenos en pacientes estratificados 
+por severidad y episodios previos. 
+Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
+con posible aplicación en la vigilancia sero-epidemiológica.
+Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
+con posible aplicación en la vigilancia sero-epidemiológica.
+Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
+con posible aplicación en la vigilancia sero-epidemiológica.
+Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
+con posible aplicación en la vigilancia sero-epidemiológica.
+Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
+con posible aplicación en la vigilancia sero-epidemiológica.~~
 
 
 # PLANTEAMIENTO DEL PROBLEMA
@@ -103,101 +105,26 @@ Malaria es una enfermedad infecciosa de importancia mundial,
 causada por protozoarios parásitos del género _Plasmodium_ 
 y transmitida por mosquitos del género _Anopheles_. 
 En el 2015, se estimaron 212 millones de casos y 429,000 muertes 
-atribuidas a esta infección a nivel mundial. [@WHO2016world] 
+atribuidas a esta infección<!-- a nivel mundial-->. [@WHO2016world] 
 Aunque <!--Si bien--> _P. falciparum_ representó el 96 y 99% de estas cifras,
 fuera de África se estimó que _P. vivax_ fue responsable 
 del 41 y 86%, respectivamente.
 Más aún, la región de las Américas tuvo la mayor proporción 
 de estos casos (69%)
-donde Perú fue el tercer país con más reportes <!--de malaria--> (19%), 
+donde Perú fue el tercer país con más reportes <!--de malaria--> (n=63,153<!--19%-->), 
 detrás de Brasil y Venezuela, 
-atribuidos en un 80% (62,220 en total) a dicha especie. [@rosas2016peru]
+atribuidos en un 80% a dicha especie. [@rosas2016peru]
 
-<!--  por _P. vivax_ (24%) (30%) 
-[@WHO2016world; WHO world report
-@howes2016global; VIVAX world
-@wassmer2015; SEVERE world
-@rosas2016peru VIVAX peru
-] 
--->
-
-Reportes recientes de enfermedad severa y fatal
-causados por _P. vivax_ han desafiado 
-su tradicional condición de enfermedad benigna. [@quispe2014]
-<!--Incluso, con una patogénesis similar a la desarrollada 
-por _P. falciparum_. [@barber2015]-->
-A pesar de este reconocimiento, factores condicionantes como la
-respuesta del hospedero aún no han sido explorados. <!--[@rosas2016peru]-->
-<!--Con respecto a sus factores condicionantes, la respuesta inmune humoral
-del hospedero aún no ha sido completamente caracterizada.-->
-Por un lado, modelos experimentales <!--de malaria falciparum severa--> 
-han sugerido un rol de la inmunidad en la reducción de la severidad. [@Moreno2013]
-Sin embargo, estudios preliminares basados en 
-la respuesta de anticuerpos contra un solo antígeno
-han sugerido un grado similar de exposición previa
-entre pacientes con malaria vivax severa y no complicada. [@baldevi2013] 
-<!--Sin embargo, ningún estudio hasta el momento ha contrastado a una mayor escala 
-la respuesta inmune humoral entre dichos grupos. [@rosas2016peru]-->
-Hasta el momento, 
-dicha hipótesis no se ha puesto a prueba con un enfoque a larga escala, 
-cuya aplicación ha descubierto nuevos antígenos con mayor resolución para la discriminación de condiciones clínicas relevantes como inmunidad y exposición. [@crompton2010; @Helb2015exposure]
-
-<!--
-La malaria por _P. vivax_ ha desafiado 
-su tradicional condición de enfermedad benigna debido a 
-reportes recientes de enfermedad severa y fatal. [@quispe2014]
-
-
-, en comparación a los tradicionales
-
-En contraste a este enfoque,
-estudios a larga escala han descubierto antígenos
-asociados a exposición o inmunidad distintos a los tradicionales y
-con mayor resolución en la discriminación de dichas condiciones clínicas relevantes. [@crompton2010]
-
-basado en un solo antígeno protéico [@cutts2014meta]
-los perfiles de anticuerpos a larga escala han demostrado la amplitud y heterogeneidad 
-de las respuestas humorales [@crompton2010].
-de respuestas de anticuerpos a 
-(PvCSP, PvMSP-1~19~, PvMSP-1~NT~ y PvAMA-1)
-la cual incrementa con exposiciones consecutivas a la infección. [@crompton2010]
--->
-
-
-<!-- 
-luego de una subsecuente exposición a la infección
- 
-enfoques a larga escala han demostrado que
-
-la malaria induce potentes respuestas de anticuerpos 
-que incrementan con exposiciones consecutivas [@crompton2010]
- 
- Por una parte, los enfoques a larga escala han demostrado que
-la malaria induce potentes respuestas de anticuerpos 
-que incrementan con exposiciones consecutivas [@crompton2010].
-Por otra, estudios basados en la respuesta contra un solo antígeno
-han sugerido un grado similar de exposición previa
-entre pacientes con malaria vivax severa y no complicada. [@baldevi2013] 
- 
- mediante la cuantificación 
-de títulos de anticuerpos IgG anti- _Pv_ MSP1. 
- 
- un reciente estudio sugirió que su
- 
- Incluso, se ha demostrado una mayor contribución 
-de la parasitemia oculta en su patogénesis, al igual que con _P. falciparum_ 
-pero con acumulación tisular en órganos sin endotelio. [@barber2015]
- Además, debido al incremento conocido
-de la respuesta inmune humoral ante una segunda exposición al patógeno, se ejecutará la misma comparación
-con los pacientes estratificados por eventos previos de malari
- biomasa parasitaria total y no la circulante 
- 
- Si bien se estima que la malaria severa representa menos del 
-3% de los casos a nivel mundial [@WHO2016world], 
-se han logrado identificar heterogeneidades geográficas 
-con respecto a las manifestaciones clínicas casuadas por _P. vivax_. [@rahimi2014meta]
- --> 
-
+Reportes recientes de malaria severa y fatal causados por _P. vivax_ han desafiado 
+su tradicional condición de enfermedad benigna. [@baird2009; @quispe2014]
+<!--Se ha propuesto que, en parte,-->El incremento de estos casos puede ser consecuencia de 
+un retrazo en la adquisición de inmunidad en la población por 
+una reducción en la intensidad de transmisión. [@reyburn2015]
+<!--o exposición a la infección, ES externalidad negativa-->
+Por ello, tanto su actual subestimación [@llanoschea2015] como la auscencia de marcadores serológicos de protección contra la severidad en las actuales estrategias de eliminación [@accelerate2016] podría incrementar su prevalencia a largo plazo. 
+En contraste con dicha hipótesis, pacientes de la amazonía peruana con malaria vivax severa y no complicada mostraron un grado similar de exposición previa,
+basado en la respuesta humoral contra un marcador tradicional. [@baldevi2013]
+Sin embargo, recientes estudios a larga escala han desafiado su validez como indicador de inmunidad o exposición. [@crompton2010; @Helb2015exposure]
 
 Por esta razón,
 el presente estudio tiene como objetivo comparar la respuesta de anticuerpos
@@ -205,65 +132,21 @@ ante la infección con malaria vivax
 contra más de 500 antígenos de _P. vivax_
 <!-- expresados en el estadio eritrocítico de la infección. -->
 en pacientes severos y no-severos
-provenientes de <!--un estudio prospectivo conducido en--> la 
+<!--provenientes-->de <!--un estudio prospectivo conducido en--> la 
 ciudad de Iquitos<!--entre marzo del 2012 y junio del 2013-->,
 empleando microarreglos de proteínas. 
-Primero, se identificarán los antígenos con reactividad serológica diferenciada 
+Hipotetizamos que los no-severos poseen mayor reactividad serológica 
+contra antígenos de exposición o invasión y adhesión celular, 
+con respecto a los severos.
+Primero, se identificarán los antígenos con reactividad<!-- serológica--> diferenciada 
 entre ambos grupos.
-Luego, se discriminarán las respuestas secundarias de las primarias
-determinando los antígenos con mayor reactividad en pacientes
-con exposición previa a esta infección.
+Luego, se determinarán los antígenos de respuesta secundaria en pacientes
+con episodios previos de esta infección.
 Finalmente, se describirán sus características protéicas junto 
 a los antígenos con mayor reactividad en toda la muestra 
 con el propósito de proponerlos como candidatos a vigilancia sero-epidemiológica.
 
-<!--
-dada la diferencia entre respuestas humorales secundarias y primarias,
-
-Para ello, se hará uso de microarreglos de proteínas 
-con más de 500 antígenos de _P. vivax_ presentes en el estadio 
-sanguíneo de la infección en el humano.
-
-y se emplearán a tres parámetros: 
-reactividad serológica, amplitud e intensidad de respuesta
-
-
-debido a que las respuestas de anticuerpos secundarias 
-son mayores a las de una infección primaria, 
-se ejecutará la misma comparación con los pacientes estratificados 
-por exposición previa a la malaria.
-
-
-en base a su amplitud, intensidad y reactividad serológica
-
-debido al incremento conocido de la respuesta inmune humoral ante
-una segunda infección con el patógeno
-
-Para ello, se hará uso de microarreglos de proteínas 
-con más de 500 antígenos de _P. vivax_ expresados en el estadio 
-asexual sanguíneo de la infección en el humano.
-
-El presente estudio tiene el objetivo de identificar antígenos de *P. vivax*
-discriminantes de condiciones clínicas relevantes como severidad o exposición previa.
-Para ello se 
-Se hará uso de microarreglos de proteínas los cuales incluyen 
-más de 500 antígenos de _P. vivax_ expresados en estadío asexual sanguíneo 
-en el humano.
--->
-
 ## Preguntas de investigación
-
-1. ¿Cuáles son los antígenos de _P. vivax_ con reactividad serológica diferenciada
-ante la infección con malaria vivax entre pacientes severos y no-severos<!--, 
-de la ciudad de Iquitos (Loreto-Perú)-->?
-
-2. ¿Cuáles son los antígenos de _P. vivax_ con reactividad serológica diferenciada
-ante la infección con malaria vivax entre pacientes con y sin exposición previa<!--, 
-de la ciudad de Iquitos (Loreto-Perú)-->?
-
-3. ¿Cuáles son las características protéicas de los antígenos de _P. vivax_
-con reactividad diferenciada o predominante
-en pacientes con malaria vivax?
 
 <!--
 Enuncie la pregunta de investigación que se va tratar en este estudio en una oración corta y directa.
@@ -276,11 +159,26 @@ Comparador: ¿Cuál es el grupo de comparación?
 Outcome: ¿Cuál es el resultado o desenlace de interés?
 -->
 
+1. ¿Cuáles son los antígenos de _P. vivax_ con reactividad serológica diferenciada
+ante la infección con malaria vivax entre pacientes severos y no-severos<!--, 
+de la ciudad de Iquitos (Loreto-Perú)-->?
+
+2. ¿Cuáles son los antígenos de _P. vivax_ con reactividad serológica diferenciada
+ante la infección con malaria vivax entre pacientes con y sin episodios previos<!--, 
+de la ciudad de Iquitos (Loreto-Perú)-->?
+
+3. ¿Cuáles son las características protéicas de los antígenos de _P. vivax_
+con reactividad diferenciada o predominante
+en pacientes con malaria vivax?
+
 ## Objetivos
+
 <!-- 
-  Objetivos:
+Objetivos:
   ¿Cuáles son los objetivos que piensas explorar en este estudio? 
-Usualmente se definen después de tener clara la pregunta de investigación y de haber elaborado el marco teórico. Deben ser pocos y enfocarse sólo en el tema de interés.
+  Usualmente se definen después de tener clara la pregunta de investigación y de haber 
+  elaborado el marco teórico. Deben ser pocos y enfocarse sólo en el tema de interés.
+
 Hipótesis:
   Describa la respuesta esperada a la pregunta de investigación.
 -->
@@ -293,17 +191,16 @@ discriminante de condiciones clínicas relevantes ante la infección con malaria
 <!-- 
 - Identificar antígenos de _P. vivax_ con reactividad serológica 
 diferenciada ante la infección con malaria vivax entre pacientes 
-según su severidad y exposición previa.
+según su severidad y episodios previos.
 
 un subconjunto de
 contra la malaria vivax severa 
-
 -->
   
 ### Específicos
 <!--  
 - Identificar antígenos con reactividad diferenciada según la
-severidad y exposición previa de los pacientes con malaria vivax.
+severidad y episodios previos de los pacientes con malaria vivax.
 - Identificar los antígenos con reactividad predominante en los pacientes 
 con malaria vivax.
 sintomática
@@ -314,7 +211,7 @@ severos y no-severos.
 
 - Identificar antígenos de _P. vivax_ con reactividad serológica 
 diferenciada ante la infección con malaria vivax entre pacientes 
-con y sin exposición previa.
+con y sin episodios previos.
 
 - Describir las características protéicas de los antígenos con reactividad 
 diferenciada o predominante<!-- según parámetros disponibles en la base de datos PlasmoDB-->.
@@ -323,22 +220,21 @@ diferenciada o predominante<!-- según parámetros disponibles en la base de dat
 ### Exploratorio
 
 - Comparar la amplitud e intensidad de respuesta de anticuerpos según 
-la<!-- exposición previa, severidad y--> edad de los pacientes con malaria vivax.
+la<!-- severidad, episodios previos y--> edad de los pacientes con malaria vivax.
 
 <!--
 - Comparar la amplitud e intensidad de respuesta de anticuerpos
 según la edad de los pacientes con malaria vivax.
 - Comparar la amplitud e intensidad de respuesta de anticuerpos según 
-la exposición y severidad por rangos de edad de los pacientes con malaria vivax.
+la severidad y episodios previos por rangos de edad de los pacientes con malaria vivax.
 -->
 
 ## Justificación {#justif}
 
-<!-- e importancia 
-DOS PÁRRAFOS -> BIOMARCADORES Y HERRAMIENTAS DE ANÁLISIS
--->
+<!-- e importancia -->
 
 Ante la reemergencia repetitiva de la malaria en la amazonía peruana, 
+[@griffing2013history; @soto2017spatio; @rosas2016peru]
 la implementación de vigilancias serológicas programáticas en nuestro país
 es una prioridad. [@hotspots2015] 
 En zonas con baja transmisión, estos ensayos poseen una mayor sensibilidad y representan
@@ -350,34 +246,18 @@ discriminantes de condiciones clínicas como severidad o exposición
 que permitirán optimizar y acelerar su ejecución en programas de salud pública contra
 la malaria en el Perú en miras a su control y posterior eliminación. [@accelerate2016]
 
-<!--
-En zonas con baja transmisión,
-estos ensayos poseen una mayor sensibilidad y representan un menor gasto económico 
-en comparación a las estrategias convensionales de monitoreo y control. [@elliott2014]
--->
-<!-- Ante la reemergencia repetitiva de esta infección en la amazonía, -->
-<!--es una prioridad-->
-
-<!--[@rosas2016peru]-->
-
 <!-- 
 Históricamente, reemergencias repetitivas de esta infección en la amazonía peruana 
 han demostrado que las estrategias convensionales de monitoreo y control 
 ya no son sostenibles. [@rosas2016peru]
+
 Una solución a este problema está en el uso de anticuerpos 
 especie-específicos como biomarcadores para el monitoreo activo
 de la exposición e inmunidad. 
+
 En zonas de baja transmisión, estos ensayos poseen una 
 mayor sensibilidad y menor gasto económico en comparación a las
 estimaciones entomológicas o prevalencias por parasitemia. [@elliott2014]
-
-Como conclusión, tanto la implementación de novedosas herramientas de análisis 
-con software libre como 
-el descubrimiento de biomarcadores con relevancia clínica contra esta enfermedad
-permitirán reducir las brechas técnicas y de conocimiento que continúan limitando 
-el desarrollo de vigilancias serológicas programáticas en nuestro país. 
-
---
 
 Dada su transmisión baja y estacional, 
 
@@ -391,6 +271,7 @@ identificar _hotspots_ de transmisión [@hotspots2015] y así
 direccionalizar la ejecución de intervenciones, en combinación con estudios geoespaciales. 
 Sin embargo, aún existen brechas técnicas y de conocimiento que limitan el desarrollo 
 y optimización de ensayos serológicos para el desarrollo de vigilancias programáticas. [@rosas2016peru]
+
 Una de ellas es la selección de antígenos de _P. vivax_ en base a su rendimiento, 
 tomando en cuenta parámetros como inmunogenicidad, polimorfismo, 
 magnitud de respuesta, duración, especificidad por especie, sensibilidad y razón de adquicisión. [@elliott2014]
@@ -402,15 +283,9 @@ acelerar el descubrimiento de nuevas proteínas que puedan ser usadas como
 futuros marcadores serológicos óptimos en la ejecución de vigilancia sero-epidemiológica
 y evaluación de políticas de salud contra la malaria vivax.
 
-<!--Por ello, el Proyecto para la Eliminación de Malaria en el Perú tiene como objetivo optimizar ensayos serológicos complementarios a test de diagnóstico rápido con el fin de identificar a portadores asintomáticos [@accelerate2016]-->
-
-
-<!--
+Por ello, el Proyecto para la Eliminación de Malaria en el Perú tiene como objetivo optimizar ensayos serológicos complementarios a test de diagnóstico rápido con el fin de identificar a portadores asintomáticos [@accelerate2016]
 
 ## Consecuencia de la investigación {#consec}
-
-limita: natraleza vigilancia pasiva
-exposición reportada, mas no registrada en historial clínico 
 
 La principal consecuencia de esta investigación estará en la identificación
 de nuevos candidatos a marcadores serológicos en programas de vigilancia contra la malaria vivax. 
@@ -428,10 +303,6 @@ con nuevos diseños experimentales y a su vez flexible para la generación de nu
 en comparación a recientes servidores web. [@gmine2016]
 
 
--->
-
-
-<!--
 Una vacuna efectiva
 permitirá disminuir los índices de infección y mortalidad en niños de
 la región amazónica a causa de esta infección parasitaria. Una vez
@@ -443,10 +314,9 @@ epidemiológicos.
 
 ## Limitaciones {#limit}
 
-Resumimos tres limitaciones el estudio.
+Resumimos tres limitaciones del estudio.
 
-Primero, las muestras a evaluar provienen de pacientes con infecciones no sincronizadas. El muestreo se ejecutó en la fase sintomática, momento en el que acuden al Hospital, con un desconocimiento del inicio de la infección por paciente. Sin embargo, infecciones experimentales han estimado que dicha fase ocurre normalmente entre los 11 y 13 días de infección. [@arevalo2016]
-<!-- CITAR EL EXPERIMENTO DE LA INFECCIÓN EXPERIMENTAL!!!! -->
+Primero, las muestras a evaluar provienen de pacientes con infecciones no sincronizadas. El muestreo se ejecutó en la fase sintomática, momento en el que acuden al Hospital, con un desconocimiento del inicio de la infección por paciente. Sin embargo, infecciones experimentales han estimado que dicha fase ocurre normalmente entre los 11 y 13 días de infección. [@arevalo2014]
 
 Segundo, el estudio posee debilidades propias del diseño experimental a emplear.
 El diseño de tipo Caso Control es suceptible a errores sistemáticos de 
@@ -468,11 +338,6 @@ de eficiencia en la producción del arreglo serán reportados
 - amplificación,
 - clonamiento,
 - expresión,
-
-CORRELACIÓN entre proteínas purificadas VS proteínas IVTT
-para evaluar el plegamiento/purificación
-
-ESPECIES MULTIMÉRICAS???????
 -->
 
 <!--
@@ -492,17 +357,6 @@ Finalmente, un aspecto novedoso del proyecto será el uso del lenguaje de progra
 Este enfoque de análisis permitirá acelerar el progreso en esta área de investigación, automatizar procesos de análisis y reducir las brechas técnicas que que continúan limitando el descubrimiento de biomarcadores relevantes para la aplicación de vigilancias sero-epidemiológicas en nuestro país. 
 
 <!-- 
-En segundo lugar, un aspecto novedoso del presente estudio y de interés para el área estará en el desarrollo 
-de un flujo de trabajo reproducible empleando el lenguaje de programación y 
-software libre R [@R] para el análisis de respuestas serológicas a larga escala. 
-Su implementación otorgará ventajas en su desarrollo, corrección, reporte final y 
-reutilización, estimulando así la contribución de otros grupos 
-y acelerando el progreso en esta área de investigación. [@CienciaReproducible2016]
-Este enfoque de análisis permitirá reducir las brechas técnicas que continúan limitando 
-el conocimiento sobre los antígenos de _P. vivax_ y la aplicación de vigilancias sero-epidemiológicas en nuestro país. 
-
---
-
 Esto debido a la elección de un diseño Caso-Control, ideal para el estudio de casos infrecuentes, la evaluación de multiples factores para el mismo resultado y eficiente en recursos por tiempo. 
 
 Cabe agregar , condición que posibilita escalar su aplicación a tamaño muestral epidemiológico. 
@@ -524,8 +378,6 @@ Describa la respuesta esperada a la pregunta de investigación.
 un subconjunto de antígenos con reactividad serológica 
 y relevancia clínica en _P. vivax_.
 
-.-.-.-.-.-..-.---.-
-
 Los pacientes con malaria vivax no-severa reconocen 
 un subconjunto de antígenos con reactividad serológica 
 y relevancia clínica contra la malaria vivax severa.
@@ -534,12 +386,14 @@ y relevancia clínica contra la malaria vivax severa.
 ### De diferencia entre grupos
 
 1. Los pacientes con malaria vivax no-severa poseen 
-mayor reactividad serológica contra un subconjunto de antígenos de _P. vivax_
-ante la infección que los pacientes con malatia vivax severa.
+mayor reactividad serológica contra<!-- un subconjunto de--> antígenos de _P. vivax_
+asociados a exposición o invasión y adhesión celular
+<!--ante la infección -->con respecto a los pacientes<!-- con malatia vivax--> severos.
 
-2. Los pacientes con exposición previa a malaria poseen
-mayor reactividad serológica contra un subconjunto de antígenos de _P. vivax_
-ante la infección que los pacientes sin exposición previa.
+2. Los pacientes con episodios previos de malaria poseen
+mayor reactividad serológica contra<!-- un subconjunto de--> antígenos de _P. vivax_
+asociados a exposición
+<!--ante la infección -->con respecto a los pacientes sin episodios previos.
 
 ### Descriptiva
 
@@ -550,11 +404,7 @@ y estar bajo presión selectiva por el sistema inmune.<!--, entre ellas la prese
 dominios transmembrana, péptidos señal y 
 razón de mutaciones no-sinónimas sobre sinónimas mayor a 1.-->
 
-<!-- 
-poseen características propias de proteínas
-con localización extracelular y bajo presión selectiva por el sistema inmune.
-
-4 HIPOTESIS
+<!-- 4 HIPOTESIS
 1. Los pacientes con malaria vivax no-severa poseen una 
 amplitud e intensidad de respuesta de anticuerpos mayor a 
 los pacientes con malatia vivax severa.
@@ -606,11 +456,11 @@ los pacientes sin eventos previos reportados.
   **Variables**                      **Clasificación**
   --------------------------------- -------------------
   Reactividad serológica            Cuantitativa
-  Exposición previa                 Cualitativa
+  Episodio previo                   Cualitativa
   Severidad                         Cualitativa
 -->
 
-El presente estudio busca contrastar la respuesta de anticuerpos ante la infección con malaria vivax entre pacientes clasificados según su severidad y exposición previa. Para ello se medirá la variable de reactividad serológica de antígenos de _P. vivax_ luego de sondear plasma de pacientes en un microarreglo de proteínas. Además se clasificará a los pacientes como severos o no-severos de acuerdo a diagnóstico clínico y bioquímico, y como con o sin exposición previa de acuerdo a lo reportado en la encuesta con el médico tratante.
+El presente estudio busca contrastar la respuesta de anticuerpos ante la infección con malaria vivax entre pacientes clasificados según su severidad y episodios previos. Para ello se medirá la variable de reactividad serológica de antígenos de _P. vivax_ luego de sondear plasma de pacientes en un microarreglo de proteínas. Además se clasificará a los pacientes como severos o no-severos de acuerdo a diagnóstico clínico y bioquímico, y como con o sin episodios previos de acuerdo a lo reportado en la encuesta con el médico tratante.
 
 Primero, la reactividad serológica cuantificará la especificidad de los anticuerpos de respuesta contra los antígenos del patógeno _P. vivax_. Esta variable medirá indirectamente la intensidad fluorescente producto de la interacción entre antígeno y anticuerpo, a través de un lector de microarreglos.
 
@@ -758,19 +608,19 @@ VARIABLE INTERVINIENTE con OBJETIVO EXPLORATORIO: EDAD (hipotesis sin poder esta
   Historia clínica y muestra de sangre &\\[15ex]
   \hline
   
-  \textbf{Independiente} Exposición previa
+  \textbf{Independiente} Episodios previos
   & 
   % aCONCEPTUAL: 
-  Presencia de infecciones de malaria en el pasado
+  Exposición a la infección de malaria en el pasado
   &
   % aOPERACIONAL:
-  Número de eventos previos reportados 
+  Número de episodios previos reportados 
   & 
   Encuesta
   & 
   \begin{minipage}{2.2cm} 
-  \textbf{Sin:} 0 eventos.\\
-  \textbf{Con:} 1 o más eventos.
+  \textbf{Sin:} 0 episodios.\\
+  \textbf{Con:} 1 o más episodios.
   \end{minipage}
   &
   Categórica dicotómica
@@ -816,93 +666,87 @@ VARIABLE INTERVINIENTE con OBJETIVO EXPLORATORIO: EDAD (hipotesis sin poder esta
 
 <!-- 
 teoría/conceptos
-metodología
-hallazgos/resultados
+¿hallazgos/resultados?
 -->
-
-<!-- HIPOTESIS 1
-*Fundamentación:*
-
-Ante una infección parasitaria, el sistema inmune responde a la infección
-mediante el reconocimiento de inmunógenos del patógeno por parte de los linfocitos B.
-Esta acción gatilla su diferenciación y la consecuente producción de 
-células plasmáticas encargadas de la secreción de anticuerpos 
-con afinidad o reactividad específica
-contra los antígenos desencadenantes. [@abbas2012]
-
-Generalmente, se reconoce que los antígenos protéicos poseen 
-características generales que permite seleccionarlos de acuerdo a 
-sus propiedades físicas, función y localización celular.
-Este subconjunto suele estar estar directamente relacionado 
-a los niveles de expresión protéica [@vigil2010],
-más aún en patógenos con ciclos de vida complejos, como _P. vivax_,
-quien presentan perfiles de expresión únicos por cada estadio de 
-infección. [@bozdech2008; @westenberger2010; @bozdech2016]
-
-*Formulación:*
--->
-
-<!-- HIPOTESIS 2
-*Fundamentación:*
-
-En contraste a estudios seroepidemiológicos basados en un solo antígeno protéico [@cutts2014meta], 
-los perfiles de anticuerpos a larga escala han demostrado la amplitud y heterogeneidad 
-de las respuestas humorales [@crompton2010].
-En contraste a lo identificado en estudios seroepidemiológicos a nivel poblacional [@cutts2014meta], 
-los estudios de perfiles de anticuerpos a larga escala han reportado antígenos 
-asociados a exposición o inmunidad distintos a los tradicionales
-(PvCSP, PvMSP-1~19~, PvMSP-1~NT~ y PvAMA-1)
-y con mayor resolución en la discriminación de pacientes. [@crompton2010]
-
-
-Los dos principales parámetros de comparación entre grupos, 
-con respecto a la respuesta general de anticuerpos, 
-son la proporción de antígenos reactivos y el promedio de sus intensidades 
-por individuo o amplitud e intensidad de respuesta, respectivamente. [@crompton2010; @King2015FOC; @Helb2015exposure]
-Infecciones experimentales de _P. vivax_ en Colombia con seguimiento longitudinal 
-por 145 días han demostrado que la dinámica de la respuesta humoral 
-diverge entre individuos sin exposición previa (_naive_) y semi-inmunes, 
-en base estos dos parámetros. [@arevalo2016]
-
-Además, la comparación de la intensidad de respuesta por antígenos individuales 
-ha permitido seleccionar proteínas discriminantes entre grupos
-con manifestaciones clínicas relevantes y priorizar su experimentación en ensayos confirmatorios.
-Esta evaluación ha sido ejecutada en la identificación de antígenos diferencialmente reactivos 
-en pacientes con malaria falciparum asintomática en Perú, [@Torres2014asymptomatic]
-o predictores de incidencia y dias desde la última infección con malaria falciparum por 
-individuo en Uganda. [@@Helb2015exposure]
-
-Un reporte preliminar con las muestras a emplear en el presente estudio concluyó que 
-los episodios previos eran secundarios para la severidad. [@baldevi2013] 
-Además, la cuantificación de títulos de anticuerpos IgG anti-PvMSP1 
-sugirió un grado similar de exposición previa entre grupos según severidad.
-Una comparación del perfil a larga escala permitirá 
-poner a prueba dichas hipótesis nuevamente frente a 500 antígenos protéicos.
-
-*Formulación:*
-
-.-.-..-.-.-..-.-.-.-.-.-..
-
-Existe la probabilidad que los pacientes generen anticuerpos contra
-proteínas que sean muy similares entre *P. vivax* y *P. falciparum*, a
-pesar de nunca haber sido infectados por *P. falciparum*. Es por ello
-que, con el fin de eliminar una posible confusión entre ambas
-infecciones, es necesario identificar los antígenos que comparten
-reactividad.
-
-Por último, se buscarán las diferencias entre las muestras de
-diferentes localidades con el fin de averiguar alguna influencia de la
-epidemiología sobre el patrón de anticuerpos, y también se buscará una
-posible relación entre el patrón de anticuerpos y la severidad de la
-infección.
--->
-
 
 ## Antecedentes de la investigación
 
-> \textcolor{red}{pendiente: máximo media cara}
+a. En Africa
+    
+    Un hito en la aplicación de microarreglos de proteínas para el estudio 
+    de la respuesta humoral a escala epidemiológica fue la publicación de 
+    Crompton et al. 2010. [@crompton2010] 
+    Este estudio comparó la respuesta de anticuerpos contra el 23% del proteoma 
+    de _P. falciparum_ antes y después de la temporada de malaria en 220 
+    individuos de Mali, en dos grupos poblacionales: 2-10 y 18-25 años.
+    Dentro del grupo de niños entre 8 y 10 años se identificaron 49 proteínas con 
+    mayor reactividad serológica en el grupo de infectados asintomáticos, en 
+    comparación a los sintomáticos. Cinco de los principales candidatos a vacuna
+    (CSP, LSA-3, MSP1, MSP2, AMA1) no lograron discriminar ambos grupos. Sin embargo,
+    cuatro candidatos secundarios (STARP, LSA-1, RESA, antígeno 332), con expresión en 
+    diferentes estadíos del ciclo biológico, sí lograron tal discriminación.
+    <!--Por último, una alta respuesta contra protéinas intracelulares fue sugerida como un
+    marcador de mayor muerte parasitaria.-->
+    
+    Un segundo hito de interés representa el trabajo de Helb et al. 2015. 
+    [@Helb2015exposure] Ellos reportaron una estrategia para 
+    identificar combinanciones de respuestas 
+    contra más de un anticuerpo que maximicen la información de la exposición reciente
+    al nivel de individuos. 
+    Para ello emplearon modelos basados en el aprendizaje automático o 
+    _machine learning_ para el análisis de las respuestas contra
+    865 antígenos de _P. falciparum_ en 186 niños (3-6 años) de Uganda
+    en base al registro activo y pasivo de sus historias clínicas a los largo de un año.
+    En contraste a los marcadores tradicionalmente emplados para evaluar exposición
+    a nivel poblacional (CSP, MSP1, MSP2, AMA1), [@elliott2014] se identificaron
+    marcadores más informativos como hyp2, GEXP18, EMP1, ETRAMP4, HSP40-II y PF70.
+    La validación de este método permitirá seleccionar mejores marcadores para la 
+    vigilancia sero-epidemiológica, relevante para el guiado y evaluación de los 
+    programas de control y eliminación de malaria a nivel mundial.
+
+b. En Perú
+    
+    El primer estudio en publicarse fue de Torres et al. 2014 [@Torres2014asymptomatic] 
+    donde reportaron marcadores de inmunidad clínica -no esterilizante- de adquisición 
+    natural a la malaria falciparum.
+    Además de ello, el resultado con mayor implicancias fue que
+    estos marcadores presentaron un enrriquecimiento de polimorfismos no-sinónimos, 
+    indicativo de una presión de selección positiva por parte del sistema inmune, a pesar
+    de provenir de una zona con baja transmisión.
+    Las 51 proteínas con mayor reactividad en 14 pacientes infectados y asintomáticos
+    se obtuvieron al comparar
+    las respuestas con 24 paciente sintomáticos provenientes de la Amazonía peruana 
+    (Departamento de Loreto, Provincia de Maynas y Requena)
+    contra 824 fragmentos (699 proteínas) de _P. falciparum_.
+    
+    El segundo y último estudio en ser publicado ha sido el de Chuquiyauri et al. 2015. 
+    [@chuquiyauri2015vivax] Ellos compararon la respuesta contra _P. vivax_ de pacientes
+    con relapsos y reinfección, sin encontrar diferencia alguna entre ambos grupos. Sin 
+    embargo, al igual que el anterior estudio, identificaron un enriquecimiento de 
+    proteínas con polimorfismos no-sinónimos en el grupo de antígenos reactivos. Además,
+    dentro del grupo con mayor reactividad en toda la muestra, resaltaron a 
+    PvMSP-10 como potencial candidato a vacuna al presentar la expresión más consistente 
+    y validar lo reportado por dos estudios previos con enfoque tradicional 
+    donde emplean ambos sistemas de expresión: eucariota y procariota. El estudio empleó
+    un arreglo con 2233 fragmentos (1936 proteínas) en 106 individuos de la ciudad de 
+    Maynas, Loreto - Perú.
 
 <!--
+a. mundial
+
+    Trieu et al. 2011 [@Trieu2011], inmunización experimental contra _P. falciparum_
+    
+    Finney et al. 2014 [@Finney2014], mono- y co-infecciones 
+    de _P. falciparum_ y _P. vivax_ 
+    con anticuerpos de adquisición natural en Papua Nueva Guinea
+
+c. En Latinoamérica
+
+    Molina et al. 2012 [@molina2012] en _P. vivax_
+    con anticuerpos de adquisición natural en Colombia
+    
+    Arévalo-Herrera et al. 2016 [@arevalo2016] inmunización experimental con _P. vivax_ 
+
 Crompton PD (2010) en su investigación titulada “*A prospective
 analysis of the Ab response to Plasmodium falciparum before and
 after a malaria season by protein microarray*” menciona el
@@ -939,69 +783,334 @@ comprensión de estos mecanismos inmunológicos adquiridos puede
 conducir al desarrollo de nuevas estrategias de vacuna contra
 la malaria.
 -->
+
 ## Bases teóricas
 
-> \textcolor{red}{pendiente: máximo media cara}
+<!-- 
+SEVERIDAD
+Por un lado, modelos experimentales de malaria falciparum severa 
+han sugerido un rol de la inmunidad en la reducción de la severidad, [@Moreno2013]
+la cual se adquiere por una constante exposición a la infección. [@Stanisic2015]
 
-<!--
-a. Epidemiología de la Malaria
+.-.-..-.-.-..-.-.-.-.-.-..
 
+INMUNOGENICIDAD
+Ante una infección parasitaria, el sistema inmune responde a la infección
+mediante el reconocimiento de inmunógenos del patógeno por parte de los linfocitos B.
+Esta acción gatilla su diferenciación y la consecuente producción de 
+células plasmáticas encargadas de la secreción de anticuerpos 
+con afinidad o reactividad específica
+contra los antígenos desencadenantes. [@abbas2012]
+
+INMUNÓGENOS
+Generalmente, se reconoce que los antígenos protéicos poseen 
+características generales que permite seleccionarlos de acuerdo a 
+sus propiedades físicas, función y localización celular.
+Este subconjunto suele estar estar directamente relacionado 
+a los niveles de expresión protéica [@vigil2010],
+más aún en patógenos con ciclos de vida complejos, como _P. vivax_,
+quien presentan perfiles de expresión únicos por cada estadio de 
+infección. [@bozdech2008; @westenberger2010; @bozdech2016]
+
+INMUNIDAD
+titulo/nivel de anticuerpos vs edad/exposición -> INMUNIDAD PROTECTORA [@Stanisic2015]
+
+.-.-..-.-.-..-.-.-.-.-.-..
+
+CROSS-REACTIVITY
+Existe la probabilidad que los pacientes generen anticuerpos contra
+proteínas con alta homología entre *P. vivax* y *P. falciparum*
+o especie-específicas (sin ortología con otras especies).
+-->
+
+    
+
+### Malaria vivax
+
+a. Epidemiología
+    
     i.  **A nivel mundial**
     
-    La malaria sigue ejerciendo una enfermedad significativa en todo el
-    mundo. De cinco especies de Plasmodium que causan la enfermedad en
-    humanos, *P. falciparum* y *P. vivax* son responsables de la mayoría
-    de los casos de malaria en todo el mundo (Murray CJ, et al. 2012). Los
-    esfuerzos de investigación se han centrado tradicionalmente en *P.
-    falciparum* causa de la mortalidad que causa en África. Sin embargo,
-    *P. vivax* es la especie más ampliamente distribuida de la malaria, y
-    más de 2,8 millones de personas están en riesgo de adquirir *P. vivax*
-    (WHO, World Malaria Report. 2011).
+        *P. vivax* y *P. falciparum* son los principales responsables de los 
+        casos de malaria en humanos. Ambas especies exponen aproximadamente a
+        2.5 mil millones de personas en riesgo de infección. [@howes2016global]
+        Sin embargo, *P. vivax* es el parásito dominante en la mayoría de regiones fuera 
+        del África Sub-Sahariana, en su mayoría densamente pobladas y empobrecidas.
+        Entre ellas, Etiopía, India, Indonesia y Pakistán acumularon el 78% de casos de 
+        _P.vivax_ a nivel mundial. A su vez, la región de las Américas tuvo la 
+        mayor proporción de estos, con un 69%. [@WHO2016world] A pesar de ello,
+        hasta el momento la mayoría de la investigación y financiamiento está 
+        destinado a la prevención, tratamiento y control de _P. falciparum_. [@path2011]
+    
+    ii. __En el Perú__
+    
+        En el 2015, Perú fue el tercer país con más casos reportados en 
+        Latinoamérica (19%), detrás de Brasil (24%) y Venezuela (30%). [@WHO2016world]
+        El 80% fueron casuados por _P.vivax_ (63,153 en total), en regiones con 
+        endemismo y transmisión heterogénea [@rosas2016peru]. El 95% 
+        pertenecieron al noreste amazónico (con una razón Pv/Pf de 4/1) 
+        y el resto al norte costero 
+        y la región minera del suroeste. Notablemente, una comunidad en 
+        Madre de Dios no ha tenido un solo caso de malaria falciparum en 
+        una década. Con respecto a factores ambientales, en el año 1998 
+        durante el fenómeno El Niño-Oscilación Sur (ENSO) se produjo 
+        el mayor pico de casos anuales en la historia (200,000 casos), con mayor 
+        efecto en el norte costero. [@gagnon2002enso] Los casos anuales 
+        provenientes de Tumbes, Piura y Lambayeque a nivel nacional pasaron de
+        representar menos del 7% en 1996, a un 48% entre 1998 y 1999.
 
-    ii.  **En el continente Sudamericano**
+b. Biología
+    
+    i. __Ciclo Biológico__
+    
+        El ciclo de vida del parasito de la malaria involucra a dos hospederos: 
+        el humano y el mosquito.
+        
+        Primero, en el humano se desarrolla la fase asexual donde se multiplica la biomasa
+        parasitaria al invadir a las células hepáticas y luego a las eritrocíticas.
+        Posterior al ingreso del esporozoitos mediante la picadura del mosquito infectado,
+        estos ingresan a las células hepáticas iniciandose el estadio hepático.
+        Ahí se multiplican hasta formar esquizontes, los cuales egresan en la forma de 
+        merozoitos. Estos inician el estadio eritrocítico al invadir glóbulos 
+        rojos (RBC) pasando por distintas morfologías reconocidas como trofozoitos 
+        inmaduros (en forma de anillo), maduros y esquizontes, los cuales a su
+        ruptura reinfectan nuevos glóbulos rojos. La rapidez de este ciclo determina la 
+        razón de multiplicación parasitaria.
+        Por motivos aún desconocidos, 
+        a partir de los trofozoitos inmaduros se inicia el desarrollo de gametocitos
+        diferenciandose sexualmente dentro del torrente sanguíneo del humano.
+        
+        Segundo, la fase sexual en el mosquito mosquito se inicia mediante la
+        ingestión accidental de gametocitos en la alimentación sanguínea de mosquitos 
+        hembra, con la intención inicial de proveer nutrientes a sus huevos.
+        En su tracto digestivo, los cambios fisico-químicos permiten la ruputa de los 
+        RBC y la liberación de los
+        macrogametocitos y microgametocitos, los cuales forman al macrogameto diploide,
+        desarrollando al ooquiento el cual al enquistarse en pared del estómago medio, 
+        se replica y forma la estructura llamada oocisto. Su ruptura libera a los 
+        esporozoitos, los cuales se dirigen a las glándulas salivares.
+        La transmisión del parásito de la malaria continúa en la siguiente alimentación 
+        del moquitos hembra al liberar el contenido de sus glándulas
+        salivales en el torrente sanguíneo de un nuevo hospedero.
+    
+    ii. __Particularidades__
+        
+        _P.vivax_ posee importantes variantes biológicas que caracterizan su 
+        epidemiología y dinámica de infección [@howes2016global]. Dos de las 
+        más importantes son (i) la presencia de relapsos por la activación de 
+        hipnozoitos, estado de latencia o dormacia en el estadio hepático, 
+        condición que genera reservorios de infección que prolongan 
+        su transmisión; y (ii) el tropismo hacia reticulocitos o RBC inmaduros
+        (1-2% de RBC circulantes), 
+        condición que genera bajas parasitemias en comparación a _P. falciparum_.
+        Por otro lado, el antígeno sanguíneo _Duffy_, predominante en problación 
+        con ancestría africana, es considerado un factor de resistencia a _P.vivax_.
 
-    En las Américas, el *P. vivax* es responsable del 70% de los casos de
-    malaria reportados. Además, existe una creciente preocupación por el
-    impacto en la salud global de las infecciones por *P. vivax* causa de
-    nuestra aparente subestimación de la carga de morbilidad potencial y
-    su amplia distribución geográfica (Arevalo-Herrera M, et al. 2012).
-    Por último, aun cuando los esfuerzos globales de eliminación de la
-    malaria se centran en la reducción de los casos de *P. falciparum* en
-    fase arterial, la etapa hepática de hipnozoito latente confiere una
-    ventaja de supervivencia única para *P. vivax* (Kochar DK, et al.
-    2005).
+c. Severidad
+    
+    i. __Comparación__
+    
+        Entre el 2005 y 2015, menos del 3% de casos no-complicados fueron asumidos 
+        como malaria severa [@WHO2016world]. Históricamente, la malaria vivax 
+        ha sido considerada como "benigna" en comparación a _P.falciparum_ 
+        debido a su: (i) baja invasión parasitaria, sezgada 
+        a reticulocitos y rutas alternas de menor efectividad; y (ii) pobre 
+        citoadhesión de sus glóbulos rojos infectados (iRBC), dada por la auscencia de 
+        protruciones abastonadas o _knob protrusions_, auscencia de genes homólogos 
+        a _var_ o genes _vir_, y a la baja proporción de esquizontes tardíos que 
+        sugieren bajo sequestramiento tisular, corroborado en autopsias. [@wassmer2015]
+        
+        Sin embargo, recientemente se ha demostrado que en los casos severos por _P. vivax_ 
+        la parasitemia periférica subestima la biomasa parasitaria 
+        total [@barber2015]. En aquel estudio, la parasitemia oculta fue la 
+        mayor contribuyente de citoquinas pro-inflamatorias, semejante a lo
+        observado con _P. falciparum_. Aquellos autores sugieren una posible 
+        acumulación parasitaria en partes de órganos sin endotelio.
+        
+    ii. __Patogénesis__
+        
+        Aún no está completamente entendida. Sin embargo, se han propuesto mecanismos
+        en base a lo observado en los casos de malaria cerebral por _P. falciparum_,
+        donde los mecanismos de invasión y adhesión parasitaria son relevantes.
+        Así, la respuesta celular contra la parasitemia, dependiente de su 
+        tasa de multiplicación, sumada a la citoadherencia 
+        de iRBC en estadío esquizonte a endotelio o RBC no infectados (rosetamiento), 
+        desencadena una obstrucción microvascular que activa a sus células endoteliales. 
+        Estas liberan una mayor cantidad de citoquinas pro-inflamatorias, provocando 
+        la pérdida de perfusión y una consecuente disfunción microvasular que progresa 
+        por retroalimentación positiva.
+    
+    iii. __Criterios__
+    
+        Ante la auscencia de una descripción especie-específica, la Malaria Vivax
+        Severa está definida por el criterio para _P. falciparum_ otorgado 
+        por la OMS en el 2014, [@WHO2014severe] el cual incluye uno o más de
+        las siguientes características (todas registradas en mono-infecciones 
+        por _P. vivax_):
+            1. condición neurológica: coma, mareo, pérdida conciencia;
+            2. condición hematológica: anemia/trombocitopenia severa;
+            3. síntomas sistémicos: shock circulatorio; y
+            4. fallo de órganos vitales:
+                disfución respiratoria, estrés respiratorio agudo, 
+                daño renal agudo, ruptura esplénica, 
+                disfunción hepática e ictericia (hiperbilirrubina).
+        Por último, un reciente meta-análisis identificó patrones geográficos 
+        en la prevalencia de manifestaciones clínicas, donde la región de las 
+        Américas presentaba la mayor variedad de disfunciones orgánicas. [@rahimi2014meta]
+    
+    iv. __Riesgo__
+        
+        La vulnerabilidad a la Malaria Severa ha sido asociada a la intensidad de 
+        transmisión y el desarrollo de la inmunidad independiente a la edad. [@reyburn2015]
+        Por ejemplo, en zonas de alta transmisión como en el África Sub-Sahariana, 
+        las poblaciones más vulnerables son: niños menores de 5 años con un desarrollo 
+        incompleto de inmunidad parcial contra la malaria, [@Stanisic2015] 
+        mujeres embarazadas en parte a la adhesión placentaria de iRBC, 
+        [@rogerson2007preg] y viajeros o migrantes sin 
+        inmunidad provenientes de áreas con baja o ninguna transmisión de malaria. 
+        Por otro lado, en zonas de baja transmisión como en Asia y América Latina, 
+        al haber una menor exposición a la infección, la mayoría de la población 
+        llega a la adultez sin haber desarrollado una inmunidad protectiva. 
+        Como consecuencia, tanto en la Amazonía peruana como en el Norte costero la 
+        población adolescente y adulta joven es el más suceptible a desarrollar esta 
+        patología, [@quispe2014; @llanoschea2015] comúnmente al iniciar trabajos a campo 
+        abierto, e.g. actividades madereras o mineras, en zonas de alto riesgo de 
+        contacto con mosquitos infectados. [@factores2001]
+        
+        Cabe agregar que la presencia de comorbilidades, coinfecciones y malnutrición 
+        son reconocidos como factores contribuyentes a la Malaria Severa, los cuales deben
+        ser adecuadamente registrados. Sin embargo, se ha sugerido que la coinfección de 
+        _Plasmodium_ con Dengue no está asociada con una peor enfermedad,
+        asemejándose a una mono-infección con Dengue tanto en frecuencia de síntomas como 
+        en el nivel de marcadores inmunológicos. [@baldevi2016]
+        
+    v. __En el Perú__
+        
+        En el norte costero, Quispe et al. 2014 [@quispe2014] mediante un estudio 
+        retrospectivo (2008-2009) identificó 81/6502 casos con anemia severa (57%), 
+        shock (25%), daño pulmonar (21%), daño renal agudo (14%) y malaria cerebral (11%).
+        Comparados con los pacientes no complicados, los severos fueron mayores 
+        (38 vs 26 años, P<0.001).
+        
+        En el noreste amazónico, un reciente estudio prospectivo dirigido por 
+        El Centro de Enfermedades Tropicales de la Marina de los Estados Unidos 
+        NAMRU-6 (2012-2013) [@smith2013] identificó 67/164 casos con <!--¡¡ACTUALIZAR!!-->
+        síndrome respiratorio agudo (94%), hiperbilirubina (80%), shock (46%), 
+        sangrado (12%) e ictericia conjuntiva (12%). No se encontraron diferencias
+        con respecto a la edad entre no-severos y severos (33.5 vs 30, P=0.956).
+        Sin embargo, sí se identificó una mayor proporción de pacientes con episodios 
+        previos en el grupo de no-severos (67 vs 49%, P=0.007).
+    
+### Respuesta inmune
 
-b. Características de la malaria vivax
+a. En la malaria no complicada
+    
+    Malaria induce potentes respuestas de anticuerpos que incrementan con 
+    exposiciones subsecuentes. [@Stanisic2015] Tradicionalmente, estudios 
+    seroepidemiológicos [@cutts2014meta] han identificado marcadores en la 
+    respuesta de anticuerpos IgG contra: (i) PvCSP, PvMSP-1~19~, PvMSP-9~RIRII~ 
+    y PvAMA-1 asociados infección o exposición, y (ii) PvMSP-1~19~, PvMSP-1~NT~,
+    PvMSP-3$\alpha$ y PvMSP-9~NT~ asociados con protección o inmunidad.
+    Sin embargo, en los últimos 10 años, estudios de perfiles de anticuerpos 
+    de larga escala han demostrado la amplitud y heterogeneidad de dichas 
+    respuestas. [@Portugal2013]
+    
+    Inmunidad clínica
+    titulo/nivel de anticuerpos vs edad/exposición -> 
+    INMUNIDAD PROTECTORA [@Stanisic2015]
 
-    i.  **Malaria vivax severa**
+d. En la malaria severa
+    
+    cacdacad
+    
 
-    Informes recientes de malaria grave y fatal han desafiado el dogma de
-    que *P. vivax* es un enfermedad benigna. Una amplia variedad de
-    complicaciones graves se han descrito y asociado con monoinfecciones
-    de *P. vivax*, que van desde el fallo de un solo órgano (cerebro,
-    hígado, pulmones, riñones, sangre, bazo, etc.) hasta fallas en
-    múltiples órganos que ponen en peligro la vida del paciente (Andrade
-    BB, et al. 2010).
+<!--
+### Inmunómica
 
-    ii.  **Malaria vivax y coinfecciones**
+<!-- 
 
-    En base a esta nueva evidencia, más investigadores proponen ahora que
-    la malaria severa podría ser causada por monoinfecciones de *P.
-    vivax*, especialmente cuando las comorbilidades, como el dengue, la
-    leptospirosis, hepatitis viral, sepsis bacteriana, y P. falciparum,
-    han sido descartadas (Genton B, et al. 2008). Sin embargo, debido a
-    que la mayoría de los casos se originan a partir de áreas coendemicas
-    de *P. vivax / P. falciparum*, la exposición recurrente previa a *P.
-    falciparum* pueden impedirnos ver el papel de *P. vivax* en su
-    totalidad como causa única de una enfermedad grave (Alexandre MA, et
-    al. 2010).
+INMUNOMICA
+En contraste a estudios seroepidemiológicos basados en un solo antígeno protéico [@cutts2014meta], 
+
+los perfiles de anticuerpos a larga escala han demostrado la amplitud y heterogeneidad 
+de las respuestas humorales [@crompton2010].
+
+los estudios de perfiles de anticuerpos a larga escala han reportado antígenos 
+asociados a exposición o inmunidad distintos a los tradicionales
+(PvCSP, PvMSP-1~19~, PvMSP-1~NT~ y PvAMA-1)
+y con mayor resolución en la discriminación de pacientes. [@crompton2010]
+
+
+Los dos principales parámetros de comparación entre grupos, 
+con respecto a la respuesta general de anticuerpos, 
+son la proporción de antígenos reactivos y el promedio de sus intensidades 
+por individuo o amplitud e intensidad de respuesta, respectivamente. [@crompton2010; @King2015FOC; @Helb2015exposure]
+
+Infecciones experimentales de _P. vivax_ en Colombia con seguimiento longitudinal 
+por 145 días han demostrado que la dinámica de la respuesta humoral 
+diverge entre individuos sin exposición previa (_naive_) y semi-inmunes, 
+en base estos dos parámetros. [@arevalo2016]
+
+Además, la comparación de la intensidad de respuesta por antígenos individuales 
+ha permitido seleccionar proteínas discriminantes entre grupos
+con manifestaciones clínicas relevantes y priorizar su experimentación en ensayos confirmatorios.
+Esta evaluación ha sido ejecutada en la identificación de antígenos diferencialmente reactivos 
+en pacientes con malaria falciparum asintomática en Perú, [@Torres2014asymptomatic]
+o predictores de incidencia y dias desde la última infección con malaria falciparum por 
+individuo en Uganda. [@@Helb2015exposure]
+
+a. Enfoques a larga escala
+    
+    svfsvfsnvsfvnfsl
+
+b. Diseños de investigación
+    
+    advfvfsvfv
 -->
+
+### Microarreglos
+
+<!--
+Para ello, se hará uso de microarreglos de proteínas 
+con más de 500 antígenos de _P. vivax_ presentes en el estadio 
+asexual eritrocítico de la infección en el humano.
+
+y se emplearán a tres parámetros: 
+reactividad serológica, amplitud e intensidad de respuesta
+-->
+
+a. Microarreglos de proteínas
+    
+    addvsf
+    A escala mundial, ICEMR King et al. 2015 [@King2015FOC]
+
+b. Análisis de datos
+    
+    i. Softwares
+    
+        VDVFSVFSVFS
+    
+    ii. Métodos
+        
+        1. Normalización
+    
+            VFSVFSBF
+    
+        2. Filtrado
+    
+            dvdsav
+    
+        3. Test estadístico
+    
+            adcacdac
+    
+        4. Comparación múltiple
+    
+            cadcdac
+
 ## Definiciones conceptuales
 
 ### Acrónimos
-
-__RTS:__
-Sistema rápido de traducción de proteínas recombinantes líbre de células.
 
 __IVTT:__
 (Proteína) transcrita/traducida _in vitro_.
@@ -1014,10 +1123,8 @@ normalizada localmente mediante la
 sustracción de la intensidad de fondo presente 
 a su alrededor.
 
-<!--
-__FOC:__
-_Fold-Over-Control_ o Razón sobre el control.
--->
+__RTS:__
+Sistema rápido de traducción de proteínas recombinantes libre de células.
 
 ### Términos
 
@@ -1032,77 +1139,77 @@ según parámetros clínicos y de laboratorio.
 
 a. Generales
   
-**Antígeno.-** Molécula que se une con productos de la respuesta inmune, 
-como anticuerpos o receptores de lifocitos T o B. [@abbas2012]
-
-**Inmunógeno.-** Un antígeno que induce una respuesta inmunitaria. [@abbas2012]
-
-**Inmunoma.-** Conjunto de todos los inmunógenos que interactúan con 
-el sistema inmune de determinado hospedero [@immunomics2016; @sette2005]
-
-**Inmunómica.-** Estudio del inmunoma. [@immunomics2016]
-
-**Anticuerpo.-** Tipo de molécula glucoprotéica, también llamada 
-inmunoglobulina (Ig), producida por los linfocitos B, que se une a antígenos 
-con un grado alto de especificidad y afinidad. [@abbas2012]
-
-**Anticuerpo secundario.-** Anticuerpo de unión específica a la fracción constante 
-de los anticuerpos de un hospedero, comúnmente conjugado con biotina.
-
-**Fluoróforo.-** Componente de una molécula que brinda la cualidad 
-de fluorescencia, comúnmente conjugada con estreptavidina para la detección de 
-moléculas biotiniladas.
-
+    **Antígeno.-** Molécula que se une con productos de la respuesta inmune, 
+    como anticuerpos o receptores de lifocitos T o B. [@abbas2012]
+    
+    **Inmunógeno.-** Un antígeno que induce una respuesta inmunitaria. [@abbas2012]
+    
+    **Inmunoma.-** Conjunto de todos los inmunógenos que interactúan con 
+    el sistema inmune de determinado hospedero [@immunomics2016; @sette2005]
+    
+    **Inmunómica.-** Estudio del inmunoma. [@immunomics2016]
+    
+    **Anticuerpo.-** Tipo de molécula glucoprotéica, también llamada 
+    inmunoglobulina (Ig), producida por los linfocitos B, que se une a antígenos 
+    con un grado alto de especificidad y afinidad. [@abbas2012]
+    
+    **Anticuerpo secundario.-** Anticuerpo de unión específica a la fracción constante 
+    de los anticuerpos de un hospedero, comúnmente conjugado con biotina.
+    
+    **Fluoróforo.-** Componente de una molécula que brinda la cualidad 
+    de fluorescencia, comúnmente conjugada con estreptavidina para la detección de 
+    moléculas biotiniladas.
+    
 b. Específicos
-
-__Antígeno-IVTT:__
-Antígeno objetivo o 
-_spot_ con proteína IVTT a partir de un plásmido con DNA insertado 
-del polipéptido, segmento o exón de interés.
-
-__Control-IVTT:__
-Control negativo o 
-_spot_ con mix de expresión RTS y plásmido sin DNA insertado,
-representante de la intensidad de fondo específica del paciente.
-
-__Proteína purificada:__
-Control de comparación o 
-_spot_ con proteína de antigenicidad conocida expresada dentro de célula.
-
-__Transformación:__
-Logaritmo en base dos de la lectura cruda en MFI de antígenos-IVTT y control-IVTT.
-
-__Normalización:__
-Sustracción de la mediana de los control-IVTT a cada antígeno-IVTT por individuo.
-
-__Intensidad de antígeno:__
-Lectura normalizada de cada antígeno-IVTT entre individuos. 
-También llamada "Reactividad de anticuerpos".
-
-<!-- y expresada como _Fold over control (FOC)_. -->
-
-__Antígeno reactivo:__
-Antígenos-IVTT con una lectura transformada mayor o igual a 
-dos veces la mediana de los control-IVTT por individuo.
-
-<!-- 
-con una intensidad de antígeno mayor o igual a uno
-y calculado como $log_2(FOC) \geq 1$ 
--->
-
-__Frecuencia del antígeno:__
-Porcentaje de individuos con antígeno reactivo por antígeno-IVTT. 
-
-__Filtrado:__
-Remoción de todo antígeno que posea una frecuencia de reactividad 
-menor al 10%.
-
-__Intensidad de respuesta:__
-Promedio de intensidades de antígenos reactivos por individuo
-
-__Amplitud de respuesta:__
-Porcentaje de antígenos reactivos por individuo.
-
+    
+    __Antígeno-IVTT:__
+    Antígeno objetivo o 
+    _spot_ con proteína IVTT a partir de un plásmido con DNA insertado 
+    del polipéptido, segmento o exón de interés.
+    
+    __Control-IVTT:__
+    Control negativo o 
+    _spot_ con mix de expresión RTS y plásmido sin DNA insertado,
+    representante de la intensidad de fondo específica del paciente.
+    
+    __Proteína purificada:__
+    Control de comparación o 
+    _spot_ con proteína de antigenicidad conocida expresada dentro de célula.
+    
+    __Transformación:__
+    Logaritmo en base dos de los MFI de antígenos-IVTT y control-IVTT.
+    
+    __Normalización:__
+    Sustracción de la mediana de los control-IVTT a cada antígeno-IVTT por individuo.
+    
+    __Intensidad de antígeno:__
+    Lectura normalizada de cada antígeno-IVTT entre individuos. 
+    También llamada "Reactividad de anticuerpos".
+    
+    <!-- y expresada como _Fold over control (FOC)_. -->
+    
+    __Antígeno reactivo:__
+    Antígenos-IVTT con una lectura transformada mayor o igual a 
+    dos veces la mediana de los control-IVTT por individuo.
+    
+    <!-- 
+    con una intensidad de antígeno mayor o igual a uno
+    y calculado como $log_2(FOC) \geq 1$ 
+    -->
+    
+    __Frecuencia del antígeno:__
+    Porcentaje de individuos con antígeno reactivo por antígeno-IVTT. 
+    
+    __Filtrado:__
+    Remoción de todo antígeno que posea una frecuencia de reactividad 
+    menor al 10%.
+    
+    __Intensidad de respuesta:__
+    Promedio de intensidades de antígenos reactivos por individuo
+    
+    __Amplitud de respuesta:__
+    Porcentaje de antígenos reactivos por individuo.
+    
 
 
 # METODOLOGÍA
@@ -1155,7 +1262,7 @@ sin evento que se incluirán en la población de comparación.
 
 __Por la finalidad: Analítico.__ A diferencia de un descriptivo, realizaremos compraciones entre grupos y evaluaremos una posible relación causal entre el factor y el efecto.
 
-__Por el Control de la asignación: Observacional.__ A diferencia de un experimental, no controlaremos la asignación de los factores (severidad y exposición previa). Es decir, se procederemos a observar el fenómeno, ejecutar la medición y analizar los resultados.
+__Por el Control de la asignación: Observacional.__ A diferencia de un experimental, no controlaremos la asignación de los factores (severidad y episodios previos). Es decir, se procederemos a observar el fenómeno, ejecutar la medición y analizar los resultados.
 
 __Por el seguimiento: Transversal.__ A diferencia de uno longitudinal, no ejecutaremos un seguimiento. Las variables se medirán una sola vez, en un mismo instante.
 
@@ -1295,7 +1402,7 @@ representando 873 proteínas predichas (427 de _P. falciparum_ y 446 de _P. viva
 seleccionadas luego de una extensiva evaluación serológica con uno 
 de mayor escala (Pf2208/Pv2233).
 Las proteínas son transcritas/traducidas _in vitro_ 
-empleando un sistema de expresión libre de células de _E. coli_ e 
+empleando un sistema de expresión de _E. coli_ libre de células e 
 impresas en bloques de nitrocelulosa sobre una lámina portaobjetos 
 con 8 bloques paralelos, 
 cada uno con 4 arreglos paralelos compuestos por cuadrículas de 17x17 _spots_.
@@ -1405,7 +1512,7 @@ Para ello se hará empleo de los siguientes paquetes:
 
 ### Procesamiento
 
-Preliminarmente, describirá la distribución y proporción de las
+Preliminarmente, se describirá la distribución y proporción de las
 covariables epidemiológicas, clínicas y de laboratorio 
 de los pacientes de la muestra.
 Luego, con las lecturas crudas en MFI se evaluará la validez y 
@@ -1428,7 +1535,7 @@ Segundo, se realizará un test de reactividad diferenciada de anticuerpos entre 
 usando el test t-moderado empírico de Bayes o eBayes [@smyth2004ebayes] 
 con corrección por comparación múltiple de la razón de falsos descubrimientos 
 por el método de Benjamini-Hochberg, disponible en el paquete `limma`. [@limma]
-Tercero, se realizará un _clustering_ jerárquico para agrupar a los
+Tercero, se realizará un agrupamiento jerárquico o _hierarchical clustering_ de los
 antígenos identificados en base a su distancia euclidiana, disponible en el paquete `NMF`. [@Gaujoux2010NMF]
 Finalmente, se mostrarán las siguiente características protéicas de los
 antígenos identificados: presencia de dominios transmembrana, péptido señal, 
@@ -1439,10 +1546,11 @@ número de ortólogos en _Plasmodium_, ontología génica y razón de mutaciones
 Los resultados se visualizarán mediante cinco tipos de gráficos.
 Diagrama de dispersión para mostrar la correlación entre dos variables contínuas, 
 Diagramas de cajas para variables contínuas,
-Diagrama de barras para frecuencias,
+Diagrama de barras para frecuencias, Diagramas tipo volcán o
 _Volcano plots_ para mostrar la reactividad diferenciada de antígenos entre grupos 
-contra el valor P no ajustado y resaltar los antígenos con valor P ajustado significativo, y
-_Heatmaps_ para el perfil serológico en escala de dos colores segmentado por clusters.
+contra el valor P no ajustado resaltando los que posean un P ajustado significativo, 
+y Mapas de calor o _Heatmaps_ para el perfil serológico en escala de dos colores 
+segmentado por racimos o _clusters_.
 
 # ASPECTOS ADMINISTRATIVOS
 
@@ -1453,7 +1561,7 @@ recolectar lo datos a través del instrumento de medición descrito.
 -->
   **ACTIVIDAD PROGRAMADA**
   --------------------------------- ----------- --------- --------- --------- --------- ---------
-                                    **Jun**     **Jul**   **Ago**   **Sep**   **Oct**   **Nov**  
+                                    **Jul**     **Ago**   **Sep**   **Oct**   **Nov**   **Dic**  
   Aprovación del proyecto de tesis  X
   Procesamiento de datos                        X
   Interpretación de resultados                            X

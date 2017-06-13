@@ -37,8 +37,8 @@ GENÉTICA Y BIOTECNOLOGÍA
 \Large
 Comparación de la respuesta de anticuerpos ante la %infección con 
 malaria vivax 
-en pacientes de la ciudad de Iquitos (Loreto - Perú)
-según su severidad y exposición previa
+en pacientes de la Amazonía peruana %ciudad de Iquitos (Loreto - Perú)
+según su severidad y episodios previos %exposición previa
 mediante microarreglos de proteínas
 % aPerfil de anticuerpos en respuesta a la infección con malaria vivax
 %mediante un enfoque inmunómico .
@@ -59,11 +59,11 @@ Bach. Andree Adolfo Valle Campos
 \vspace{1.2 cm}
 
 \Large
-Asesores
+Asesores 
 
-<por confirmar>%Prof. Walter Cabrera-Febolá
+Interno: <por confirmar>%Prof. Walter Cabrera-Febolá
 
-PhD. G. Christian Baldeviano
+Externo: PhD. G. Christian Baldeviano
 
 
 \vspace{1.2 cm}

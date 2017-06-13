@@ -76,7 +76,7 @@ digraph resumen {
 [7]: 'severa'
 [8]: 'inmunidad'
 [9]: 'diseño\\n experimental'
-[10]: 'hallmarks'
+[10]: 'milestones'
 [11]: 'detalles'
 [12]: 'limitaciones'
 [13]: 'normalización'
