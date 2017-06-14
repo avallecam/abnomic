@@ -825,7 +825,7 @@ o especie-específicas (sin ortología con otras especies).
 
     
 
-### Malaria vivax
+### Malaria Vivax
 
 a. Epidemiología
     
@@ -834,7 +834,7 @@ a. Epidemiología
         *P. vivax* y *P. falciparum* son los principales responsables de los 
         casos de malaria en humanos. Ambas especies exponen aproximadamente a
         2.5 mil millones de personas en riesgo de infección. [@howes2016global]
-        Sin embargo, *P. vivax* es el parásito dominante en la mayoría de regiones fuera 
+        Sin embargo, *P. vivax* es el parásito dominante en las regiones fuera 
         del África Sub-Sahariana, en su mayoría densamente pobladas y empobrecidas.
         Entre ellas, Etiopía, India, Indonesia y Pakistán acumularon el 78% de casos de 
         _P.vivax_ a nivel mundial. A su vez, la región de las Américas tuvo la 
@@ -864,34 +864,27 @@ b. Biología
     i. __Ciclo Biológico__
     
         El ciclo de vida del parasito de la malaria involucra a dos hospederos: 
-        el humano y el mosquito.
-        
-        Primero, en el humano se desarrolla la fase asexual donde se multiplica la biomasa
-        parasitaria al invadir a las células hepáticas y luego a las eritrocíticas.
-        Posterior al ingreso del esporozoitos mediante la picadura del mosquito infectado,
-        estos ingresan a las células hepáticas iniciandose el estadio hepático.
-        Ahí se multiplican hasta formar esquizontes, los cuales egresan en la forma de 
-        merozoitos. Estos inician el estadio eritrocítico al invadir glóbulos 
-        rojos (RBC) pasando por distintas morfologías reconocidas como trofozoitos 
+        el humano y el mosquito. En el humano el parásito se desarrolla asexualmente 
+        al invadir a las 
+        células hepáticas y luego a los glóbulos rojos (RBC).
+        A través de la picadura del mosquito infectado, los esporozoitos 
+        ingresan a las células hepáticas iniciandose el estadio hepático.
+        Ahí se multiplican hasta formar esquizontes, los cuales egresan al torrente 
+        sanguíneo en la forma de 
+        merozoitos. El estadio eritrocítico se inicia al invadir RBC, 
+        desarrollando en forma consecutiva trofozoitos 
         inmaduros (en forma de anillo), maduros y esquizontes, los cuales a su
-        ruptura reinfectan nuevos glóbulos rojos. La rapidez de este ciclo determina la 
-        razón de multiplicación parasitaria.
+        ruptura los nuevos merozoitos reinfectan más glóbulos rojos. 
+        La rapidez de este ciclo determina la razón de multiplicación parasitaria.
         Por motivos aún desconocidos, 
         a partir de los trofozoitos inmaduros se inicia el desarrollo de gametocitos
         diferenciandose sexualmente dentro del torrente sanguíneo del humano.
-        
-        Segundo, la fase sexual en el mosquito mosquito se inicia mediante la
+        La fase sexual en el mosquito mosquito se inicia mediante la
         ingestión accidental de gametocitos en la alimentación sanguínea de mosquitos 
         hembra, con la intención inicial de proveer nutrientes a sus huevos.
-        En su tracto digestivo, los cambios fisico-químicos permiten la ruputa de los 
-        RBC y la liberación de los
-        macrogametocitos y microgametocitos, los cuales forman al macrogameto diploide,
-        desarrollando al ooquiento el cual al enquistarse en pared del estómago medio, 
-        se replica y forma la estructura llamada oocisto. Su ruptura libera a los 
-        esporozoitos, los cuales se dirigen a las glándulas salivares.
-        La transmisión del parásito de la malaria continúa en la siguiente alimentación 
-        del moquitos hembra al liberar el contenido de sus glándulas
-        salivales en el torrente sanguíneo de un nuevo hospedero.
+        En su tracto digestivo, se desarrollan los esporozoitos, 
+        los cuales migran a las glándulas salivares para continuar
+        la transmisión en la siguiente alimentación del moquitos hembra.
     
     ii. __Particularidades__
         
@@ -906,41 +899,11 @@ b. Biología
         Por otro lado, el antígeno sanguíneo _Duffy_, predominante en problación 
         con ancestría africana, es considerado un factor de resistencia a _P.vivax_.
 
-c. Severidad
+### Malaria Severa
+
+a. General
     
-    i. __Comparación__
-    
-        Entre el 2005 y 2015, menos del 3% de casos no-complicados fueron asumidos 
-        como malaria severa [@WHO2016world]. Históricamente, la malaria vivax 
-        ha sido considerada como "benigna" en comparación a _P.falciparum_ 
-        debido a su: (i) baja invasión parasitaria, sezgada 
-        a reticulocitos y rutas alternas de menor efectividad; y (ii) pobre 
-        citoadhesión de sus glóbulos rojos infectados (iRBC), dada por la auscencia de 
-        protruciones abastonadas o _knob protrusions_, auscencia de genes homólogos 
-        a _var_ o genes _vir_, y a la baja proporción de esquizontes tardíos que 
-        sugieren bajo sequestramiento tisular, corroborado en autopsias. [@wassmer2015]
-        
-        Sin embargo, recientemente se ha demostrado que en los casos severos por _P. vivax_ 
-        la parasitemia periférica subestima la biomasa parasitaria 
-        total [@barber2015]. En aquel estudio, la parasitemia oculta fue la 
-        mayor contribuyente de citoquinas pro-inflamatorias, semejante a lo
-        observado con _P. falciparum_. Aquellos autores sugieren una posible 
-        acumulación parasitaria en partes de órganos sin endotelio.
-        
-    ii. __Patogénesis__
-        
-        Aún no está completamente entendida. Sin embargo, se han propuesto mecanismos
-        en base a lo observado en los casos de malaria cerebral por _P. falciparum_,
-        donde los mecanismos de invasión y adhesión parasitaria son relevantes.
-        Así, la respuesta celular contra la parasitemia, dependiente de su 
-        tasa de multiplicación, sumada a la citoadherencia 
-        de iRBC en estadío esquizonte a endotelio o RBC no infectados (rosetamiento), 
-        desencadena una obstrucción microvascular que activa a sus células endoteliales. 
-        Estas liberan una mayor cantidad de citoquinas pro-inflamatorias, provocando 
-        la pérdida de perfusión y una consecuente disfunción microvasular que progresa 
-        por retroalimentación positiva.
-    
-    iii. __Criterios__
+    i. __Definición__
     
         Ante la auscencia de una descripción especie-específica, la Malaria Vivax
         Severa está definida por el criterio para _P. falciparum_ otorgado 
@@ -954,11 +917,8 @@ c. Severidad
                 disfución respiratoria, estrés respiratorio agudo, 
                 daño renal agudo, ruptura esplénica, 
                 disfunción hepática e ictericia (hiperbilirrubina).
-        Por último, un reciente meta-análisis identificó patrones geográficos 
-        en la prevalencia de manifestaciones clínicas, donde la región de las 
-        Américas presentaba la mayor variedad de disfunciones orgánicas. [@rahimi2014meta]
-    
-    iv. __Riesgo__
+        
+    ii. __Riesgo__
         
         La vulnerabilidad a la Malaria Severa ha sido asociada a la intensidad de 
         transmisión y el desarrollo de la inmunidad independiente a la edad. [@reyburn2015]
@@ -983,27 +943,102 @@ c. Severidad
         _Plasmodium_ con Dengue no está asociada con una peor enfermedad,
         asemejándose a una mono-infección con Dengue tanto en frecuencia de síntomas como 
         en el nivel de marcadores inmunológicos. [@baldevi2016]
+
+b. Epidemiología
+    
+    i. __A nivel mundial__
         
-    v. __En el Perú__
+        Entre el 2005 y 2015, entre el 1-3% de casos no-complicados fueron asumidos 
+        como malaria severa, causante de la muerte de 429,000 personas [@WHO2016world]
+        y en un 90% niños menores de 5 años en África. [@wassmer2015]
+        Entre las estrategias preventivas desarrolladas hasta el momento
+        (control vectorial, quimioprevención, vacunas e indicadores),
+        la única vacuna en completar un ensayo de fase 3, RTS,S/AS01, solo redujo 
+        en un 39% la incidencia de enfermedad y en 31.5% la de malaria severa en niños
+        entre 5-17 meses. [@rts2015]
+        
+        Con respecto a la malaria vivax severa, un reciente meta-análisis con 
+        46,411 casos registrados desde el año 1900 identificó patrones geográficos 
+        en la prevalencia de manifestaciones clínicas. [@rahimi2014meta]
+        Concluyeron que en las zonas de alta transmisión (e.g. Papua Nueva Guinea)
+        la anemia severa fue el síntoma con mayor prevalencia en niños jóvenes. 
+        <!--Por ejemplo, en India Kochar et al. 2009 [@kochar2009] en un estudio 
+        prospectivo reportó 
+        40/456 casos de malaria vivax severa, entre 18-60 años de edad, con 
+        hiperbilirrubina (58%), daño renal agudo (45%),
+        anemia severa (33%), malaria cerebral (13%), daño pulmonar (10%), shock 
+        circulatorio (8%) e hipoglicemia (3%).-->
+        Por otro lado, en zonas con baja transmisión (e.g. la región de las 
+        Américas) los adultos eran los más susceptibles a la severidad con una 
+        mayor variedad de disfunciones orgánicas.
+        Por ejemplo, en Brasil Alexandre et al. 2010 [@alexandre2010] en un 
+        estudio retrospectivo
+        identifico 17/11,251 casos de malaria vivax severa, entre 28-80 años de edad, 
+        con hiperbilirrubina (59%), 
+        anemia severa (29%), daño renal agudo (12%), daño pulmonar (12%) y shock 
+        circulatorio (6%).
+    
+    i. __En el Perú__
         
         En el norte costero, Quispe et al. 2014 [@quispe2014] mediante un estudio 
-        retrospectivo (2008-2009) identificó 81/6502 casos con anemia severa (57%), 
-        shock (25%), daño pulmonar (21%), daño renal agudo (14%) y malaria cerebral (11%).
+        retrospectivo (2008-2009) identificó 81/6502 casos de malaria vivax severa 
+        con anemia severa (57%), 
+        shock circulatorio (25%), hiperbilirrubina (25%), daño pulmonar (21%), 
+        daño renal agudo (14%) y malaria cerebral (11%).
         Comparados con los pacientes no complicados, los severos fueron mayores 
         (38 vs 26 años, P<0.001).
         
         En el noreste amazónico, un reciente estudio prospectivo dirigido por 
         El Centro de Enfermedades Tropicales de la Marina de los Estados Unidos 
-        NAMRU-6 (2012-2013) [@smith2013] identificó 67/164 casos con <!--¡¡ACTUALIZAR!!-->
+        NAMRU-6 (2012-2013) [@smith2013] identificó 67/164 casos de 
+        malaria vivax severa con <!--¡¡ACTUALIZAR!!-->
         síndrome respiratorio agudo (94%), hiperbilirubina (80%), shock (46%), 
         sangrado (12%) e ictericia conjuntiva (12%). No se encontraron diferencias
         con respecto a la edad entre no-severos y severos (33.5 vs 30, P=0.956).
         Sin embargo, sí se identificó una mayor proporción de pacientes con episodios 
         previos en el grupo de no-severos (67 vs 49%, P=0.007).
-    
-### Respuesta inmune
 
-a. En la malaria no complicada
+
+c. Biología
+    
+    i. __Comparación__
+    
+        Históricamente, la malaria vivax 
+        ha sido considerada como "benigna" en comparación a _P.falciparum_ 
+        debido a su: (i) baja invasión parasitaria, sezgada 
+        a reticulocitos y rutas alternas de menor efectividad; y (ii) pobre 
+        citoadhesión de sus glóbulos rojos infectados (iRBC), dada por la auscencia de 
+        protruciones abastonadas o _knob protrusions_, auscencia de genes homólogos 
+        a _var_ o genes _vir_, y a la baja proporción de esquizontes tardíos que 
+        sugieren bajo sequestramiento tisular, corroborado en autopsias. [@wassmer2015]
+        
+        Sin embargo, recientemente se ha demostrado que en los casos severos por _P. vivax_ 
+        la parasitemia periférica subestima la biomasa parasitaria 
+        total [@barber2015]. Además, la parasitemia oculta fue la 
+        mayor contribuyente de citoquinas pro-inflamatorias, semejante a lo
+        observado con _P. falciparum_. Los autores también sugirieron una posible 
+        acumulación parasitaria en partes de órganos sin endotelio.
+        
+    ii. __Patogénesis__
+        
+        Aún no está completamente entendida. Sin embargo, se han propuesto mecanismos
+        en base a lo observado en los casos de malaria cerebral por _P. falciparum_,
+        donde los mecanismos de invasión y adhesión parasitaria son relevantes.
+        La respuesta celular contra la parasitemia, dependiente de su 
+        tasa de multiplicación, sumada a la citoadherencia 
+        de iRBC en estadío esquizonte a endotelio o RBC no infectados (rosetamiento), 
+        desencadena una obstrucción microvascular que activa a sus células endoteliales. 
+        Estas liberan una mayor cantidad de citoquinas pro-inflamatorias, provocando 
+        la pérdida de perfusión y una consecuente disfunción microvasular que progresa 
+        por retroalimentación positiva.
+
+### Anticuerpos
+
+a. Relevancia
+    
+    cdvcdsv
+
+b. Marcador de exposición
     
     Malaria induce potentes respuestas de anticuerpos que incrementan con 
     exposiciones subsecuentes. [@Stanisic2015] Tradicionalmente, estudios 
@@ -1014,15 +1049,26 @@ a. En la malaria no complicada
     Sin embargo, en los últimos 10 años, estudios de perfiles de anticuerpos 
     de larga escala han demostrado la amplitud y heterogeneidad de dichas 
     respuestas. [@Portugal2013]
-    
-    Inmunidad clínica
-    titulo/nivel de anticuerpos vs edad/exposición -> 
-    INMUNIDAD PROTECTORA [@Stanisic2015]
 
-d. En la malaria severa
+c. Marcador de inmunidad
     
-    cacdacad
+    i. contra la severidad
+        
+        avsdvd
     
+    ii. contra la enfermedad
+        
+        Inmunidad clínica
+        titulo/nivel de anticuerpos vs edad/exposición -> 
+        INMUNIDAD PROTECTORA [@Stanisic2015]
+    
+    iii. contra la parasitemia
+        
+        bdfbdv
+
+d. Enfoque a larga escala
+    
+    dvsvfvbf
 
 <!--
 ### Inmunómica
@@ -1086,27 +1132,22 @@ a. Microarreglos de proteínas
 
 b. Análisis de datos
     
-    i. Softwares
+    i. Métodos
+        
+        1. Preprocesamiento 
+            
+            Transformación
+            Normalización
+            Filtrado
+    
+        2. Test estadístico
+    
+            Bayes t-test y
+            Comparación múltiple
+            
+    ii. Softwares
     
         VDVFSVFSVFS
-    
-    ii. Métodos
-        
-        1. Normalización
-    
-            VFSVFSBF
-    
-        2. Filtrado
-    
-            dvdsav
-    
-        3. Test estadístico
-    
-            adcacdac
-    
-        4. Comparación múltiple
-    
-            cadcdac
 
 ## Definiciones conceptuales
 
