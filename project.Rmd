@@ -56,7 +56,7 @@ OR:
 \newpage
 \pagenumbering{arabic}
 
-# RESUMEN EJECUTIVO {-}
+# RESUMEN {-}
 
 <!-- 
 ## Descripción del proyecto {#resumen}
@@ -1036,100 +1036,222 @@ c. Biología
 
 a. Relevancia
     
-    cdvcdsv
+    Los anticuerpos han demostrado ser los marcadores ideales para el monitoreo rápido
+    y preciso de la efectividad de intervenciones contra la malaria a nivel mundial.
+    A partir de una sola muestra de sangre, con métodos análiticos aplicables a una
+    escala epidemiológica, es posible evaluar tanto la exposición 
+    acumulada como los niveles de inmunidad contra patógenos específicos.
+    Incluso con el potencial de identificar _hotspots_ y cambios en la transmisión, 
+    evaluar el impacto de intervenciones, confirmar los estados de control o eliminación, y 
+    monitorear reemergencias. [@elliott2014]
+    
+    Además, la identificación de antígenos homólogos a _P. falciparum_ e inductores 
+    de inmunidad por
+    adquisión natural contra _P. vivax_ en poblaciones endémicas ha sido la fuente 
+    de mayor importancia para la propuesta de candidatos a vacuna.
+    A diferencia de _P. falciparum_, _P. vivax_ posee dificulatdes técnicas para 
+    el desarrollo de cultivos _in vitro_ y modelos animales de infección.
+    Esto se ve reflejado en los dos candidatos a vacuna de _P. vivax_ (PvDBP en ensayos 
+    clínicos fase I y PvCSP en estudios pre-clínicos) contra los 23 de _P. falciparum_.
+    [@rainbow2016]
 
-b. Marcador de exposición
+  b. Exposición
     
-    Malaria induce potentes respuestas de anticuerpos que incrementan con 
-    exposiciones subsecuentes. [@Stanisic2015] Tradicionalmente, estudios 
-    seroepidemiológicos [@cutts2014meta] han identificado marcadores en la 
-    respuesta de anticuerpos IgG contra: (i) PvCSP, PvMSP-1~19~, PvMSP-9~RIRII~ 
-    y PvAMA-1 asociados infección o exposición, y (ii) PvMSP-1~19~, PvMSP-1~NT~,
-    PvMSP-3$\alpha$ y PvMSP-9~NT~ asociados con protección o inmunidad.
-    Sin embargo, en los últimos 10 años, estudios de perfiles de anticuerpos 
-    de larga escala han demostrado la amplitud y heterogeneidad de dichas 
-    respuestas. [@Portugal2013]
-
-c. Marcador de inmunidad
+    Estudios longitudinales han sugerido que la intensidad de la respuesta de anticuerpos
+    en poblaciones con poca inmunidad, en un inicio pueden actuar como marcadores 
+    de exposición. Luego de una exposición constante, esta respuesta incrementa hasta 
+    superar un umbral de protección, donde los anticuerpos pueden actuar como marcadores de 
+    inmunidad. [@Stanisic2015]
     
-    i. contra la severidad
+    En el caso de _P. vivax_, estudios seroepidemiológicos han logrado asociar marcadores
+    con exposición (PvCSP, PvMSP-1~19~, PvMSP-9~RIRII~ y PvAMA-1) 
+    e inmunidad (PvMSP-1~19~, PvMSP-1~NT~, PvMSP-3$\alpha$ y PvMSP-9~NT~). 
+    [@cutts2014meta] Sin embargo, su principal limitante está en la
+    carecia de evaluaciones en su cinética de adquisición, i.e. su desarrollo y 
+    mantenimiento, en cohortes longitudinales.
+    <!--
+    Actualmente, el cálculo de la razón de seroconversiónn (SCR) es el método más 
+    estandarizado para la evaluación de la exposición y caracterización
+    de la transmisión por adquisición de anticuerpos a nivel poblacional. [@King2015FOC]
+    -->
+    
+c. Inmunidad
+    
+    En áreas de alta transmisión, los niños adquieren resistencia a la manifestación
+    severa de la malaria a la edad de cinco años, aproximadamente. Sin embargo,
+    continuan siendo susceptibles a episodios no-complicados hasta la adolescencia,
+    donde adquieren un estado resistente a la malaria sintomática. A pesar de ello,
+    no se ha demostrado que esta adquisición natural por la exposición acumulada a malaria 
+    otorgue una protección esterilizante o de resistencia a la infección. [@crompton2014rev]
+    Los detalles de los procesos involucrados en cada una de estas fases no están
+    completamente entendidos, pero se tiene detalles de algunos componentes:
+    
+    i. __contra la severidad__
         
-        avsdvd
-    
-    ii. contra la enfermedad
+        Se conoce que la respuesta contra esta manifestación está guiada por una
+        excesiva respuesta inflamatoria que incluye la producción de las citoquinas 
+        proinflamatorias TNF-$\alpha$, INF-$\alpha$, IL-1$\beta$ e IL-6 [@baird2013]
+        junto a una 
+        reducción en la producción de la citoquina antiinflamatoria IL-10, un regulador
+        central en la respuesta contra la malaria. [@jagannathan2014]
         
-        Inmunidad clínica
-        titulo/nivel de anticuerpos vs edad/exposición -> 
-        INMUNIDAD PROTECTORA [@Stanisic2015]
-    
-    iii. contra la parasitemia
+        Es por ello que esta primera fase implicaría la adquisición de
+        inmunidad a componentes parasitarios que gatillan una respuesta inflamatoria 
+        innata. Una hipótesis está en anticuerpos que interfieran la unión de 
+        glucoporteínas pro-inflamatorias con receptores Toll. 
+        [@schofield2006toll; @coban2005toll]
         
-        bdfbdv
-
+        Por otro lado, la adquisición de anticuerpos que bloqueen la invasión parasitaria
+        o adhesión de iRBC también involucraría una protección a la severidad. 
+        [@wassmer2015]
+        Antígenos candidatos son genes _vir_, homologos a los genes _var_ de 
+        _P. falciparum_ e involucrados en la secreción de proteínas adhesivas a RBC y 
+        endotelio, [@portillo2001vir] y genes PvRBP, alternativo a PvDBP y tradicionalmente 
+        identificado como exclusivo para la invasión a reticulocitos. [@galinski1992rbp]
+    
+    ii. __contra la enfermedad__
+        
+        En 1961, la
+        transferencia pasiva de anticuerpos donados por adultos con
+        inmunidad adquirida de forma natural
+        tuvo una alta efectividad en la disminución de la parasitemia periférica y 
+        resolución de síntomas clínicos en niños con malaria. [@cohen1961; @sabchareon1991]
+        Este experimento
+        sugirió que los anticuerpos contra
+        antígenos del estadio eritrocítico son marcadores importantes de inmunidad.
+        
+        En el caso de _P. vivax_, la adquisición de esta inmunidad ocurre con una 
+        mayor rapidez. Se ha propuesto que este proceso es facilitado por las 
+        particularidades biológicas de la especie. [@mueller2013]
+        
+        Los antígenos propuestos hasta el momento para _P. vivax_ son proteínas del 
+        micronema de los merozoitos como DBP y AMA1, y proteínas de superficie como 
+        MSP1, MSP1-P (región C-terminal), MSP3 (PvMSP-3$\alpha$, PvMSP-3$\beta$) 
+        y MSP9. [@lopez2017]
+        
+        <!--Desarrollo de respuestas inmunoreguladoras que atenuen la respuesta a productos 
+        parasitarios como citoquinas anti-inflamatorias (IL-10), expanción de células T 
+        regulatorias, y subtipos específicos de células B y T con alta eficiencia en la
+        generación de respuestas humorales.-->
+        
+    iii. __contra la parasitemia__
+        
+        La adquisición de una inmunidad esterilizante solo ha sido comprobada 
+        mediante la inmunización con esporozoitos atenuados
+        por radiación. Tanto en _P. falciparum_ como en _P. vivax_ se ha confirmado
+        esta respuesta. Un reciente ensayo clínico de fase II en Colombia con _P. vivax_ 
+        encontró
+        que luego de siete inmunizaciones a lo largo de 56 semanas y una reexposición 
+        con esporozoitos 
+        infecciosos, 5/12 voluntarios obtuvieron dicha protección y 
+        las respuestas de anticuerpos 
+        Ig1 anti-PvCSP estuvieron asociadas a ella. [@arevalo2016spz]
+        <!-- Estudios en modelos murinos han señalado a 
+        las respuestas de células T CD8^+^ como importantes mediadores de este tipo de 
+        inmunidad.-->
+        
 d. Enfoque a larga escala
     
-    dvsvfvbf
-
-<!--
-### Inmunómica
+    El parásito de la malaria, al tener un ciclo de vida complejo con múltiples estadios
+    de desarrollo en el humano, posee también un transcriptoma, proteoma y, por lo tanto, 
+    un inmunoma estadio-específico que deriva de un total de ~5300 proteínas putativas. 
+    Por este motivo, tanto los esfuferzos de vacunas por subunidades 
+    (disponibles para hepatitis B) 
+    como por organismos completos (atenuados o inactivados) han fracazado. Ensayos 
+    clínicos han demostrado que los actuales candidatos poseen un pobre inmunogenicidad y
+    protección contra la malaria (e.g. RST,S).
+    
+    i. __Inmunómica__
+    
+        La era genómica permitió un cambio de perspectiva en la investigación inmunológica:
+        se pasó de una procupación en plataformas a una en antígenos de vacunación.
+        Es por ello que, actuamente, el objetivo de mayor importancia está en 
+        identificar el subgrupo de antígenos capaz de inducir una respuesta inmune
+        protectiva.
+        
+        El primer enfoque en respuesta a esta problemática fue llamado 
+        _Vacunología Reversa_,
+        el cual hace uso de la información genómica para la predicción bioinformática de 
+        antígenos candidatos a vacuna a partir de características protéticas asociadas a 
+        inmunogenicidad y efectividad en vacunación. La principal limitación de este 
+        enfoque 
+        radica en el que el genoma es estático en el tiempo, no aplicable en organismos
+        con ciclos de vida complejos.
+        
+        Por ello, un segundo enfoque que 
+        se construyó sobre aquél fue llamado _Inmunómica_, el cual hace uso de la 
+        información
+        transcriptómica y proteómica de patógenos dinámicos junto a métodos computacionales 
+        predictivos e información del hospedero para la selección inmunógenos en 
+        forma empírica.
+        Su principal ventaja está en la capacidad de priorizar la selección de antígenos en
+        base a criterios clínicamente relevantes, como el de individuos con inmunidad por 
+        adquicisión natural.
+        
+        Este enfoque ha permitido obtener datos empíricos sobre 
+        diferencias en la amplitud, intensidad, cinética y longevidad de respuestas inmunes
+        inducidas por patógenos. Además de respuestas a preguntas clave de la 
+        respuesta inmune como el
+        porcentaje del proteóma reconocido por el sistema inmune,
+        si los anticuerpos pueden ser predictores de estados de la enfermedad, o
+        si la inmunogenicidad puede ser predicha solamente por aminoácidos.
+        Entre las plataformas empleadas en este enfoque están los microarreglos de proteínas
+        y péptidos, los cuales complementados con el mapeo de epítopes, han alimentado a 
+        los actuales algoritmos de predicción computacional.
 
 <!-- 
-
-INMUNOMICA
-En contraste a estudios seroepidemiológicos basados en un solo antígeno protéico [@cutts2014meta], 
-
-los perfiles de anticuerpos a larga escala han demostrado la amplitud y heterogeneidad 
-de las respuestas humorales [@crompton2010].
-
-los estudios de perfiles de anticuerpos a larga escala han reportado antígenos 
-asociados a exposición o inmunidad distintos a los tradicionales
-(PvCSP, PvMSP-1~19~, PvMSP-1~NT~ y PvAMA-1)
-y con mayor resolución en la discriminación de pacientes. [@crompton2010]
-
-
-Los dos principales parámetros de comparación entre grupos, 
-con respecto a la respuesta general de anticuerpos, 
-son la proporción de antígenos reactivos y el promedio de sus intensidades 
-por individuo o amplitud e intensidad de respuesta, respectivamente. [@crompton2010; @King2015FOC; @Helb2015exposure]
-
 Infecciones experimentales de _P. vivax_ en Colombia con seguimiento longitudinal 
 por 145 días han demostrado que la dinámica de la respuesta humoral 
 diverge entre individuos sin exposición previa (_naive_) y semi-inmunes, 
 en base estos dos parámetros. [@arevalo2016]
-
-Además, la comparación de la intensidad de respuesta por antígenos individuales 
-ha permitido seleccionar proteínas discriminantes entre grupos
-con manifestaciones clínicas relevantes y priorizar su experimentación en ensayos confirmatorios.
-Esta evaluación ha sido ejecutada en la identificación de antígenos diferencialmente reactivos 
-en pacientes con malaria falciparum asintomática en Perú, [@Torres2014asymptomatic]
-o predictores de incidencia y dias desde la última infección con malaria falciparum por 
-individuo en Uganda. [@@Helb2015exposure]
-
-a. Enfoques a larga escala
-    
-    svfsvfsnvsfvnfsl
-
-b. Diseños de investigación
-    
-    advfvfsvfv
 -->
 
 ### Microarreglos
 
-<!--
-Para ello, se hará uso de microarreglos de proteínas 
-con más de 500 antígenos de _P. vivax_ presentes en el estadio 
-asexual eritrocítico de la infección en el humano.
-
-y se emplearán a tres parámetros: 
-reactividad serológica, amplitud e intensidad de respuesta
--->
-
-a. Microarreglos de proteínas
+a. De proteínas
     
-    addvsf
-    A escala mundial, ICEMR King et al. 2015 [@King2015FOC]
-
+    Dado el tamaño y complejidad de los genomas de _Plasmodium_, la ejecución de un
+    _screening_ de proteoma completo es desafiante. Por ejemplo, _P. falciparum_ posee
+    más de 3kb de longitud, ~5300 genes, genes multi-exónicos complejos y segmentos 
+    largos de secuencias repetitivas por el bajo contenido de GC. Por esta razón,
+    el diseño de microarreglos de proteínas requiere de procesos de selección en base
+    a características protéicas y conocimiento empírico. De esta manera se ha logrado 
+    desarrollar plataformas costo-efectivas y rápidas de emplear, capaces de facilitar el 
+    descubrimiento de antígenos para vacunas o serovigilancia con el menor trabajo en 
+    laboratorio e independiente de algoritmos predictivos.
+    
+    i. __Primera generación__
+    
+        Finney et al. 2014 [@Finney2014] diseñaron los microarreglos de _P. vivax_ y 
+        _P. falciparum_ en base
+        a las proteínas predichas para el estadío eritrocítico con capacidad de ser 
+        expuestas a
+        superficie, presencia de evidencia en microarreglos, proteómica, EST, secretoma 
+        predicho, presencia de péptidos señal, dominios transmembrana, proteínas putativas 
+        citplasmáticas carentes de péptidos señal y dominios transmembrana en base a 
+        filtros
+        por punto isoeléctro, exclusión de proteínas con variabilidad antigénica (e.g.
+        PfEMP1, RIFIN, surfin, stevors; Pv _var_ y pseudogenes), inclusión de genes 
+        multi-exonicos y genes largos didividos en
+        segmentos sobrelapantes, limitando amplicones a 300-3000nt.
+            
+    ii. __Segunda generación__
+        
+        En el 2015, el Centro Internacional de Excelencia para la Investigación de la 
+        Malaria ICEMR realizó una subselección empírica del microarreglo anteriormente
+        detallado. [@King2015FOC] 
+        Para ello sondearon los microarreglos de _P. falciparum_ con 20 muestras 
+        de Papua Nueva Guinea, 20 de Kenya, 20 de Mali y 10 controles norteamericanos, y 
+        los de _P. vivax_ con 15 de Papua Nueva Guinea, 15 de China, 22 de Perú, 10 de 
+        Tailandia y 10 controles. Luego se seleccionó a los antígenos seroreactivos por 
+        país, cumpliendo la condición de ser mayores a dos veces la desviasión estandar
+        de la media de la reactividad serologica en los controles. Finalmente, 
+        se seleccionó el top 500 para ambas especies empleando un filtrado jerárquico,
+        dándole prioridad a los antígenos con seroreactividad en todos los paises y
+        en las posiciones restantes los antígenos en orden descendiente a la reactividad
+        en todos los paises. Este diseño ha sido depositado en la base de datos GEO
+        con el código GPL 18316.
+        
 b. Análisis de datos
     
     i. Métodos
@@ -1139,11 +1261,26 @@ b. Análisis de datos
             Transformación
             Normalización
             Filtrado
-    
+            
         2. Test estadístico
-    
+            
             Bayes t-test y
             Comparación múltiple
+            
+        3. Parámetros
+            
+            y se emplearán a tres parámetros: 
+            reactividad serológica, amplitud e intensidad de respuesta
+            
+            los perfiles de anticuerpos a larga escala han demostrado la amplitud y
+            heterogeneidad de las respuestas humorales [@crompton2010].
+            
+            Los dos principales parámetros de comparación entre grupos, 
+            con respecto a la respuesta general de anticuerpos, 
+            son la proporción de antígenos reactivos y el promedio de sus intensidades 
+            por individuo o amplitud e intensidad de respuesta, respectivamente.
+            [@crompton2010; @King2015FOC; @Helb2015exposure]
+
             
     ii. Softwares
     
@@ -1441,7 +1578,7 @@ microarreglos diseñados con 1014 fragmentos protéicos recombinantes
 representando 873 proteínas predichas (427 de _P. falciparum_ y 446 de _P. vivax_, 
 ~8% del total predicho para el genoma de _P. vivax_ Sal1) 
 seleccionadas luego de una extensiva evaluación serológica con uno 
-de mayor escala (Pf2208/Pv2233).
+de mayor escala (Pf2208/Pv2233). [@Finney2014]
 Las proteínas son transcritas/traducidas _in vitro_ 
 empleando un sistema de expresión de _E. coli_ libre de células e 
 impresas en bloques de nitrocelulosa sobre una lámina portaobjetos 
@@ -1674,18 +1811,12 @@ multi col-row + landscape!!
 # BIBLIOGRAFÍA
 <!--
 1.  **Referida al tema**
-
-    Alexandre MA, et al. (2010). Severe Plasmodium vivax malaria,
-    Brazilian Amazon. Emerg Infect Dis 16: 1611–1614.
     
     Andrade BB, et al. (2010). Severe Plasmodium vivax malaria exhibits
     marked inflammatory imbalance. Malar J 9: 13.
     
     Arevalo-Herrera M, et al. (2012). Malaria in selected non-Amazonian
     countries of Latin America. Acta Trop 121: 303–314.
-    
-    Baird JK, (2009). Severe and fatal vivax malaria challenges 'benign
-    tertian malaria' dogma. Ann Trop Paediatr 29: 251–252.
     
     Bassat Q, et al. (2011). Defying malaria: fathoming severe
     Plasmodium vivax disease. Nat Med 17: 48–49.
@@ -1697,46 +1828,11 @@ multi col-row + landscape!!
     associated with severe malaria in children: a prospective cohort
     study from Papua New Guinea. PLoS Med 5: e127.
     
-    Kochar DK, et al. (2005). Plasmodium vivax malaria. Emerg Infect Dis
-    11: 132–134.
-    
-    Murray CJ, et al. (2012). Global malaria mortality between 1980 and
-    2010: a systematic analysis. Lancet 379: 413–431.
-    
     Poespoprodjo JR, et al. (2009). Vivax malaria: a major cause of
     morbidity in early infancy. Clin Infect Dis 48: 1704–1712.
     
     Westenberger SJ, et al. (2010). A systems-based analysis of
     Plasmodium vivax lifecycle transcription from human to mosquito.
     PLoS Negl Trop Dis 4: e653.
-    
-    World Health Organization, 2011. World Malaria Report. Available
-    at: http://www.who.int/entity/malaria/world\_malaria\_report\_2011/9789241564403\_eng.
-    pdf.
-
-2.  **Referida a la metodología de investigación**
-
-    Baum E, et al. (2015). Submicroscopic and asymptomatic Plasmodium
-    falciparum and Plasmodium vivax infections are common in western
-    Thailand-molecular and serological evidence. Malaria journal,
-    14(1), 95.
-
-    Crompton P., et al. (2010). A prospective analysis of the Ab
-    response to Plasmodium falciparum before and after a malaria season
-    by protein microarray. Proceedings of the National Academy of
-    Sciences, 107(15), 6958-6963.
-
-    Molina DM, et al. (2012). Plasmodium vivax Pre-Erythrocytic–Stage
-    Antigen Discovery: Exploiting Naturally Acquired Humoral Responses.
-    The American journal of tropical medicine and hygiene,
-    87(3), 460-469.
-
-    Torres KJ, et al. (2014). Genome-Level Determination of Plasmodium
-    falciparum Blood Stage Targets of Malarial Clinical Immunity in the
-    Peruvian Amazon. Journal of Infectious Diseases, jiu614.
-
-    Vigil A, et al. (2010). Defining the humoral immune response to
-    infectious agents using high-density protein microarrays. Future
-    Microbiol 5: 241–251.
 -->
-**De acuerdo al orden en el que han sido citadas:**
+<!--**De acuerdo al orden en el que han sido citadas:**-->
