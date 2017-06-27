@@ -63,26 +63,20 @@ OR:
 RESUMEN: CORRIGELO AL FINAL 
 -->
 
-~~RESUMEN A ESCRIBIR Y CORREGIR AL FINAL!!!!
-El presente proyecto tiene como objetivo identificar 
-antígenos con relevancia clínica contra la malaria vivax.
-Para ello, se realizará un perfil a larga escala de anticuerpos
-en pacientes sintomáticos a través de microarreglos de 
-500 proteínas de *Plasmodium vivax* y 500 de *P. falciparum*. 
-Se contrastarán parámetros generales de la respuesta humoral 
-y evaluará la reactividad diferenciada de antígenos en pacientes estratificados 
-por severidad y episodios previos. 
-Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
-con posible aplicación en la vigilancia sero-epidemiológica.
-Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
-con posible aplicación en la vigilancia sero-epidemiológica.
-Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
-con posible aplicación en la vigilancia sero-epidemiológica.
-Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
-con posible aplicación en la vigilancia sero-epidemiológica.
-Finalmente, se <!--espera proponer--> propondrán nuevos antígenos de _P. vivax_
-con posible aplicación en la vigilancia sero-epidemiológica.~~
-
+> _Plasmodium vivax_ es responsable del 80% de la malaria en el Perú.
+Casos de enfermedad severa por mono-infecciones de _P. vivax_ han sido reportados tanto 
+en el
+sudeste asiático como en sudamérica. Sin embargo, dicha condición aún está
+subestimada en las normas técnicas a nivel nacional, incrementando el riesgo 
+de posibles diagnósticos tardíos o inapropiados por el personal de salud.
+Con el fin de identificar biomarcadores de relevancia clínica contra la malaria 
+vivax severa, el presente proyecto de tesis propone
+comparar la respuesta de anticuerpos ante la infección 
+en pacientes severos y no-severos provenientes de un estudio prospectivo caso-control
+ejecutado en la ciudad de Iquitos, Loreto-Perú, empleando microarreglos de proteínas.
+Los resultados permitirán proponer marcadores serológicos de protección 
+contra la severidad con el potencial de implementarse en programas de 
+sero-vigilancia en miras al control y eliminación de la malaria.
 
 # PLANTEAMIENTO DEL PROBLEMA
 
@@ -121,7 +115,7 @@ su tradicional condición de enfermedad benigna. [@baird2009; @quispe2014]
 un retrazo en la adquisición de inmunidad en la población por 
 una reducción en la intensidad de transmisión. [@reyburn2015]
 <!--o exposición a la infección, ES externalidad negativa-->
-Por ello, tanto su actual subestimación [@llanoschea2015] como la auscencia de marcadores serológicos de protección contra la severidad en las actuales estrategias de eliminación [@accelerate2016] podría incrementar su prevalencia a largo plazo. 
+Por ello, tanto su actual subestimación [@norma2001] como la auscencia de marcadores serológicos de protección contra la severidad en las actuales estrategias de eliminación [@accelerate2016] podría incrementar su prevalencia a largo plazo. 
 En contraste con dicha hipótesis, pacientes de la amazonía peruana con malaria vivax severa y no complicada mostraron un grado similar de exposición previa,
 basado en la respuesta humoral contra un marcador tradicional. [@baldevi2013]
 Sin embargo, recientes estudios a larga escala han desafiado su validez como indicador de inmunidad o exposición. [@crompton2010; @Helb2015exposure]
