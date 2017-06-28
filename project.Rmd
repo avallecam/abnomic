@@ -115,10 +115,14 @@ su tradicional condición de enfermedad benigna. [@baird2009; @quispe2014]
 un retrazo en la adquisición de inmunidad en la población por 
 una reducción en la intensidad de transmisión. [@reyburn2015]
 <!--o exposición a la infección, ES externalidad negativa-->
-Por ello, tanto su actual subestimación [@norma2001] como la auscencia de marcadores serológicos de protección contra la severidad en las actuales estrategias de eliminación [@accelerate2016] podría incrementar su prevalencia a largo plazo. 
-En contraste con dicha hipótesis, pacientes de la amazonía peruana con malaria vivax severa y no complicada mostraron un grado similar de exposición previa,
+Por ello, tanto su actual subestimación [@norma2001] como la auscencia de marcadores 
+serológicos de protección contra la severidad en las actuales estrategias de eliminación 
+[@accelerate2016] podría incrementar su prevalencia a largo plazo. 
+En contraste con dicha hipótesis, pacientes de la amazonía peruana con malaria vivax severa 
+y no complicada mostraron un grado similar de exposición previa,
 basado en la respuesta humoral contra un marcador tradicional. [@baldevi2013]
-Sin embargo, recientes estudios a larga escala han desafiado su validez como indicador de inmunidad o exposición. [@crompton2010; @Helb2015exposure]
+Sin embargo, recientes estudios a larga escala han desafiado su validez como indicador de 
+inmunidad o exposición. [@crompton2010; @Helb2015exposure]
 
 Por esta razón,
 el presente estudio tiene como objetivo comparar la respuesta de anticuerpos
@@ -143,8 +147,10 @@ con el propósito de proponerlos como candidatos a vigilancia sero-epidemiológi
 ## Preguntas de investigación
 
 <!--
-Enuncie la pregunta de investigación que se va tratar en este estudio en una oración corta y directa.
-La pregunta de investigación propuesta debe estar completa. Asegúrese de mencionar los siguientes elementos en la pregunta de investigación:
+Enuncie la pregunta de investigación que se va tratar en este estudio en una oración corta 
+y directa.
+La pregunta de investigación propuesta debe estar completa. Asegúrese de mencionar los 
+siguientes elementos en la pregunta de investigación:
 
 Mencionar los componentes del acrónimo PECO:
 Población: ¿En qué población se quiere hacer el estudio?
@@ -208,7 +214,8 @@ diferenciada ante la infección con malaria vivax entre pacientes
 con y sin episodios previos.
 
 - Describir las características protéicas de los antígenos con reactividad 
-diferenciada o predominante<!-- según parámetros disponibles en la base de datos PlasmoDB-->.
+diferenciada o predominante<!-- según parámetros disponibles en la base de datos 
+PlasmoDB-->.
 
 
 ### Exploratorio
@@ -260,15 +267,18 @@ AGREGA IMPORTANCIA DE:
 - vigilar EXPOSICIÓN y 
 - CARACTERIZAR respuesta de pacientes SEVEROS!!  INMUNIDAD? 
 
-En este sentido, el análisis de respuestas serológicas ha surgido como una alternativa con el potencial de 
+En este sentido, el análisis de respuestas serológicas ha surgido como una alternativa con 
+el potencial de 
 identificar _hotspots_ de transmisión [@hotspots2015] y así
 direccionalizar la ejecución de intervenciones, en combinación con estudios geoespaciales. 
 Sin embargo, aún existen brechas técnicas y de conocimiento que limitan el desarrollo 
-y optimización de ensayos serológicos para el desarrollo de vigilancias programáticas. [@rosas2016peru]
+y optimización de ensayos serológicos para el desarrollo de vigilancias programáticas. 
+[@rosas2016peru]
 
 Una de ellas es la selección de antígenos de _P. vivax_ en base a su rendimiento, 
 tomando en cuenta parámetros como inmunogenicidad, polimorfismo, 
-magnitud de respuesta, duración, especificidad por especie, sensibilidad y razón de adquicisión. [@elliott2014]
+magnitud de respuesta, duración, especificidad por especie, sensibilidad y razón de 
+adquicisión. [@elliott2014]
 
 La identificación de biomarcadores de exposición y severidad, junto a 
 la implementación de un flujo de trabajo reproducible para el análisis de 
@@ -277,13 +287,17 @@ acelerar el descubrimiento de nuevas proteínas que puedan ser usadas como
 futuros marcadores serológicos óptimos en la ejecución de vigilancia sero-epidemiológica
 y evaluación de políticas de salud contra la malaria vivax.
 
-Por ello, el Proyecto para la Eliminación de Malaria en el Perú tiene como objetivo optimizar ensayos serológicos complementarios a test de diagnóstico rápido con el fin de identificar a portadores asintomáticos [@accelerate2016]
+Por ello, el Proyecto para la Eliminación de Malaria en el Perú tiene como objetivo 
+optimizar ensayos serológicos complementarios a test de diagnóstico rápido con el fin de 
+identificar a portadores asintomáticos [@accelerate2016]
 
 ## Consecuencia de la investigación {#consec}
 
 La principal consecuencia de esta investigación estará en la identificación
-de nuevos candidatos a marcadores serológicos en programas de vigilancia contra la malaria vivax. 
-En contraste a lo identificado en estudios seroepidemiológicos a nivel poblacional [@cutts2014meta], 
+de nuevos candidatos a marcadores serológicos en programas de vigilancia contra la malaria 
+vivax. 
+En contraste a lo identificado en estudios seroepidemiológicos a nivel poblacional 
+[@cutts2014meta], 
 los estudios de perfiles de anticuerpos a larga escala han reportado antígenos 
 asociados a exposición o inmunidad distintos a los tradicionales
 (PvCSP, PvMSP-1~19~, PvMSP-1~NT~ y PvAMA-1)
@@ -293,7 +307,8 @@ Una segunda consecuencia estará en la metodología de análisis empleando el so
 de computación estadística R. 
 Este procedimiento permitirá que el flujo de trabajo ejecutado sea reproducible y, 
 potencialmente, una plantilla estándar para el análisis de próximos trabajos 
-con nuevos diseños experimentales y a su vez flexible para la generación de nuevas hipótesis, 
+con nuevos diseños experimentales y a su vez flexible para la generación de nuevas 
+hipótesis, 
 en comparación a recientes servidores web. [@gmine2016]
 
 
@@ -310,7 +325,11 @@ epidemiológicos.
 
 Resumimos tres limitaciones del estudio.
 
-Primero, las muestras a evaluar provienen de pacientes con infecciones no sincronizadas. El muestreo se ejecutó en la fase sintomática, momento en el que acuden al Hospital, con un desconocimiento del inicio de la infección por paciente. Sin embargo, infecciones experimentales han estimado que dicha fase ocurre normalmente entre los 11 y 13 días de infección. [@arevalo2014]
+Primero, las muestras a evaluar provienen de pacientes con infecciones no sincronizadas. 
+El muestreo se ejecutó en la fase sintomática, momento en el que acuden al Hospital, con 
+un desconocimiento del inicio de la infección por paciente. Sin embargo, infecciones 
+experimentales han estimado que dicha fase ocurre normalmente entre los 11 y 13 días de 
+infección. [@arevalo2014]
 
 Segundo, el estudio posee debilidades propias del diseño experimental a emplear.
 El diseño de tipo Caso Control es susceptible a errores sistemáticos de 
@@ -321,7 +340,8 @@ relevantes para la caracterización de la enfermedad.
 <!--
 severidad, e.g.: la exposición de los pacientes a malaria durante el último año
 --
-Sin embargo, las historias clínicas registraron el número de eventos previos con malaria reportados por el paciente
+Sin embargo, las historias clínicas registraron el número de eventos previos con malaria 
+reportados por el paciente
 -->
 
 Tercero, los microarreglos de proteínas poseen limitantes propias a su fabricación. 
@@ -353,17 +373,32 @@ con respecto a la severidad, manifestaciones clínicas en los episodios previos
 
 ## Viabilidad
 
-El proyecto es viable dada la factibilidad de su ejecución y el nivel de interés para el área de conocimiento.
+El proyecto es viable dada la factibilidad de su ejecución y el nivel de interés para el 
+área de conocimiento.
 
-En primer lugar, su factibilidad se sustenta en que el proyecto se ejecutará sobre los resultados de un estudio prospectivo ya realizado, facilitando el proceso de muestreo y limitándolo al planteamiento del problema y análisis de los datos. Además, dado que los microarreglos de proteínas requieren de pequeño volúmen de plasma por paciente (~2$\mu$L), se contará con un adecuado tamaño muestral (n=60) el cual permitirá poner a prueba las hipótesis formuladas con suficiente poder estadístico. 
+En primer lugar, su factibilidad se sustenta en que el proyecto se ejecutará sobre los 
+resultados de un estudio prospectivo ya realizado, facilitando el proceso de muestreo y 
+limitándolo al planteamiento del problema y análisis de los datos. Además, dado que los 
+microarreglos de proteínas requieren de pequeño volúmen de plasma por paciente (~2$\mu$L), 
+se contará con un adecuado tamaño muestral (n=60) el cual permitirá poner a prueba las 
+hipótesis formuladas con suficiente poder estadístico. 
 
-Finalmente, un aspecto novedoso del proyecto será el uso del lenguaje de programación y software libre R [@R] para el análisis de datos. Esta plataforma facilitará la reproducibilidad del estudio, promoviendo su reutilización y contribución por otros grupos. [@CienciaReproducible2016]
-Este enfoque de análisis permitirá acelerar el progreso en esta área de investigación, automatizar procesos de análisis y reducir las brechas técnicas que que continúan limitando el descubrimiento de biomarcadores relevantes para la aplicación de vigilancias sero-epidemiológicas en nuestro país. 
+Finalmente, un aspecto novedoso del proyecto será el uso del lenguaje de programación y 
+software libre R [@R] para el análisis de datos. Esta plataforma facilitará la 
+reproducibilidad del estudio, promoviendo su reutilización y contribución por otros grupos. 
+[@CienciaReproducible2016]
+Este enfoque de análisis permitirá acelerar el progreso en esta área de investigación, 
+automatizar procesos de análisis y reducir las brechas técnicas que que continúan limitando 
+el descubrimiento de biomarcadores relevantes para la aplicación de vigilancias 
+sero-epidemiológicas en nuestro país. 
 
 <!-- 
-Esto debido a la elección de un diseño Caso-Control, ideal para el estudio de casos infrecuentes, la evaluación de multiples factores para el mismo resultado y eficiente en recursos por tiempo. 
+Esto debido a la elección de un diseño Caso-Control, ideal para el estudio de casos 
+infrecuentes, la evaluación de multiples factores para el mismo resultado y eficiente en 
+recursos por tiempo. 
 
-Cabe agregar , condición que posibilita escalar su aplicación a tamaño muestral epidemiológico. 
+Cabe agregar , condición que posibilita escalar su aplicación a tamaño muestral 
+epidemiológico. 
  -->
 
 # FORMULACIÓN DE HIPÓTESIS Y VARIABLES
@@ -946,7 +981,7 @@ b. Epidemiología
         Con respecto a la malaria vivax severa, un reciente meta-análisis con 
         46,411 casos registrados desde el año 1900 identificó patrones geográficos 
         en la prevalencia de manifestaciones clínicas. [@rahimi2014meta]
-        Concluyeron que en las zonas de alta transmisión (e.g. Papua Nueva Guinea)
+        Concluyeron que en las zonas de alta transmisión (e.g., Papua Nueva Guinea)
         la anemia severa fue el síntoma con mayor prevalencia en niños jóvenes. 
         <!--Por ejemplo, en India Kochar et al. 2009 [@kochar2009] en un estudio 
         prospectivo reportó 
@@ -954,7 +989,7 @@ b. Epidemiología
         hiperbilirrubina (58%), daño renal agudo (45%),
         anemia severa (33%), malaria cerebral (13%), daño pulmonar (10%), shock 
         circulatorio (8%) e hipoglicemia (3%).-->
-        Por otro lado, en zonas con baja transmisión (e.g. la región de las 
+        Por otro lado, en zonas con baja transmisión (e.g., la región de las 
         Américas) los adultos eran los más susceptibles a la severidad con una 
         mayor variedad de disfunciones orgánicas.
         Por ejemplo, en Brasil Alexandre et al. 2010 [@alexandre2010] en un 
@@ -1058,8 +1093,8 @@ b. Marcadores
 	    con exposición (PvCSP, PvMSP-1~19~, PvMSP-9~RIRII~ y PvAMA-1) 
 	    e inmunidad (PvMSP-1~19~, PvMSP-1~NT~, PvMSP-3$\alpha$ y PvMSP-9~NT~). 
 	    [@cutts2014meta] Sin embargo, su principal limitante está en la
-	    carecia de evaluaciones en su cinética de adquisición, i.e. su desarrollo y 
-	    mantenimiento, en cohortes longitudinales.
+	    carecia de evaluaciones en su cinética de adquisición, desarrollo y 
+	    mantenimiento en cohortes longitudinales.
 	    <!--
 	    Actualmente, el cálculo de la razón de seroconversiónn (SCR) es el método más 
 	    estandarizado para la evaluación de la exposición y caracterización
@@ -1149,7 +1184,7 @@ d. Enfoque a larga escala
     respectivamente. [@immunomics2016]
     Incluso, ensayos 
     clínicos de fase 3 han demostrado que los actuales candidatos poseen una pobre 
-    inmunogenicidad y protección contra la malaria (e.g. RTS,S). [@rts2015]
+    inmunogenicidad y protección contra la malaria (e.g., RTS,S). [@rts2015]
     
     i. __Inmunómica__
     
@@ -1225,8 +1260,8 @@ a. De proteínas
         citoplasmáticas carentes de péptidos señal y dominios transmembrana en base a 
         filtros
         por punto isoeléctrico, con la exclusión de proteínas con variabilidad antigénica 
-        (e.g. PfEMP1, RIFIN, surfin, stevors; Pv _var_ y pseudogenes), e inclusión de genes 
-        multi-exonicos y largos didividos en
+        (e.g., PfEMP1, RIFIN, surfin, stevors; Pv _var_ y pseudogenes), e inclusión de 
+        genes multi-exonicos y largos divididos en
         segmentos sobrelapantes, limitando amplicones a 300-3000nt.
             
     ii. __Segunda generación__
@@ -1313,7 +1348,7 @@ b. Análisis de datos
             aplicado en forma paralela a la transformación asinh con respecto a controles 
             spike-in de intensidad invariante entre muestras. [@huber2002vsn]
             - modelo robusto lineal o RLM,
-            con la capacidad de controlar la variabilidad entre arreglos (i.e. muestras) 
+            con la capacidad de controlar la variabilidad entre arreglos (i.e., muestras) 
             observada en el diseño experimental de microarreglos de proteínas. 
             [@sboner2009rlm]
             
@@ -1347,7 +1382,7 @@ b. Análisis de datos
             un enfoque bayesiano empírico permite reducir (o moderar) las varianzas de 
             todas las lecturas. 
             Una primera estrategia corregía la varianza observada de cada gen tomando en 
-            cuenta la varianza de genes vecinos, i.e. con medias de expresión 
+            cuenta la varianza de genes vecinos con medias de expresión 
             similar.[@baldi2001cybert]
             Posteriormente, esta se extendió y optimizó mediante la estimación de 
             una varianza general previa para la actualización de todas las varianzas 
@@ -1381,7 +1416,7 @@ b. Análisis de datos
             [@sundaresh2007]
             Por ello, el esquema de ranqueo de elementos comúnmente ha sido complementado 
             con técnicas de clasificación.
-            Este proceso involucra la asignación de objetos (e.g. genes) en categorías
+            Este proceso involucra la asignación de objetos (e.g., genes) en categorías
             pre-existentes (clasificación supervisada), o el desarrollo progresivo de 
             un conjunto de categorías por características de los objetos.
             (clasificación no supervisada). [@allison2006]
@@ -1586,23 +1621,28 @@ Especificar los criterios de inclusión  del estudio.
 
 Criterios de exclusión
 
-Especificar los criterios de exclusión del estudio. No deben repetir lo establecido en los criterios de inclusión.
+Especificar los criterios de exclusión del estudio. No deben repetir lo establecido en los 
+criterios de inclusión.
 
 Selección de participantes
 
-Describir cómo se hará la selección de los participantes para el estudio. Por ejemplo: Se tomaran aleatoriamente a un grupo de alumnos que estén matriculados en el curso de Patología.
+Describir cómo se hará la selección de los participantes para el estudio. Por ejemplo: Se 
+tomaran aleatoriamente a un grupo de alumnos que estén matriculados en el curso de 
+Patología.
 
 Variables del estudio
 
 Describir las variable principales del estudio (variable dependiente e independiente)
 Especificar lo siguiente para cada variable:
-Variable (indicar el nombre de la variable y si es la variable dependiente o independiente del estudio)
+Variable (indicar el nombre de la variable y si es la variable dependiente o independiente 
+del estudio)
 Definición operativa
 Medición (cómo se medirá y/o cómo se recolectará el dato)
 Valores posibles
 Fuente de la variable
 
-Luego de hacer una descripción detallada, es útil resumir las variables de estudio en una tabla.
+Luego de hacer una descripción detallada, es útil resumir las variables de estudio en una 
+tabla.
 -->
 
 ## Diseño
@@ -1615,17 +1655,24 @@ sin evento que se incluirán en la población de comparación.
 
 ### Tipo de investigación
 
-__Por la finalidad: Analítico.__ A diferencia de un descriptivo, realizaremos compraciones entre grupos y evaluaremos una posible relación causal entre el factor y el efecto.
+__Por la finalidad: Analítico.__ A diferencia de un descriptivo, realizaremos compraciones 
+entre grupos y evaluaremos una posible relación causal entre el factor y el efecto.
 
-__Por el Control de la asignación: Observacional.__ A diferencia de un experimental, no controlaremos la asignación de los factores (severidad y episodios previos). Es decir, se procederemos a observar el fenómeno, ejecutar la medición y analizar los resultados.
+__Por el Control de la asignación: Observacional.__ A diferencia de un experimental, no 
+controlaremos la asignación de los factores (severidad y episodios previos). Es decir, se 
+procederemos a observar el fenómeno, ejecutar la medición y analizar los resultados.
 
-__Por el seguimiento: Transversal.__ A diferencia de uno longitudinal, no ejecutaremos un seguimiento. Las variables se medirán una sola vez, en un mismo instante.
+__Por el seguimiento: Transversal.__ A diferencia de uno longitudinal, no ejecutaremos un 
+seguimiento. Las variables se medirán una sola vez, en un mismo instante.
 
-__Por la relación cronológica: Prospectivo.__ A diferencia de un retrospectivo, recolectaremos los datos después de planificado el estudio.
+__Por la relación cronológica: Prospectivo.__ A diferencia de un retrospectivo, 
+recolectaremos los datos después de planificado el estudio.
 
-<!--__Por la dirección temporal: Hacia atrás/adelante.__ La población será selecionada por la variable Efecto/Exposición-->
+<!--__Por la dirección temporal: Hacia atrás/adelante.__ La población será selecionada por 
+la variable Efecto/Exposición-->
 
-__Por la unidad de análisis: Basado en individuo.__ A diferencia de uno ecológico, la unidad de observación son individuos, llamados aquí pacientes.
+__Por la unidad de análisis: Basado en individuo.__ A diferencia de uno ecológico, la 
+unidad de observación son individuos, llamados aquí pacientes.
 
 <!--
 **Por el tipo de conocimiento previo usado en la investigación:** Científica
@@ -1705,7 +1752,8 @@ A partir de esta clasificación, se ejecutará una selección aleatoria simple
 de 30 pacientes con más de 2 criterios de malaria severa para el grupo de casos y 
 30 no-severos para el grupo control.
 
-__Tipo de muestra: Probabilística.__ Cada elemento de la muestra será seleccionado al azar, con probabilidad de selección conocida.
+__Tipo de muestra: Probabilística.__ Cada elemento de la muestra será seleccionado al azar, 
+con probabilidad de selección conocida.
 
 ## Recolección de los datos e Instrumento
 <!-- Muestreo -->
@@ -1800,8 +1848,21 @@ una matriz final con valores numéricos.
 
 La aplicación del instrumento consiste en tres pasos: sondeo, escaneo y análisis, 
 tal como ha sido publicado previamente. [@Driguez2015]
-Primero, previo al sondeo los microarreglos se hidratan con buffer de bloqueo dentro de cámaras de incubación. Paralelamente, el plasma de los pacientes se diluye con buffer de bloqueo en 1:100 y se pre-absorbe con lisado de _E. coli_ en 10%(w/v), con el objetivo de reducir ruido de fondo en las mediciones tanto por uniones inespecíficas con el sustrato como por antígenos bacterianos del sistema de expresión RTS. Segundo, aspirado el buffer de bloqueo del microarreglo, se procede con el sondeo al agregar el plasma pre-absorbido e incubar _overnight_ en cámara húmeda a 4°C con leve agitación. Tercero, luego de lavados y aspirado repetitivos antes y después de cada paso, se agrega la solución con anticuerpos secundarios biotinilados y posteriormente la solución con fluoróforos conjugados con estreptavidina. Cuarto, luego de centrifugar las láminas, se procede al escaneo de las fluorescencias con lectores de microarreglos de laser confocal (e.g., Genepix 4300A). Las medidas crudas se obtienen luego de una normalización local mediante la sustracción de la intensidad de fondo presente alrededor de cada _spot_, ejecutada en el software del lector (Genepix Pro 7). Finalmente, se procede al análisis de los datos el cual será detallado en [la sección 4.4](#procanal).
-
+Primero, previo al sondeo los microarreglos se hidratan con buffer de bloqueo dentro de 
+cámaras de incubación. Paralelamente, el plasma de los pacientes se diluye con buffer de 
+bloqueo en 1:100 y se pre-absorbe con lisado de _E. coli_ en 10%(w/v), con el objetivo de 
+reducir ruido de fondo en las mediciones tanto por uniones inespecíficas con el sustrato 
+como por antígenos bacterianos del sistema de expresión RTS. Segundo, aspirado el buffer de 
+bloqueo del microarreglo, se procede con el sondeo al agregar el plasma pre-absorbido e 
+incubar _overnight_ en cámara húmeda a 4°C con leve agitación. Tercero, luego de lavados y 
+aspirado repetitivos antes y después de cada paso, se agrega la solución con anticuerpos 
+secundarios biotinilados y posteriormente la solución con fluoróforos conjugados con 
+estreptavidina. Cuarto, luego de centrifugar las láminas, se procede al escaneo de las 
+fluorescencias con lectores de microarreglos de laser confocal (e.g., Genepix 4300A). Las 
+medidas crudas se obtienen luego de una normalización local mediante la sustracción de la 
+intensidad de fondo presente alrededor de cada _spot_, ejecutada en el software del lector 
+(Genepix Pro 7). Finalmente, se procede al análisis de los datos el cual será detallado en 
+[la sección 4.4](#procanal).
 
 #### Validez y confiabilidad {#validez}
  <!--de medición y recolección
@@ -1811,7 +1872,9 @@ VALIDEZ (PRECISIÓN) -> PURIFIED vs IVTT
 REPRODUCIBILIDAD (CONFIABILIDAD) -> DAY1 vs DAY2
 
  PREVIO AL SONDEO PRINCIPAL
-Luego, se ejecuta un sondeo preliminar con anticuerpos dirigidos a extremos N- y C- terminales, con colas 10x HIS (histidina) y HA (hemoaglutinina) con el objetivo de realizar un control de la calidad de la expresión e impresión de proteínas.
+Luego, se ejecuta un sondeo preliminar con anticuerpos dirigidos a extremos N- y C- 
+terminales, con colas 10x HIS (histidina) y HA (hemoaglutinina) con el objetivo de realizar 
+un control de la calidad de la expresión e impresión de proteínas.
 
 Se agregarán diluciones de proteínas recombinantes expresadas en un
 sistema celular de reactividad conocida, controles positivos para
@@ -1823,13 +1886,20 @@ contacto alguno con la infección.
 
  -->
 
-Ambos parámetros será evaluados seguiendo la metodología empleada en estudios previos [@crompton2010] y estará incluido en la [sección 4.4](#procanal).
-Primero, la validez o exactitud del experimento será evaluada mediante la correlación lineal entre las lecturas de los antígenos-IVTT y sus correspondientes proteínas purificadas por muestra, compuestas por proteínas de inmunogenicidad conocida y expresadas por un sistema dentro de célula.
-Segundo, la confiabilidad o reproducibilidad será evaluada mediante la correlación lineal entre controles positivos agregados a las lecturas del primer y segundo día de sondeo de las muestras.
+Ambos parámetros será evaluados seguiendo la metodología empleada en estudios previos 
+[@crompton2010] y estará incluido en la [sección 4.4](#procanal).
+Primero, la validez o exactitud del experimento será evaluada mediante la correlación 
+lineal entre las lecturas de los antígenos-IVTT y sus correspondientes proteínas 
+purificadas por muestra, compuestas por proteínas de inmunogenicidad conocida y expresadas 
+por un sistema dentro de célula.
+Segundo, la confiabilidad o reproducibilidad será evaluada mediante la correlación lineal 
+entre controles positivos agregados a las lecturas del primer y segundo día de sondeo de 
+las muestras.
 
 ### Codificación y creación del archivo de datos
 
-Cada paciente del estudio estará identificado con un código de estructura `LIM####`, e.g.: `LIM1063`.
+Cada paciente del estudio estará identificado con un código de estructura `LIM####`, 
+e.g.: `LIM1063`.
 Los antígenos protéicos estarán identificados con el código asignado 
 a sus genes en la base de datos PlasmoDB, e.g.: 
 `PF3D7_0202500` o `PVX_091315`, 
@@ -1843,8 +1913,10 @@ se extenderá el código de cada uno con su respectivo número,
 e.g.: `_S1` para el primer segmento de un gen.
 
 Los datos serán organizados en dos matrices: 
-(i) archivo `samples.csv` con los códigos de los pacientes y sus covariables epidemiológicas y 
-(ii) archivo `RawData.csv` con los códigos de las proteínas y sus lecturas crudas en MFI por código de paciente.
+(i) archivo `samples.csv` con los códigos de los pacientes y sus covariables 
+epidemiológicas y 
+(ii) archivo `RawData.csv` con los códigos de las proteínas y sus lecturas crudas en MFI 
+por código de paciente.
 
 
 ## Procesamiento y Análisis de datos {#procanal}
@@ -1915,10 +1987,12 @@ usando el test-t moderado [@smyth2004ebayes]
 con corrección por comparación múltiple de la razón de falsos descubrimientos (FDR)
 por el método de Benjamini-Hochberg, disponible en el paquete `limma`. [@limma]
 Tercero, se realizará un agrupamiento jerárquico o _hierarchical clustering_ de los
-antígenos identificados en base a su distancia euclidiana, disponible en el paquete `NMF`. [@Gaujoux2010NMF]
+antígenos identificados en base a su distancia euclidiana, disponible en el paquete `NMF`. 
+[@Gaujoux2010NMF]
 Finalmente, se mostrarán las siguiente características protéicas de los
 antígenos identificados: presencia de dominios transmembrana, péptido señal, 
-número de ortólogos en _Plasmodium_, ontología génica y razón de mutaciones no-sinónimas sobre sinónimas, disponibles en la base de datos PlasmoDB. [@plasmodb]
+número de ortólogos en _Plasmodium_, ontología génica y razón de mutaciones no-sinónimas 
+sobre sinónimas, disponibles en la base de datos PlasmoDB. [@plasmodb]
 
 ### Visualización de resultados
 
