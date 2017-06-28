@@ -1340,7 +1340,7 @@ b. Análisis de datos
             - presencia de varianzas artificialmente altas o bajas producto del 
             bajo número de réplicas entre arreglos o muestras; [@baldi2001cybert] y un
             - amplio número de hipótesis puestas a prueba en forma simultánea, donde los 
-            que test estadísticos tradicionales pueden generar un largo número de 
+            test estadísticos tradicionales pueden generar un largo número de 
             falsos positivos. [@kayala2012cyber]
             
             Ante el primer problema, 
