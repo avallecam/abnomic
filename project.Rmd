@@ -64,9 +64,8 @@ RESUMEN: CORRIGELO AL FINAL
 -->
 
 > _Plasmodium vivax_ es responsable del 80% de la malaria en el Perú.
-Casos de enfermedad severa por mono-infecciones de _P. vivax_ han sido reportados tanto 
-en el
-sudeste asiático como en sudamérica. Sin embargo, dicha condición aún está
+Casos de enfermedad severa por mono-infecciones de _P. vivax_ han sido reportados 
+tanto en el noreste amazónico como en norte costero. Sin embargo, dicha condición aún está
 subestimada en las normas técnicas a nivel nacional, incrementando el riesgo 
 de posibles diagnósticos tardíos o inapropiados por el personal de salud.
 Con el fin de identificar biomarcadores de relevancia clínica contra la malaria 
@@ -992,12 +991,11 @@ b. Epidemiología
         Por otro lado, en zonas con baja transmisión (e.g., la región de las 
         Américas) los adultos eran los más susceptibles a la severidad con una 
         mayor variedad de disfunciones orgánicas.
-        Por ejemplo, en Brasil Alexandre et al. 2010 [@alexandre2010] en un 
-        estudio retrospectivo
+        Por ejemplo, en Brasil un estudio retrospectivo
         identifico 17/11,251 casos de malaria vivax severa, entre 28-80 años de edad, 
         con hiperbilirrubina (59%), 
         anemia severa (29%), daño renal agudo (12%), daño pulmonar (12%) y shock 
-        circulatorio (6%).
+        circulatorio (6%). [@alexandre2010]
     
     i. __En el Perú__
         
@@ -1117,9 +1115,9 @@ b. Marcadores
         	
 	        Se conoce que la respuesta contra esta manifestación está guiada por una
 	        excesiva respuesta inflamatoria que incluye la producción de las citoquinas 
-	        proinflamatorias TNF-$\alpha$, INF-$\alpha$, IL-1$\beta$ e IL-6 [@baird2013]
+	        pro-inflamatorias TNF-$\alpha$, INF-$\alpha$, IL-1$\beta$ e IL-6 [@baird2013]
 	        junto a una 
-	        reducción en la producción de la citoquina antiinflamatoria IL-10, un regulador
+	        reducción en la producción de la citoquina anti-inflamatoria IL-10, un regulador
 	        central en la respuesta contra la malaria. [@jagannathan2014]
 	        Es por ello que esta primera fase implicaría la adquisición de
 	        inmunidad a componentes parasitarios que gatillan una respuesta inflamatoria 
@@ -1938,6 +1936,7 @@ Para ello se hará empleo de los siguientes paquetes:
 -->
 
 ### Procesamiento
+<!-- Control de calidad y Preprocesamiento -->
 
 Preliminarmente, se describirá la distribución y proporción de las
 covariables epidemiológicas, clínicas y de laboratorio 
@@ -1977,8 +1976,9 @@ dos veces la mediana de los control-IVTT por individuo.
 -->
 
 ### Confirmación de hipótesis
+<!-- Inferencia, Clasificación y Descripción -->
 
-Se pondrán a prueba las hipótesis con el siguiente protocolo.
+Cada una de las hipótesis será prueba con el siguiente protocolo.
 Primero, se contrastará la amplitud e intensidad de respuesta con 
 un test de diferencias entre variables contínuas y no pareadas de dos grupos, 
 usando t-Student o Mann-Whitney, dependiendo de la distribución.
@@ -1989,10 +1989,12 @@ por el método de Benjamini-Hochberg, disponible en el paquete `limma`. [@limma]
 Tercero, se realizará un agrupamiento jerárquico o _hierarchical clustering_ de los
 antígenos identificados en base a su distancia euclidiana, disponible en el paquete `NMF`. 
 [@Gaujoux2010NMF]
-Finalmente, se mostrarán las siguiente características protéicas de los
-antígenos identificados: presencia de dominios transmembrana, péptido señal, 
+Finalmente, se describirán las siguientes características protéicas 
+disponibles en la base de datos PlasmoDB [@plasmodb] para el subgrupo de interés: 
+presencia de dominios transmembrana, péptido señal, 
 número de ortólogos en _Plasmodium_, ontología génica y razón de mutaciones no-sinónimas 
-sobre sinónimas, disponibles en la base de datos PlasmoDB. [@plasmodb]
+sobre sinónimas.
+<!-- ¿EN QUÉ MOMENTO HABLAS DE PLASMODB EN EL PROYECTO? ¿QUÉ ES PLASMODB? -->
 
 ### Visualización de resultados
 
