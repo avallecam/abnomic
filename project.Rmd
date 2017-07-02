@@ -16,11 +16,13 @@ header-includes:
 - \usepackage{afterpage}
 - \usepackage{capt-of}
 - \usepackage{array}
-- \usepackage{color}
+- \usepackage{color,soul}
 bibliography: analysis/malaria.bib
 csl: analysis/american-medical-association.csl
 #UNMSM: http://crai.ub.edu/es/pmf/iso-esp
 link-citations: yes
+urlcolor: red
+linkcolor: blue
 biblio-style: apalike
 ---
 
@@ -72,7 +74,7 @@ Con el fin de identificar biomarcadores de relevancia clínica contra la malaria
 vivax severa, el presente proyecto de tesis propone
 comparar la respuesta de anticuerpos ante la infección 
 en pacientes severos y no-severos provenientes de un estudio prospectivo caso-control
-ejecutado en la ciudad de Iquitos, Loreto-Perú, empleando microarreglos de proteínas.
+ejecutado en la ciudad de Iquitos, Loreto - Perú, empleando microarreglos de proteínas.
 Los resultados permitirán proponer marcadores serológicos de protección 
 contra la severidad con el potencial de implementarse en programas de 
 serovigilancia en miras al control y eliminación de la malaria.
@@ -234,7 +236,7 @@ la severidad y episodios previos por rangos de edad de los pacientes con malaria
 <!-- e importancia -->
 
 Ante la reemergencia repetitiva de la malaria en la Amazonia peruana 
-[@griffing2013history; @soto2017spatio; @rosas2016peru], 
+[@griffing2013history; @rosas2016peru], 
 la implementación de vigilancias serológicas programáticas en nuestro país
 es una prioridad [@hotspots2015]. 
 En zonas con baja transmisión, estos ensayos poseen una mayor sensibilidad y representan
@@ -1860,7 +1862,7 @@ fluorescencias con lectores de microarreglos de láser confocal (e.g., Genepix 4
 medidas crudas se obtienen luego de una normalización local mediante la sustracción de la 
 intensidad de fondo presente alrededor de cada _spot_, ejecutada en el software del lector 
 (Genepix Pro 7). Finalmente, se procede al análisis de los datos el cual será detallado en 
-[la sección 4.4](#procanal).
+la [sección 4.4](#anadata).
 
 #### Validez y confiabilidad {#validez}
  <!--de medición y recolección
@@ -1885,7 +1887,7 @@ contacto alguno con la infección.
  -->
 
 Ambos parámetros será evaluados siguiendo la metodología empleada en estudios previos 
-[@crompton2010] y estará incluido en la [sección 4.4](#procanal).
+[@crompton2010] y estará incluido en la [sección 4.4](#anadata).
 Primero, la validez o exactitud del experimento será evaluada mediante la correlación 
 lineal entre las lecturas de los antígenos-IVTT y sus correspondientes proteínas 
 purificadas por muestra, compuestas por proteínas de inmunogenicidad conocida y expresadas 
@@ -1917,7 +1919,7 @@ epidemiológicas y
 por código de paciente.
 
 
-## Procesamiento y Análisis de datos {#procanal}
+## Análisis de datos {#anadata}
 
 Todo el análisis estadístico se realizará en el software de computación estadística R [@R],
 el cual se complementará con funciones provenientes de distintos paquetes. 
@@ -1935,7 +1937,7 @@ Para ello se hará empleo de los siguientes paquetes:
 `PerformanceAnalytics`, `beeswarm`, `Rmisc`, `htmlTable` y `biobroom`.
 -->
 
-### Procesamiento
+### Control de calidad y Pre procesamiento
 <!-- Control de calidad y Preprocesamiento -->
 
 Preliminarmente, se describirá la distribución y proporción de las
@@ -1975,10 +1977,10 @@ Lectura normalizada de cada antígeno-IVTT mayor o igual a
 dos veces la mediana de los control-IVTT por individuo.
 -->
 
-### Confirmación de hipótesis
+### Prueba de hipótesis
 <!-- Inferencia, Clasificación y Descripción -->
 
-Cada una de las hipótesis será prueba con el siguiente protocolo.
+Cada una de las hipótesis de diferencia entre grupos seguirá el siguiente protocolo.
 Primero, se contrastará la amplitud e intensidad de respuesta con 
 un test de diferencias entre variables continuas y no pareadas de dos grupos, 
 usando t-Student o Mann-Whitney, dependiendo de la distribución.
@@ -1996,16 +1998,15 @@ número de ortólogos en _Plasmodium_, ontología génica y razón de mutaciones
 sobre sinónimas.
 <!-- ¿EN QUÉ MOMENTO HABLAS DE PLASMODB EN EL PROYECTO? ¿QUÉ ES PLASMODB? -->
 
-### Visualización de resultados
+### Reporte de resultados
 
-Los resultados se visualizarán mediante cinco tipos de gráficos.
-Diagrama de dispersión para mostrar la correlación entre dos variables continuas, 
-Diagramas de cajas para variables continuas,
-Diagrama de barras para frecuencias, Diagramas tipo volcán o
-_Volcano plots_ para mostrar la reactividad diferenciada de antígenos entre grupos 
-contra el valor P no ajustado resaltando los que posean un P ajustado significativo, 
-y Mapas de calor o _Heatmaps_ para el perfil serológico en escala de dos colores 
-segmentado por racimos o _clusters_.
+Las pruebas estadísticas serán reportadas con el valor del estadístico, valor p y valor
+p-ajustado para la comparación múltiple. Las distribuciones serán visualizadas con
+diagramas de dispersión para la correlación entre variables continuas, 
+diagramas de cajas y barras para la comparación de variables continuas y frecuencias, respectivamente, 
+diagramas tipo volcán o _volcano plots_ para la reactividad diferenciada entre grupos
+contra sus respectivos valores p no-ajustados, 
+y mapa de calor o _heat map_ segmentado por racimos o _clusters_ para el perfil serológico general.
 
 # ASPECTOS ADMINISTRATIVOS
 
@@ -2028,7 +2029,7 @@ recolectar lo datos a través del instrumento de medición descrito.
 ## Presupuesto y financiamiento
 
 El proyecto será realizado en El Centro de Enfermedades Tropicales
-de la Marina de los Estados Unidos NAMRU-6 y \textcolor{red}{financiado por ****}.
+de la Marina de los Estados Unidos NAMRU-6 y \textcolor{red}{\hl{financiado por ****}}.
 
 ```{r, eval=TRUE, echo=FALSE}
 a <- c(50,200,25,
