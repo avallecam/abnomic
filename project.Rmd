@@ -20,9 +20,11 @@ header-includes:
 bibliography: analysis/malaria.bib
 csl: analysis/american-medical-association.csl
 #UNMSM: http://crai.ub.edu/es/pmf/iso-esp
+#ISO-690: numeric OR author-date? https://www.zotero.org/styles?q=iso690
 link-citations: yes
-urlcolor: red
-linkcolor: blue
+linkcolor: Blue
+#citecolor: Maroon
+urlcolor: Blue
 biblio-style: apalike
 ---
 
@@ -35,6 +37,11 @@ FROM:
 https://es.sharelatex.com/learn/Spanish
 - \usepackage[utf8]{inputenc}
 - \usepackage[spanish, es-tabla]{babel} #Cuadro (default)
+
+BIBLIOGRAFY: (In:) to (En:) problem
+https://tex.stackexchange.com/questions/321972/spanish-bibliography
+https://tex.stackexchange.com/questions/238157/reference-in-spanish-and-english-language-in-bibtex
+- \usepackage[english,main=spanish]{babel}
 
 OR:
 \renewcommand{\listtablename}{Índice de tablas}
@@ -235,7 +242,7 @@ la severidad y episodios previos por rangos de edad de los pacientes con malaria
 
 <!-- e importancia -->
 
-Ante la reemergencia repetitiva de la malaria en la Amazonia peruana 
+Ante la reemergencia repetitiva de la malaria en la Amazonía peruana 
 [@griffing2013history; @rosas2016peru], 
 la implementación de vigilancias serológicas programáticas en nuestro país
 es una prioridad [@hotspots2015]. 
@@ -374,30 +381,41 @@ con respecto a la severidad, manifestaciones clínicas en los episodios previos
 
 ## Viabilidad
 
-El proyecto es viable dada la factibilidad de su ejecución y el nivel de interés para el 
-área de conocimiento.
+El proyecto es viable por su factible ejecución, 
+la importancia de sus resultados para el área, la novedad de su enfoque y 
+la relevancia de su método para la investigación biomédica.
 
-En primer lugar, su factibilidad se sustenta en que el proyecto se ejecutará sobre los 
-resultados de un estudio prospectivo ya realizado, facilitando el proceso de muestreo y 
-limitándolo al planteamiento del problema y análisis de los datos. Además, dado que los 
-microarreglos de proteínas requieren de pequeño volumen de plasma por paciente (~2$\mu$L), 
-se contará con un adecuado tamaño muestral (n=60) el cual permitirá poner a prueba las 
-hipótesis formuladas con suficiente poder estadístico. 
-
+Primero, su ejecución es factible por la disponibilidad inmediata de muestras
+provenientes de un estudio prospectivo ya realizado, su adecuado tamaño muestral (n=60),
+la objetividad de su pregunta de investigación y la experiencia técnica del investigador en la
+herramienta de análisis R [@R2016]/Bioconductor [@bioconductor2004].
+Segundo, el problema es de interés para la comunidad por la posibilidad de que
+sus resultados generen un cambio en la práctica médica.
+Tercero, la novedad de su enfoque a larga escala permitirá corroborar, refutar o 
+extender el estado del conocimiento y brindar mayor evidencia con respecto a la 
+controversia mencionada.<!-- actual / generada por el enfoque tradicional -->
+Cuarto, la relevancia de su método de análisis<!-- de datos--> reproducible con software libre
+permitirá transparentar la generación de resultados y promover su puesta en práctica 
+en futuras investigaciones de esta u otras áreas.
+<!--
 Finalmente, un aspecto novedoso del proyecto será el uso del lenguaje de programación y 
-software libre R [@R] para el análisis de datos. Esta plataforma facilitará la 
+software libre R [@R2016] para el análisis de datos. Esta plataforma facilitará la 
 reproducibilidad del estudio, promoviendo su reutilización y contribución por otros grupos
 [@CienciaReproducible2016].
 Este enfoque de análisis permitirá acelerar el progreso en esta área de investigación, 
 automatizar procesos de análisis y reducir las brechas técnicas que continúan limitando 
 el descubrimiento de biomarcadores relevantes para la aplicación de vigilancias 
-seroepidemiológicas en nuestro país. 
-
+seroepidemiológicas en nuestro país. -->
+<!--
+facilitando el proceso de muestreo y 
+limitándolo al planteamiento del problema y análisis de los datos. 
+microarreglos de proteínas requieren de pequeño volumen de plasma por paciente (~2$\mu$L), 
+se contará con un adecuado tamaño muestral (n=60) el cual permitirá poner a prueba las 
+hipótesis formuladas con suficiente poder estadístico. -->
 <!-- 
 Esto debido a la elección de un diseño Caso-Control, ideal para el estudio de casos 
 infrecuentes, la evaluación de multiples factores para el mismo resultado y eficiente en 
 recursos por tiempo. 
-
 Cabe agregar , condición que posibilita escalar su aplicación a tamaño muestral 
 epidemiológico. 
  -->
@@ -918,8 +936,9 @@ b. Biología
         (1-2% de RBC circulantes), 
         condición que genera bajas parasitemias en comparación a _P. falciparum_; 
         y (iii) la dependencia del antígeno _Duffy_ para la invasión de RBC, cuya
-        ausencia tiene una alta frecuencia en las poblaciones con ancestría africana y
-        tradicionalmente considerado como factor de resistencia a _P. vivax_.
+        ausencia en individuos con ancestría africana 
+        se ha considerado como un factor de resistencia a _P. vivax_.
+        <!--tiene una alta frecuencia en las poblaciones-->
 
 ### Malaria Severa
 
@@ -965,7 +984,7 @@ a. General
         _Plasmodium_ con Dengue no está asociada con una peor enfermedad,
         asemejándose a una mono-infección con Dengue tanto en frecuencia de síntomas como 
         en el nivel de marcadores inmunológicos [@baldevi2016].
-
+\newpage
 b. Epidemiología
     
     i. __A nivel mundial__
@@ -1143,7 +1162,7 @@ b. Marcadores
 	        marcadores en ser propuestos como importantes para la protección a este nivel,
 	        tal como lo sugirió en 1961 la terapia efectiva por transferencia pasiva de 
 	        anticuerpos donados por adultos con inmunidad adquirida de forma natural
-	        [@cohen1961; @sabchareon1991].
+	        [@cohen1961]. <!-- [@sabchareon1991] -->
 	        
 	        En el caso de _P. vivax_, su adquisición ocurre con una mayor rapidez, 
 	        posiblemente facilitada por sus particularidades biológicas [@mueller2013].
@@ -1343,7 +1362,7 @@ b. Análisis de datos
             - sustracción de controles,
             aplicado luego de ejecutar una transformación logarítmica y llamado 
             _fold over control_ (FOC) en microarreglos de proteínas
-            [@King2015FOC; @arevalo2016]; y
+            [@King2015FOC]; y<!--[@arevalo2016]-->
             - estabilización de varianzas o VSN, 
             aplicado en forma paralela a la transformación asinh con respecto a controles 
             _spike-in_ de intensidad invariante entre muestras [@huber2002vsn].
@@ -1495,12 +1514,12 @@ b. Análisis de datos
             Lu et al. 2014
             (GraphPad, SigmaPlot10.0, Cluster3.0, TreeView y pearsoncorrelation.com)
             [@lu2014rama], y
-            Chen et al. 2015 (SAS, MULTTEST y TIGR MeV) [@chen2015immunomics]
+            Chen et al. 2015 (SAS, MULTTEST y TIGR MeV) [@chen2015immunomics].
             
         2. __Libre__
             
             En respuesta a esta problemática, el uso de lenguajes de programación de
-            alto nivel como R [@R] junto a ambientes de análisis como Bioconductor 
+            alto nivel como R [@R2016] junto a ambientes de análisis como Bioconductor 
             [@bioconductor2004] han
             reducido las barreras de acceso a la investigación interdisciplinaria
             para el análisis transparente de datos moleculares de larga escala,
@@ -1736,7 +1755,7 @@ a. Criterios de inclusión
     Hipoglicemia (glucosa < 40 mg/dL), 
     Anemia severa (hemoglobina < 7mg/dL), 
     Daño renal (creatinina > 3mg/dl),
-    Hiperbilirrubina (bilirrubina sérica > 2.5 mg/dL), 
+    Hiperbilirrubina (bilirrubina sérica > 2.5 mg/dL).
     <!-- exluidos de Malaria Severa 2014: sangrado, acidosis, hiperparasitemia -->
     
 b. Criterios de exclusión
@@ -1921,9 +1940,11 @@ por código de paciente.
 
 ## Análisis de datos {#anadata}
 
-Todo el análisis estadístico se realizará en el software de computación estadística R [@R],
-el cual se complementará con funciones provenientes de distintos paquetes. 
-
+Se hará uso del software de computación estadística R [@R2016],
+complementado con funciones de distintos paquetes pertenecientes a
+dos principales ambientes de análisis: 
+Bioconductor [@bioconductor2004] 
+y tidyverse [@wickham2016r4ds].<!-- [@wickham2014tidy] -->
 <!--
 El informe final será generado por un formato que integrará texto, código y resultados, 
 siguiendo principios de reproducibilidad [@CienciaReproducible2016].
@@ -1946,7 +1967,8 @@ de los pacientes de la muestra.
 Luego, con las lecturas crudas en MFI se evaluará la validez y 
 reproducibilidad del ensayo mediante un
 test de asociación entre variables continuas, 
-usando correlación de Pearson ($r$) o Spearman ($\rho$), dependiendo de la distribución.
+usando correlación de Pearson ($r$) o Spearman ($\rho$), dependiendo de la distribución,
+con un 0.1% de error asumido.
 Posteriormente, se procederá con su 
 transformación a escala logarítmica en base 2, 
 normalización entre muestras por sustracción de la mediana de los control-IVTT a 
@@ -1982,31 +2004,38 @@ dos veces la mediana de los control-IVTT por individuo.
 
 Cada una de las hipótesis de diferencia entre grupos seguirá el siguiente protocolo.
 Primero, se contrastará la amplitud e intensidad de respuesta con 
-un test de diferencias entre variables continuas y no pareadas de dos grupos, 
-usando t-Student o Mann-Whitney, dependiendo de la distribución.
+un test de diferencias entre variables continuas y no pareadas de dos grupos
+usando t-Student o Mann-Whitney, dependiendo de la distribución,
+con un 5% de error asumido.
 Segundo, se realizará un test de reactividad diferenciada de anticuerpos entre dos grupos, 
 usando el test-t moderado [@smyth2004ebayes] 
 con corrección por comparación múltiple de la razón de falsos descubrimientos (FDR)
-por el método de Benjamini-Hochberg, disponible en el paquete `limma` [@limma].
+por el método de Benjamini-Hochberg, disponible en el paquete `limma` [@limma],
+con un 0.1% de error asumido.
 Tercero, se realizará un agrupamiento jerárquico o _hierarchical clustering_ de los
 antígenos identificados en base a su distancia euclidiana, disponible en el paquete `NMF`
 [@Gaujoux2010NMF].
-Finalmente, se describirán las siguientes características proteicas 
-disponibles en la base de datos PlasmoDB [@plasmodb] para el subgrupo de interés: 
+Finalmente, se describirá la<!-- siguientes características proteicas -->
 presencia de dominios transmembrana, péptido señal, 
 número de ortólogos en _Plasmodium_, ontología génica y razón de mutaciones no-sinónimas 
-sobre sinónimas.
+sobre sinónimas para el subgrupo de interés,
+disponible en la base de datos PlasmoDB [@plasmodb].
 <!-- ¿EN QUÉ MOMENTO HABLAS DE PLASMODB EN EL PROYECTO? ¿QUÉ ES PLASMODB? -->
 
 ### Reporte de resultados
 
-Las pruebas estadísticas serán reportadas con el valor del estadístico, valor p y valor
-p-ajustado para la comparación múltiple. Las distribuciones serán visualizadas con
+De acuerdo a las guía SAMPL [@lang2013basic],
+las correlaciones y pruebas de hipótesis serán reportadas con el valor del 
+estadístico de prueba y el valor p. Las distribuciones serán visualizadas con
 diagramas de dispersión para la correlación entre variables continuas, 
-diagramas de cajas y barras para la comparación de variables continuas y frecuencias, respectivamente, 
-diagramas tipo volcán o _volcano plots_ para la reactividad diferenciada entre grupos
-contra sus respectivos valores p no-ajustados, 
-y mapa de calor o _heat map_ segmentado por racimos o _clusters_ para el perfil serológico general.
+diagramas de cajas y barras para la comparación de variables continuas y frecuencias, respectivamente.
+Las comparaciones múltiples reportarán el valor p-ajustado y serán visualizadas con dos
+gráficos: un diagrama tipo volcán o _volcano plot_ con la diferencia de reactividad 
+entre grupos en escala logarítmica contra sus respectivos valores p<!-- no-ajustados-->
+y un mapa de calor o _heat map_ segmentado por racimos o _clusters_.
+El informe final consistirá de un reporte en formato _notebook_ que integrará 
+texto, código y resultados [@knitr], siguiendo principios de 
+reproducibilidad [@CienciaReproducible2016].
 
 # ASPECTOS ADMINISTRATIVOS
 
@@ -2019,7 +2048,7 @@ recolectar lo datos a través del instrumento de medición descrito.
   --------------------------------- ----------- --------- --------- --------- --------- ---------
                                     **Jul**     **Ago**   **Sep**   **Oct**   **Nov**   **Dic**  
   Recolección de datos              X
-  Procesamiento de datos                        X
+  Análisis de datos                             X
   Interpretación de resultados                            X
   Redacción final                                                   X
   Correcciones                                                                X
@@ -2029,7 +2058,11 @@ recolectar lo datos a través del instrumento de medición descrito.
 ## Presupuesto y financiamiento
 
 El proyecto será realizado en El Centro de Enfermedades Tropicales
-de la Marina de los Estados Unidos NAMRU-6 y \textcolor{red}{\hl{financiado por ****}}.
+de la Marina de los Estados Unidos NAMRU-6 y \textcolor{red}{\hl{financiado por}}
+The Global Emerging Infectious Surveillance and Response System (GEIS) section at the 
+Armed Forces Health Surveillance Branch (AFHSC),
+The Military Infectious Diseases Research Program (MIDRP) y el
+NIH Training grant 2D43TW007393.
 
 ```{r, eval=TRUE, echo=FALSE}
 a <- c(50,200,25,
