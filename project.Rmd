@@ -82,9 +82,11 @@ vivax severa, el presente proyecto de tesis propone
 comparar la respuesta de anticuerpos ante la infección 
 en pacientes severos y no-severos provenientes de un estudio prospectivo caso-control
 ejecutado en la ciudad de Iquitos, Loreto - Perú, empleando microarreglos de proteínas.
-Los resultados permitirán proponer marcadores serológicos de protección 
-contra la severidad con el potencial de implementarse en programas de 
-serovigilancia en miras al control y eliminación de la malaria.
+Los resultados permitirán proponer marcadores serológicos discriminantes 
+de severidad<!-- o episodios previos--> 
+con el potencial de implementarse en programas de 
+serovigilancia en miras al control y eliminación de la malaria en la región.
+<!-- complementar las actuales medidas de control "MALARIA CERO 2017" -->
 
 # PLANTEAMIENTO DEL PROBLEMA
 
@@ -381,13 +383,13 @@ con respecto a la severidad, manifestaciones clínicas en los episodios previos
 
 ## Viabilidad
 
-El proyecto es viable por su factible ejecución, 
-la importancia de sus resultados para el área, la novedad de su enfoque y 
+El proyecto es viable por la factibilidad de su ejecución, 
+el interés de sus resultados para el área, la novedad de su enfoque y 
 la relevancia de su método para la investigación biomédica.
 
 Primero, su ejecución es factible por la disponibilidad inmediata de muestras
 provenientes de un estudio prospectivo ya realizado, su adecuado tamaño muestral (n=60),
-la objetividad de su pregunta de investigación y la experiencia técnica del investigador en la
+la objetividad de la pregunta planteada y la experiencia técnica del investigador en la
 herramienta de análisis R [@R2016]/Bioconductor [@bioconductor2004].
 Segundo, el problema es de interés para la comunidad por la posibilidad de que
 sus resultados generen un cambio en la práctica médica.
@@ -888,9 +890,9 @@ a. Epidemiología
         endemismo y transmisión heterogénea [@rosas2016peru]. El 95% 
         pertenecieron al noreste amazónico (con una razón Pv/Pf de 4/1) 
         y el resto al norte costero 
-        y la región minera del suroeste. Notablemente, una comunidad en 
-        Madre de Dios no ha tenido un solo caso de malaria falciparum en 
-        una década. Con respecto a factores ambientales, en el año 1998 
+        y la región minera del suroeste. Notablemente, comunidades en 
+        Madre de Dios no han registrado caso de malaria falciparum en 
+        una década (2001-2012). Con respecto a factores ambientales, en el año 1998 
         durante el fenómeno El Niño-Oscilación Sur (ENSO) se produjo 
         el mayor pico de casos anuales en la historia (200,000 casos), con mayor 
         efecto en el norte costero [@gagnon2002enso]. Los casos anuales 
@@ -899,13 +901,14 @@ a. Epidemiología
 
 b. Biología
     
-    i. __Ciclo Biológico__
+    i. __Ciclo de vida__
     
         La ecología natural del parásito de la malaria involucra a dos hospederos: 
         el humano y el mosquito.
         A través de la picadura del mosquito infectado, los esporozoitos 
-        ingresan a las células hepáticas iniciándose su desarrollo asexual en
-        el estadio hepático.
+        son librerados al fluido sanguíneo del hospedero e
+        ingresan a las células hepáticas iniciándose su desarrollo asexual,
+        llamado estadio hepático.
         Ahí se multiplican hasta formar esquizontes, los cuales egresan al torrente 
         sanguíneo en la forma de 
         merozoitos. El segundo estadio, llamado eritrocítico, se inicia al invadir 
@@ -937,7 +940,7 @@ b. Biología
         condición que genera bajas parasitemias en comparación a _P. falciparum_; 
         y (iii) la dependencia del antígeno _Duffy_ para la invasión de RBC, cuya
         ausencia en individuos con ancestría africana 
-        se ha considerado como un factor de resistencia a _P. vivax_.
+        ha sido considerada como un factor de resistencia a _P. vivax_.
         <!--tiene una alta frecuencia en las poblaciones-->
 
 ### Malaria Severa
@@ -966,8 +969,8 @@ a. General
         Por ejemplo, en zonas de alta transmisión como en el África subsahariana, 
         las poblaciones más vulnerables son: niños menores de 5 años con un desarrollo 
         incompleto de inmunidad parcial contra la malaria [@Stanisic2015], 
-        mujeres embarazadas en parte a la adhesión placentaria de iRBC
-        [@rogerson2007preg], y viajeros o migrantes sin 
+        mujeres embarazadas en parte a la adhesión placentaria de 
+        glóbulos rojos infectados (iRBC) [@rogerson2007preg], y viajeros o migrantes sin 
         inmunidad provenientes de áreas con baja o ninguna transmisión de malaria. 
         Por otro lado, en zonas de baja transmisión como en Asia y América Latina, 
         al haber una menor exposición a la infección, la mayoría de la población 
@@ -1047,7 +1050,7 @@ c. Biología
         ha sido considerada como "benigna" en comparación a _P. falciparum_ 
         debido a su: (i) baja invasión parasitaria, sesgada 
         a reticulocitos y rutas alternas de menor efectividad; y (ii) pobre 
-        citoadhesión de sus glóbulos rojos infectados (iRBC), dada por la ausencia de 
+        citoadhesión de sus iRBC, dada por la ausencia de 
         protrusiones abastonadas o _knob protrusions_. 
         Sin embargo, la presencia de genes homólogos a Pf _var_, o genes Pv _vir_, y
         la baja proporción de esquizontes tardíos sugieren la presencia de secuestramiento 
@@ -1067,12 +1070,13 @@ c. Biología
         <!--Aún no está completamente entendida. Sin embargo, s-->Se han propuesto 
         mecanismos
         en base a lo observado en los casos de malaria cerebral por _P. falciparum_,
-        donde los mecanismos de invasión y adhesión parasitaria son relevantes.
+        donde los procesos de invasión y adhesión parasitaria son relevantes.
         La respuesta celular contra la parasitemia, dependiente de su 
         tasa de multiplicación, sumada a la citoadherencia 
         de iRBC en estadio esquizonte a endotelio o RBC no infectados (rosetamiento), 
         desencadena una obstrucción microvascular que activa a sus células endoteliales. 
-        Estas liberan una mayor cantidad de citoquinas proinflamatorias, provocando 
+        En respuesta, estas liberan una mayor cantidad de citoquinas proinflamatorias, 
+        provocando 
         la pérdida de perfusión y una consecuente disfunción microvascular que progresa 
         por retroalimentación positiva.
 
@@ -1150,11 +1154,15 @@ b. Marcadores
 	        Por otro lado, la adquisición de anticuerpos que bloqueen la adhesión de iRBC 
 	        o invasión parasitaria también son candidatos a otorgar una protección a este
 	        nivel [@wassmer2015].
-	        Antígenos referenciales son las proteínas VIR, homólogas a VAR y
-	        posiblemente secretadas en iRBC con adhesividad a endotelio y RBC no infectados
-	        [@portillo2001vir], y las proteínas de la familia PvDBP y PvRBP
+	        Antígenos referenciales son las proteínas VIR en _P. vivax_, homólogas a VAR 
+	        en _P. falciparum_,
+	        posiblemente secretadas en iRBC y causantes de adhesividad a endotelio o 
+	        RBC no infectados, condición gatilladora del rosetamiento y 
+	        posterior obstrucción microvascular [@portillo2001vir], y 
+	        las proteínas de la familia PvDBP y PvRBP
 	        (_Duffy-_ y _Reticulocyte- binding proteins_), responsables
-	        de la invasión a reticulocitos [@galinski1992rbp].
+	        de la invasión a reticulocitos por la ruta tradicional y alternativa, respectivamente
+	        [@galinski1992rbp].
     	\newpage
 	    2. __contra la enfermedad__
 	        
@@ -1217,7 +1225,8 @@ d. Enfoque a larga escala
         
         El primer enfoque en respuesta a esta problemática fue llamado 
         _Vacunología Reversa_,
-        el cual hace uso de la información genómica para la predicción bioinformática de 
+        el cual hace uso de la información genómica de los patógenos
+        para la predicción bioinformática de 
         antígenos candidatos a vacuna a partir de características protéticas asociadas a 
         inmunogenicidad y efectividad en vacunación. La principal limitación de este 
         enfoque 
@@ -1225,11 +1234,14 @@ d. Enfoque a larga escala
         con ciclos de vida complejos [@immunomics2016].
         
         Un segundo enfoque <!--que se construyó sobre aquél -->fue llamado _Inmunómica_, 
-        el cual hace uso de la información
-        transcriptómica y proteómica de patógenos dinámicos, métodos computacionales 
-        predictivos e información del hospedero para la selección inmunógenos en 
-        forma empírica.
-        Su principal ventaja está en la capacidad de priorizar la selección de antígenos en
+        el cual hace uso de la información de ambos agentes interaccionantes.
+        La selección de inmunógenos es realizada por métodos empíricos usando data
+        transcriptómica y proteómica de patógenos dinámicos más la información clínica 
+        del hospedero, o métodos teóricos empleando algoritmos computacionales predictivos 
+        <!--de proteínas inmunógenas -->que tomen en cuenta la afinidad entre 
+        péptidos del patógeno y determinadas moléculas MHC del hospedero.
+        La principal ventaja del primer método
+        está en la capacidad de priorizar la selección de antígenos en
         base a criterios clínicamente relevantes, como el de individuos con inmunidad por 
         adquisición natural [@immunomics2016].
         
@@ -1257,9 +1269,9 @@ a. De proteínas
     Esta es una técnica empleada en la medición a larga escala de las interacciones o 
     actividades de proteínas capaz de reconstruir redes biológicas entre 
     diferentes clases de moléculas y estados celulares [@uzoma2013interactome].
-    En el contexto inmunómico o de la interacción patógeno-hospedero, dado el tamaño y 
-    complejidad de los genomas de 
-    _Plasmodium_, la ejecución de un _screening_ de proteoma completo es desafiante. 
+    En el contexto inmunómico, cuantificando la interacción antígeno-anticuerpo,
+    el tamaño y complejidad de los genomas de _Plasmodium_ desafían su
+    ejecución a una escala de proteoma completo.
     <!--Por ejemplo, _P. falciparum_ posee más de 3kb de longitud, ~5300 genes, genes 
     multi-exónicos complejos y segmentos largos de secuencias repetitivas por el bajo 
     contenido de GC. -->
@@ -1274,15 +1286,15 @@ a. De proteínas
     
         Finney et al. 2014 [@Finney2014] diseñaron microarreglos de _P. vivax_ y 
         _P. falciparum_ en base
-        a las proteínas predichas para el estadio eritrocítico con capacidad de ser 
-        expuestas a superficie con: (i) evidencia en microarreglos, proteomas, EST, 
-        o secretoma predicho para _P. falciparum_, (ii) proteínas únicas y ortólogas con
-        presencia de péptidos señal (SP) o dominios transmembrana (TMD) para _P. vivax_, (iii)
+        a (i) proteínas predichas para el estadio eritrocítico con capacidad de ser 
+        expuestas a superficie, (ii) evidencia en microarreglos, proteomas, EST, 
+        o secretoma predicho para _P. falciparum_, (iii) proteínas únicas y ortólogas con
+        presencia de péptidos señal (SP) o dominios transmembrana (TMD) para _P. vivax_, (iv)
         proteínas putativas citoplasmáticas carentes de SP o TMD en base a filtros
-        de punto isoeléctrico por especie, (iv) exclusión de proteínas con variabilidad 
+        de punto isoeléctrico por especie, (v) exclusión de proteínas con variabilidad 
         antigénica (e.g., PfEMP1, RIFIN, surfin, stevors; Pv _var_ y pseudogenes), 
-        e (v) inclusión de genes simples y multi-exónicos.
-            
+        e (vi) inclusión de genes simples y multi-exónicos.
+        
     ii. __Segunda generación__
         
         En el 2015, el Centro Internacional de Excelencia para la Investigación de la 
@@ -1298,7 +1310,7 @@ a. De proteínas
         dándole prioridad a los antígenos con seroreactividad en todos los países y
         en las posiciones restantes los antígenos en orden descendiente a su reactividad
         promedio. Este diseño ha sido depositado en la base de datos GEO
-        con el código GPL 18316.
+        con el código [GPL18316](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL18316).
         
 b. Análisis de datos
     
@@ -1368,7 +1380,7 @@ b. Análisis de datos
             _spike-in_ de intensidad invariante entre muestras [@huber2002vsn].
             - modelo robusto lineal o RLM,
             con la capacidad de controlar la variabilidad entre arreglos (i.e., muestras) 
-            observada en el diseño experimental de microarreglos de proteínas 
+            observada en los diseños experimentales de microarreglos de proteínas 
             [@sboner2009rlm].
             
             Tercero, el filtrado en experimentos a larga escala permite incrementar
@@ -1440,8 +1452,9 @@ b. Análisis de datos
             un conjunto de categorías por características de los objetos.
             (clasificación no supervisada) [@allison2006].
             
-            La clasificación supervisada o predicción de clase, define las categorías, 
-            conjuntos de entrenamiento y prueba _a priori_. Requiere del
+            La clasificación supervisada o predicción de clase, define _a priori_ 
+            el número de categorías, el conjunto de entrenamiento y el de prueba. 
+            Requiere del
             uso de procedimientos de validación cruzada y tomar en cuenta sesgos de
             selección. Por otro lado, su precisión predictiva es afectada por la 
             sobreparametrización, más aún con bajo número de muestras y amplia 
@@ -1488,7 +1501,7 @@ b. Análisis de datos
         El primero se obtiene calculando la proporción o porcentaje de antígenos 
         reactivos por individuo
         y el segundo por el promedio de sus intensidades<!-- por individuo-->.
-        Particularmente, la amplitud ha demostrado tan relevante como la
+        Particularmente, la amplitud ha demostrado ser tan relevante como la
         reactividad de antígenos individuales en el desarrollo de inmunidad contra
         la malaria [@crompton2010].
         <!--Los perfiles de anticuerpos a larga escala han demostrado la amplitud y
@@ -1515,6 +1528,7 @@ b. Análisis de datos
             (GraphPad, SigmaPlot10.0, Cluster3.0, TreeView y pearsoncorrelation.com)
             [@lu2014rama], y
             Chen et al. 2015 (SAS, MULTTEST y TIGR MeV) [@chen2015immunomics].
+            <!-- PRE-PRINT of TIPS TP MAKE YOUR RESEARCH IRREPRODUCIBLIBLE (2015) -->
             
         2. __Libre__
             
@@ -1522,13 +1536,13 @@ b. Análisis de datos
             alto nivel como R [@R2016] junto a ambientes de análisis como Bioconductor 
             [@bioconductor2004] han
             reducido las barreras de acceso a la investigación interdisciplinaria
-            para el análisis transparente de datos moleculares de larga escala,
-            promoviendo la reproducibilidad de reportes [@knitr] y resultados por 
-            su flexibilidad a la
+            para el análisis transparente de datos moleculares de larga escala.
+            Su flexibilidad a la
             creación de _scripts_ de análisis o _workflows_ combinando diferentes
-            tipos de data, herramientas estadísticas y visualizaciones [@Biobase],
+            tipos de data, herramientas estadísticas y visualizaciones [@Biobase]
+            dentro de reportes dinámicos [@knitr]
             con registro explícito de todas las ediciones a data cruda y parámetros
-            empleados, siguiendo principios de 
+            empleados, permite seguir los principios de 
             Ciencia Reproducible [@CienciaReproducible2016].
         \newpage
         3. __Servidores__
@@ -1678,7 +1692,7 @@ __Por la finalidad: Analítico.__ A diferencia de un descriptivo, realizaremos c
 entre grupos y evaluaremos una posible relación causal entre el factor y el efecto.
 
 __Por el Control de la asignación: Observacional.__ A diferencia de un experimental, no 
-controlaremos la asignación de los factores (severidad y episodios previos). Es decir, se 
+controlaremos la asignación de los factores (severidad y episodios previos). Es decir,
 procederemos a observar el fenómeno, ejecutar la medición y analizar los resultados.
 
 __Por el seguimiento: Transversal.__ A diferencia de uno longitudinal, no ejecutaremos un 
@@ -1691,7 +1705,7 @@ recolectaremos los datos después de planificado el estudio.
 la variable Efecto/Exposición-->
 
 __Por la unidad de análisis: Basado en individuo.__ A diferencia de uno ecológico, la 
-unidad de observación son individuos, llamados aquí pacientes.
+unidad de observación son individuos o pacientes.
 
 <!--
 **Por el tipo de conocimiento previo usado en la investigación:** Científica
@@ -1804,20 +1818,19 @@ impresos en una lámina portaobjetos y
 organizados en 8 bloques paralelos, 
 cada uno con 4 arreglos compuestos por cuadrículas de 17x17 _spots_.
 
+El microarreglo de proteínas es una herramienta que permite medir
+a larga escala los anticuerpos reactivos a determinados antígenos de 
+un patógeno presentes en plasma.
+
 ADN 300-3000 aa
 entre 100 y 1000 aminoácidos de longitud, 
 En este caso, la matriz posee 515 fragmentos protéicos,
 representantes de 446 proteínas, aproximadamente el 8% del genoma de _P. vivax_ (Sal1).
-> 8.21% del genoma Pvivax Sal1
- -->
+8.21% del genoma Pvivax Sal1 -->
 
-
-El microarreglo de proteínas es una herramienta que permite medir
-a larga escala los anticuerpos reactivos a determinados antígenos de 
-un patógeno presentes en plasma.
 El presente estudio hará uso de 
 microarreglos diseñados con 1014 fragmentos proteicos recombinantes 
-(498 de _P. falciparum_ y 516 de _P. vivax_, expresado como Pf498/Pv516) 
+(498 de _P. falciparum_ y 516 de _P. vivax_, expresado como Pf498/Pv516 o PfPv500) 
 representando 873 proteínas predichas (427 de _P. falciparum_ y 446 de _P. vivax_, 
 ~8% del total predicho para el genoma de _P. vivax_ Sal1) 
 seleccionadas luego de una extensiva evaluación serológica con uno 
@@ -1873,12 +1886,12 @@ buffer en 1:100 y se pre-absorbe con lisado de _E. coli_ en 10%(w/v), con el obj
 reducir ruido de fondo en las mediciones tanto por uniones inespecíficas con el sustrato 
 como por antígenos bacterianos del sistema de expresión RTS. Segundo, aspirado el buffer de 
 bloqueo del microarreglo, se procede con el sondeo al agregar el plasma pre-absorbido e 
-incubar _overnight_ en cámara húmeda a 4°C con leve agitación. Tercero, luego de lavados y 
-aspirado repetitivos antes y después de cada paso, se agrega la solución con anticuerpos 
+incubar _overnight_ en cámara húmeda a 4°C con leve agitación. Tercero, con lavados y 
+aspirados repetitivos antes y después de cada paso, se agrega la solución con anticuerpos 
 secundarios biotinilados y posteriormente la solución con fluoróforos conjugados con 
 estreptavidina. Cuarto, luego de centrifugar las láminas, se procede al escaneo de las 
 fluorescencias con lectores de microarreglos de láser confocal (e.g., Genepix 4300A). Las 
-medidas crudas se obtienen luego de una normalización local mediante la sustracción de la 
+medidas crudas se obtienen al aplicar una normalización local mediante la sustracción de la 
 intensidad de fondo presente alrededor de cada _spot_, ejecutada en el software del lector 
 (Genepix Pro 7). Finalmente, se procede al análisis de los datos el cual será detallado en 
 la [sección 4.4](#anadata).
@@ -1905,8 +1918,8 @@ contacto alguno con la infección.
 
  -->
 
-Ambos parámetros será evaluados siguiendo la metodología empleada en estudios previos 
-[@crompton2010] y estará incluido en la [sección 4.4](#anadata).
+Ambos parámetros serán evaluados siguiendo la metodología empleada en estudios previos 
+[@crompton2010] y que estará incluida en la [sección 4.4](#anadata).
 Primero, la validez o exactitud del experimento será evaluada mediante la correlación 
 lineal entre las lecturas de los antígenos-IVTT y sus correspondientes proteínas 
 purificadas por muestra, compuestas por proteínas de inmunogenicidad conocida y expresadas 
@@ -1944,7 +1957,7 @@ Se hará uso del software de computación estadística R [@R2016],
 complementado con funciones de distintos paquetes pertenecientes a
 dos principales ambientes de análisis: 
 Bioconductor [@bioconductor2004] 
-y tidyverse [@wickham2016r4ds].<!-- [@wickham2014tidy] -->
+y Tidyverse [@wickham2016r4ds].<!-- [@wickham2014tidy] -->
 <!--
 El informe final será generado por un formato que integrará texto, código y resultados, 
 siguiendo principios de reproducibilidad [@CienciaReproducible2016].
@@ -1959,7 +1972,6 @@ Para ello se hará empleo de los siguientes paquetes:
 -->
 
 ### Control de calidad y Pre procesamiento
-<!-- Control de calidad y Preprocesamiento -->
 
 Preliminarmente, se describirá la distribución y proporción de las
 covariables epidemiológicas, clínicas y de laboratorio 
@@ -2002,7 +2014,7 @@ dos veces la mediana de los control-IVTT por individuo.
 ### Prueba de hipótesis
 <!-- Inferencia, Clasificación y Descripción -->
 
-Cada una de las hipótesis de diferencia entre grupos seguirá el siguiente protocolo.
+Las dos hipótesis de diferencia entre grupos seguirán el siguiente protocolo.
 Primero, se contrastará la amplitud e intensidad de respuesta con 
 un test de diferencias entre variables continuas y no pareadas de dos grupos
 usando t-Student o Mann-Whitney, dependiendo de la distribución,
@@ -2024,8 +2036,8 @@ disponible en la base de datos PlasmoDB [@plasmodb].
 
 ### Reporte de resultados
 
-De acuerdo a las guía SAMPL [@lang2013basic],
-las correlaciones y pruebas de hipótesis serán reportadas con el valor del 
+<!--De acuerdo a las guía SAMPL [@lang2013basic],-->
+Las correlaciones y pruebas de hipótesis serán reportadas con el valor del 
 estadístico de prueba y el valor p. Las distribuciones serán visualizadas con
 diagramas de dispersión para la correlación entre variables continuas, 
 diagramas de cajas y barras para la comparación de variables continuas y frecuencias, respectivamente.
@@ -2033,8 +2045,8 @@ Las comparaciones múltiples reportarán el valor p-ajustado y serán visualizad
 gráficos: un diagrama tipo volcán o _volcano plot_ con la diferencia de reactividad 
 entre grupos en escala logarítmica contra sus respectivos valores p<!-- no-ajustados-->
 y un mapa de calor o _heat map_ segmentado por racimos o _clusters_.
-El informe final consistirá de un reporte en formato _notebook_ que integrará 
-texto, código y resultados [@knitr], siguiendo principios de 
+El informe final consistirá de un reporte en formato `R Notebook` con extensión `.Rmd` 
+que integrará texto, código y resultados [@knitr], siguiendo principios de 
 reproducibilidad [@CienciaReproducible2016].
 
 # ASPECTOS ADMINISTRATIVOS
@@ -2102,23 +2114,6 @@ b <- format((a*100/sum(a)), digits = 1)
   ------------------------------------------------------------------------------------------
 
 
-<!--
-# ANEXOS
-
-
-##  Matriz de consistencia
-
-Ver \autoref{tab:consis} al final del documento.
--->
-
-<!--
-
-# ADVANCE TABLE
-
-multi col-row + landscape!!
-
--->
-
 # BIBLIOGRAFÍA
 <!--
 1.  **Referida al tema**
@@ -2132,18 +2127,17 @@ multi col-row + landscape!!
     Bassat Q, et al. (2011). Defying malaria: fathoming severe
     Plasmodium vivax disease. Nat Med 17: 48–49.
     
-    Carlton JM, et al. (2008). Comparative genomics of the neglected
-    human malaria parasite Plasmodium vivax. Nature 455: 757–763.
-    
     Genton B, et al. (2008). Plasmodium vivax and mixed infections are
     associated with severe malaria in children: a prospective cohort
     study from Papua New Guinea. PLoS Med 5: e127.
     
     Poespoprodjo JR, et al. (2009). Vivax malaria: a major cause of
     morbidity in early infancy. Clin Infect Dis 48: 1704–1712.
-    
-    Westenberger SJ, et al. (2010). A systems-based analysis of
-    Plasmodium vivax lifecycle transcription from human to mosquito.
-    PLoS Negl Trop Dis 4: e653.
 -->
-<!--**De acuerdo al orden en el que han sido citadas:**-->
+<!--
+# ANEXOS
+
+##  Matriz de consistencia
+
+Ver \autoref{tab:consis} al final del documento.
+-->
