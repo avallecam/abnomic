@@ -3,18 +3,17 @@ output: pdf_document
 ---
 
 \clearpage
-\newgeometry{top=0.2cm,bottom=1cm}
-\vspace*{\fill}
+\newgeometry{left=0.5cm,right=0.5cm,top=1.6cm,bottom=1cm}
 
 \begin{centering}
 
 \begin{figure}[!ht]
   \begin{center}
-    \includegraphics[width=.8in]{figure/UNMSM_escudo-2000px.png}
+    \includegraphics[width=.6in]{figure/UNMSM_escudo-2000px.png}% en informe: 8
   \end{center}
 \end{figure}
 
-\Large
+\Large %https://tex.stackexchange.com/questions/24599/what-point-pt-font-size-are-large-etc
 UNIVERSIDAD NACIONAL MAYOR DE SAN MARCOS
 
 \large
@@ -32,45 +31,56 @@ ESCUELA ACADÉMICO PROFESIONAL DE
 
 GENÉTICA Y BIOTECNOLOGÍA
 
-\vspace{1.5 cm}
+\vspace{1.8 cm}
 
 \Large
 Comparación de la respuesta de anticuerpos ante la %infección con 
 malaria vivax 
-en pacientes de la Amazonía peruana %ciudad de Iquitos (Loreto - Perú)
-según su severidad y episodios previos %exposición previa
+en \\pacientes de la Amazonía peruana %ciudad de Iquitos (Loreto - Perú)
+según su severidad y episodios \\previos %exposición previa
 mediante microarreglos de proteínas
 % aPerfil de anticuerpos en respuesta a la infección con malaria vivax
 %mediante un enfoque inmunómico .
 %% con sintomatología severa y no complicada/ pre-inmunes/ semi-inmunes
 
-\vspace{1.5 cm}
+\vspace{1 cm}
 
-\Large
 Proyecto de Tesis para optar al Título Profesional de 
 
 Biólogo Genetista y Biotecnólogo
 
-\vspace{1 cm}
+\vspace{1.8 cm}
 
-\Large
+\large
+Investigador
+
 Bach. Andree Adolfo Valle Campos
 
-\vspace{1.2 cm}
+\vspace{.3 cm}
 
-\Large
-Asesores 
+Asesores
 
-Interno: <por confirmar>%Prof. Walter Cabrera-Febolá
+Interno: Prof. Walter Cabrera-Febolá
 
 Externo: PhD. G. Christian Baldeviano
 
+\vspace{.3 cm}
 
-\vspace{1.2 cm}
+Institución
 
+Centro de Enfermedades Tropicales de la Marina de los Estados Unidos 
+NAMRU-6
+
+\vspace{.3 cm}
+
+Duración: 6 meses
+
+\vspace{1.5 cm}
+
+\Large
 Lima - Perú
 
-\vspace{.5 cm}
+%\vspace{.5 cm}
 
 2017
 

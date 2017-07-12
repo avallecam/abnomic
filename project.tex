@@ -100,17 +100,17 @@
 \pagenumbering{gobble}
 
 \clearpage
-\newgeometry{top=0.2cm,bottom=1cm} \vspace*{\fill}
+\newgeometry{left=0.5cm,right=0.5cm,top=1.6cm,bottom=1cm}
 
 \begin{centering}
 
 \begin{figure}[!ht]
   \begin{center}
-    \includegraphics[width=.8in]{figure/UNMSM_escudo-2000px.png}
+    \includegraphics[width=.6in]{figure/UNMSM_escudo-2000px.png}% en informe: 8
   \end{center}
 \end{figure}
 
-\Large
+\Large %https://tex.stackexchange.com/questions/24599/what-point-pt-font-size-are-large-etc
 UNIVERSIDAD NACIONAL MAYOR DE SAN MARCOS
 
 \large
@@ -128,45 +128,56 @@ ESCUELA ACADÉMICO PROFESIONAL DE
 
 GENÉTICA Y BIOTECNOLOGÍA
 
-\vspace{1.5 cm}
+\vspace{1.8 cm}
 
 \Large
 Comparación de la respuesta de anticuerpos ante la %infección con 
 malaria vivax 
-en pacientes de la Amazonía peruana %ciudad de Iquitos (Loreto - Perú)
-según su severidad y episodios previos %exposición previa
+en \\pacientes de la Amazonía peruana %ciudad de Iquitos (Loreto - Perú)
+según su severidad y episodios \\previos %exposición previa
 mediante microarreglos de proteínas
 % aPerfil de anticuerpos en respuesta a la infección con malaria vivax
 %mediante un enfoque inmunómico .
 %% con sintomatología severa y no complicada/ pre-inmunes/ semi-inmunes
 
-\vspace{1.5 cm}
+\vspace{1 cm}
 
-\Large
 Proyecto de Tesis para optar al Título Profesional de 
 
 Biólogo Genetista y Biotecnólogo
 
-\vspace{1 cm}
+\vspace{1.8 cm}
 
-\Large
+\large
+Investigador
+
 Bach. Andree Adolfo Valle Campos
 
-\vspace{1.2 cm}
+\vspace{.3 cm}
 
-\Large
-Asesores 
+Asesores
 
-Interno: <por confirmar>%Prof. Walter Cabrera-Febolá
+Interno: Prof. Walter Cabrera-Febolá
 
 Externo: PhD. G. Christian Baldeviano
 
+\vspace{.3 cm}
 
-\vspace{1.2 cm}
+Institución
 
+Centro de Enfermedades Tropicales de la Marina de los Estados Unidos 
+NAMRU-6
+
+\vspace{.3 cm}
+
+Duración: 6 meses
+
+\vspace{1.5 cm}
+
+\Large
 Lima - Perú
 
-\vspace{.5 cm}
+%\vspace{.5 cm}
 
 2017
 
@@ -1144,26 +1155,23 @@ investigación}\label{antecedentes-de-la-investigacion}
     transcriptómica y proteómica de patógenos dinámicos más la
     información clínica del hospedero, o métodos teóricos empleando
     algoritmos computacionales predictivos que tomen en cuenta la
-    afinidad entre péptidos del patógeno y determinadas moléculas MHC
-    del hospedero. La principal ventaja del primer método está en la
-    capacidad de priorizar la selección de antígenos en base a criterios
-    clínicamente relevantes, como el de individuos con inmunidad por
-    adquisición
+    afinidad entre péptidos del patógeno y moléculas del complejo
+    principal de histocompatibilidad (MHC) del hospedero. La principal
+    ventaja del primer método está en la capacidad de priorizar la
+    selección de antígenos en base a criterios clínicamente relevantes,
+    como el de individuos con inmunidad por adquisición
     natural\textsuperscript{\protect\hyperlink{ref-immunomics2016}{50}}.
 
     Este enfoque ha permitido obtener datos empíricos sobre diferencias
     en la amplitud, intensidad, cinética y longevidad de respuestas
     inmunes inducidas por patógenos. Además de mayor información sobre
-    aspectos clave como el porcentaje del proteóma reconocido por el
-    hospedero, la capacidad de los anticuerpos como predictores de
-    estados de la enfermedad, o de los aminoácidos como predictores
-    únicos de la
+    aspectos clave como el porcentaje del proteoma reconocido por el
+    hospedero, la capacidad predictora de anticuerpos sobre el estado de
+    la enfermedad o de las secuencias de aminoácidos sobre su
     inmunogenicidad\textsuperscript{\protect\hyperlink{ref-Davies2015Large}{51}}.
-    Entre las plataformas empleadas en este enfoque están los
-    microarreglos de proteínas y péptidos, los cuales complementados con
-    el mapeo de epítopes, han alimentado a los actuales algoritmos de
-    predicción
-    computacional\textsuperscript{\protect\hyperlink{ref-carmona2015peptide}{52}}.
+    Dos plataformas representativas son los microarreglos de proteínas y
+    péptidos, este último con mayor resolución en el mapeo de
+    epítopes\textsuperscript{\protect\hyperlink{ref-carmona2015peptide}{52}}.
   \end{enumerate}
 \end{enumerate}
 
@@ -1602,7 +1610,7 @@ incluirán en la población de comparación.
 realizaremos comparaciones entre grupos y evaluaremos una posible
 relación causal entre el factor y el efecto.
 
-\textbf{Por el Control de la asignación: Observacional.} A diferencia de
+\textbf{Por el control de la asignación: Observacional.} A diferencia de
 un experimental, no controlaremos la asignación de los factores
 (severidad y episodios previos). Es decir, procederemos a observar el
 fenómeno, ejecutar la medición y analizar los resultados.
@@ -1675,7 +1683,7 @@ grupo de casos y 30 no-severos para el grupo control.
 será seleccionado al azar, con probabilidad de selección conocida.
 
 \subsection{Recolección de los datos e
-Instrumento}\label{recoleccion-de-los-datos-e-instrumento}
+instrumento}\label{recoleccion-de-los-datos-e-instrumento}
 
 \subsubsection{Técnica para la recolección de
 datos}\label{tecnica-para-la-recoleccion-de-datos}
@@ -1777,7 +1785,7 @@ Bioconductor\textsuperscript{\protect\hyperlink{ref-bioconductor2004}{18}}
 y
 Tidyverse\textsuperscript{\protect\hyperlink{ref-wickham2016r4ds}{82}}.
 
-\subsubsection{Control de calidad y Pre
+\subsubsection{Control de calidad y pre
 procesamiento}\label{control-de-calidad-y-pre-procesamiento}
 
 Preliminarmente, se describirá la distribución y proporción de las
@@ -1864,11 +1872,11 @@ Correcciones & & & & & X &\tabularnewline
 financiamiento}\label{presupuesto-y-financiamiento}
 
 El proyecto será realizado en El Centro de Enfermedades Tropicales de la
-Marina de los Estados Unidos NAMRU-6 y
-\textcolor{red}{\hl{financiado por}} The Global Emerging Infectious
-Surveillance and Response System (GEIS) section at the Armed Forces
-Health Surveillance Branch (AFHSC), The Military Infectious Diseases
-Research Program (MIDRP) y el NIH Training grant 2D43TW007393.
+Marina de los Estados Unidos NAMRU-6 y financiado por The Global
+Emerging Infectious Surveillance and Response System (GEIS) section at
+the Armed Forces Health Surveillance Branch (AFHSC), The Military
+Infectious Diseases Research Program (MIDRP) y el NIH Training grant
+2D43TW007393.
 
 \begin{longtable}[]{@{}lcc@{}}
 \toprule
@@ -2582,7 +2590,7 @@ Ver \autoref{tab:consis} al final del documento.
   \textbf{Clasificación:}\\
   -Por la finalidad: Analítico.\\
   %\newline
-  -Por el Control de la asignación:\\ Observacional.\\
+  -Por el control de la asignación:\\ Observacional.\\
   %\newline
   -Por el seguimiento: Transversal.\\
   %\newline

@@ -1239,7 +1239,8 @@ d. Enfoque a larga escala
         transcriptómica y proteómica de patógenos dinámicos más la información clínica 
         del hospedero, o métodos teóricos empleando algoritmos computacionales predictivos 
         <!--de proteínas inmunógenas -->que tomen en cuenta la afinidad entre 
-        péptidos del patógeno y determinadas moléculas MHC del hospedero.
+        péptidos del patógeno y<!-- determinadas--> moléculas 
+        del complejo principal de histocompatibilidad (MHC) del hospedero.
         La principal ventaja del primer método
         está en la capacidad de priorizar la selección de antígenos en
         base a criterios clínicamente relevantes, como el de individuos con inmunidad por 
@@ -1248,14 +1249,16 @@ d. Enfoque a larga escala
         Este enfoque ha permitido obtener datos empíricos sobre 
         diferencias en la amplitud, intensidad, cinética y longevidad de respuestas inmunes
         inducidas por patógenos. Además de mayor información sobre aspectos clave como el
-        porcentaje del proteóma reconocido por el hospedero, la capacidad de
-        los anticuerpos como predictores de estados de la enfermedad, o de los
-        aminoácidos como predictores únicos de la inmunogenicidad [@Davies2015Large].
-        Entre las plataformas empleadas en este enfoque están los microarreglos de proteínas
-        y péptidos, los cuales complementados con el mapeo de epítopes, han alimentado a 
-        los actuales algoritmos de predicción computacional [@carmona2015peptide].
+        porcentaje del proteoma reconocido por el hospedero, la capacidad predictora
+        de anticuerpos sobre el estado de la enfermedad o de las
+        secuencias de aminoácidos sobre su inmunogenicidad [@Davies2015Large].
+        Dos plataformas representativas son los microarreglos de proteínas
+        y péptidos, este último con mayor resolución en el mapeo de epítopes 
+        [@carmona2015peptide].
 
 <!-- 
+han alimentado a los actuales algoritmos de predicción computacional
+
 Infecciones experimentales de _P. vivax_ en Colombia con seguimiento longitudinal 
 por 145 días han demostrado que la dinámica de la respuesta humoral 
 diverge entre individuos sin exposición previa (_naive_) y semi-inmunes, 
@@ -1691,7 +1694,7 @@ sin evento que se incluirán en la población de comparación.
 __Por la finalidad: Analítico.__ A diferencia de un descriptivo, realizaremos comparaciones 
 entre grupos y evaluaremos una posible relación causal entre el factor y el efecto.
 
-__Por el Control de la asignación: Observacional.__ A diferencia de un experimental, no 
+__Por el control de la asignación: Observacional.__ A diferencia de un experimental, no 
 controlaremos la asignación de los factores (severidad y episodios previos). Es decir,
 procederemos a observar el fenómeno, ejecutar la medición y analizar los resultados.
 
@@ -1788,7 +1791,7 @@ de 30 pacientes con más de 2 criterios de malaria severa para el grupo de casos
 __Tipo de muestra: Probabilística.__ Cada elemento de la muestra será seleccionado al azar, 
 con probabilidad de selección conocida.
 
-## Recolección de los datos e Instrumento
+## Recolección de los datos e instrumento
 <!-- Muestreo -->
 
 ### Técnica para la recolección de datos
@@ -1971,7 +1974,7 @@ Para ello se hará empleo de los siguientes paquetes:
 `PerformanceAnalytics`, `beeswarm`, `Rmisc`, `htmlTable` y `biobroom`.
 -->
 
-### Control de calidad y Pre procesamiento
+### Control de calidad y pre procesamiento
 
 Preliminarmente, se describirá la distribución y proporción de las
 covariables epidemiológicas, clínicas y de laboratorio 
@@ -2070,7 +2073,7 @@ recolectar lo datos a través del instrumento de medición descrito.
 ## Presupuesto y financiamiento
 
 El proyecto será realizado en El Centro de Enfermedades Tropicales
-de la Marina de los Estados Unidos NAMRU-6 y \textcolor{red}{\hl{financiado por}}
+de la Marina de los Estados Unidos NAMRU-6 y financiado por<!--\textcolor{red}{\hl{a}}-->
 The Global Emerging Infectious Surveillance and Response System (GEIS) section at the 
 Armed Forces Health Surveillance Branch (AFHSC),
 The Military Infectious Diseases Research Program (MIDRP) y el
