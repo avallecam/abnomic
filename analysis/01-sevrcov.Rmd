@@ -203,7 +203,7 @@ sevdb_1 %>% group_by(presenta_comorb, diabetes, enf_cardiac, enf_pulm, enf_renal
 
 ### Filter WHO criteria
 
-Según @WHOsevere2014:
+Según @WHO2014severe:
 
 - **create** `sev_WHO`
     + **includes:** 
@@ -538,6 +538,33 @@ sevdb_4 <- sevdb_3 %>%
   dplyr::inner_join(sevdb_x)
 
 html(Hmisc::contents(sevdb_4), maxlevels=10, levelType='table')
+```
+
+```{r}
+s1 <- Hmisc::summaryM(glas_11 +
+                        sdra +
+                        lung_injury +
+                        ictericia_corr + hiperbil +
+                        shock +
+                        bleeding +
+                        glic_normal +
+                        anemia_severa +
+                        hiperparasitemia + #parasitemia + 
+                        sev_WHO_num +
+                        fiebre_hoy_corr
+                      ~ sev_WHO
+                      ,
+               data=sevdb_3,
+               overall=FALSE, test=FALSE)
+
+latex(s1, caption='Laboratory data',
+      exclude1=TRUE, npct='both', 
+      digits=3,
+      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = TRUE,
+      #legend.bottom = TRUE, #insert.bottom = TRUE, 
+      what="%", html = TRUE
+      ) #change here for LaTeX PDF
 ```
 
 ### combinations of criterias

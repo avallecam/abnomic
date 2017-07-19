@@ -3,13 +3,13 @@ output: pdf_document
 ---
 
 \clearpage
-\newgeometry{left=0.5cm,right=0.5cm,top=1.6cm,bottom=1cm}
+\newgeometry{left=0.5cm,right=0.5cm,top=1.8cm,bottom=1cm}
 
 \begin{centering}
 
 \begin{figure}[!ht]
   \begin{center}
-    \includegraphics[width=.6in]{figure/UNMSM_escudo-2000px.png}% en informe: 8
+    \includegraphics[width=.8in]{figure/UNMSM_escudo-2000px.png}% en informe: 8
   \end{center}
 \end{figure}
 
@@ -19,19 +19,19 @@ UNIVERSIDAD NACIONAL MAYOR DE SAN MARCOS
 \large
 (Universidad del Perú, DECANA DE AMÉRICA)
 
-\vspace{.5 cm}
+\vspace{.3 cm}
 
 \Large
 FACULTAD DE CIENCIAS BIOLÓGICAS
 
-\vspace{.5 cm}
+\vspace{.3 cm}
 
 \normalsize
 ESCUELA ACADÉMICO PROFESIONAL DE
 
 GENÉTICA Y BIOTECNOLOGÍA
 
-\vspace{1.8 cm}
+\vspace{2.3 cm}
 
 \Large
 Comparación de la respuesta de anticuerpos ante la %infección con 
@@ -43,13 +43,14 @@ mediante microarreglos de proteínas
 %mediante un enfoque inmunómico .
 %% con sintomatología severa y no complicada/ pre-inmunes/ semi-inmunes
 
-\vspace{1 cm}
+\vspace{2.3 cm}
 
-Proyecto de Tesis para optar al Título Profesional de 
+\large
+Proyecto de Tesis 
 
-Biólogo Genetista y Biotecnólogo
+para optar al Título Profesional de Biólogo Genetista y Biotecnólogo
 
-\vspace{1.8 cm}
+\vspace{.3 cm}
 
 \large
 Investigador
@@ -75,7 +76,7 @@ NAMRU-6
 
 Duración: 6 meses
 
-\vspace{1.5 cm}
+\vspace{1 cm}
 
 \Large
 Lima - Perú
