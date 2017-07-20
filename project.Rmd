@@ -1211,19 +1211,19 @@ d. Enfoque a larga escala
     en contraste a la eficacia observada de dichas estrategias en otras infecciones como 
     la HBsAg contra la hepatitis B y BCG contra la tuberculosis, 
     respectivamente [@immunomics2016].
-    Incluso, ensayos 
+    <!--Incluso, ensayos 
     clínicos de fase 3 han demostrado que los actuales candidatos poseen una pobre 
-    inmunogenicidad y protección contra la malaria (e.g., RTS,S) [@rts2015].
+    inmunogenicidad y protección contra la malaria (e.g., RTS,S) [@rts2015].-->
     
-    i. __Inmunómica__
+    La era genómica permitió un cambio de perspectiva en la investigación inmunológica:
+    se pasó de una enfocada en plataformas de vacunación a una 
+    en antígenos de vacunación.
+    Es por ello que, actualmente, el objetivo de mayor importancia está en la
+    identificación de subgrupos de antígenos capaces de inducir respuestas inmunes
+    protectivas [@Davies2015Large].    
     
-        La era genómica permitió un cambio de perspectiva en la investigación inmunológica:
-        se pasó de una enfocada en plataformas de vacunación a una 
-        en antígenos de vacunación.
-        Es por ello que, actualmente, el objetivo de mayor importancia está en la
-        identificación de subgrupos de antígenos capaces de inducir respuestas inmunes
-        protectivas [@Davies2015Large].
-        
+    i. __Vacunología reversa__
+    
         El primer enfoque en respuesta a esta problemática fue llamado 
         _Vacunología Reversa_,
         el cual hace uso de la información genómica de los patógenos
@@ -1232,7 +1232,9 @@ d. Enfoque a larga escala
         inmunogenicidad y efectividad en vacunación. La principal limitación de este 
         enfoque 
         radica en el que el genoma es estático en el tiempo, no aplicable en organismos
-        con ciclos de vida complejos [@immunomics2016].
+        con ciclos de vida complejos [@immunomics2016].    
+    
+    ii. __Inmunómica__
         
         Un segundo enfoque <!--que se construyó sobre aquél -->fue llamado _Inmunómica_, 
         el cual hace uso de la información de ambos agentes interaccionantes.
