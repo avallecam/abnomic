@@ -535,8 +535,8 @@ fluorescente producto de esta reacción.
 
 Segundo, los pacientes severos se definirán por la presencia de 
 manifestaciones clínicas severas o complicaciones sistémicas. Esta variable será asignada 
-con la presencia de dos o más criterios clínicos o de laboratorio para malaria severa,
-según recomendación de la Organización Mundial de la Salud (OMS) [@WHO2014severe].
+por la presencia de uno o más parámetros clínicos y de laboratorio para la malaria severa,
+según el criterio recomendado por la Organización Mundial de la Salud (OMS) [@WHO2014severe].
 
 Tercero, la clasificación por episodios previos reportados representará la presencia de 
 infecciones previas con malaria y, consecuentemente, la presencia de una respuesta inmune 
@@ -666,15 +666,15 @@ VARIABLE INTERVINIENTE con OBJETIVO EXPLORATORIO: EDAD (hipotesis sin poder esta
   Presencia de manifestaciones clínicas severas o complicaciones sistémicas
   &
   % aOPERACIONAL:
-  Número de criterios OMS para malaria severa
+  Número de parámetros del criterio OMS para malaria severa
   & 
   \begin{minipage}{2.2cm} 
-  Diagnóstico \\clínico \\y exámenes de \\laboratorio 
+  Diagnóstico \\clínico \\y pruebas \\bioquímicas 
   \end{minipage}
   & 
   \begin{minipage}{2.2cm} 
-  \textbf{No-severa:} 0 criterios.\\
-  \textbf{Severa:} 2 o más criterios.
+  \textbf{No-severa:} 0 parámetros.\\
+  \textbf{Severa:} 1 o más parámetros.
   \end{minipage}
   &
   Categórica dicotómica
@@ -951,8 +951,8 @@ a. General
     
         Ante la ausencia de una descripción especie-específica, la Malaria Vivax
         Severa está definida por el criterio para _P. falciparum_ otorgado 
-        por la OMS en el 2014 [@WHO2014severe], el cual incluye uno o más de
-        las siguientes características (todas registradas en mono-infecciones 
+        por la OMS en el 2014 [@WHO2014severe], el cual incluye una o más de
+        las siguientes (todas registradas en mono-infecciones 
         por _P. vivax_):
         1. condición neurológica: coma, mareo, pérdida conciencia;
         2. condición hematológica: anemia/trombocitopenia severa;
@@ -1033,13 +1033,14 @@ b. Epidemiología
         
         En el noreste amazónico, un reciente estudio prospectivo dirigido por 
         El Centro de Enfermedades Tropicales de la Marina de los Estados Unidos 
-        NAMRU-6 (2012-2013) [@smith2013] identificó 67/164 casos de 
-        malaria vivax severa con <!--¡¡ACTUALIZAR!!-->
-        síndrome respiratorio agudo (94%), hiperbilirubina (80%), shock (46%), 
-        sangrado (12%) e ictericia conjuntiva (12%). No se encontraron diferencias
-        con respecto a la edad entre no-severos y severos (33.5 vs 30 años, P=0.956).
-        Sin embargo, sí se identificó una mayor proporción de pacientes con episodios 
-        previos en el grupo de no-severos (67 vs 49%, P=0.007).
+        NAMRU-6 (2012-2013) [@smith2013] identificó 55/164 casos de 
+        malaria vivax severa con <!--POSTER, PERO REQUIERE ¡¡ACTUALIZAR!!-->
+        postración (83%), confusión (32%), shock (27.6%), daño pulmonar (24.5%)
+        hiperbilirubina (18.1%), daño renal (2%) y anemia severa (1.7%). 
+        No se encontraron diferencias
+        con respecto a la edad entre no-severos y severos (33 vs 29 años, P=0.497).
+        Sin embargo, sí se identificó una mayor proporción de pacientes con malaria 
+        severa en mujeres (52 vs 35%, P=0.039).
 
 
 c. Biología
@@ -1757,21 +1758,22 @@ a. Criterios de inclusión
     
     En el estudio prospectivo mencionado, 
     164 pacientes con malaria vivax fueron enrolados mediante vigilancia pasiva.
-    Bajo los criterios clínicos y de laboratorio de la OMS para la Malaria Severa 
-    [@WHO2014severe], 67 fueron clasificados como severos y 97 como no-severos.
+    Según la presencia de uno o más parámetros clínicos y de laboratorio del 
+    criterio OMS para la Malaria Severa [@WHO2014severe], los pacientes fueron 
+    clasificados como severos o no-severos.
     <!-- OJO: REDEFINIR LUEGO DE REVISAR sevcov!! -->
     
-    Los criterios clínicos de empleados fueron:
+    Los parámetros clínicos del criterio OMS son:
     Shock circulatorio (presión sanguínea sistólica < 80 mmHg), 
     Deterioro del nivel de conciencia (puntaje Glasgow $\le$ 9/14),
     Daño del sistema nerviosos central (convulsión, postración, coma, confusión),
-    Daño pulmonar (disnea, taquipnea, infiltración, edema),
+    Daño pulmonar (disnea, taquipnea, infiltración, edema), y el
     Síndrome de dificultad respiratoria aguda o SDRA.
     
-    Los criterios de laboratorio empleados fueron:
+    Los parámetros de laboratorio del criterio OMS son:
     Hipoglicemia (glucosa < 40 mg/dL), 
     Anemia severa (hemoglobina < 7mg/dL), 
-    Daño renal (creatinina > 3mg/dl),
+    Daño renal (creatinina > 3mg/dl), e
     Hiperbilirrubina (bilirrubina sérica > 2.5 mg/dL).
     <!-- exluidos de Malaria Severa 2014: sangrado, acidosis, hiperparasitemia -->
     
@@ -1785,7 +1787,7 @@ b. Criterios de exclusión
 ### Selección de participantes
 
 A partir de esta clasificación, se ejecutará una selección aleatoria simple
-de 30 pacientes con más de 2 criterios de malaria severa para el grupo de casos y 
+de 30 pacientes con uno o más parámetros del criterio OMS de malaria severa para el grupo de casos y 
 30 no-severos para el grupo control.
 
 __Tipo de muestra: Probabilística.__ Cada elemento de la muestra será seleccionado al azar, 
@@ -1977,7 +1979,7 @@ Para ello se hará empleo de los siguientes paquetes:
 ### Control de calidad y pre procesamiento
 
 Preliminarmente, se describirá la distribución y proporción de las
-covariables epidemiológicas, clínicas y de laboratorio 
+covariables epidemiológicas, clínicas y bioquímicas 
 de los pacientes de la muestra.
 Luego, con las lecturas crudas en MFI se evaluará la validez y 
 reproducibilidad del ensayo mediante un
