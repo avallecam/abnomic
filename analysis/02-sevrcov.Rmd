@@ -158,7 +158,7 @@ __criterios de inclusión__
     - ~~temperatura: "hiperpirexia", "temperatura"~~
     - ~~UCI: "admin_uci", "dias_uci"~~
 
-* laboratorio
+* bioquímicos
 
     - hipoglicemia (glucosa < 40 mg/dL): "glucosa", "glic_normal", "hipo_glic1", "hipo_glic2"
     - anemia severa (hemoglobina < 7mg/dL): "hemoglobinuria", "anemia_severa", "hto_bajo", "hemog_bajo", "hto", "hemoglobina"
@@ -187,20 +187,13 @@ sevdb_1 <- sevdb %>%
   select(codigo,
          cas_con_admin,
          edad, sexo,
-         #ident_caso:dx_admin6, 
-         #-starts_with("dx_admin"), -ident_caso, -contains("smear"), -eritro_parasit,
          admin_uci:peso,
          -numconvul, -dias_uci, #-starts_with("glas_"),
          -hiperpirexia, -temperatura, -fcardiaca, frespiratoria,
-         #-ends_with("_us"), -inicio_sintom_fec, -ends_with("_hoy"),
-         #-starts_with("droga"), 
-         malaria_pasado_num, #malaria_pasado_num:tx_malaria, -starts_with("notx_"), -starts_with("donde_"),
+         malaria_pasado_num, #malaria_pasado_num:tx_malaria,
          presenta_comorb:enf_otra_esp, -ends_with("_esp"), -contains("otra"),
          parasitemia, 
          glucosa:casecontrol
-         #-starts_with("fec_tx_"), -starts_with("tx_"), #-starts_with("notx_"),
-         #starts_with("preg_"),
-         #fuente_agua:trabajo_riesgo, #vinculadas a riesgo/exposición
          ) %>% 
   tidyr::separate(parterial, c("pa_sistolica", "pa_diastolica")) %>% 
   mutate(codigo= str_replace(codigo,"LIM0","LIM"),
@@ -367,40 +360,6 @@ sevdb_1 %>% group_by(sdra, pulmonar_oms) %>%  dplyr::count()
 sevdb_1 %>% dplyr::count(sdra)
 ```
 
-- ~~**BLEEDING**~~
-    + ~~gingivorragia_corr, epistaxis_corr, sang_intest_corr~~
-    + ~~at least one criteria~~
-    + ~~`sangrado` con asignación incorrecta~~
-```{r}
-# BLEEDING -------------------------------------------------- REDEFINIR!!
-#  = at least one criteria of bleeding (gingivorragia_corr, epistaxis_corr, sang_intest_corr)
-sevdb_1 %>% 
-  group_by(sangrado_new, sangrado_sum, sangrado, gingivorragia, epistaxis, sang_intest) %>%  
-  dplyr::count()
-```
-- ~~**TROMBOCITOPENIA**~~
-    + ~~puntos de corte~~
-        - ~~severe trombocitopenia: menor de 50 000~~
-        - ~~trombocitopenia: menor de 150 000~~
-    + ~~`trombocitopenia` con asignacion incorrecta~~
-```{r}
-#TROMBOCITOPENIA?? -------------------------------------------------- REDEFINIR!!
-sevdb_1 %>% 
-  select(trombocitopenia, cont_plaquetas, coag_normal) %>% #dplyr::count()
-  mutate(trombo_sev= if_else(cont_plaquetas<50000,1,0)) %>% 
-  mutate(trombo_sev= as.factor(trombo_sev)) %>% #glimpse()
-  ggplot(aes(x=cont_plaquetas, fill=trombo_sev)) + 
-  geom_histogram(alpha=.5, position = "identity") + 
-  labs(title="trombocitopenia")
-
-sevdb_1 %>% 
-  select(trombocitopenia, cont_plaquetas, coag_normal) %>% #dplyr::count()
-  mutate(trombo_sev= if_else(cont_plaquetas<50000,1,0)) %>% 
-  mutate(trombo_sev= as.factor(trombo_sev)) %>% #glimpse()
-  group_by(trombo_sev, trombocitopenia, coag_normal) %>% 
-  dplyr::count()
-```
-
 - **HIPOGLICEMIA**
     + `hipo_glic1`, `hipo_glic2`, qué determinan?
     + ningún hipoglicémico!
@@ -459,6 +418,41 @@ sevdb_1 %>%
   group_by(hiperbil_oms, hiperbil, ictericia, hepato_normal) %>%  
   dplyr::count() #%>% View()
 ```
+
+- ~~**BLEEDING**~~
+    + ~~gingivorragia_corr, epistaxis_corr, sang_intest_corr~~
+    + ~~at least one criteria~~
+    + ~~`sangrado` con asignación incorrecta~~
+```{r}
+# BLEEDING -------------------------------------------------- REDEFINIR!!
+#  = at least one criteria of bleeding (gingivorragia_corr, epistaxis_corr, sang_intest_corr)
+sevdb_1 %>% 
+  group_by(sangrado_new, sangrado_sum, sangrado, gingivorragia, epistaxis, sang_intest) %>%  
+  dplyr::count()
+```
+- ~~**TROMBOCITOPENIA**~~
+    + ~~puntos de corte~~
+        - ~~severe trombocitopenia: menor de 50 000~~
+        - ~~trombocitopenia: menor de 150 000~~
+    + ~~`trombocitopenia` con asignacion incorrecta~~
+```{r}
+#TROMBOCITOPENIA?? -------------------------------------------------- REDEFINIR!!
+sevdb_1 %>% 
+  select(trombocitopenia, cont_plaquetas, coag_normal) %>% #dplyr::count()
+  mutate(trombo_sev= if_else(cont_plaquetas<50000,1,0)) %>% 
+  mutate(trombo_sev= as.factor(trombo_sev)) %>% #glimpse()
+  ggplot(aes(x=cont_plaquetas, fill=trombo_sev)) + 
+  geom_histogram(alpha=.5, position = "identity") + 
+  labs(title="trombocitopenia")
+
+sevdb_1 %>% 
+  select(trombocitopenia, cont_plaquetas, coag_normal) %>% #dplyr::count()
+  mutate(trombo_sev= if_else(cont_plaquetas<50000,1,0)) %>% 
+  mutate(trombo_sev= as.factor(trombo_sev)) %>% #glimpse()
+  group_by(trombo_sev, trombocitopenia, coag_normal) %>% 
+  dplyr::count()
+```
+
 
 - **COMORBILITIES** 
     + diabetes, enf_cardiac, enf_pulm, enf_renal, enf_snc, enf_otra
@@ -640,9 +634,9 @@ sevdb_2x <- sevdb_2 %>%
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
                         presenta_comorb + enf_cronica +
-                        parasitemia +
-                        malaria_pasado + malaria_pasado_num #+ 
+                        malaria_pasado + #malaria_pasado_num #+ 
                         #sev_WHO + sev_WHO_num +
+                        parasitemia #+
                       ~ sev_WHO #+ 
                       #malaria_pasado
                       ,
@@ -671,9 +665,9 @@ latex(s1, caption='Clinical data',
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
                         presenta_comorb + enf_cronica +
-                        parasitemia +
                         #malaria_pasado_num + #malaria_pasado +
-                        sev_WHO + sev_WHO_num #+
+                        sev_WHO + sev_WHO_num +
+                        parasitemia #+
                       ~ #sev_WHO #+ 
                       malaria_pasado
                       ,
@@ -699,9 +693,9 @@ latex(s1, caption='Clinical data',
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
                         presenta_comorb + enf_cronica +
-                        parasitemia #+
                         #malaria_pasado_num + #malaria_pasado +
                         #sev_WHO_num #+ sev_WHO
+                        parasitemia #+
                       ~ sev_WHO + 
                       malaria_pasado
                       ,
@@ -889,9 +883,9 @@ sevdb_3x <- sevdb_3 %>%
 s1 <- Hmisc::summaryM(edad + sexo +
                         #presenta_comorb + 
                         enf_cronica +
-                        parasitemia +
-                        malaria_pasado + malaria_pasado_num #+ 
+                        malaria_pasado + #malaria_pasado_num + 
                         #sev_WHO + sev_WHO_num +
+                        parasitemia #+
                       ~ sev_WHO #+ 
                       #malaria_pasado
                       ,
@@ -921,9 +915,9 @@ latex(s1, caption='Clinical data',
 s1 <- Hmisc::summaryM(edad + sexo +
                         #presenta_comorb + 
                         enf_cronica +
-                        parasitemia +
                         #malaria_pasado_num + #malaria_pasado +
-                        sev_WHO + sev_WHO_num #+
+                        sev_WHO + sev_WHO_num +
+                        parasitemia #+
                       ~ #sev_WHO #+ 
                       malaria_pasado
                       ,
@@ -950,9 +944,9 @@ latex(s1, caption='Clinical data',
 s1 <- Hmisc::summaryM(edad + sexo +
                         #presenta_comorb + 
                         enf_cronica +
-                        parasitemia #+
                         #malaria_pasado_num + #malaria_pasado +
                         #sev_WHO_num #+ sev_WHO
+                        parasitemia #+
                       ~ sev_WHO + 
                       malaria_pasado
                       ,
