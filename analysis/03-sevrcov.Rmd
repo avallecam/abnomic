@@ -288,6 +288,7 @@ sevdb_1 <- full_join(sevdb_pre_1, sevdb_pos_1, by="codigo", suffix= c("_1","_2")
 ##### Which to use?
 
 Se evalará:
+
 - la semejanza entre las variables pre y pos actualización
 - el número de elementos no-NA's
 
@@ -473,15 +474,25 @@ sevdb_1 %>%
 
 - **HIPERBILIRRUBINA**
     + `bilitot` auscente en `sevdv_pos`
-    + `bilirrubina_2` posee correcciones
-    + __OJO:__ `bilirrubina_1` posee menos NA's
+    + `bilirrubina_1` con decimales completos y `bilirrubina_2` con decimales aproximados a dos dígitos.
+    + __OJO:__ `bilitot` posee menos NA's
 
 ```{r}
-sevdb_1 %>% 
-  mutate(bilirrubina= bilirrubina_1==bilirrubina_2) %>% dplyr::count(bilirrubina) #%>% View()
+#sevdb_1 %>% 
+#  mutate(bilirrubina= bilirrubina_1==bilirrubina_2) %>% #dplyr::count(bilirrubina) #%>% View()
+#  filter(bilirrubina==FALSE) %>% 
+#  select(bilirrubina, bilirrubina_1, bilirrubina_2, bilitot)
 sevdb_1 %>% 
   mutate(bilirrubina= bilirrubina_1==bilirrubina_2) %>%
-  select(bilirrubina, bilirrubina_1, bilirrubina_2) %>% summarise_all(funs(sum(!is.na(.))))
+  select(bilitot, #bilirrubina, 
+         bilirrubina_1, bilirrubina_2) %>% summarise_all(funs(sum(!is.na(.))))
+sevdb_1 %>% 
+  mutate(bilirrubina= bilirrubina_1==bilitot) %>% #dplyr::count(bilirrubina) #%>% View()
+  filter(bilirrubina==FALSE) %>% 
+  select(bilirrubina, bilitot, bilirrubina_1, bilirrubina_2)
+sevdb_1 %>% 
+  mutate(bilirrubina= bilirrubina_1==bilitot) %>%
+  select(bilirrubina, bilitot, bilirrubina_1, bilirrubina_2) #%>% summarise_all(funs(sum(!is.na(.))))
 ```
 
 - **BLEEDING**
@@ -838,15 +849,17 @@ sevdb_1 %>%
   mutate(anemia_severa_c= as.numeric(anemia_severa_c))
 ```
 
-```{r}
+```{r, eval=FALSE}
+# SIN EVALUACION por que bilitot incluye la mayor cantidad de data sin aproximación de decimales
+# ADEMÁS, por errores en la union de dos números decimales iguales
 sevdb_1 %>% 
-  mutate(bilirrubina= bilirrubina_1==bilirrubina_2) %>%
-  select(bilirrubina, bilirrubina_1, bilirrubina_2) %>%
-  tidyr::unite(bilirrubina_c, bilirrubina_1, bilirrubina_2, remove=F) %>% #count()
+  mutate(bilirrubina= bilirrubina_1==bilitot) %>%
+  select(bilirrubina, bilirrubina_1, bilitot, bilirrubina_2) %>%
+  tidyr::unite(bilirrubina_c, bilirrubina_1, bilitot, remove=F, sep = "_") %>% #count()
   mutate(bilirrubina_c=str_replace(bilirrubina_c,"(\\d+)_\\1", "\\1")) %>%
   mutate(bilirrubina_c=str_replace(bilirrubina_c,"NA_(\\d+)", "\\1")) %>% 
   mutate(bilirrubina_c=str_replace(bilirrubina_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(bilirrubina_c=str_replace(bilirrubina_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(bilirrubina_c=str_replace(bilirrubina_c,"(\\d+\\.\\d+)_(\\d+\\.\\d+)", "\\1")) %>% #count() #preferencia a _2
   mutate(bilirrubina_c=str_replace(bilirrubina_c,"NA", replacement = NA_character_)) %>%  #%>% count()
   mutate(bilirrubina_c= as.numeric(bilirrubina_c))
 ```
@@ -1185,14 +1198,16 @@ sevdb_1 %>%
   mutate(anemia_severa_c=str_replace(anemia_severa_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
   mutate(anemia_severa_c=str_replace(anemia_severa_c,"NA", replacement = NA_character_)) %>%  #%>% count()
   mutate(anemia_severa_c= as.numeric(anemia_severa_c)) %>%
-  
-  tidyr::unite(bilirrubina_c, bilirrubina_1, bilirrubina_2) %>% #count()
-  mutate(bilirrubina_c=str_replace(bilirrubina_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(bilirrubina_c=str_replace(bilirrubina_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(bilirrubina_c=str_replace(bilirrubina_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(bilirrubina_c=str_replace(bilirrubina_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(bilirrubina_c=str_replace(bilirrubina_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(bilirrubina_c= as.numeric(bilirrubina_c)) %>%
+
+# SIN EVALUACION por que bilitot incluye la mayor cantidad de data sin aproximación de decimales
+# ADEMÁS, por errores en la union de dos números decimales iguales
+#  tidyr::unite(bilirrubina_c, bilirrubina_1, bilirrubina_2, remove=F, sep = "_") %>% #count()
+#  mutate(bilirrubina_c=str_replace(bilirrubina_c,"(\\d+)_\\1", "\\1")) %>%
+#  mutate(bilirrubina_c=str_replace(bilirrubina_c,"NA_(\\d+)", "\\1")) %>% 
+#  mutate(bilirrubina_c=str_replace(bilirrubina_c,"(\\d+)_NA", "\\1")) %>% 
+#  mutate(bilirrubina_c=str_replace(bilirrubina_c,"(\\d+\\.\\d+)_(\\d+\\.\\d+)", "\\1")) %>% #count() #preferencia a _2
+#  mutate(bilirrubina_c=str_replace(bilirrubina_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+#  mutate(bilirrubina_c= as.numeric(bilirrubina_c)) %>%
   
   tidyr::unite(sangrado_c, sangrado_1, sangrado_2) %>% #count()
   mutate(sangrado_c=str_replace(sangrado_c,"(\\d+)_\\1", "\\1")) %>%
@@ -1321,7 +1336,7 @@ sevdb_1 %>%
     edema_pulm_c,
     sdra_c,
     anemia_severa_c,
-    bilirrubina_c,
+    #bilirrubina_c,
     sangrado_c,
     gingivorragia_c,
     epistaxis_c,
@@ -1368,7 +1383,7 @@ sevdb_1oms <- sevdb_1c %>%
     edema_pulm= edema_pulm_c,
     sdra= sdra_c,
     anemia_severa= anemia_severa_c,
-    bilirrubina= bilirrubina_c,
+    #bilirrubina= bilirrubina_c,
     sangrado= sangrado_c,
     gingivorragia= gingivorragia_c,
     epistaxis= epistaxis_c,
@@ -1396,15 +1411,15 @@ sevdb_1oms <- sevdb_1c %>%
          renal_oms= if_else(creatinina>3,1,0),
          bilsum= rowSums(.[37:38],na.rm = T),
          hiperbil_oms= if_else(bilsum>2.5,1,0),
-         enf_sum= rowSums(.[28:32],na.rm = T),
+         enf_sum= rowSums(.[27:31],na.rm = T),
          enf_cronica= if_else(enf_sum>0,1,0),
-         sangrado_sum= rowSums(.[22:24],na.rm = T),
+         sangrado_sum= rowSums(.[21:23],na.rm = T),
          sangrado_new= if_else(sangrado_sum>0,1,0)
          #hiperbil_omsX= if_else(bilitot>2.5,1,0),
          #hiperbil_test= hiperbil_omsX==hiperbil_oms,
          ) %>% #glimpse() 
     mutate(
-      shock_oms= rowSums(.[c(4,41)],na.rm = T)
+      shock_oms= rowSums(.[c(4,40)],na.rm = T)
       ) %>% 
     glimpse()# OR shock==1
 ```
@@ -1554,19 +1569,20 @@ sevdb_1 %>% select(creatin_valor, creatinina, renal_oms) %>%
     + `ictericia` diferente a `hiperbili`
     + ambas con asignación incorrecta
     
-```{r, eval=FALSE}
+```{r}
 # HIPERBILIRRUBINA
 #sevdb_1 %>% group_by(hiperbil_oms, hiperbil_omsX) %>% dplyr::count()
 
-sevdb_1 %>% select(hiperbil_oms) %>% dplyr::count(hiperbil_oms)
+sevdb_1oms %>% select(hiperbil_oms) %>% dplyr::count(hiperbil_oms)
 
-sevdb_1 %>% 
-  group_by(hiperbil_oms, hiperbil, bilirrubina, bilitot, bilind, bildirect) %>%  
-  dplyr::count() #%>% View()
+sevdb_1oms %>% 
+  group_by(hiperbil_oms, #hiperbil, 
+           #bilirrubina, 
+           bilitot, bilind, bildirect) %>%  dplyr::count() #%>% View()
 
-sevdb_1 %>% 
-  group_by(hiperbil_oms, hiperbil, ictericia, hepato_normal) %>%  
-  dplyr::count() #%>% View()
+#sevdb_1oms %>% 
+#  group_by(hiperbil_oms, hiperbil, ictericia, hepato_normal) %>%  
+#  dplyr::count() #%>% View()
 ```
 
 ###### conditional
@@ -1582,6 +1598,9 @@ sevdb_1 %>%
 ```
 
 #### Filter WHO criteria
+
+__OJO: con 2 o más criterios__
+
 ```{r}
 sevdb_2 <- sevdb_1oms %>% 
   select(1:3,
@@ -1590,8 +1609,8 @@ sevdb_2 <- sevdb_1oms %>%
          #sangrado, trombocitpenia, hiperparasitemia,
          presenta_comorb,enf_cronica,parasitemia,
          malaria_pasado_num#,casecontrol
-         ) %>% 
-  mutate(sev_WHO_num= rowSums(.[5:13],na.rm = T),
+         ) %>% #glimpse()
+  mutate(sev_WHO_num= rowSums(.[4:12],na.rm = T),
          sev_WHO= if_else(sev_WHO_num>1,"severo","no-severo"),# OJO: severo con 2 o más criterios!!
          malaria_pasado=if_else(malaria_pasado_num>0,"con-episodio-previo","sin-episodio-previo")
          ) %>%
@@ -1818,7 +1837,12 @@ subsev <- data_frame(
   abnomic= TRUE
 )
 
-sevdb_3 <- dplyr::inner_join(sevdb_2,subsev, by="codigo")
+# generate
+sevdb_3 <- dplyr::inner_join(sevdb_2,subsev, by="codigo") 
+
+# output
+sevdb_3 %>% saveRDS("data/03-sevrcov.rds")
+
 #html(Hmisc::contents(sevdb_3), maxlevels=10, levelType='table')
 
 sevdb_3 %>% group_by(malaria_pasado, malaria_pasado_num) %>% dplyr::count()
@@ -1833,9 +1857,42 @@ sevdb_3 %>% group_by(malaria_pasado, sev_WHO) %>% dplyr::count()
 #sevdb_3 %>% group_by(anemia_severa, hemoglobinuria_corr) %>%  dplyr::count()
 ```
 
-- Joint `parasitemia` from `28Nov2014_Ed.dta` **[WARNING]**
+__¿malaria_pasado==`NA`?__:
+
+- ¿podemos corregir `NA` con covariables relacionadas a exposición?, o
+- corregimos en forma insesgada a `sin-episodio-previo`
+
+```{r}
+sevdb_3 %>% 
+  select(codigo,malaria_pasado) %>% 
+  filter(is.na(malaria_pasado)) %>% 
+  dplyr::inner_join(sevdb_pre %>% 
+                      select(codigo,malaria_pasado_num,
+                             fuente_agua:trabajo_riesgo) %>% #glimpse()
+                      mutate(codigo= str_replace(codigo,"LIM0","LIM"))
+                    , by="codigo")
+#  filter(codigo=="LIM02017")
+```
+
+__POR DEFAULT: `NA`__
+```{r}
+sevdb_3 <- sevdb_3 %>% 
+  #filter(is.na(malaria_pasado)) %>% 
+  #select(codigo, malaria_pasado) %>% #glimpse()
+  #mutate(malaria_pasado= as.character(malaria_pasado)) %>% 
+  #mutate(malaria_pasado= fct_recode(malaria_pasado,"sin-episodio-previo"=NA_character_)) %>% 
+  #mutate(malaria_pasado= funs(ifelse(is.na(.),"sin-episodio-previo",.)))
+  replace_na(list(malaria_pasado="sin-episodio-previo")) #%>% 
+  #dplyr::count(malaria_pasado)
+
+sevdb_3 %>% dplyr::count(malaria_pasado)
+```
+
+
 
 ```{r, eval=FALSE}
+# - Joint `parasitemia` from `28Nov2014_Ed.dta` **[WARNING]**
+
 sevdb_4 <- sevdb_3 %>% 
   dplyr::inner_join(sevdb_x, by="codigo")
 #html(Hmisc::contents(sevdb_4), maxlevels=10, levelType='table')
@@ -1844,8 +1901,6 @@ sevdb_4 <- sevdb_3 %>%
 d <- describe(sevdb_4)
 html(d, size=90, scroll=TRUE)
 ```
-
-
 ```{r, eval=FALSE}
 # THIS IS IN eval=FALSE !!!!!!!
 sevdb_4 <- sevdb_3 %>% 

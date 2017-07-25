@@ -742,7 +742,12 @@ subsev <- data_frame(
   abnomic= TRUE
 )
 
-sevdb_3 <- dplyr::inner_join(sevdb_2,subsev, by="codigo")
+# generate
+sevdb_3 <- dplyr::inner_join(sevdb_2,subsev, by="codigo") 
+
+# output
+sevdb_3 %>% saveRDS("data/02-sevrcov.rds")
+
 #html(Hmisc::contents(sevdb_3), maxlevels=10, levelType='table')
 
 sevdb_3 %>% group_by(malaria_pasado, malaria_pasado_num) %>% dplyr::count()

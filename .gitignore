@@ -25,4 +25,6 @@ s2.tex
 s1xx.tex
 s1.tex
 s3expo.tex
+*.knit.md
+*.utf8.md
 
