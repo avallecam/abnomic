@@ -1798,7 +1798,7 @@ latex(s1, caption='Clinical data',
 s1 <- Hmisc::summaryM(edad + sexo +
                         presenta_comorb + enf_cronica +
                         #malaria_pasado_num + #malaria_pasado +
-                        sev_WHO + sev_WHO_num +
+                        sev_WHO + #sev_WHO_num +
                         parasitemia #+
                       ~ #sev_WHO #+ 
                       malaria_pasado
@@ -1901,10 +1901,8 @@ subsev <- data_frame(
 
 # generate
 sevdb_3 <- dplyr::inner_join(sevdb_2,subsev, by="codigo") 
-
-# output
-sevdb_3 %>% saveRDS("data/03-sevrcov.rds")
 ```
+
 ```{r}
 #html(Hmisc::contents(sevdb_3), maxlevels=10, levelType='table')
 sevdb_3 %>% dplyr::count(sev_WHO)
@@ -1988,6 +1986,12 @@ sevdb_3 %>%
   group_by(casecontrol,sev_WHO) %>% dplyr::count()
 ```
 
+__GRABAR BASE DE DATOS COMO `data/03-sevrcov.rds`__
+
+```{r}
+# output
+sevdb_3 %>% saveRDS("data/03-sevrcov.rds")
+```
 
 #### proportions per criteria
 
@@ -2139,7 +2143,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
                         presenta_comorb + 
                         enf_cronica +
                         #malaria_pasado_num + #malaria_pasado +
-                        sev_WHO + sev_WHO_num +
+                        sev_WHO + #sev_WHO_num +
                         parasitemia #+
                       ~ #sev_WHO #+ 
                       malaria_pasado
