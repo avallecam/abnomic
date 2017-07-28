@@ -116,7 +116,7 @@ sevdb_pre <- haven::read_dta("data-raw/malaria severa 28Nov2014_Ed.dta") #%>% ha
 ```{r}
 sevdb_1 <- sevdb_pre %>% 
   select(codigo,
-         cas_con_admin,
+         cas_con_admin, temp_local,
          edad, sexo,
          admin_uci:peso,
          -numconvul, -dias_uci, #-starts_with("glas_"),
@@ -127,6 +127,7 @@ sevdb_1 <- sevdb_pre %>%
          glucosa:casecontrol
          ) %>% 
   tidyr::separate(parterial, c("pa_sistolica", "pa_diastolica")) %>% 
+  dplyr::rename(tiempo_local= temp_local) %>% 
   mutate(codigo= str_replace(codigo,"LIM0","LIM"),
          pa_sistolica= str_replace(pa_sistolica,"NaN|99",replacement = NA_character_),
          pa_diastolica= str_replace(pa_diastolica,"NaN|99",replacement = NA_character_),
@@ -188,6 +189,7 @@ sevdb_1 <- sevdb_pre %>%
          gingivorragia= as.numeric(gingivorragia),
          epistaxis= as.numeric(epistaxis),
          sang_intest= as.numeric(sang_intest),
+         tiempo_local= as.numeric(tiempo_local),
          cas_con_admin= as.numeric(cas_con_admin)
          ) #%>% glimpse()
 ```
@@ -229,6 +231,7 @@ sevdb_1oms <- sevdb_1 %>%
     enf_cardiac,
     enf_pulm,
     enf_renal,
+    tiempo_local,
     malaria_pasado_num,
     
     glucosa,
@@ -248,7 +251,7 @@ sevdb_1oms <- sevdb_1 %>%
          hipoglic_oms= if_else(glucosa<40,1,0),
          anemia_oms= if_else(hemoglobina<7,1,0),
          renal_oms= if_else(creatinina>3,1,0),
-         bilsum= rowSums(.[37:38],na.rm = T),
+         bilsum= rowSums(.[38:39],na.rm = T),
          hiperbil_oms= if_else(bilsum>2.5,1,0),
          enf_sum= rowSums(.[27:31],na.rm = T),
          enf_cronica= if_else(enf_sum>0,1,0),
@@ -258,7 +261,7 @@ sevdb_1oms <- sevdb_1 %>%
          #hiperbil_test= hiperbil_omsX==hiperbil_oms,
          ) %>% #glimpse() 
     mutate(
-      shock_oms= rowSums(.[c(4,40)],na.rm = T)
+      shock_oms= rowSums(.[c(4,41)],na.rm = T)
       ) #%>% glimpse()# OR shock==1
 ```
 
@@ -441,8 +444,8 @@ sevdb_1oms %>% select(pa_sistolica, pa_diastolica, shock_oms) %>%
 
 ```{r, eval=FALSE}
 #GLASGOW -------------------------------------------------- CON INCONSISTENCIAS!!!
-sevdb_1oms %>% group_by(glas_oms, glas_11, glas_ojos, glas_verbal, glas_motor, glasgow) %>% dplyr::count()
-sevdb_1oms %>% group_by(glas_oms, glas_11) %>% dplyr::count()
+sevdb_1oms %>% group_by(glas_9, glas_11, glas_ojos, glas_verbal, glas_motor, glasgow) %>% dplyr::count()
+sevdb_1oms %>% group_by(glas_9, glas_11,coma) %>% dplyr::count()
 ```
 
 
@@ -583,7 +586,7 @@ sevdb_1oms %>%
 
 ### Filter WHO criteria
 
-__OJO: con 1 o más criterios + 2 de SNC__
+__OJO: con 1 o más criterios__
 
 ```{r}
 sevdb_2 <- sevdb_1oms %>% 
@@ -593,17 +596,17 @@ sevdb_2 <- sevdb_1oms %>%
   select(1:3,
          shock_oms, glas_oms, pulmonar_oms, #sdra, #snc_sum, #snc_oms
          anemia_oms, renal_oms, hiperbil_oms, hipoglic_oms, #sangr_oms,
-         coma, convulsion, postracion,
+         convulsion,
+         #coma, postracion,
          #trombocitopenia, hiperparasitemia,
-         presenta_comorb,enf_cronica,parasitemia,
-         malaria_pasado_num#,casecontrol
+         presenta_comorb, enf_cronica, enf_sum, parasitemia,
+         tiempo_local, malaria_pasado_num#,casecontrol
          ) %>% #glimpse()
-  mutate(sev_WHO_num= rowSums(.[4:10],na.rm = T),
-         sev_SNC_num= rowSums(.[11:13],na.rm = T)
+  mutate(sev_WHO_num= rowSums(.[4:11],na.rm = T)#,sev_SNC_num= rowSums(.[11:13],na.rm = T)
          ) %>% #glimpse()
-  mutate(sev_ALL_num= rowSums(.[c(18,19)],na.rm = T),
-         sev_WHO= if_else(sev_WHO_num>0 | sev_ALL_num>1,
-                          "severo","no-severo"),# OJO: severo con 1 o más criterios + 2 de SNC
+  mutate(#sev_ALL_num= rowSums(.[c(18,19)],na.rm = T),
+         sev_WHO= if_else(sev_WHO_num>0# | sev_ALL_num>1
+                          ,"severo","no-severo"),# OJO: severo con 1 o más criterios + 2 de SNC
          malaria_pasado=if_else(malaria_pasado_num>0,"con-episodio-previo","sin-episodio-previo")
          ) %>% 
   mutate(sexo= as.factor(sexo),
@@ -644,8 +647,8 @@ s1 <- Hmisc::summaryM(shock_oms + #clinicos
                         anemia_oms +
                         renal_oms +
                         hipoglic_oms +
-                        postracion +#extra
-                        coma +
+                        #postracion +#extra
+                        #coma +
                         convulsion +
                         #presenta_comorb+
                         #enf_cronica
@@ -656,7 +659,7 @@ s1 <- Hmisc::summaryM(shock_oms + #clinicos
                data=sevdb_2,
                overall=FALSE, test=FALSE)
 
-latex(s1, caption='WHO criteria: Clinical and Laboratory parameters',
+latex(s1, caption='WHO classification: Clinical and Laboratory criterias',
       exclude1=TRUE, npct='both', 
       digits=3,
       prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
@@ -670,7 +673,7 @@ latex(s1, caption='WHO criteria: Clinical and Laboratory parameters',
 
 __check `sev_WHO`__
 ```{r}
-sevdb_2 %>% group_by(sev_WHO_num, sev_SNC_num, sev_ALL_num, sev_WHO) %>% dplyr::count()
+sevdb_2 %>% group_by(sev_WHO_num, sev_WHO) %>% dplyr::count()
 ```
 
 ```{r}
@@ -691,7 +694,7 @@ sevdb_2 %>% group_by(sev_WHO_num, sev_SNC_num, sev_ALL_num, sev_WHO) %>% dplyr::
 sevdb_2 %>% 
   group_by(shock_oms, glas_oms, pulmonar_oms, #sdra,snc_oms,
            hipoglic_oms, anemia_oms, renal_oms, hiperbil_oms,
-           coma, convulsion, postracion,
+           convulsion, #coma, postracion,
            sev_WHO_num, sev_WHO
            ) %>% 
   dplyr::count() %>% 
@@ -703,7 +706,7 @@ sevdb_2 %>%
 sevdb_2 %>% 
   select(shock_oms, glas_oms, pulmonar_oms, #sdra,snc_oms,
          hipoglic_oms, anemia_oms, renal_oms, hiperbil_oms,
-         coma, convulsion, postracion
+         convulsion#coma, , postracion
            ) %>% 
   summarise_all(sum,na.rm=T) #%>% t()
 ```
@@ -746,9 +749,10 @@ sevdb_2x <- sevdb_2 %>%
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
-                        presenta_comorb + enf_cronica +
-                        malaria_pasado + #malaria_pasado_num #+ 
+                        tiempo_local +
+                        malaria_pasado + #malaria_pasado_num + 
                         #sev_WHO + sev_WHO_num +
+                        presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ sev_WHO #+ 
                       #malaria_pasado
@@ -777,9 +781,10 @@ latex(s1, caption='Clinical data',
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
-                        presenta_comorb + enf_cronica +
-                        #malaria_pasado_num + #malaria_pasado +
+                        tiempo_local +
+                        #malaria_pasado_num + #malaria_pasado +  
                         sev_WHO + #sev_WHO_num +
+                        presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ #sev_WHO #+ 
                       malaria_pasado
@@ -805,9 +810,10 @@ latex(s1, caption='Clinical data',
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
+                        tiempo_local +
+                        #malaria_pasado + #malaria_pasado_num + 
+                        #sev_WHO + sev_WHO_num +
                         presenta_comorb + enf_cronica +
-                        #malaria_pasado_num + #malaria_pasado +
-                        #sev_WHO_num #+ sev_WHO
                         parasitemia #+
                       ~ sev_WHO + 
                       malaria_pasado
@@ -984,8 +990,8 @@ s1 <- Hmisc::summaryM(shock_oms + #clinicos
                         anemia_oms +
                         renal_oms +
                         hipoglic_oms +
-                        postracion +#extra
-                        coma +
+                        #postracion +#extra
+                        #coma +
                         convulsion +
                         #presenta_comorb+
                         #enf_cronica
@@ -996,7 +1002,7 @@ s1 <- Hmisc::summaryM(shock_oms + #clinicos
                data=sevdb_3,
                overall=FALSE, test=FALSE)
 
-latex(s1, caption='WHO criteria: Clinical and Laboratory parameters',
+latex(s1, caption='WHO classification: Clinical and Laboratory criterias',
       exclude1=TRUE, npct='both', 
       digits=3,
       prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
@@ -1010,7 +1016,7 @@ latex(s1, caption='WHO criteria: Clinical and Laboratory parameters',
 
 __check `sev_WHO`__
 ```{r}
-sevdb_3 %>% group_by(sev_WHO_num, sev_SNC_num, sev_ALL_num, sev_WHO) %>% dplyr::count()
+sevdb_3 %>% group_by(sev_WHO_num, sev_WHO) %>% dplyr::count()
 ```
 
 - 8 pacientes con solo `coma` + `postracion`
@@ -1033,7 +1039,7 @@ sevdb_3 %>% group_by(sev_WHO_num, sev_SNC_num, sev_ALL_num, sev_WHO) %>% dplyr::
 sevdb_3 %>% 
   group_by(shock_oms, glas_oms, pulmonar_oms, #sdra,snc_oms,
            hipoglic_oms, anemia_oms, renal_oms, hiperbil_oms,
-           coma, convulsion, postracion,
+           convulsion,#coma, , postracion,
            sev_WHO_num, sev_WHO
            ) %>% 
   dplyr::count() %>% 
@@ -1044,7 +1050,7 @@ sevdb_3 %>%
 sevdb_3 %>% 
   select(shock_oms, glas_oms, pulmonar_oms, #sdra,snc_oms,
          hipoglic_oms, anemia_oms, renal_oms, hiperbil_oms,
-         coma, convulsion, postracion
+         convulsion#coma, , postracion
            ) %>% 
   summarise_all(sum,na.rm=T) #%>% t()
 ```
@@ -1053,7 +1059,7 @@ sevdb_3 %>% select(codigo, sev_WHO, sev_WHO_num) %>%
   inner_join(sevdb_1, by="codigo") %>% 
   group_by(sev_WHO, sev_WHO_num, shock_oms, 
            #snc_oms, snc_sum, 
-           coma, convulsion, postracion
+           convulsion#coma, , postracion
            #, snc_normal
            ) %>% dplyr::count()
 ```
@@ -1089,10 +1095,11 @@ sevdb_3x <- sevdb_3 %>%
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
-                        #presenta_comorb + 
-                        enf_cronica +
+                        tiempo_local +
                         malaria_pasado + #malaria_pasado_num + 
                         #sev_WHO + sev_WHO_num +
+                        #presenta_comorb + 
+                        enf_cronica +
                         parasitemia #+
                       ~ sev_WHO #+ 
                       #malaria_pasado
@@ -1113,7 +1120,7 @@ latex(s1, caption='Clinical data',
 
 ***
 
-**wrt previouse episodes of malaria**
+**wrt previous episodes of malaria**
 
 - significant differences with respect to 
     + mean age,
@@ -1121,10 +1128,11 @@ latex(s1, caption='Clinical data',
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
+                        tiempo_local +
+                        #malaria_pasado + #malaria_pasado_num + 
+                        sev_WHO + #sev_WHO_num +
                         #presenta_comorb + 
                         enf_cronica +
-                        #malaria_pasado_num + #malaria_pasado +
-                        sev_WHO + #sev_WHO_num +
                         parasitemia #+
                       ~ #sev_WHO #+ 
                       malaria_pasado
@@ -1150,10 +1158,11 @@ latex(s1, caption='Clinical data',
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
+                        tiempo_local +
+                        #malaria_pasado + #malaria_pasado_num + 
+                        #sev_WHO + #sev_WHO_num +
                         #presenta_comorb + 
                         enf_cronica +
-                        #malaria_pasado_num + #malaria_pasado +
-                        #sev_WHO_num #+ sev_WHO
                         parasitemia #+
                       ~ sev_WHO + 
                       malaria_pasado

@@ -37,9 +37,62 @@ to use them as covariates for the subset of samples provided to the
 
 ## Done
 
+- `postración` es retirado como criterio por ser una variable subjetiva, 
+carente de una definición clara en la literatura.
+- `coma` es retirada ya que es una variable definida por `glasgow`.
+
 ## To do
 
+- ¿qué hacer con pacientes con puntaje final de `glasgow` y auscencia 
+de puntaje para sus sub-componentes (motor, verbal, ojos)?
+- ¿`presenta_comorb` distinta a `enf_cronica`? ¿Cómo están definidas?
+- ¿es relevante que incluya `presencia de comorbilidades` o `enfermedades crónicas` 
+en la descripción de la muestra?
+- ¿se puede asumir un valor de `episodios-previos` con la ayuda de las covariables
+asociadas a exposición? ¿vale la pena corregirlo?
+
 ## Notes
+
+-------------------------------------------------------------
+ Dataset   Pros                      Cons
+---------- ------------------------- -------------------------
+  nov2014   posee valores             __mayor cantidad de
+            cuantitativos originales  NA's__
+            de los __criterios de
+            laboratorio__:
+            glucosa,
+            hemoglobina,
+            creatinina,
+            bilirrubina,
+            parasitemia.
+
+  sep2016   menor cantidad de NA's    difiere en algunas 
+            o __mayor cantidad de     variables, incluido
+            _non-missing values___    __criterios clínicos__:
+                                      edad,
+                                      sexo,
+                                      pa_sistolica (shock),
+                                      edema, sdra (pulmonar),
+                                      glasgow (coma),
+                                      convulción.
+
+-------------------------------------------------------------
+
+Table: Pros and cons between datasets
+
+__Pregunta:__
+
+- ¿Las diferencias entre `nov2014` y `sep2016` deben ser consideradas 
+como __correcciones__ o __actualizaciones__?
+    + [evaluar](#evaluate-covariates) la presencia de diferencias y 
+    cantidad de NA's por variable,
+    + [ejecutar consenso](#execute-consensus-covariates) y 
+    otorgar prioridad a `sep2016`.
+
+__Decisión:__
+
+- __criterios de laboratorio__ extraídas de `nov2014`.
+- variables epidemiológicas y __criterios clínicos__ corregidos en base a `sep2016`.
 
 ## Analysis
 
@@ -81,7 +134,7 @@ sevdb_pos <- haven::read_dta("data-raw/severe_malaria_vivax SEP2016.dta") #%>% h
 ```{r}
 sevdb_pre_1 <- sevdb_pre %>% 
   select(codigo,
-         cas_con_admin,
+         cas_con_admin, temp_local,
          edad, sexo,
          admin_uci:peso,
          -numconvul, -dias_uci, #-starts_with("glas_"),
@@ -92,6 +145,7 @@ sevdb_pre_1 <- sevdb_pre %>%
          glucosa:casecontrol
          ) %>% 
   tidyr::separate(parterial, c("pa_sistolica", "pa_diastolica")) %>% 
+  dplyr::rename(tiempo_local= temp_local) %>% 
   mutate(codigo= str_replace(codigo,"LIM0","LIM"),
          pa_sistolica= str_replace(pa_sistolica,"NaN|99",replacement = NA_character_),
          pa_diastolica= str_replace(pa_diastolica,"NaN|99",replacement = NA_character_),
@@ -139,7 +193,7 @@ sevdb_pre_1 <- sevdb_pre %>%
          edema_pulm=as.numeric(edema_pulm), 
          #resp_normal=as.numeric(resp_normal),
          hiperbil= as.double(hiperbil),
-         malaria_pasado_num= as.numeric(malaria_pasado_num),
+         malaria_pasado_num= as.integer(malaria_pasado_num),
          pa_sistolica= as.numeric(pa_sistolica),
          pa_diastolica= as.numeric(pa_diastolica),
          #fiebre_hoy_corr= as.numeric(fiebre_hoy_corr),
@@ -153,6 +207,7 @@ sevdb_pre_1 <- sevdb_pre %>%
          gingivorragia= as.numeric(gingivorragia),
          epistaxis= as.numeric(epistaxis),
          sang_intest= as.numeric(sang_intest),
+         tiempo_local= as.numeric(tiempo_local),
          cas_con_admin= as.numeric(cas_con_admin)
          ) #%>% glimpse()
 ```
@@ -162,7 +217,7 @@ sevdb_pre_1 <- sevdb_pre %>%
 ```{r}
 sevdb_pos_1 <- sevdb_pos %>% 
   select(codigo,
-         cas_con_admin2,
+         cas_con_admin2, tiempoenlocal,
          edad, sexo,
          admin_uci_corr:peso,
          -num_convulsion, -dias_uci, #-starts_with("glas_"),
@@ -174,6 +229,7 @@ sevdb_pos_1 <- sevdb_pos %>%
          ) %>% #glimpse()
   tidyr::separate(parterial, c("pa_sistolica", "pa_diastolica")) %>% #glimpse()
   dplyr::rename(cas_con_admin= cas_con_admin2,
+                tiempo_local= tiempoenlocal,
                 admin_uci= admin_uci_corr,
                 postracion= postracion_corr,
                 confusion= confusion_corr,
@@ -238,7 +294,7 @@ sevdb_pos_1 <- sevdb_pos %>%
          edema_pulm=as.numeric(edema_pulm), 
          #resp_normal=as.numeric(resp_normal),
          hiperbil= as.double(hiperbil),
-         malaria_pasado_num= as.numeric(malaria_pasado_num),
+         malaria_pasado_num= as.integer(malaria_pasado_num),
          pa_sistolica= as.numeric(pa_sistolica),
          pa_diastolica= as.numeric(pa_diastolica),
          #fiebre_hoy= as.numeric(fiebre_hoy),
@@ -256,46 +312,105 @@ sevdb_pos_1 <- sevdb_pos %>%
          cont_plaquetas= as.numeric(cont_plaquetas),
          talla= as.numeric(talla),
          peso= as.numeric(peso),
+         tiempo_local= as.numeric(tiempo_local),
          bilirrubina= as.numeric(bilirrubina)
          ) #%>% glimpse()
 ```
 
 ##### sample comparison
 
+```{r, fig.align='center', fig.width=5, fig.height=5}
+g1_id <- sevdb_pre %>% dplyr::select(codigo)      # 960
+g2_id <- sevdb_pos %>% dplyr::select(codigo)     # 963
+
+g1_idl= unlist(as.list(g1_id))
+g2_idl= unlist(as.list(g2_id))
+
+tmp <- gplots::venn(list(sevdb_pre=g1_idl, sevdb_pos=g2_idl))
+```
 ```{r}
 #intersect(sevdb_pre[,"codigo"], sevdb_pos[,"codigo"]) %>% dplyr::n_distinct()
 setdiff(sevdb_pre[,"codigo"], sevdb_pos[,"codigo"])
 setdiff(sevdb_pos[,"codigo"], sevdb_pre[,"codigo"])
 ```
 
-```{r, fig.align='center', fig.width=5, fig.height=5}
-unapid <- sevdb_pre %>% dplyr::select(codigo)      # 960
-epidid <- sevdb_pos %>% dplyr::select(codigo)     # 963
-
-id_unap= unlist(as.list(unapid))
-id_epid= unlist(as.list(epidid))
-
-tmp <- gplots::venn(list(sevdb_pre=id_unap,sevdb_pos=id_epid))
-```
-
-
 ##### full join
 ```{r}
-sevdb_1 <- full_join(sevdb_pre_1, sevdb_pos_1, by="codigo", suffix= c("_1","_2")) %>% 
-  glimpse()
+sevdb_1 <- full_join(sevdb_pre_1, sevdb_pos_1, by="codigo", suffix= c("_1","_2")) #%>% glimpse()
+#sevdb_1 %>% select(codigo, temp_local, tiempoenlocal)
 ```
 
-#### Evaluate covariates
+### Evaluate covariates
 
-Se evalará:
+* Se evalará:
+    - __diferencias__ entre las variables pre y pos actualización
+    - el número de elementos __no-NA's__
 
-- la semejanza entre las variables pre y pos actualización
-- el número de elementos no-NA's
+* Se generarán nuevas [variables consenso](#show-consensus-covariates) para:
+    - llenar los vacios en `nov2014`, y
+    - corregir la data en `nov2014` por la presente en `sep2016`.
+
+* Ver tabla:
+
+-------------------------------------------------------------------
+variable              ¿hay datos             ¿`sep2016` tiene menos
+                      diferentes entre       NA's con respecto a
+                      `nov2014` y `sep2016`? `nov2014`?
+--------------------- ---------------------- ----------------------
+__general__
+
+`edad`                x                      x
+
+`sexo`                x                      x
+
+__who criteria__
+
+`shock`               x                      x
+
+`pa_sistolica`                               x
+
+`glasgow`             x                      x
+
+`glas_ojos`                                  x
+
+`glas_verbal`                                x
+
+`glas_motor`                                 x
+
+~~`coma`~~            x                      x
+
+`convulsion`                                 x
+
+`edema_pulm`                                 x
+
+`sdra`                x                      x
+
+__conditional__
+
+`tiempo_local`        x                      x
+
+`malaria_pasado_num`                         x
+
+`presenta_comorb`     x                      x
+
+`diabetes`                                   x
+
+`enf_renal`           x                      x
+
+`enf_cardiac`         x                      x
+
+`enf_pulm`                                   x
+
+`enf_snc`                                    x
+
+-------------------------------------------------------------------
+
+Table: Comparación entre bases de datos. (La respuesta afirmativa esta marcada con un aspa)
 
 ##### general
 
 - **EDAD**
-    + diferencias entre `edad_1` y `edad_2`
+    + `edad_1` y `edad_2` tienen elementos diferentes
     + `edad_2` posee menos NA's
 
 ```{r}
@@ -307,7 +422,7 @@ sevdb_1 %>%
 ```
 
 - **SEXO**
-    + diferencias entre `sexo_1` y `sexo_2`
+    + `sexo_1` y `sexo_2` tienen elementos diferentes
     + `sexo_2` posee menos NA's
     
 ```{r}
@@ -321,8 +436,11 @@ sevdb_1 %>%
 ##### who criteria
 
 - **SHOCK**
-    + `shock_2` es corrección de `shock_1`
+    + `shock_1` y `shock_2` tienen elementos diferentes
+    + `shock_1` posee menos NA's
+    + `pa_sistolica_1` y `pa_sistolica_2` no tienen elementos diferentes
     + `pa_sistolica_2` posee menos NA's
+    + `shock` y `pa_sistolica` se complementan.
 
 ```{r}
 sevdb_1 %>% 
@@ -335,12 +453,24 @@ sevdb_1 %>%
 sevdb_1 %>% 
   mutate(pa_sistolica= pa_sistolica_1==pa_sistolica_2) %>%
   select(pa_sistolica, pa_sistolica_1, pa_sistolica_2) %>% summarise_all(funs(sum(!is.na(.))))
+
+sevdb_1 %>% 
+  mutate(shock= shock_1==shock_2) %>%
+  mutate(pa_sistolica= pa_sistolica_1==pa_sistolica_2) %>%
+  group_by(shock, shock_1, shock_2,
+           pa_sistolica, pa_sistolica_1, pa_sistolica_2) %>% 
+  dplyr::count()
 ```
 
 - **GLASGOW**
-    + `glasgow_2` tiene correcciones y menos NA's
+    + `glasgow_1` y `glasgow_2` tienen elementos diferentes
+    + `glasgow_2` menos NA's
+    + ningún sub-componente `_1` y `_2` tiene elementos diferentes
     + `glas_ojos_2`, `glas_verbal_2`, `glas_motor_2` tienen menos NA's
     + ¿diferencias entre `glas_total` y `glasgow_2`?
+    + `coma_1` y `coma_2` tienen elementos diferentes
+    + `coma_2` menos NA's
+    + `coma` es una variable __erronea__, no consistente con la data de `glasgow`
     
 ```{r}
 sevdb_1 %>% 
@@ -348,6 +478,12 @@ sevdb_1 %>%
 sevdb_1 %>% 
   mutate(glasgow= glasgow_1==glasgow_2) %>%
   select(glasgow, glasgow_1, glasgow_2) %>% summarise_all(funs(sum(!is.na(.))))
+sevdb_1 %>% 
+  mutate(glasgow= glasgow_1==glasgow_2) %>%
+  group_by(glasgow,
+           glasgow_1, glas_verbal_1, glas_ojos_1, glas_motor_1,
+           glasgow_2, glas_verbal_2, glas_ojos_2, glas_motor_2) %>% dplyr::count() %>% #View()
+  dplyr::arrange(glasgow_2)
 
 sevdb_1 %>% 
   mutate(glas_ojos= glas_ojos_1==glas_ojos_2) %>% dplyr::count(glas_ojos) #%>% View()
@@ -366,25 +502,6 @@ sevdb_1 %>%
 sevdb_1 %>% 
   mutate(glas_motor= glas_motor_1==glas_motor_2) %>%
   select(glas_motor, glas_motor_1, glas_motor_2) %>% summarise_all(funs(sum(!is.na(.))))
-```
-
-- **CNS malaria**
-    + `postracion_2`, `confusion_2`, `coma_2`, `convulsion_2` tienen menos NA's
-    + ojo con `cns_malaria`
-    
-```{r}
-#postracion, confusion, coma, convulsion
-sevdb_1 %>% 
-  mutate(postracion= postracion_1==postracion_2) %>% dplyr::count(postracion) #%>% View()
-sevdb_1 %>% 
-  mutate(postracion= postracion_1==postracion_2) %>%
-  select(postracion, postracion_1, postracion_2) %>% summarise_all(funs(sum(!is.na(.))))
-
-sevdb_1 %>% 
-  mutate(confusion= confusion_1==confusion_2) %>% dplyr::count(confusion) #%>% View()
-sevdb_1 %>% 
-  mutate(confusion= confusion_1==confusion_2) %>%
-  select(confusion, confusion_1, confusion_2) %>% summarise_all(funs(sum(!is.na(.))))
 
 sevdb_1 %>% 
   mutate(coma= coma_1==coma_2) %>% dplyr::count(coma) #%>% View()
@@ -393,6 +510,24 @@ sevdb_1 %>%
   select(coma, coma_1, coma_2) %>% summarise_all(funs(sum(!is.na(.))))
 
 sevdb_1 %>% 
+  mutate(glasgow= glasgow_1==glasgow_2) %>%
+  mutate(coma= coma_1==coma_2) %>%
+  group_by(glasgow,
+           glasgow_1, #glas_verbal_1, glas_ojos_1, glas_motor_1,
+           glasgow_2, #glas_verbal_2, glas_ojos_2, glas_motor_2,
+           coma, 
+           coma_1, coma_2) %>% dplyr::count() %>% #View()
+  dplyr::arrange(glasgow_2)
+
+```
+
+- **CONVULSION**
+    + `convulsion_1` y `convulsion_2` no tienen diferencias
+    + `convulsion_2` tienen menos NA's
+    
+```{r}
+#convulsion
+sevdb_1 %>% 
   mutate(convulsion= convulsion_1==convulsion_2) %>% dplyr::count(convulsion) #%>% View()
 sevdb_1 %>% 
   mutate(convulsion= convulsion_1==convulsion_2) %>%
@@ -400,41 +535,19 @@ sevdb_1 %>%
 ```
 
 - **LUNG_INJURY**
-    + `disnea_2`, `taquipnea_2`, `infiltracion_2` con corrección
-    + `disnea_2`, `taquipnea_2`, `infiltracion_2`, `edema_pulm_2` tiene menos NA's
-    + ojo con `lung_injury`
+    + `edema_pulm_1` y `edema_pulm_2` no tienen elementos diferentes
+    + `edema_pulm_2` con menos NA's
+    + `sdra_1` y `sdra_2` tienen elementos diferentes
+    + `sdra_2` con menos NA's
     
 ```{r}
-#disnea, taquipnea, infiltracion, edema_pulm
-sevdb_1 %>% 
-  mutate(disnea= disnea_1==disnea_2) %>% dplyr::count(disnea) #%>% View()
-sevdb_1 %>% 
-  mutate(disnea= disnea_1==disnea_2) %>%
-  select(disnea, disnea_1, disnea_2) %>% summarise_all(funs(sum(!is.na(.))))
-
-sevdb_1 %>% 
-  mutate(taquipnea= taquipnea_1==taquipnea_2) %>% dplyr::count(taquipnea) #%>% View()
-sevdb_1 %>% 
-  mutate(taquipnea= taquipnea_1==taquipnea_2) %>%
-  select(taquipnea, taquipnea_1, taquipnea_2) %>% summarise_all(funs(sum(!is.na(.))))
-
-sevdb_1 %>% 
-  mutate(infiltracion= infiltracion_1==infiltracion_2) %>% dplyr::count(infiltracion) #%>% View()
-sevdb_1 %>% 
-  mutate(infiltracion= infiltracion_1==infiltracion_2) %>%
-  select(infiltracion, infiltracion_1, infiltracion_2) %>% summarise_all(funs(sum(!is.na(.))))
-
+#edema_pulm y sdra
 sevdb_1 %>% 
   mutate(edema_pulm= edema_pulm_1==edema_pulm_2) %>% dplyr::count(edema_pulm) #%>% View()
 sevdb_1 %>% 
   mutate(edema_pulm= edema_pulm_1==edema_pulm_2) %>%
   select(edema_pulm, edema_pulm_1, edema_pulm_2) %>% summarise_all(funs(sum(!is.na(.))))
-```
 
-- **SDRA**
-    + `sdra_2` con corrección y menos NA's
-
-```{r}
 sevdb_1 %>% 
   mutate(sdra= sdra_1==sdra_2) %>% dplyr::count(sdra) #%>% View()
 sevdb_1 %>% 
@@ -442,63 +555,10 @@ sevdb_1 %>%
   select(sdra, sdra_1, sdra_2) %>% summarise_all(funs(sum(!is.na(.))))
 ```
 
+```{r, eval=FALSE}
+#- **BLEEDING**
+#    + `sangrado_2`, `gingivorragia_2`, `epistaxis_2`, `sang_intest_2` con correcciones y menos NA's
 
-- **HIPOGLICEMIA**
-    + `glucosa` auscente en `sevdv_pos`
-    + `glic_normal_2` con 166 falsos por poseer numeracion inversa y menos NA's
-    + `glic_normal_2` retirado
-
-```{r}
-sevdb_1 %>% 
-  mutate(glic_normal= glic_normal_1==glic_normal_2) %>% dplyr::count(glic_normal) #%>% View()
-sevdb_1 %>% 
-  mutate(glic_normal= glic_normal_1==glic_normal_2) %>%
-  select(glic_normal, glic_normal_1, glic_normal_2) %>% summarise_all(funs(sum(!is.na(.))))
-```
-
-- **ANEMIA SEVERA**
-    + `hemoglobina` auscente en `sevdv_pos`
-    + `anemia_severa_2` con 92 correcciones y menos NA's
-    
-```{r}
-sevdb_1 %>% 
-  mutate(anemia_severa= anemia_severa_1==anemia_severa_2) %>% dplyr::count(anemia_severa) #%>% View()
-sevdb_1 %>% 
-  mutate(anemia_severa= anemia_severa_1==anemia_severa_2) %>%
-  select(anemia_severa, anemia_severa_1, anemia_severa_2) %>% summarise_all(funs(sum(!is.na(.))))
-```
-
-- **DAÑO RENAL**
-    + sin actualización
-    + `creatinina` auscente en `sevdv_pos`
-
-- **HIPERBILIRRUBINA**
-    + `bilitot` auscente en `sevdv_pos`
-    + `bilirrubina_1` con decimales completos y `bilirrubina_2` con decimales aproximados a dos dígitos.
-    + __OJO:__ `bilitot` posee menos NA's
-
-```{r}
-#sevdb_1 %>% 
-#  mutate(bilirrubina= bilirrubina_1==bilirrubina_2) %>% #dplyr::count(bilirrubina) #%>% View()
-#  filter(bilirrubina==FALSE) %>% 
-#  select(bilirrubina, bilirrubina_1, bilirrubina_2, bilitot)
-sevdb_1 %>% 
-  mutate(bilirrubina= bilirrubina_1==bilirrubina_2) %>%
-  select(bilitot, #bilirrubina, 
-         bilirrubina_1, bilirrubina_2) %>% summarise_all(funs(sum(!is.na(.))))
-sevdb_1 %>% 
-  mutate(bilirrubina= bilirrubina_1==bilitot) %>% #dplyr::count(bilirrubina) #%>% View()
-  filter(bilirrubina==FALSE) %>% 
-  select(bilirrubina, bilitot, bilirrubina_1, bilirrubina_2)
-sevdb_1 %>% 
-  mutate(bilirrubina= bilirrubina_1==bilitot) %>%
-  select(bilirrubina, bilitot, bilirrubina_1, bilirrubina_2) #%>% summarise_all(funs(sum(!is.na(.))))
-```
-
-- **BLEEDING**
-    + `sangrado_2`, `gingivorragia_2`, `epistaxis_2`, `sang_intest_2` con correcciones y menos NA's
-    
-```{r}
 sevdb_1 %>% 
   mutate(sangrado= sangrado_1==sangrado_2) %>% dplyr::count(sangrado) #%>% View()
 sevdb_1 %>% 
@@ -522,14 +582,12 @@ sevdb_1 %>%
 sevdb_1 %>% 
   mutate(sang_intest= sang_intest_1==sang_intest_2) %>%
   select(sang_intest, sang_intest_1, sang_intest_2) %>% summarise_all(funs(sum(!is.na(.))))
-```
 
-- **TROMBOCITOPENIA**
-    + `trombocitopenia_2` y `cont_plaquetas_2` con correcciones
-    + `trombocitopenia_2` con menos NA's
-    + __OJO:__ `cont_plaquetas_1` con menos NA's
+#- **TROMBOCITOPENIA**
+#    + `trombocitopenia_2` y `cont_plaquetas_2` con correcciones
+#    + `trombocitopenia_2` con menos NA's
+#    + __OJO:__ `cont_plaquetas_1` con menos NA's
 
-```{r}
 sevdb_1 %>% 
   mutate(trombocitopenia= trombocitopenia_1==trombocitopenia_2) %>% dplyr::count(trombocitopenia) #%>% View()
 sevdb_1 %>% 
@@ -546,9 +604,54 @@ sevdb_1 %>%
 
 ##### conditional
 
+- **TIEMPO (¿AÑOS VIVIENDO?) EN LOCALIDAD**
+```{r, fig.width=8, fig.height=4}
+sevdb_1 %>% 
+  mutate(tiempo_local= tiempo_local_1==tiempo_local_2) %>% dplyr::count(tiempo_local) #%>% View()
+sevdb_1 %>% 
+  mutate(tiempo_local= tiempo_local_1==tiempo_local_2) %>%
+  select(tiempo_local, tiempo_local_1, tiempo_local_2) %>% summarise_all(funs(sum(!is.na(.))))
+sevdb_1 %>% 
+  mutate(tiempo_local= tiempo_local_1==tiempo_local_2) %>%
+  mutate(control_1= tiempo_local_1>edad_1,
+         control_2= tiempo_local_2>edad_2) %>%
+  group_by(control_1, control_2) %>% dplyr::count()
+#group_by(control_1, edad_1, tiempo_local_1, control_2, edad_2, tiempo_local_2) %>% dplyr::count()
+a <- sevdb_1 %>% 
+  ggplot(aes(edad_1, tiempo_local_1)) + 
+  geom_point() + 
+  scale_color_viridis() +
+  labs(title="edad vs años vivendo en localidad",
+       subtitle= "nov2014")
+b <- sevdb_1 %>% 
+  ggplot(aes(edad_2, tiempo_local_2)) + 
+  geom_point() + 
+  scale_color_viridis() +
+  labs(title="edad vs años vivendo en localidad",
+       subtitle= "sep2016")
+Rmisc::multiplot(a,b, cols = 2)
+```
+
+- **MALARIA_PASADO_NUM**
+    + `malaria_pasado_num_1` y `malaria_pasado_num_2` no tienen elementos diferentes
+    + `malaria_pasado_num_2` con menor número de NA's
+```{r}
+sevdb_1 %>% 
+  mutate(malaria_pasado_num= malaria_pasado_num_1==malaria_pasado_num_2) %>% dplyr::count(malaria_pasado_num) #%>% View()
+sevdb_1 %>% 
+  mutate(malaria_pasado_num= malaria_pasado_num_1==malaria_pasado_num_2) %>%
+  select(malaria_pasado_num, malaria_pasado_num_1, malaria_pasado_num_2) %>% summarise_all(funs(sum(!is.na(.))))
+```
+
 - **COMORBILITIES** 
     + ¿`presenta_comorb` distinta a `enf_cronica`?
-    + `enf_renal_2` y `enf_cardiac_2` con correcciones
+
+- **ENFERMEDAD CRONICA**
+    + `enf_renal_1` y `enf_renal_2` tienen elementos diferentes
+    + `enf_cardiac_1` y `enf_cardiac_2` tienen elementos diferentes
+    + `diabetes_1` y `diabetes_2` no tienen elementos diferentes
+    + `enf_pulm_1` y `enf_pulm_2` no tienen elementos diferentes
+    + `enf_snc_1` y `enf_snc_2` no tienen elementos diferentes
     + `diabetes_2`, `enf_cardiac_2`, `enf_pulm_2`, `enf_renal_2`, `enf_snc_2` con menos NA's
     
 ```{r}
@@ -590,474 +693,7 @@ sevdb_1 %>%
   select(enf_renal, enf_renal_1, enf_renal_2) %>% summarise_all(funs(sum(!is.na(.))))
 ```
 
-- **MALARIA_PASADO_NUM**
-```{r}
-sevdb_1 %>% 
-  mutate(malaria_pasado_num= malaria_pasado_num_1==malaria_pasado_num_2) %>% dplyr::count(malaria_pasado_num) #%>% View()
-sevdb_1 %>% 
-  mutate(malaria_pasado_num= malaria_pasado_num_1==malaria_pasado_num_2) %>%
-  select(malaria_pasado_num, malaria_pasado_num_1, malaria_pasado_num_2) %>% summarise_all(funs(sum(!is.na(.))))
-```
-
-
-#### Show Consensus covariates
-
-##### general
-
-```{r}
-sevdb_1 %>% 
-  mutate(edad= edad_1==edad_2) %>%
-  select(edad, edad_1, edad_2) %>%
-  tidyr::unite(edad_c, edad_1, edad_2, remove=F) %>% #count()
-  mutate(edad_c=str_replace(edad_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(edad_c=str_replace(edad_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(edad_c=str_replace(edad_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(edad_c=str_replace(edad_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(edad_c=str_replace(edad_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(edad_c= as.numeric(edad_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(sexo= sexo_1==sexo_2) %>%
-  select(sexo, sexo_1, sexo_2) %>%
-  tidyr::unite(sexo_c, sexo_1, sexo_2, remove=F) %>% #count()
-  mutate(sexo_c=str_replace(sexo_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(sexo_c=str_replace(sexo_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(sexo_c=str_replace(sexo_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(sexo_c=str_replace(sexo_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(sexo_c=str_replace(sexo_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(sexo_c= as.numeric(sexo_c))
-```
-
-##### who criteria
-
-```{r}
-sevdb_1 %>% 
-  mutate(shock= shock_1==shock_2) %>%
-  select(shock, shock_1, shock_2) %>%
-  tidyr::unite(shock_c, shock_1, shock_2, remove=F) %>% #count()
-  mutate(shock_c=str_replace(shock_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(shock_c=str_replace(shock_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(shock_c=str_replace(shock_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(shock_c=str_replace(shock_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(shock_c=str_replace(shock_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(shock_c= as.numeric(shock_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(pa_sistolica= pa_sistolica_1==pa_sistolica_2) %>%
-  select(pa_sistolica, pa_sistolica_1, pa_sistolica_2) %>%
-  tidyr::unite(pa_sistolica_c, pa_sistolica_1, pa_sistolica_2, remove=F) %>% #count()
-  mutate(pa_sistolica_c=str_replace(pa_sistolica_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(pa_sistolica_c=str_replace(pa_sistolica_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(pa_sistolica_c=str_replace(pa_sistolica_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(pa_sistolica_c=str_replace(pa_sistolica_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(pa_sistolica_c=str_replace(pa_sistolica_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(pa_sistolica_c= as.numeric(pa_sistolica_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(glasgow= glasgow_1==glasgow_2) %>%
-  select(glasgow, glasgow_1, glasgow_2) %>%
-  tidyr::unite(glasgow_c, glasgow_1, glasgow_2, remove=F) %>% #count()
-  mutate(glasgow_c=str_replace(glasgow_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(glasgow_c=str_replace(glasgow_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(glasgow_c=str_replace(glasgow_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(glasgow_c=str_replace(glasgow_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(glasgow_c=str_replace(glasgow_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(glasgow_c= as.numeric(glasgow_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(glas_ojos= glas_ojos_1==glas_ojos_2) %>%
-  select(glas_ojos, glas_ojos_1, glas_ojos_2) %>%
-  tidyr::unite(glas_ojos_c, glas_ojos_1, glas_ojos_2, remove=F) %>% #count()
-  mutate(glas_ojos_c=str_replace(glas_ojos_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(glas_ojos_c=str_replace(glas_ojos_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(glas_ojos_c=str_replace(glas_ojos_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(glas_ojos_c=str_replace(glas_ojos_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(glas_ojos_c=str_replace(glas_ojos_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(glas_ojos_c= as.numeric(glas_ojos_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(glas_verbal= glas_verbal_1==glas_verbal_2) %>%
-  select(glas_verbal, glas_verbal_1, glas_verbal_2) %>%
-  tidyr::unite(glas_verbal_c, glas_verbal_1, glas_verbal_2, remove=F) %>% #count()
-  mutate(glas_verbal_c=str_replace(glas_verbal_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(glas_verbal_c=str_replace(glas_verbal_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(glas_verbal_c=str_replace(glas_verbal_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(glas_verbal_c=str_replace(glas_verbal_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(glas_verbal_c=str_replace(glas_verbal_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(glas_verbal_c= as.numeric(glas_verbal_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(glas_motor= glas_motor_1==glas_motor_2) %>%
-  select(glas_motor, glas_motor_1, glas_motor_2) %>%
-  tidyr::unite(glas_motor_c, glas_motor_1, glas_motor_2, remove=F) %>% #count()
-  mutate(glas_motor_c=str_replace(glas_motor_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(glas_motor_c=str_replace(glas_motor_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(glas_motor_c=str_replace(glas_motor_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(glas_motor_c=str_replace(glas_motor_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(glas_motor_c=str_replace(glas_motor_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(glas_motor_c= as.numeric(glas_motor_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(postracion= postracion_1==postracion_2) %>%
-  select(postracion, postracion_1, postracion_2) %>%
-  tidyr::unite(postracion_c, postracion_1, postracion_2, remove=F) %>% #count()
-  mutate(postracion_c=str_replace(postracion_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(postracion_c=str_replace(postracion_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(postracion_c=str_replace(postracion_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(postracion_c=str_replace(postracion_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(postracion_c=str_replace(postracion_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(postracion_c= as.numeric(postracion_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(confusion= confusion_1==confusion_2) %>%
-  select(confusion, confusion_1, confusion_2) %>%
-  tidyr::unite(confusion_c, confusion_1, confusion_2, remove=F) %>% #count()
-  mutate(confusion_c=str_replace(confusion_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(confusion_c=str_replace(confusion_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(confusion_c=str_replace(confusion_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(confusion_c=str_replace(confusion_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(confusion_c=str_replace(confusion_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(confusion_c= as.numeric(confusion_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(coma= coma_1==coma_2) %>%
-  select(coma, coma_1, coma_2) %>%
-  tidyr::unite(coma_c, coma_1, coma_2, remove=F) %>% #count()
-  mutate(coma_c=str_replace(coma_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(coma_c=str_replace(coma_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(coma_c=str_replace(coma_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(coma_c=str_replace(coma_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(coma_c=str_replace(coma_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(coma_c= as.numeric(coma_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(convulsion= convulsion_1==convulsion_2) %>%
-  select(convulsion, convulsion_1, convulsion_2) %>%
-  tidyr::unite(convulsion_c, convulsion_1, convulsion_2, remove=F) %>% #count()
-  mutate(convulsion_c=str_replace(convulsion_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(convulsion_c=str_replace(convulsion_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(convulsion_c=str_replace(convulsion_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(convulsion_c=str_replace(convulsion_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(convulsion_c=str_replace(convulsion_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(convulsion_c= as.numeric(convulsion_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(disnea= disnea_1==disnea_2) %>%
-  select(disnea, disnea_1, disnea_2) %>%
-  tidyr::unite(disnea_c, disnea_1, disnea_2, remove=F) %>% #count()
-  mutate(disnea_c=str_replace(disnea_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(disnea_c=str_replace(disnea_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(disnea_c=str_replace(disnea_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(disnea_c=str_replace(disnea_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(disnea_c=str_replace(disnea_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(disnea_c= as.numeric(disnea_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(taquipnea= taquipnea_1==taquipnea_2) %>%
-  select(taquipnea, taquipnea_1, taquipnea_2) %>%
-  tidyr::unite(taquipnea_c, taquipnea_1, taquipnea_2, remove=F) %>% #count()
-  mutate(taquipnea_c=str_replace(taquipnea_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(taquipnea_c=str_replace(taquipnea_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(taquipnea_c=str_replace(taquipnea_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(taquipnea_c=str_replace(taquipnea_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(taquipnea_c=str_replace(taquipnea_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(taquipnea_c= as.numeric(taquipnea_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(infiltracion= infiltracion_1==infiltracion_2) %>%
-  select(infiltracion, infiltracion_1, infiltracion_2) %>%
-  tidyr::unite(infiltracion_c, infiltracion_1, infiltracion_2, remove=F) %>% #count()
-  mutate(infiltracion_c=str_replace(infiltracion_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(infiltracion_c=str_replace(infiltracion_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(infiltracion_c=str_replace(infiltracion_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(infiltracion_c=str_replace(infiltracion_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(infiltracion_c=str_replace(infiltracion_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(infiltracion_c= as.numeric(infiltracion_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(edema_pulm= edema_pulm_1==edema_pulm_2) %>%
-  select(edema_pulm, edema_pulm_1, edema_pulm_2) %>%
-  tidyr::unite(edema_pulm_c, edema_pulm_1, edema_pulm_2, remove=F) %>% #count()
-  mutate(edema_pulm_c=str_replace(edema_pulm_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(edema_pulm_c=str_replace(edema_pulm_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(edema_pulm_c=str_replace(edema_pulm_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(edema_pulm_c=str_replace(edema_pulm_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(edema_pulm_c=str_replace(edema_pulm_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(edema_pulm_c= as.numeric(edema_pulm_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(sdra= sdra_1==sdra_2) %>%
-  select(sdra, sdra_1, sdra_2) %>%
-  tidyr::unite(sdra_c, sdra_1, sdra_2, remove=F) %>% #count()
-  mutate(sdra_c=str_replace(sdra_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(sdra_c=str_replace(sdra_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(sdra_c=str_replace(sdra_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(sdra_c=str_replace(sdra_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(sdra_c=str_replace(sdra_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(sdra_c= as.numeric(sdra_c))
-```
-__ojo__
-```{r}
-sevdb_1 %>% 
-  mutate(glic_normal= glic_normal_1==glic_normal_2) %>%
-  select(glic_normal, glic_normal_1, glic_normal_2) %>%
-  tidyr::unite(glic_normal_c, glic_normal_1, glic_normal_2, remove=F) %>% #count()
-  mutate(glic_normal_c=str_replace(glic_normal_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(glic_normal_c=str_replace(glic_normal_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(glic_normal_c=str_replace(glic_normal_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(glic_normal_c=str_replace(glic_normal_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(glic_normal_c=str_replace(glic_normal_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(glic_normal_c= as.numeric(glic_normal_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(anemia_severa= anemia_severa_1==anemia_severa_2) %>%
-  select(anemia_severa, anemia_severa_1, anemia_severa_2) %>%
-  tidyr::unite(anemia_severa_c, anemia_severa_1, anemia_severa_2, remove=F) %>% #count()
-  mutate(anemia_severa_c=str_replace(anemia_severa_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(anemia_severa_c=str_replace(anemia_severa_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(anemia_severa_c=str_replace(anemia_severa_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(anemia_severa_c=str_replace(anemia_severa_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(anemia_severa_c=str_replace(anemia_severa_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(anemia_severa_c= as.numeric(anemia_severa_c))
-```
-
-```{r, eval=FALSE}
-# SIN EVALUACION por que bilitot incluye la mayor cantidad de data sin aproximación de decimales
-# ADEMÁS, por errores en la union de dos números decimales iguales
-sevdb_1 %>% 
-  mutate(bilirrubina= bilirrubina_1==bilitot) %>%
-  select(bilirrubina, bilirrubina_1, bilitot, bilirrubina_2) %>%
-  tidyr::unite(bilirrubina_c, bilirrubina_1, bilitot, remove=F, sep = "_") %>% #count()
-  mutate(bilirrubina_c=str_replace(bilirrubina_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(bilirrubina_c=str_replace(bilirrubina_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(bilirrubina_c=str_replace(bilirrubina_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(bilirrubina_c=str_replace(bilirrubina_c,"(\\d+\\.\\d+)_(\\d+\\.\\d+)", "\\1")) %>% #count() #preferencia a _2
-  mutate(bilirrubina_c=str_replace(bilirrubina_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(bilirrubina_c= as.numeric(bilirrubina_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(sangrado= sangrado_1==sangrado_2) %>%
-  select(sangrado, sangrado_1, sangrado_2) %>%
-  tidyr::unite(sangrado_c, sangrado_1, sangrado_2, remove=F) %>% #count()
-  mutate(sangrado_c=str_replace(sangrado_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(sangrado_c=str_replace(sangrado_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(sangrado_c=str_replace(sangrado_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(sangrado_c=str_replace(sangrado_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(sangrado_c=str_replace(sangrado_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(sangrado_c= as.numeric(sangrado_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(gingivorragia= gingivorragia_1==gingivorragia_2) %>%
-  select(gingivorragia, gingivorragia_1, gingivorragia_2) %>%
-  tidyr::unite(gingivorragia_c, gingivorragia_1, gingivorragia_2, remove=F) %>% #count()
-  mutate(gingivorragia_c=str_replace(gingivorragia_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(gingivorragia_c=str_replace(gingivorragia_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(gingivorragia_c=str_replace(gingivorragia_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(gingivorragia_c=str_replace(gingivorragia_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(gingivorragia_c=str_replace(gingivorragia_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(gingivorragia_c= as.numeric(gingivorragia_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(epistaxis= epistaxis_1==epistaxis_2) %>%
-  select(epistaxis, epistaxis_1, epistaxis_2) %>%
-  tidyr::unite(epistaxis_c, epistaxis_1, epistaxis_2, remove=F) %>% #count()
-  mutate(epistaxis_c=str_replace(epistaxis_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(epistaxis_c=str_replace(epistaxis_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(epistaxis_c=str_replace(epistaxis_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(epistaxis_c=str_replace(epistaxis_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(epistaxis_c=str_replace(epistaxis_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(epistaxis_c= as.numeric(epistaxis_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(sang_intest= sang_intest_1==sang_intest_2) %>%
-  select(sang_intest, sang_intest_1, sang_intest_2) %>%
-  tidyr::unite(sang_intest_c, sang_intest_1, sang_intest_2, remove=F) %>% #count()
-  mutate(sang_intest_c=str_replace(sang_intest_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(sang_intest_c=str_replace(sang_intest_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(sang_intest_c=str_replace(sang_intest_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(sang_intest_c=str_replace(sang_intest_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(sang_intest_c=str_replace(sang_intest_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(sang_intest_c= as.numeric(sang_intest_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(trombocitopenia= trombocitopenia_1==trombocitopenia_2) %>%
-  select(trombocitopenia, trombocitopenia_1, trombocitopenia_2) %>%
-  tidyr::unite(trombocitopenia_c, trombocitopenia_1, trombocitopenia_2, remove=F) %>% #count()
-  mutate(trombocitopenia_c=str_replace(trombocitopenia_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(trombocitopenia_c=str_replace(trombocitopenia_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(trombocitopenia_c=str_replace(trombocitopenia_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(trombocitopenia_c=str_replace(trombocitopenia_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(trombocitopenia_c=str_replace(trombocitopenia_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(trombocitopenia_c= as.numeric(trombocitopenia_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(cont_plaquetas= cont_plaquetas_1==cont_plaquetas_2) %>%
-  select(cont_plaquetas, cont_plaquetas_1, cont_plaquetas_2) %>% 
-  tidyr::unite(cont_plaquetas_c, cont_plaquetas_1, cont_plaquetas_2, remove = F) %>% #count()
-  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(\\d{4,})_\\1", "\\1")) %>%
-  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"NA_(\\d{4,})", "\\1")) %>% 
-  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(\\d{4,})_NA", "\\1")) %>% 
-  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(\\d{4,})_(\\d{4,})", "\\2")) %>% #count() #preferencia a _2
-  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(\\d{4,})_(\\d{1,3})", "\\1")) %>% #count() #problemas en _2
-  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(.....)_\\1", "\\1")) %>% #count()
-  mutate(cont_plaquetas_c= as.numeric(cont_plaquetas_c))
-```
-
-##### conditional
-
-```{r}
-sevdb_1 %>% 
-  mutate(presenta_comorb= presenta_comorb_1==presenta_comorb_2) %>%
-  select(presenta_comorb, presenta_comorb_1, presenta_comorb_2) %>%
-  tidyr::unite(presenta_comorb_c, presenta_comorb_1, presenta_comorb_2, remove=F) %>% #count()
-  mutate(presenta_comorb_c=str_replace(presenta_comorb_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(presenta_comorb_c=str_replace(presenta_comorb_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(presenta_comorb_c=str_replace(presenta_comorb_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(presenta_comorb_c=str_replace(presenta_comorb_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(presenta_comorb_c=str_replace(presenta_comorb_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(presenta_comorb_c= as.numeric(presenta_comorb_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(diabetes= diabetes_1==diabetes_2) %>%
-  select(diabetes, diabetes_1, diabetes_2) %>%
-  tidyr::unite(diabetes_c, diabetes_1, diabetes_2, remove=F) %>% #count()
-  mutate(diabetes_c=str_replace(diabetes_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(diabetes_c=str_replace(diabetes_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(diabetes_c=str_replace(diabetes_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(diabetes_c=str_replace(diabetes_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(diabetes_c=str_replace(diabetes_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(diabetes_c= as.numeric(diabetes_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(enf_snc= enf_snc_1==enf_snc_2) %>%
-  select(enf_snc, enf_snc_1, enf_snc_2) %>%
-  tidyr::unite(enf_snc_c, enf_snc_1, enf_snc_2, remove=F) %>% #count()
-  mutate(enf_snc_c=str_replace(enf_snc_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(enf_snc_c=str_replace(enf_snc_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(enf_snc_c=str_replace(enf_snc_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(enf_snc_c=str_replace(enf_snc_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(enf_snc_c=str_replace(enf_snc_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(enf_snc_c= as.numeric(enf_snc_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(enf_cardiac= enf_cardiac_1==enf_cardiac_2) %>%
-  select(enf_cardiac, enf_cardiac_1, enf_cardiac_2) %>%
-  tidyr::unite(enf_cardiac_c, enf_cardiac_1, enf_cardiac_2, remove=F) %>% #count()
-  mutate(enf_cardiac_c=str_replace(enf_cardiac_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(enf_cardiac_c=str_replace(enf_cardiac_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(enf_cardiac_c=str_replace(enf_cardiac_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(enf_cardiac_c=str_replace(enf_cardiac_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(enf_cardiac_c=str_replace(enf_cardiac_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(enf_cardiac_c= as.numeric(enf_cardiac_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(enf_pulm= enf_pulm_1==enf_pulm_2) %>%
-  select(enf_pulm, enf_pulm_1, enf_pulm_2) %>%
-  tidyr::unite(enf_pulm_c, enf_pulm_1, enf_pulm_2, remove=F) %>% #count()
-  mutate(enf_pulm_c=str_replace(enf_pulm_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(enf_pulm_c=str_replace(enf_pulm_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(enf_pulm_c=str_replace(enf_pulm_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(enf_pulm_c=str_replace(enf_pulm_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(enf_pulm_c=str_replace(enf_pulm_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(enf_pulm_c= as.numeric(enf_pulm_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(enf_renal= enf_renal_1==enf_renal_2) %>%
-  select(enf_renal, enf_renal_1, enf_renal_2) %>%
-  tidyr::unite(enf_renal_c, enf_renal_1, enf_renal_2, remove=F) %>% #count()
-  mutate(enf_renal_c=str_replace(enf_renal_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(enf_renal_c=str_replace(enf_renal_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(enf_renal_c=str_replace(enf_renal_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(enf_renal_c=str_replace(enf_renal_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(enf_renal_c=str_replace(enf_renal_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(enf_renal_c= as.numeric(enf_renal_c))
-```
-
-```{r}
-sevdb_1 %>% 
-  mutate(malaria_pasado_num= malaria_pasado_num_1==malaria_pasado_num_2) %>%
-  select(malaria_pasado_num, malaria_pasado_num_1, malaria_pasado_num_2) %>%
-  tidyr::unite(malaria_pasado_num_c, malaria_pasado_num_1, malaria_pasado_num_2, remove = F) %>% #count()
-  mutate(malaria_pasado_num_c=str_replace(malaria_pasado_num_c,"(\\d+)_\\1", "\\1")) %>%
-  mutate(malaria_pasado_num_c=str_replace(malaria_pasado_num_c,"NA_(\\d+)", "\\1")) %>% 
-  mutate(malaria_pasado_num_c=str_replace(malaria_pasado_num_c,"(\\d+)_NA", "\\1")) %>% 
-  mutate(malaria_pasado_num_c=str_replace(malaria_pasado_num_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
-  mutate(malaria_pasado_num_c=str_replace(malaria_pasado_num_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(malaria_pasado_num_c= as.numeric(malaria_pasado_num_c))
-```
-
-```{r, eval=FALSE}
-###### test
-sevdb_1 %>% 
-  mutate(cont_plaquetas= cont_plaquetas_1==cont_plaquetas_2) %>%
-  select(cont_plaquetas, cont_plaquetas_1, cont_plaquetas_2) %>% 
-  tidyr::unite(cont_plaquetas_c, cont_plaquetas_1, cont_plaquetas_2, remove = F) %>% #count()
-  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(\\d{4,})_\\1", "\\1")) %>%
-  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"NA_(\\d{4,})", "\\1")) %>% 
-  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(\\d{4,})_NA", "\\1")) %>% 
-  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(\\d{4,})_(\\d{4,})", "\\2")) %>% #count() #preferencia a _2
-  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(\\d{4,})_(\\d{1,3})", "\\1")) %>% #count() #problemas en _2
-  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"NA", replacement = NA_character_)) %>%  #%>% count()
-  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(.....)_\\1", "\\1")) %>% #count()
-  mutate(cont_plaquetas_c= as.numeric(cont_plaquetas_c))
-```
-
-#### Execute Consensus covariates
+### Execute Consensus covariates
 ```{r}
  sevdb_1c <- sevdb_1 %>% 
  
@@ -1312,6 +948,14 @@ sevdb_1 %>%
   mutate(enf_renal_c=str_replace(enf_renal_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
   mutate(enf_renal_c=str_replace(enf_renal_c,"NA", replacement = NA_character_)) %>%  #%>% count()
   mutate(enf_renal_c= as.numeric(enf_renal_c)) %>%
+  
+  tidyr::unite(tiempo_local_c, tiempo_local_1, tiempo_local_2, remove = F) %>% #count()
+  mutate(tiempo_local_c=str_replace(tiempo_local_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(tiempo_local_c=str_replace(tiempo_local_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(tiempo_local_c=str_replace(tiempo_local_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(tiempo_local_c=str_replace(tiempo_local_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(tiempo_local_c=str_replace(tiempo_local_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(tiempo_local_c= as.numeric(tiempo_local_c)) %>% 
 
   tidyr::unite(malaria_pasado_num_c, malaria_pasado_num_1, malaria_pasado_num_2) %>% #count()
   mutate(malaria_pasado_num_c=str_replace(malaria_pasado_num_c,"(\\d+)_\\1", "\\1")) %>%
@@ -1355,6 +999,7 @@ sevdb_1 %>%
     enf_cardiac_c,
     enf_pulm_c,
     enf_renal_c,
+    tiempo_local_c,
     malaria_pasado_num_c,
     
     glucosa,
@@ -1365,7 +1010,7 @@ sevdb_1 %>%
   ) #%>% glimpse()
 ```
 
-#### Create WHO parameters
+### Create WHO parameters
 ```{r}
 sevdb_1oms <- sevdb_1c %>% 
   dplyr::rename(
@@ -1400,6 +1045,7 @@ sevdb_1oms <- sevdb_1c %>%
     enf_cardiac= enf_cardiac_c,
     enf_pulm= enf_pulm_c,
     enf_renal= enf_renal_c,
+    tiempo_local=tiempo_local_c,
     malaria_pasado_num= malaria_pasado_num_c
   ) %>% #glimpse()
   mutate(shock_oms_pa= if_else(pa_sistolica<=80,1,0),# OR shock==1
@@ -1407,13 +1053,13 @@ sevdb_1oms <- sevdb_1c %>%
          #snc_oms=  if_else(snc_sum>1,1,0),
          glas_11= if_else(glasgow<=11 & glasgow>0,1,0),
          glas_9= if_else(glasgow<=9 & glasgow>0,1,0),
-         pulmonar_sum= rowSums(.[c(17,18)],na.rm = T),# ANTES: taquip+disnea+infiltr+edema, DESPUES: edema+sdra
+         pulmonar_sum= rowSums(.[c(17,18)],na.rm = T),
          pulmonar_oms=  if_else(pulmonar_sum>0,1,0),
          #sdra=  if_else(sdra!=1,0,1),
          hipoglic_oms= if_else(glucosa<40,1,0),
          anemia_oms= if_else(hemoglobina<7,1,0),
          renal_oms= if_else(creatinina>3,1,0),
-         bilsum= rowSums(.[37:38],na.rm = T),
+         bilsum= rowSums(.[38:39],na.rm = T),
          hiperbil_oms= if_else(bilsum>2.5,1,0),
          enf_sum= rowSums(.[27:31],na.rm = T),
          enf_cronica= if_else(enf_sum>0,1,0),
@@ -1423,53 +1069,51 @@ sevdb_1oms <- sevdb_1c %>%
          #hiperbil_test= hiperbil_omsX==hiperbil_oms,
          ) %>% #glimpse() 
     mutate(
-      shock_oms= rowSums(.[c(4,40)],na.rm = T)
+      shock_oms= rowSums(.[c(4,41)],na.rm = T)
       ) #%>% glimpse()# OR shock==1
 ```
 
 ##### who criteria
 
 - **SHOCK**
-    + menor o menor e igual a 80?
-    + __inclusivo__ con casos definidos __sin__ `pa_sistolica` (únicos en Ab profile subset)
+    + menor a 80? o __menor e igual a 80__?
+    + __inclusivo__ con casos definidos __sin__ `pa_sistolica` 
+    (son los únicos en __Ab profile subset__)
 
-```{r, eval=FALSE}
+```{r}
 #SHOCK
-sevdb_1 %>% group_by(shock_oms, shock) %>% dplyr::count() #%>% View()
-#sevdb_1 %>% group_by(shock_oms, shock, pa_sistolica, pa_diastolica) %>% dplyr::count() #%>% View()
-sevdb_1 %>% select(pa_sistolica, pa_diastolica, shock_oms) %>%  
-  #mutate(shock_oms= as.factor(shock_oms)) %>% 
-  ggplot(aes(pa_sistolica, pa_diastolica, colour=shock_oms)) + 
-  geom_vline(aes(xintercept=80))+
-  #geom_histogram(alpha=.5, position = "identity") + 
-  geom_point() + 
-  scale_color_viridis() +
-  labs(title="presion arterial")
+sevdb_1oms %>% group_by(shock_oms, shock, shock_oms_pa) %>% dplyr::count() #%>% View()
+
+#sevdb_1 %>% select(pa_sistolica, pa_diastolica, shock_oms) %>%  
+#  #mutate(shock_oms= as.factor(shock_oms)) %>% 
+#  ggplot(aes(pa_sistolica, pa_diastolica, colour=shock_oms)) + 
+#  geom_vline(aes(xintercept=80))+
+#  #geom_histogram(alpha=.5, position = "identity") + 
+#  geom_point() + 
+#  scale_color_viridis() +
+#  labs(title="presion arterial")
 ```
 
 - **GLASGOW**
-    + menor a 9 o menor a 11?
+    + `coma` no era consistente con los valores reales de `glasgow`
+    + `glas_oms` corrige error.    
+    + __menor a 9__ o menor a 11?
     + heterogeneidad en data: 
-        - valores finales sin valores de componentes
+        - valores finales sin valores de sub-componentes
         - y viseversa
-        - **requiere corrección**
+        - **requiere revisión**
 
 ```{r}
 #GLASGOW -------------------------------------------------- CON INCONSISTENCIAS!!!
 sevdb_1oms %>% group_by(glas_9, glas_11, glas_ojos, glas_verbal, glas_motor, glasgow) %>% dplyr::count()
-sevdb_1oms %>% group_by(glas_9, glas_11) %>% dplyr::count()
+sevdb_1oms %>% group_by(glas_9, glas_11, coma) %>% dplyr::count()
 ```
 
 
-- **CNS malaria**
-    + postracion, coma, convulsion, confusion
-```{r}
-# CNS malaria = postracion, coma, convulcion, confusion
-sevdb_1oms %>% group_by(#snc_oms, snc_sum, 
-                        postracion, #confusion, 
-                        coma, convulsion
-                        #, snc_normal
-                        ) %>% dplyr::count()
+- **CONVULSION**
+```{r, eval=FALSE}
+# CNS malaria = postracion, coma, convulsion, confusion
+sevdb_1oms %>% dplyr::count(convulsion)
 ```
 
 - **LUNG_INJURY**
@@ -1478,14 +1122,13 @@ sevdb_1oms %>% group_by(#snc_oms, snc_sum,
         + at least 1 criteria
     + lung related-injuries (disnea, taquipnea, infiltracion, edema)
         + not used
-    + definición de respiración normal?
 ```{r}
 # SDRA != LUNG_INJURY = at least 2 criteria of lung related-injuries (disnea, taquipnea, infiltracion, edema)
-sevdb_1oms %>% 
-  group_by(pulmonar_oms, pulmonar_sum, sdra, edema_pulm, disnea, taquipnea, infiltracion
+#sevdb_1oms %>% 
+#  group_by(pulmonar_oms, pulmonar_sum, sdra, edema_pulm, disnea, taquipnea, infiltracion
            #, resp_normal
-           ) %>%  
-  dplyr::count()
+#           ) %>%  
+#  dplyr::count()
 
 # RESPIRACION NORMAL vs FRECUENCIA RESPIRATORIA? -------------------------------------------------- REDEFINIR!!
 #sevdb_1oms %>% group_by(resp_normal, frespiratoria) %>% dplyr::count()
@@ -1498,7 +1141,7 @@ sevdb_1oms %>% group_by(pulmonar_oms, sdra, edema_pulm) %>%  dplyr::count()
     + ~~gingivorragia_corr, epistaxis_corr, sang_intest_corr~~
     + ~~at least one criteria~~
     + ~~`sangrado` con asignación incorrecta~~
-```{r}
+```{r, eval=FALSE}
 # BLEEDING -------------------------------------------------- REDEFINIR!!
 #  = at least one criteria of bleeding (gingivorragia_corr, epistaxis_corr, sang_intest_corr)
 sevdb_1oms %>% 
@@ -1529,12 +1172,11 @@ sevdb_1 %>%
 ```
 
 - **HIPOGLICEMIA**
-    + `hipo_glic1`, `hipo_glic2`, qué determinan?
     + ningún hipoglicémico!
 ```{r, eval=FALSE}
 # HIPOGLICEMIA
 # glic_normal = hipo_glic1 + hipo_glic2 ????????
-sevdb_1 %>% group_by(hipoglic_oms, glucosa, hipo_glic1, hipo_glic2, glic_normal) %>%  dplyr::count()
+sevdb_1oms %>% group_by(hipoglic_oms, glucosa) %>%  dplyr::count()
 ```
 
 - **ANEMIA SEVERA**
@@ -1554,7 +1196,8 @@ sevdb_1 %>% select(hto, hemoglobina,anemia_oms) %>%
 ```
 
 - **DAÑO RENAL**
-    + `renal_normal` y `hipercreat` con asignación incorrecta
+    + `renal_normal` y `hipercreat` no era consistente con los valores reales de `creatinina`
+    + `renal_oms` corrige error
 
 ```{r, eval=FALSE}
 # DAÑO RENAL
@@ -1569,8 +1212,8 @@ sevdb_1 %>% select(creatin_valor, creatinina, renal_oms) %>%
 ```
 
 - **HIPERBILIRRUBINA**
-    + `ictericia` diferente a `hiperbili`
-    + ambas con asignación incorrecta
+    + `ictericia` diferente a `hiperbili`, no son consistentes con los valores reales de `bilind` y `bildirect`.
+    + `hiperbil_oms` corrige error
     
 ```{r}
 # HIPERBILIRRUBINA
@@ -1591,18 +1234,18 @@ sevdb_1oms %>%
 ##### conditional
 
 - **COMORBILITIES** 
-    + diabetes, enf_cardiac, enf_pulm, enf_renal, enf_snc, enf_otra
+    + `presenta_comorb` y `enf_cronica` son diferentes
     
 ```{r, eval=FALSE}
 # COMORBIDITIES
-sevdb_1 %>% 
-  group_by(presenta_comorb, enf_cronica, sin_enf_cronica, diabetes, enf_cardiac, enf_pulm, enf_renal, enf_snc) %>% 
+sevdb_1oms %>% 
+  group_by(presenta_comorb, enf_cronica, diabetes, enf_cardiac, enf_pulm, enf_renal, enf_snc) %>% 
   dplyr::count()
 ```
 
 ### Filter WHO criteria
 
-__OJO: con 1 o más criterios + 2 de SNC__
+__OJO: con 1 o más criterios__
 
 ```{r}
 sevdb_2 <- sevdb_1oms %>% 
@@ -1612,17 +1255,17 @@ sevdb_2 <- sevdb_1oms %>%
   select(1:3,
          shock_oms, glas_oms, pulmonar_oms, #sdra, #snc_sum, #snc_oms
          anemia_oms, renal_oms, hiperbil_oms, hipoglic_oms, #sangr_oms,
-         coma, convulsion, postracion,
+         convulsion,
+         #coma, postracion,
          #trombocitopenia, hiperparasitemia,
-         presenta_comorb,enf_cronica,parasitemia,
-         malaria_pasado_num#,casecontrol
+         presenta_comorb, enf_cronica, enf_sum, parasitemia,
+         tiempo_local, malaria_pasado_num#,casecontrol
          ) %>% #glimpse()
-  mutate(sev_WHO_num= rowSums(.[4:10],na.rm = T),
-         sev_SNC_num= rowSums(.[11:13],na.rm = T)
+  mutate(sev_WHO_num= rowSums(.[4:11],na.rm = T)#,sev_SNC_num= rowSums(.[11:13],na.rm = T)
          ) %>% #glimpse()
-  mutate(sev_ALL_num= rowSums(.[c(18,19)],na.rm = T),
-         sev_WHO= if_else(sev_WHO_num>0 | sev_ALL_num>1,
-                          "severo","no-severo"),# OJO: severo con 1 o más criterios + 2 de SNC
+  mutate(#sev_ALL_num= rowSums(.[c(18,19)],na.rm = T),
+         sev_WHO= if_else(sev_WHO_num>0# | sev_ALL_num>1
+                          ,"severo","no-severo"),# OJO: severo con 1 o más criterios + 2 de SNC
          malaria_pasado=if_else(malaria_pasado_num>0,"con-episodio-previo","sin-episodio-previo")
          ) %>% 
   mutate(sexo= as.factor(sexo),
@@ -1642,16 +1285,6 @@ sevdb_2 <- sevdb_1oms %>%
 html(Hmisc::contents(sevdb_2), maxlevels=10, levelType='table')
 #glimpse(sevdb_2)
 ```
-__RECLASIFICACIÓN en base a critrio OMS__
-```{r}
-sevdb_2 %>% 
-  select(codigo, sev_WHO) %>% 
-  inner_join(sevdb_pre %>% 
-               select(codigo, casecontrol) %>% 
-               mutate(codigo= str_replace(codigo,"LIM0","LIM")),
-             by="codigo") %>% 
-  group_by(casecontrol,sev_WHO) %>% dplyr::count()
-```
 
 #### proportions per criteria
 
@@ -1663,8 +1296,8 @@ s1 <- Hmisc::summaryM(shock_oms + #clinicos
                         anemia_oms +
                         renal_oms +
                         hipoglic_oms +
-                        postracion +#extra
-                        coma +
+                        #postracion +#extra
+                        #coma +
                         convulsion +
                         #presenta_comorb+
                         #enf_cronica
@@ -1675,7 +1308,7 @@ s1 <- Hmisc::summaryM(shock_oms + #clinicos
                data=sevdb_2,
                overall=FALSE, test=FALSE)
 
-latex(s1, caption='WHO criteria: Clinical and Laboratory parameters',
+latex(s1, caption='WHO classification: Clinical and Laboratory criterias',
       exclude1=TRUE, npct='both', 
       digits=3,
       prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
@@ -1689,7 +1322,8 @@ latex(s1, caption='WHO criteria: Clinical and Laboratory parameters',
 
 __check `sev_WHO`__
 ```{r}
-sevdb_2 %>% group_by(sev_WHO_num, sev_SNC_num, sev_ALL_num, sev_WHO) %>% dplyr::count()
+sevdb_2 %>% group_by(sev_WHO_num, sev_WHO#, sev_SNC_num, sev_ALL_num
+                     ) %>% dplyr::count()
 ```
 
 ```{r}
@@ -1710,7 +1344,8 @@ sevdb_2 %>% group_by(sev_WHO_num, sev_SNC_num, sev_ALL_num, sev_WHO) %>% dplyr::
 sevdb_2 %>% 
   group_by(shock_oms, glas_oms, pulmonar_oms, #sdra,snc_oms,
            hipoglic_oms, anemia_oms, renal_oms, hiperbil_oms,
-           coma, convulsion, postracion,
+           convulsion,
+           #coma, postracion,
            sev_WHO_num, sev_WHO
            ) %>% 
   dplyr::count() %>% 
@@ -1722,9 +1357,77 @@ sevdb_2 %>%
 sevdb_2 %>% 
   select(shock_oms, glas_oms, pulmonar_oms, #sdra,snc_oms,
          hipoglic_oms, anemia_oms, renal_oms, hiperbil_oms,
-         coma, convulsion, postracion
+         convulsion#,
+         #coma, postracion
            ) %>% 
   summarise_all(sum,na.rm=T) #%>% t()
+```
+
+__RECLASIFICACIÓN en base a critrio OMS__
+
+- `shock_oms` principal criterio de re-clasificación
+- pero __solo 2 pacientes__ de este grupo poseen `pa_sistolica` definida
+- en total, __solo 8 de 38 pacientes__ con `shock_oms` tienen `pa_sistolica` definida
+
+```{r}
+sevdb_2 %>% 
+  select(codigo, sev_WHO) %>% 
+  inner_join(sevdb_pre %>% 
+               select(codigo, casecontrol) %>% 
+               mutate(codigo= str_replace(codigo,"LIM0","LIM")),
+             by="codigo") %>% 
+  group_by(casecontrol,sev_WHO) %>% dplyr::count()
+
+sevdb_2 %>% 
+  select(codigo, starts_with("sev_WHO"), ends_with("_oms"), convulsion) %>% 
+  inner_join(sevdb_pre_1 %>% 
+               select(codigo, casecontrol
+                      #, pa_sistolica # solo dos pacientes reclasificados poseen esta variable definida
+                      ) %>% 
+               mutate(codigo= str_replace(codigo,"LIM0","LIM")),
+             by="codigo") %>% 
+  filter(casecontrol=="0" & sev_WHO=="severo") %>% 
+  select(4:11) %>% summarise_all(sum,na.rm=T)
+
+sevdb_2 %>% 
+  select(codigo, sev_WHO, shock_oms) %>% 
+  inner_join(sevdb_pre_1 %>% 
+               select(codigo, casecontrol
+                      , pa_sistolica # solo dos pacientes reclasificados poseen esta variable definida
+                      ) %>% 
+               mutate(codigo= str_replace(codigo,"LIM0","LIM")),
+             by="codigo") %>% 
+  #filter(casecontrol=="0" & sev_WHO=="severo") %>% 
+  filter(pa_sistolica<=80)
+```
+
+##### reproducible subsetting
+
+__Elección de los 30 más severos:__
+
+- 14 con `sev_WHO_num`>1
+- 26 con `sev_WHO_num`>0 & `shock_oms`>0
+- 09 con `sev_WHO_num`>0 & `pulmonar_oms`>0
+- __16 con `sev_WHO_num`>0 & `hiperbil_oms`>0__
+    + `hiperbil_oms` fue el criterio más importante en la 
+    reclasificación de pacientes (Smith & N6, 2013)
+- ¿cómo priorizar entre criterios para la virtual elección de 
+pacientes con un solo criterio y completar una muestra final de 30?
+    + auscencia de __comorbilidades__ y menor frecuencia de __enfermedades crónicas__ de pacientes
+    + `pulmonar_oms` sobre `shock_oms` por ser la suma de `edema`+`sdra`?
+
+```{r}
+sevdb_30 <- sevdb_2 %>% 
+  dplyr::filter(sev_WHO_num>1 | sev_WHO_num>0 & enf_sum<1 & presenta_comorb!=1
+                  #& hiperbil_oms>0
+                  #& (hiperbil_oms>0 | shock_oms>0)
+                  & (hiperbil_oms>0 | pulmonar_oms>0)
+                  )
+sevdb_30 %>% select(codigo, sev_WHO_num, enf_cronica, presenta_comorb
+                    ,hiperbil_oms
+                    #,shock_oms
+                    ,pulmonar_oms
+                    ) %>% dplyr::arrange(desc(sev_WHO_num))
 ```
 
 ```{r, fig.height=4, fig.width=6, fig.align='center', eval=FALSE}
@@ -1765,9 +1468,10 @@ sevdb_2x <- sevdb_2 %>%
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
-                        presenta_comorb + enf_cronica +
-                        malaria_pasado + #malaria_pasado_num #+ 
+                        tiempo_local +
+                        malaria_pasado + #malaria_pasado_num + 
                         #sev_WHO + sev_WHO_num +
+                        presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ sev_WHO #+ 
                       #malaria_pasado
@@ -1775,7 +1479,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
                data=sevdb_2,
                overall=FALSE, test=TRUE)
 
-latex(s1, caption='Clinical data',
+latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
       digits=3,
       prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
@@ -1796,9 +1500,10 @@ latex(s1, caption='Clinical data',
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
-                        presenta_comorb + enf_cronica +
-                        #malaria_pasado_num + #malaria_pasado +
+                        tiempo_local +
+                        #malaria_pasado_num + #malaria_pasado +  
                         sev_WHO + #sev_WHO_num +
+                        presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ #sev_WHO #+ 
                       malaria_pasado
@@ -1806,7 +1511,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
                data=sevdb_2,
                overall=FALSE, test=TRUE)
 
-latex(s1, caption='Clinical data',
+latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
       digits=3,
       prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
@@ -1824,9 +1529,10 @@ latex(s1, caption='Clinical data',
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
+                        tiempo_local +
+                        #malaria_pasado + #malaria_pasado_num + 
+                        #sev_WHO + sev_WHO_num +
                         presenta_comorb + enf_cronica +
-                        #malaria_pasado_num + #malaria_pasado +
-                        #sev_WHO_num #+ sev_WHO
                         parasitemia #+
                       ~ sev_WHO + 
                       malaria_pasado
@@ -1834,7 +1540,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
                data=sevdb_2,
                overall=FALSE, test=TRUE)
 
-latex(s1, caption='Clinical data',
+latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
       digits=3,
       prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
@@ -1860,7 +1566,7 @@ s1 <- Hmisc::summaryM(edad #+ #sexo +
                data=sevdb_2 %>% filter(sev_WHO=="severo"),
                overall=FALSE, test=TRUE)
 
-latex(s1, caption='Clinical data',
+latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
       digits=3,
       prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
@@ -1885,19 +1591,12 @@ latex(s1, caption='Clinical data',
 
 - **60 samples** from the Severe study dataset.
 
-```{r}
-subsev <- data_frame(
-  codigo= c( "LIM2048", "LIM1025", "LIM1029", "LIM2035", "LIM1043", "LIM2017", "LIM1054", 
-             "LIM2102", "LIM2010", "LIM1038", "LIM2050", "LIM2115", "LIM2043", "LIM1004", 
-             "LIM2030", "LIM2071", "LIM1035", "LIM2104", "LIM1051", "LIM2107", "LIM1062", 
-             "LIM2072", "LIM2074", "LIM1056", "LIM1050", "LIM2110", "LIM2026", "LIM1047", 
-             "LIM1057", "LIM1016", "LIM1063", "LIM1044", "LIM2044", "LIM1037", "LIM2007", 
-             "LIM2086", "LIM2042", "LIM2101", "LIM1045", "LIM2085", "LIM1048", "LIM2066", 
-             "LIM2067", "LIM1021", "LIM2077", "LIM1061", "LIM2056", "LIM2034", "LIM2016", 
-             "LIM2111", "LIM1030", "LIM2096", "LIM1064", "LIM2093", "LIM1041", "LIM2040", 
-             "LIM1052", "LIM2013", "LIM1059", "LIM2089"),
-  abnomic= TRUE
-)
+```{r, message=FALSE}
+subsev <- readr::read_csv("data-raw/samples.csv") %>% 
+  filter(Study=="Severe Malaria") %>% 
+  #mutate(sample= Sample.ID==Subject.ID) %>% dplyr::count(sample)
+  select(Sample.ID, Study) %>% 
+  dplyr::rename(codigo= Sample.ID)
 
 # generate
 sevdb_3 <- dplyr::inner_join(sevdb_2,subsev, by="codigo") 
@@ -2003,8 +1702,8 @@ s1 <- Hmisc::summaryM(shock_oms + #clinicos
                         anemia_oms +
                         renal_oms +
                         hipoglic_oms +
-                        postracion +#extra
-                        coma +
+                        #postracion +#extra
+                        #coma +
                         convulsion +
                         #presenta_comorb+
                         #enf_cronica
@@ -2015,7 +1714,7 @@ s1 <- Hmisc::summaryM(shock_oms + #clinicos
                data=sevdb_3,
                overall=FALSE, test=FALSE)
 
-latex(s1, caption='WHO criteria: Clinical and Laboratory parameters',
+latex(s1, caption='WHO classification: Clinical and Laboratory criterias',
       exclude1=TRUE, npct='both', 
       digits=3,
       prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
@@ -2029,10 +1728,11 @@ latex(s1, caption='WHO criteria: Clinical and Laboratory parameters',
 
 __check `sev_WHO`__
 ```{r}
-sevdb_3 %>% group_by(sev_WHO_num, sev_SNC_num, sev_ALL_num, sev_WHO) %>% dplyr::count()
+sevdb_3 %>% group_by(sev_WHO_num, sev_WHO#, sev_SNC_num, sev_ALL_num
+                     ) %>% dplyr::count()
 ```
 
-- 8 pacientes con solo `coma` + `postracion`
+- frecuencia por combinación de criterios
 
 ```{r}
 # SUM SEVERITY CRITERIAS
@@ -2052,7 +1752,8 @@ sevdb_3 %>% group_by(sev_WHO_num, sev_SNC_num, sev_ALL_num, sev_WHO) %>% dplyr::
 sevdb_3 %>% 
   group_by(shock_oms, glas_oms, pulmonar_oms, #sdra,snc_oms,
            hipoglic_oms, anemia_oms, renal_oms, hiperbil_oms,
-           coma, convulsion, postracion,
+           convulsion,
+           #coma, postracion,
            sev_WHO_num, sev_WHO
            ) %>% 
   dplyr::count() %>% 
@@ -2063,16 +1764,30 @@ sevdb_3 %>%
 sevdb_3 %>% 
   select(shock_oms, glas_oms, pulmonar_oms, #sdra,snc_oms,
          hipoglic_oms, anemia_oms, renal_oms, hiperbil_oms,
-         coma, convulsion, postracion
+         convulsion#,
+         #coma, postracion
            ) %>% 
   summarise_all(sum,na.rm=T) #%>% t()
+```
+
+__ningún paciente tiene `pa_sistolica` definida:__
+
+```{r}
+sevdb_3 %>% 
+  select(codigo, starts_with("sev_WHO"), shock_oms) %>% 
+  inner_join(sevdb_pos_1 %>% 
+               select(codigo, pa_sistolica) %>% 
+               mutate(codigo= str_replace(codigo,"LIM0","LIM")),
+             by="codigo") %>% 
+  dplyr::count(pa_sistolica)
 ```
 ```{r, eval=FALSE}
 sevdb_3 %>% select(codigo, sev_WHO, sev_WHO_num) %>% 
   inner_join(sevdb_1oms, by="codigo") %>% 
   group_by(sev_WHO, sev_WHO_num, shock_oms, 
            #snc_oms, snc_sum, 
-           coma, convulsion, postracion
+           convulsion#,
+           #coma, postracion
            #, snc_normal
            ) %>% dplyr::count()
 ```
@@ -2082,6 +1797,40 @@ sevdb_3 %>% select(codigo, sev_WHO, sev_WHO_num) %>%
   group_by(sev_WHO, sev_WHO_num, 
            pulmonar_oms, pulmonar_sum, sdra, edema_pulm, disnea, taquipnea, infiltracion
            ) %>% dplyr::count()
+```
+
+##### reproducible subset comparison
+
+__Comparación con la elección de 30 muestras:__
+
+- coinciden en 10 pacientes: incluye al paciente con más criterios
+- excluye a 8 pacientes con dos o más criterios
+- el resto son 13 pacientes con un solo criterio
+
+
+```{r, fig.align='center', fig.width=5, fig.height=5}
+g1_id <- sevdb_30 %>% dplyr::select(codigo)      # 960
+g2_id <- sevdb_3 %>% dplyr::filter(sev_WHO=="severo") %>% dplyr::select(codigo)     # 963
+
+g1_idl= unlist(as.list(g1_id))
+g2_idl= unlist(as.list(g2_id))
+
+tmp <- gplots::venn(list(sevdb_30=g1_idl, sevdb_3=g2_idl))
+```
+
+```{r}
+dplyr::inner_join(sevdb_30,
+                  sevdb_3 %>% 
+                    dplyr::filter(sev_WHO=="severo"),
+                  by="codigo") %>% dplyr::count(sev_WHO_num.x)
+dplyr::anti_join(sevdb_30,
+                  sevdb_3 %>% 
+                    dplyr::filter(sev_WHO=="severo"),
+                  by="codigo") %>% dplyr::count(sev_WHO_num)
+dplyr::anti_join(sevdb_3 %>% 
+                    dplyr::filter(sev_WHO=="severo"),
+                 sevdb_30,
+                  by="codigo") %>% dplyr::count(sev_WHO_num)
 ```
 
 #### Descriptive statistics
@@ -2106,12 +1855,18 @@ sevdb_3x <- sevdb_3 %>%
     + proportion of previous episodes of malaria,
     + proportion of women patients towards severe cases
 
+- observaciones:
+    + a diferencia de la muestra inicial (n=228), 
+        - menor diferencia en la proporción de mujeres severas (37 vs 55%)
+        - menor diferencia en la proporción de casos severos con episodio previo (66 vs 46%)
+    + PROBLEMA: alta proporción de pacientes con comorbilidades (?) (20 vs 30%)
+
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
-                        presenta_comorb + 
-                        enf_cronica +
+                        tiempo_local +
                         malaria_pasado + #malaria_pasado_num + 
                         #sev_WHO + sev_WHO_num +
+                        presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ sev_WHO #+ 
                       #malaria_pasado
@@ -2119,7 +1874,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
                data=sevdb_3,
                overall=FALSE, test=FALSE)
 
-latex(s1, caption='Clinical data',
+latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
       digits=3,
       prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
@@ -2132,7 +1887,7 @@ latex(s1, caption='Clinical data',
 
 ***
 
-**wrt previouse episodes of malaria**
+**wrt previous episodes of malaria**
 
 - significant differences with respect to 
     + mean age,
@@ -2140,10 +1895,10 @@ latex(s1, caption='Clinical data',
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
-                        presenta_comorb + 
-                        enf_cronica +
-                        #malaria_pasado_num + #malaria_pasado +
+                        tiempo_local +
+                        #malaria_pasado + #malaria_pasado_num + 
                         sev_WHO + #sev_WHO_num +
+                        presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ #sev_WHO #+ 
                       malaria_pasado
@@ -2151,7 +1906,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
                data=sevdb_3,
                overall=FALSE, test=FALSE)
 
-latex(s1, caption='Clinical data',
+latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
       digits=3,
       prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
@@ -2169,10 +1924,10 @@ latex(s1, caption='Clinical data',
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
-                        presenta_comorb + 
-                        enf_cronica +
-                        #malaria_pasado_num + #malaria_pasado +
-                        #sev_WHO_num #+ sev_WHO
+                        tiempo_local +
+                        #malaria_pasado + #malaria_pasado_num + 
+                        #sev_WHO + #sev_WHO_num +
+                        presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ sev_WHO + 
                       malaria_pasado
@@ -2180,7 +1935,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
                data=sevdb_3,
                overall=FALSE, test=FALSE)
 
-latex(s1, caption='Clinical data',
+latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
       digits=3,
       prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
@@ -2200,5 +1955,290 @@ latex(s1, caption='Clinical data',
 #plot(s1, which='continuous')
 #par(mfrow=c(1,1))
 ```
+
+## ANEXO
+
+### Show Consensus covariates
+
+##### general
+
+```{r}
+sevdb_1 %>% 
+  mutate(edad= edad_1==edad_2) %>%
+  select(edad, edad_1, edad_2) %>%
+  tidyr::unite(edad_c, edad_1, edad_2, remove=F) %>% #count()
+  mutate(edad_c=str_replace(edad_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(edad_c=str_replace(edad_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(edad_c=str_replace(edad_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(edad_c=str_replace(edad_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(edad_c=str_replace(edad_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(edad_c= as.numeric(edad_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(sexo= sexo_1==sexo_2) %>%
+  select(sexo, sexo_1, sexo_2) %>%
+  tidyr::unite(sexo_c, sexo_1, sexo_2, remove=F) %>% #count()
+  mutate(sexo_c=str_replace(sexo_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(sexo_c=str_replace(sexo_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(sexo_c=str_replace(sexo_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(sexo_c=str_replace(sexo_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(sexo_c=str_replace(sexo_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(sexo_c= as.numeric(sexo_c))
+```
+
+##### who criteria
+
+```{r}
+sevdb_1 %>% 
+  mutate(shock= shock_1==shock_2) %>%
+  select(shock, shock_1, shock_2) %>%
+  tidyr::unite(shock_c, shock_1, shock_2, remove=F) %>% #count()
+  mutate(shock_c=str_replace(shock_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(shock_c=str_replace(shock_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(shock_c=str_replace(shock_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(shock_c=str_replace(shock_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(shock_c=str_replace(shock_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(shock_c= as.numeric(shock_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(pa_sistolica= pa_sistolica_1==pa_sistolica_2) %>%
+  select(pa_sistolica, pa_sistolica_1, pa_sistolica_2) %>%
+  tidyr::unite(pa_sistolica_c, pa_sistolica_1, pa_sistolica_2, remove=F) %>% #count()
+  mutate(pa_sistolica_c=str_replace(pa_sistolica_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(pa_sistolica_c=str_replace(pa_sistolica_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(pa_sistolica_c=str_replace(pa_sistolica_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(pa_sistolica_c=str_replace(pa_sistolica_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(pa_sistolica_c=str_replace(pa_sistolica_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(pa_sistolica_c= as.numeric(pa_sistolica_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(glasgow= glasgow_1==glasgow_2) %>%
+  select(glasgow, glasgow_1, glasgow_2) %>%
+  tidyr::unite(glasgow_c, glasgow_1, glasgow_2, remove=F) %>% #count()
+  mutate(glasgow_c=str_replace(glasgow_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(glasgow_c=str_replace(glasgow_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(glasgow_c=str_replace(glasgow_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(glasgow_c=str_replace(glasgow_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(glasgow_c=str_replace(glasgow_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(glasgow_c= as.numeric(glasgow_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(glas_ojos= glas_ojos_1==glas_ojos_2) %>%
+  select(glas_ojos, glas_ojos_1, glas_ojos_2) %>%
+  tidyr::unite(glas_ojos_c, glas_ojos_1, glas_ojos_2, remove=F) %>% #count()
+  mutate(glas_ojos_c=str_replace(glas_ojos_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(glas_ojos_c=str_replace(glas_ojos_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(glas_ojos_c=str_replace(glas_ojos_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(glas_ojos_c=str_replace(glas_ojos_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(glas_ojos_c=str_replace(glas_ojos_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(glas_ojos_c= as.numeric(glas_ojos_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(glas_verbal= glas_verbal_1==glas_verbal_2) %>%
+  select(glas_verbal, glas_verbal_1, glas_verbal_2) %>%
+  tidyr::unite(glas_verbal_c, glas_verbal_1, glas_verbal_2, remove=F) %>% #count()
+  mutate(glas_verbal_c=str_replace(glas_verbal_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(glas_verbal_c=str_replace(glas_verbal_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(glas_verbal_c=str_replace(glas_verbal_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(glas_verbal_c=str_replace(glas_verbal_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(glas_verbal_c=str_replace(glas_verbal_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(glas_verbal_c= as.numeric(glas_verbal_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(glas_motor= glas_motor_1==glas_motor_2) %>%
+  select(glas_motor, glas_motor_1, glas_motor_2) %>%
+  tidyr::unite(glas_motor_c, glas_motor_1, glas_motor_2, remove=F) %>% #count()
+  mutate(glas_motor_c=str_replace(glas_motor_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(glas_motor_c=str_replace(glas_motor_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(glas_motor_c=str_replace(glas_motor_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(glas_motor_c=str_replace(glas_motor_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(glas_motor_c=str_replace(glas_motor_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(glas_motor_c= as.numeric(glas_motor_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(coma= coma_1==coma_2) %>%
+  select(coma, coma_1, coma_2) %>%
+  tidyr::unite(coma_c, coma_1, coma_2, remove=F) %>% #count()
+  mutate(coma_c=str_replace(coma_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(coma_c=str_replace(coma_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(coma_c=str_replace(coma_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(coma_c=str_replace(coma_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(coma_c=str_replace(coma_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(coma_c= as.numeric(coma_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(convulsion= convulsion_1==convulsion_2) %>%
+  select(convulsion, convulsion_1, convulsion_2) %>%
+  tidyr::unite(convulsion_c, convulsion_1, convulsion_2, remove=F) %>% #count()
+  mutate(convulsion_c=str_replace(convulsion_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(convulsion_c=str_replace(convulsion_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(convulsion_c=str_replace(convulsion_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(convulsion_c=str_replace(convulsion_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(convulsion_c=str_replace(convulsion_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(convulsion_c= as.numeric(convulsion_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(edema_pulm= edema_pulm_1==edema_pulm_2) %>%
+  select(edema_pulm, edema_pulm_1, edema_pulm_2) %>%
+  tidyr::unite(edema_pulm_c, edema_pulm_1, edema_pulm_2, remove=F) %>% #count()
+  mutate(edema_pulm_c=str_replace(edema_pulm_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(edema_pulm_c=str_replace(edema_pulm_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(edema_pulm_c=str_replace(edema_pulm_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(edema_pulm_c=str_replace(edema_pulm_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(edema_pulm_c=str_replace(edema_pulm_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(edema_pulm_c= as.numeric(edema_pulm_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(sdra= sdra_1==sdra_2) %>%
+  select(sdra, sdra_1, sdra_2) %>%
+  tidyr::unite(sdra_c, sdra_1, sdra_2, remove=F) %>% #count()
+  mutate(sdra_c=str_replace(sdra_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(sdra_c=str_replace(sdra_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(sdra_c=str_replace(sdra_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(sdra_c=str_replace(sdra_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(sdra_c=str_replace(sdra_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(sdra_c= as.numeric(sdra_c))
+```
+
+```{r, eval=FALSE}
+sevdb_1 %>% 
+  mutate(cont_plaquetas= cont_plaquetas_1==cont_plaquetas_2) %>%
+  select(cont_plaquetas, cont_plaquetas_1, cont_plaquetas_2) %>% 
+  tidyr::unite(cont_plaquetas_c, cont_plaquetas_1, cont_plaquetas_2, remove = F) %>% #count()
+  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(\\d{4,})_\\1", "\\1")) %>%
+  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"NA_(\\d{4,})", "\\1")) %>% 
+  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(\\d{4,})_NA", "\\1")) %>% 
+  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(\\d{4,})_(\\d{4,})", "\\2")) %>% #count() #preferencia a _2
+  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(\\d{4,})_(\\d{1,3})", "\\1")) %>% #count() #problemas en _2
+  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(cont_plaquetas_c=str_replace(cont_plaquetas_c,"(.....)_\\1", "\\1")) %>% #count()
+  mutate(cont_plaquetas_c= as.numeric(cont_plaquetas_c))
+```
+
+##### conditional
+
+```{r}
+sevdb_1 %>% 
+  mutate(presenta_comorb= presenta_comorb_1==presenta_comorb_2) %>%
+  select(presenta_comorb, presenta_comorb_1, presenta_comorb_2) %>%
+  tidyr::unite(presenta_comorb_c, presenta_comorb_1, presenta_comorb_2, remove=F) %>% #count()
+  mutate(presenta_comorb_c=str_replace(presenta_comorb_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(presenta_comorb_c=str_replace(presenta_comorb_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(presenta_comorb_c=str_replace(presenta_comorb_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(presenta_comorb_c=str_replace(presenta_comorb_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(presenta_comorb_c=str_replace(presenta_comorb_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(presenta_comorb_c= as.numeric(presenta_comorb_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(diabetes= diabetes_1==diabetes_2) %>%
+  select(diabetes, diabetes_1, diabetes_2) %>%
+  tidyr::unite(diabetes_c, diabetes_1, diabetes_2, remove=F) %>% #count()
+  mutate(diabetes_c=str_replace(diabetes_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(diabetes_c=str_replace(diabetes_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(diabetes_c=str_replace(diabetes_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(diabetes_c=str_replace(diabetes_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(diabetes_c=str_replace(diabetes_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(diabetes_c= as.numeric(diabetes_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(enf_snc= enf_snc_1==enf_snc_2) %>%
+  select(enf_snc, enf_snc_1, enf_snc_2) %>%
+  tidyr::unite(enf_snc_c, enf_snc_1, enf_snc_2, remove=F) %>% #count()
+  mutate(enf_snc_c=str_replace(enf_snc_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(enf_snc_c=str_replace(enf_snc_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(enf_snc_c=str_replace(enf_snc_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(enf_snc_c=str_replace(enf_snc_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(enf_snc_c=str_replace(enf_snc_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(enf_snc_c= as.numeric(enf_snc_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(enf_cardiac= enf_cardiac_1==enf_cardiac_2) %>%
+  select(enf_cardiac, enf_cardiac_1, enf_cardiac_2) %>%
+  tidyr::unite(enf_cardiac_c, enf_cardiac_1, enf_cardiac_2, remove=F) %>% #count()
+  mutate(enf_cardiac_c=str_replace(enf_cardiac_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(enf_cardiac_c=str_replace(enf_cardiac_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(enf_cardiac_c=str_replace(enf_cardiac_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(enf_cardiac_c=str_replace(enf_cardiac_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(enf_cardiac_c=str_replace(enf_cardiac_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(enf_cardiac_c= as.numeric(enf_cardiac_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(enf_pulm= enf_pulm_1==enf_pulm_2) %>%
+  select(enf_pulm, enf_pulm_1, enf_pulm_2) %>%
+  tidyr::unite(enf_pulm_c, enf_pulm_1, enf_pulm_2, remove=F) %>% #count()
+  mutate(enf_pulm_c=str_replace(enf_pulm_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(enf_pulm_c=str_replace(enf_pulm_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(enf_pulm_c=str_replace(enf_pulm_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(enf_pulm_c=str_replace(enf_pulm_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(enf_pulm_c=str_replace(enf_pulm_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(enf_pulm_c= as.numeric(enf_pulm_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(enf_renal= enf_renal_1==enf_renal_2) %>%
+  select(enf_renal, enf_renal_1, enf_renal_2) %>%
+  tidyr::unite(enf_renal_c, enf_renal_1, enf_renal_2, remove=F) %>% #count()
+  mutate(enf_renal_c=str_replace(enf_renal_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(enf_renal_c=str_replace(enf_renal_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(enf_renal_c=str_replace(enf_renal_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(enf_renal_c=str_replace(enf_renal_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(enf_renal_c=str_replace(enf_renal_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(enf_renal_c= as.numeric(enf_renal_c))
+```
+```{r}
+sevdb_1 %>% 
+  mutate(tiempo_local= tiempo_local_1==tiempo_local_2) %>%
+  select(tiempo_local, tiempo_local_1, tiempo_local_2)%>%
+  tidyr::unite(tiempo_local_c, tiempo_local_1, tiempo_local_2, remove = F) %>% #count()
+  mutate(tiempo_local_c=str_replace(tiempo_local_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(tiempo_local_c=str_replace(tiempo_local_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(tiempo_local_c=str_replace(tiempo_local_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(tiempo_local_c=str_replace(tiempo_local_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(tiempo_local_c=str_replace(tiempo_local_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(tiempo_local_c= as.numeric(tiempo_local_c))
+```
+
+```{r}
+sevdb_1 %>% 
+  mutate(malaria_pasado_num= malaria_pasado_num_1==malaria_pasado_num_2) %>%
+  select(malaria_pasado_num, malaria_pasado_num_1, malaria_pasado_num_2) %>%
+  tidyr::unite(malaria_pasado_num_c, malaria_pasado_num_1, malaria_pasado_num_2, remove = F) %>% #count()
+  mutate(malaria_pasado_num_c=str_replace(malaria_pasado_num_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(malaria_pasado_num_c=str_replace(malaria_pasado_num_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(malaria_pasado_num_c=str_replace(malaria_pasado_num_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(malaria_pasado_num_c=str_replace(malaria_pasado_num_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(malaria_pasado_num_c=str_replace(malaria_pasado_num_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(malaria_pasado_num_c= as.numeric(malaria_pasado_num_c))
+```
+
 
 ## References
