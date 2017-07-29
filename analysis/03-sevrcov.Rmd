@@ -13,6 +13,7 @@ output:
     code_folding: "hide"
     #df_print: paged
 bibliography: malaria.bib
+biblio-style: apalike
 #csl: american-medical-association.csl
 ---
 
@@ -37,28 +38,51 @@ to use them as covariates for the subset of samples provided to the
 
 ## Done
 
-- `postración` es retirado como criterio por ser una variable subjetiva, 
-carente de una definición clara en la literatura.
-- `coma` es retirada ya que es una variable definida por `glasgow`.
+- se reporta la:
+    - __actualización__ de la base de datos del estudio prospectivo de 
+    Malaria Severa Vivax.
+        + __comparación__ de variables entre bases y 
+        + __ejecución__ de un consenso entre ambas.
+    - __creación__ de nuevas variables en base a los criterios OMS.
+    - __clasificación__ de las muestras según estos criterios.
+        - __reproducción__ de la selección de una sub-muestra con 30 casos 
+        severos más representativos.
+        - __estadística descriptiva__ de los criterios OMS de la muestra total ([ver](#prop-all)), 
+        - __estadística inferencial__ de variables epidemiológicas relevantes
+        con la muestra total ([ver](#sev-inf)).
+    - __filtración__ de las observaciones (sub-muestra) empleadas en el estudio de microarreglos de proteínas.
+        - __estadística descriptiva__ de los criterios OMS de la sub-muestra ([ver](#abnomic-prop)), 
+        - __estadística descriptiva__ de variables epidemiológicas relevantes ([ver](#abnomic-descrip)).
 
-## To do
+## Questions
 
-- ¿qué hacer con pacientes con puntaje final de `glasgow` y auscencia 
-de puntaje para sus sub-componentes (motor, verbal, ojos)?
-- ¿`presenta_comorb` distinta a `enf_cronica`? ¿Cómo están definidas?
-- ¿es relevante que incluya `presencia de comorbilidades` o `enfermedades crónicas` 
-en la descripción de la muestra?
-- ¿se puede asumir un valor de `episodios-previos` con la ayuda de las covariables
-asociadas a exposición? ¿vale la pena corregirlo?
+- con respecto a los criterios OMS:
+    - __`convulsión`__ no es un criterio explícito ¿cómo justificarlo? ([ver](#theory))
+    - ¿por qué no tomar en cuenta __`trombocitopenia`__ 
+    (con valores cuantitativos en `cont_plaquetas`, [ver](#additional-plots)) o __`bleeding`__?
+- ¿Cómo están __definidas__ `presenta_comorb` y `enf_cronica`?
+    - ¿Es relevante que incluya `presenta_comorb` o `enf_crónica` 
+    en la descripción de la muestra?
+    - __OJO:__ Se identificó una __alta proporción de pacientes con comorbilidades__ en
+    la [sub-muestra](#abnomic-descrip) de 60 pacientes con respecto a la [muestra total](#sev-inf).
+- ¿Se puede asumir un valor de `episodio_previo` con la ayuda de las __covariables
+asociadas a exposición__? ¿vale la pena corregirlo? ([ver](#abnomic))
+- ¿Cómo validar la variable __`shock`__ ante la falta de valores de `pa_sistolica`? ([ver](#compare-who))
+- ¿Qué hacer con pacientes con puntaje final de __`glasgow`__ y auscencia 
+de puntaje para sus sub-componentes (motor, verbal, ojos)? ([ver](#compare-who))
 
-## Notes
+## Introduction
+
+__Problema:__
 
 -------------------------------------------------------------
  Dataset   Pros                      Cons
 ---------- ------------------------- -------------------------
   nov2014   posee valores             __mayor cantidad de
-            cuantitativos originales  NA's__
-            de los __criterios de
+            cuantitativos             NA's__
+            originales,
+            incluido los
+            __criterios de
             laboratorio__:
             glucosa,
             hemoglobina,
@@ -67,7 +91,7 @@ asociadas a exposición? ¿vale la pena corregirlo?
             parasitemia.
 
   sep2016   menor cantidad de NA's    difiere en algunas 
-            o __mayor cantidad de     variables, incluido
+            o __mayor cantidad de     variables, incluido los
             _non-missing values___    __criterios clínicos__:
                                       edad,
                                       sexo,
@@ -82,21 +106,114 @@ Table: Pros and cons between datasets
 
 __Pregunta:__
 
-- ¿Las diferencias entre `nov2014` y `sep2016` deben ser consideradas 
-como __correcciones__ o __actualizaciones__?
-    + [evaluar](#evaluate-covariates) la presencia de diferencias y 
+- ¿Las diferencias y mayor cantidad de _non-missing values_ entre 
+`nov2014` y `sep2016` deben ser consideradas 
+como __actualizaciones__ o __correcciones__?
+
+__Solución:__
+
+- __criterios de laboratorio__ extraídos de `nov2014`.
+- variables epidemiológicas y __criterios clínicos__ actualizados en base a `sep2016`.
+    + [comparar](#compare-covariates) la presencia de diferencias y 
     cantidad de NA's por variable,
     + [ejecutar consenso](#execute-consensus-covariates) y 
     otorgar prioridad a `sep2016`.
 
-__Decisión:__
+## Theory
 
-- __criterios de laboratorio__ extraídas de `nov2014`.
-- variables epidemiológicas y __criterios clínicos__ corregidos en base a `sep2016`.
+__WHO case definition__
+
+- criterios citados en @WHO2014severe:
+    1. ~~impaired consiousness~~
+    2. ~~acidosis~~
+    3. ~~hypoglicemia~~
+    4. ~~severe malarial anemia~~
+    5. ~~renal impairment (acute kidney injury)~~
+    6. ~~jaundice~~
+    7. ~~pulmonary edema~~
+    8. significant bleeding
+    9. ~~shock~~
+    10. ~~hyperparasitemia~~
+
+- criterios citados en @howes2016global:
+    1. condición neurológica: ~~coma (glasgow), mareo, pérdida conciencia~~;
+    2. condición hematológica: ~~anemia severa~~, trombocitopenia severa, y hemoglobinuria;
+    3. síntomas sistémicos: ~~shock circulatorio~~; y
+    4. fallo de órganos vitales:
+    ~~disfución respiratoria, estrés respiratorio agudo, 
+    daño renal agudo~~, ruptura esplénica, 
+    ~~disfunción hepática e ictericia (hiperbilirrubina)~~.
+
+## Results
+
+__LUEGO DE LA ACTUALIZACIÓN__
+
+- __wrt criterios OMS: GENERAL__
+    + __incrementa el N (non-missing values)__ por criterio clínico (i.e., disminuyen NA's)
+    + el orden y proporciones [obtenidas](#prop-all) son consistentes 
+    con lo publicado en __poster ASTMH__ por @smith2013
+    + las únicas variables __terminadas en `_corr`__ en empeladas fueron:
+        - glasgow (corrige 2 datos)
+        - convulsión (no corrige, pero agrega datos a NA's)
+        - edema (no corrige, pero agrega datos a NA's)
+
+- __wrt criterios OMS: ESPECÍFICO__
+    - `postración` es retirado como criterio por ser una variable subjetiva, 
+    carente de una definición clara en la literatura.
+    - `coma` es retirada ya que es una variable definida por `glasgow`.
+    - `shock`: solo 8 de 38 casos están definidos por `pa_sistolica`. 
+    Sus datos se complementan en `shock_oms`.
+    - `tiempo_local` [demuestra](#eval-cond) que la base `sep2016` corrige 
+    valores erróneamente asignados en `nov2014`.
+
+- __wrt variables epidemiológicas:__
+    + mismas conclusiones estadísticas
+    + incrementa el N (non-missing values) por variable epidemiológica
+
+- __`nov2014` vs (`nov2014`+`sep2016`):__
+    + no hay cambios en el orden de las proporciones por criterio
+    + De la muestra total (n=224 a n=228):
+        - casos severos: 14+
+        - shock: 14+
+        - pulmones: 3+
+        - convulsión: 2+
+        - con un criterio: 11+
+        - con dos criterios: 1+
+        - con tres criterios: 2+
+    + De la sub-muestra del estudio de microarreglo de proteínas (n=60):
+        - casos severos: 6+
+        - shock: 4+
+        - pulmonar: 2+
+        - con un solo criterio: 6+
+
+- __muestra total vs sub-muestra__
+    - en comparación con una selección de 37 casos severos rerpesentativos 
+    ([ver](#reproducible-subsetting)), 
+    la sub-muestra de pacientes definidos como severos (n=23):
+        - __coincide__ en 10 pacientes: #5 (n=1), #3 (n=1), #2 (n=4), #1 (n=4).
+        - __excluye__ a 08 pacientes con dos o más criterios, y
+        - __excluye__ a 19 pacientes con un criterio y [condiciones propuestas](#reproducible-subsetting).
+        - [ver](#reproducible-subsetting-comparison).
 
 ## Analysis
 
-### Dependencies
+- __¡ver en la tabla de contenidos de la izquierda!:__
+    - __actualización__ de la base de datos del estudio prospectivo de 
+    Malaria Severa Vivax.
+        + __comparación__ de variables entre bases y 
+        + __ejecución__ de un consenso entre ambas.
+    - __creación__ de nuevas variables en base a los criterios OMS.
+    - __clasificación__ de las muestras según estos criterios.
+        - __reproducción__ de la selección de una sub-muestra con 30 casos 
+        severos más representativos.
+        - __estadística descriptiva__ de los criterios OMS de la muestra total, 
+        - __estadística inferencial__ de variables epidemiológicas relevantes 
+        con la muestra total.
+    - __filtración__ de las observaciones (sub-muestra) empleadas en el estudio de microarreglos de proteínas.
+        - __estadística descriptiva__ de los criterios OMS de la sub-muestra, 
+        - __estadística descriptiva__ de variables epidemiológicas relevantes.
+
+<!--### Dependencies -->
 ```{r, message=FALSE}
 ##essential
 library("tidyverse")  # load dplyr, tidyr, tibble, readr, purr, ggplot2
@@ -111,23 +228,35 @@ library("viridis")    # color visualization
 
 ```
 
-### Severe dataset
+### Read datasets
 
 #### Input
 
-- Read `malaria severa 28Nov2014_Ed.dta` file: 
+- __`nov2014`__
+    - Read `malaria severa 28Nov2014_Ed.dta` file. Assigned to __`sevdb_pre`__: 
 
 ```{r}
 sevdb_pre <- haven::read_dta("data-raw/malaria severa 28Nov2014_Ed.dta") #%>% haven::as_factor() #ERROR
 ```
 
-- Read `severe_malaria_vivax SEP2016.dta` file: 
+- __`sep2016`__
+    - Read `severe_malaria_vivax SEP2016.dta` file. Assigned to __`sevdb_pos`__: 
 
 ```{r}
 sevdb_pos <- haven::read_dta("data-raw/severe_malaria_vivax SEP2016.dta") #%>% haven::as_factor() #ERROR
 ```
 
 #### Tidy data
+
+- por cada base de datos se:
+    + __selecciona__ variables relevantes
+    + __separa__ la variable `parterial` en dos nuevas variables: `pa_sistolica` y `pa_diastolica`
+    + __renombra__ a 
+        - la variable que alude al tiempo viviendo en zona endémica
+        - mismas variables con distinto nombre en ambas bases
+        - variables terminadas en `_corr`
+    + __reemplaza__ el inicio de los códigos y valores 98/99/NaN por NA's
+    + __redefine__ variables como numéricas
 
 ##### sevdb_pre
 
@@ -193,7 +322,7 @@ sevdb_pre_1 <- sevdb_pre %>%
          edema_pulm=as.numeric(edema_pulm), 
          #resp_normal=as.numeric(resp_normal),
          hiperbil= as.double(hiperbil),
-         malaria_pasado_num= as.integer(malaria_pasado_num),
+         malaria_pasado_num= as.numeric(malaria_pasado_num),
          pa_sistolica= as.numeric(pa_sistolica),
          pa_diastolica= as.numeric(pa_diastolica),
          #fiebre_hoy_corr= as.numeric(fiebre_hoy_corr),
@@ -294,7 +423,7 @@ sevdb_pos_1 <- sevdb_pos %>%
          edema_pulm=as.numeric(edema_pulm), 
          #resp_normal=as.numeric(resp_normal),
          hiperbil= as.double(hiperbil),
-         malaria_pasado_num= as.integer(malaria_pasado_num),
+         malaria_pasado_num= as.numeric(malaria_pasado_num),
          pa_sistolica= as.numeric(pa_sistolica),
          pa_diastolica= as.numeric(pa_diastolica),
          #fiebre_hoy= as.numeric(fiebre_hoy),
@@ -319,6 +448,8 @@ sevdb_pos_1 <- sevdb_pos %>%
 
 ##### sample comparison
 
+- ambas bases de datos comparten __222__ muestras
+
 ```{r, fig.align='center', fig.width=5, fig.height=5}
 g1_id <- sevdb_pre %>% dplyr::select(codigo)      # 960
 g2_id <- sevdb_pos %>% dplyr::select(codigo)     # 963
@@ -326,7 +457,7 @@ g2_id <- sevdb_pos %>% dplyr::select(codigo)     # 963
 g1_idl= unlist(as.list(g1_id))
 g2_idl= unlist(as.list(g2_id))
 
-tmp <- gplots::venn(list(sevdb_pre=g1_idl, sevdb_pos=g2_idl))
+tmp <- gplots::venn(list(sevdb_pos=g2_idl, sevdb_pre=g1_idl))
 ```
 ```{r}
 #intersect(sevdb_pre[,"codigo"], sevdb_pos[,"codigo"]) %>% dplyr::n_distinct()
@@ -335,20 +466,28 @@ setdiff(sevdb_pos[,"codigo"], sevdb_pre[,"codigo"])
 ```
 
 ##### full join
+
+- se ejecuta:
+    - __unión total__ de las observaciones y variables
+    - dimensión final de 228 obs x 124 var
+    - variables específicas a __`sevdb_pre` terminan en `_1`__
+    - variables específicas a __`sevdb_pos` terminan en `_2`__
+
 ```{r}
 sevdb_1 <- full_join(sevdb_pre_1, sevdb_pos_1, by="codigo", suffix= c("_1","_2")) #%>% glimpse()
 #sevdb_1 %>% select(codigo, temp_local, tiempoenlocal)
 ```
+### Update covariates
 
-### Evaluate covariates
+#### Compare covariates
 
-* Se evalará:
-    - __diferencias__ entre las variables pre y pos actualización
-    - el número de elementos __no-NA's__
+* Se identifican:
+    - las __diferencias__ entre las variables __pre y pos actualización__
+    - el número de elementos __no-NA's (non-missing values)__
 
-* Se generarán nuevas [variables consenso](#show-consensus-covariates) para:
-    - llenar los vacios en `nov2014`, y
-    - corregir la data en `nov2014` por la presente en `sep2016`.
+* Evaluación preliminar a la creación de nuevas [variables consenso](#show-consensus-covariates) para:
+    - __llenar__ los vacios en `nov2014`, y
+    - __corregir__ la data en `nov2014` por la presente en `sep2016`.
 
 * Ver tabla:
 
@@ -433,7 +572,7 @@ sevdb_1 %>%
   select(sexo, sexo_1, sexo_2) %>% summarise_all(funs(sum(!is.na(.))))
 ```
 
-##### who criteria
+##### who criteria {#compare-who}
 
 - **SHOCK**
     + `shock_1` y `shock_2` tienen elementos diferentes
@@ -602,9 +741,11 @@ sevdb_1 %>%
 ```
 
 
-##### conditional
+##### conditional {#eval-cond}
 
 - **TIEMPO (¿AÑOS VIVIENDO?) EN LOCALIDAD**
+    + `tiempo_local_1` y `tiempo_local_2` tienen elementos diferentes
+    + `tiempo_local_2` con menor número de NA's
 ```{r, fig.width=8, fig.height=4}
 sevdb_1 %>% 
   mutate(tiempo_local= tiempo_local_1==tiempo_local_2) %>% dplyr::count(tiempo_local) #%>% View()
@@ -693,7 +834,10 @@ sevdb_1 %>%
   select(enf_renal, enf_renal_1, enf_renal_2) %>% summarise_all(funs(sum(!is.na(.))))
 ```
 
-### Execute Consensus covariates
+#### Execute Consensus covariates
+
+- los resultados de las funciones ejecutadas en esta sección están replicados en el [anexo](#show-consensus-covariates)
+
 ```{r}
  sevdb_1c <- sevdb_1 %>% 
  
@@ -1010,7 +1154,13 @@ sevdb_1 %>%
   ) #%>% glimpse()
 ```
 
-### Create WHO parameters
+### Create WHO criterias
+
+- en esta sección se:
+    - __renombra__ a todas las variables consenso
+    - __crea__ nuevas variables en base a los criterios OMS [@WHO2014severe]
+    - __revisa__ detalles y frecuencias por variable creada
+
 ```{r}
 sevdb_1oms <- sevdb_1c %>% 
   dplyr::rename(
@@ -1079,6 +1229,7 @@ sevdb_1oms <- sevdb_1c %>%
     + menor a 80? o __menor e igual a 80__?
     + __inclusivo__ con casos definidos __sin__ `pa_sistolica` 
     (son los únicos en __Ab profile subset__)
+    + en total, __solo 8 de 38 pacientes__ con `shock_oms` tienen `pa_sistolica` definida
 
 ```{r}
 #SHOCK
@@ -1155,7 +1306,7 @@ sevdb_1oms %>%
     + ~~`trombocitopenia` con asignacion incorrecta~~
 ```{r, eval=FALSE}
 #TROMBOCITOPENIA?? -------------------------------------------------- REDEFINIR!!
-sevdb_1 %>% 
+sevdb_1 %>%
   select(trombocitopenia, cont_plaquetas, coag_normal) %>% #dplyr::count()
   mutate(trombo_sev= if_else(cont_plaquetas<50000,1,0)) %>% 
   mutate(trombo_sev= as.factor(trombo_sev)) %>% #glimpse()
@@ -1243,9 +1394,19 @@ sevdb_1oms %>%
   dplyr::count()
 ```
 
-### Filter WHO criteria
+### Classify wrt WHO criterias
 
-__OJO: con 1 o más criterios__
+- en esta sección se:
+    - __clasifica__ a las observaciones en base a los criterios OMS [@WHO2014severe]
+        - ___OJO:_ Severo con 1 o más criterios OMS__
+        - __renombra__ a:
+            - `malaria_pasado` por __`episodio_previo`__.
+            - `tiempo_local` por __`en_zona_endemica`__.
+    - __resume:__ 
+        - las proporciones por criterio
+        - la frecuencia de combinaciones de criterios
+    - __reproduce__ una selección de 30 muestras con malaria vivax severa más representativas
+    - __realiza__ inferencia estadística con respecto a las variables epidemiológicas.
 
 ```{r}
 sevdb_2 <- sevdb_1oms %>% 
@@ -1257,26 +1418,28 @@ sevdb_2 <- sevdb_1oms %>%
          anemia_oms, renal_oms, hiperbil_oms, hipoglic_oms, #sangr_oms,
          convulsion,
          #coma, postracion,
-         #trombocitopenia, hiperparasitemia,
-         presenta_comorb, enf_cronica, enf_sum, parasitemia,
+         #trombocitopenia, #hiperparasitemia,
+         presenta_comorb, enf_cronica, enf_sum, parasitemia, shock_oms_pa,
          tiempo_local, malaria_pasado_num#,casecontrol
          ) %>% #glimpse()
   mutate(sev_WHO_num= rowSums(.[4:11],na.rm = T)#,sev_SNC_num= rowSums(.[11:13],na.rm = T)
          ) %>% #glimpse()
+  dplyr::rename(episodio_previo_num=malaria_pasado_num,
+                en_zona_endemica=tiempo_local) %>% 
   mutate(#sev_ALL_num= rowSums(.[c(18,19)],na.rm = T),
          sev_WHO= if_else(sev_WHO_num>0# | sev_ALL_num>1
                           ,"severo","no-severo"),# OJO: severo con 1 o más criterios + 2 de SNC
-         malaria_pasado=if_else(malaria_pasado_num>0,"con-episodio-previo","sin-episodio-previo")
+         episodio_previo=if_else(episodio_previo_num>0,"con","sin")
          ) %>% 
   mutate(sexo= as.factor(sexo),
          sev_WHO= as.factor(sev_WHO),
-         malaria_pasado= as.factor(malaria_pasado)
+         episodio_previo= as.factor(episodio_previo)
          #,casecontrol= as.factor(casecontrol)
          ) %>% 
-  mutate(sexo= fct_recode(sexo, "hombre"="1", "mujer"="0")) %>% 
+  mutate(sexo= fct_recode(sexo, "masculino"="1", "femenino"="0")) %>% 
   #relevel(sexo, ref = "female") %>% 
-  mutate(sexo= fct_relevel(sexo, "hombre"),
-         malaria_pasado= fct_relevel(malaria_pasado, "sin-episodio-previo")) %>% 
+  mutate(sexo= fct_relevel(sexo, "masculino"),
+         episodio_previo= fct_relevel(episodio_previo, "sin")) %>% 
   glimpse()
 ```
 
@@ -1286,7 +1449,7 @@ html(Hmisc::contents(sevdb_2), maxlevels=10, levelType='table')
 #glimpse(sevdb_2)
 ```
 
-#### proportions per criteria
+#### proportions per criteria {#prop-all}
 
 ```{r}
 s1 <- Hmisc::summaryM(shock_oms + #clinicos
@@ -1311,7 +1474,7 @@ s1 <- Hmisc::summaryM(shock_oms + #clinicos
 latex(s1, caption='WHO classification: Clinical and Laboratory criterias',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = TRUE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
@@ -1321,6 +1484,9 @@ latex(s1, caption='WHO classification: Clinical and Laboratory criterias',
 #### combination of criterias
 
 __check `sev_WHO`__
+
+- frecuencia por criterios acumulados
+
 ```{r}
 sevdb_2 %>% group_by(sev_WHO_num, sev_WHO#, sev_SNC_num, sev_ALL_num
                      ) %>% dplyr::count()
@@ -1363,11 +1529,10 @@ sevdb_2 %>%
   summarise_all(sum,na.rm=T) #%>% t()
 ```
 
-__RECLASIFICACIÓN en base a critrio OMS__
+__RECLASIFICACIÓN en base a criterio OMS__
 
 - `shock_oms` principal criterio de re-clasificación
 - pero __solo 2 pacientes__ de este grupo poseen `pa_sistolica` definida
-- en total, __solo 8 de 38 pacientes__ con `shock_oms` tienen `pa_sistolica` definida
 
 ```{r}
 sevdb_2 %>% 
@@ -1403,48 +1568,52 @@ sevdb_2 %>%
 
 ##### reproducible subsetting
 
-__Elección de los 30 más severos:__
+__Elección de 30 pacientes severos más representativos:__
 
-- 14 con `sev_WHO_num`>1
-- 26 con `sev_WHO_num`>0 & `shock_oms`>0
-- 09 con `sev_WHO_num`>0 & `pulmonar_oms`>0
-- __16 con `sev_WHO_num`>0 & `hiperbil_oms`>0__
-    + `hiperbil_oms` fue el criterio más importante en la 
-    reclasificación de pacientes (Smith & N6, 2013)
-- ¿cómo priorizar entre criterios para la virtual elección de 
-pacientes con un solo criterio y completar una muestra final de 30?
-    + auscencia de __comorbilidades__ y menor frecuencia de __enfermedades crónicas__ de pacientes
-    + `pulmonar_oms` sobre `shock_oms` por ser la suma de `edema`+`sdra`?
+- __14 con `sev_WHO_num`>1__
+- Al tener 57 pacientes con un solo criterio, ¿cómo priorizar entre criterios para la virtual elección de 
+pacientes con un solo criterio y completar una muestra final de 30? 
+- __condiciones propuestas:__
+    + auscencia de __comorbilidades__ y __enfermedades crónicas__, y
+    + `shock_oms` con `pa_sistolica` definida (__+ 7 casos__), o
+    + `pulmonar_oms`= `edema`+`sdra` (__+5 casos__), o
+    + `hiperbil_oms` (__+ 11 casos__)
 
 ```{r}
 sevdb_30 <- sevdb_2 %>% 
   dplyr::filter(sev_WHO_num>1 | sev_WHO_num>0 & enf_sum<1 & presenta_comorb!=1
                   #& hiperbil_oms>0
                   #& (hiperbil_oms>0 | shock_oms>0)
-                  & (hiperbil_oms>0 | pulmonar_oms>0)
+                  & (shock_oms_pa>0 | pulmonar_oms>0 | hiperbil_oms>0
+                     )
                   )
 sevdb_30 %>% select(codigo, sev_WHO_num, enf_cronica, presenta_comorb
-                    ,hiperbil_oms
-                    #,shock_oms
+                    ,shock_oms_pa#,shock_oms
                     ,pulmonar_oms
+                    ,hiperbil_oms
                     ) %>% dplyr::arrange(desc(sev_WHO_num))
 ```
 
 ```{r, fig.height=4, fig.width=6, fig.align='center', eval=FALSE}
 ### symptoms x exposure
 
-#plot(sevdb_2$malaria_pasado_num,sevdb_2$sev_WHO_num)
+#plot(sevdb_2$episodio_previo_num,sevdb_2$sev_WHO_num)
 sevdb_2 %>% 
-  group_by(malaria_pasado_num, sev_WHO_num) %>%
+  group_by(episodio_previo_num, sev_WHO_num) %>%
   dplyr::summarise(n=n()) %>%
   mutate(prop= n/sum(n)) %>%
-  ggplot(aes(malaria_pasado_num, sev_WHO_num, colour=n)) + 
+  ggplot(aes(episodio_previo_num, sev_WHO_num, colour=n)) + 
   geom_point() + 
   scale_color_viridis() +
   labs(title="sevdb_2")
 ```
 
-#### Inferential statistics
+#### Inferential statistics {#sev-inf}
+
+* la prueba de hipótesis se ejecutará sobre las variables evaluadas en:
+    - @smith2013,
+    - @baldevi2013, y
+    - @quispe2014
 
 ```{r, eval=FALSE}
 #- Joint `parasitemia` from `28Nov2014_Ed.dta` **[WARNING]**
@@ -1468,13 +1637,13 @@ sevdb_2x <- sevdb_2 %>%
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
-                        tiempo_local +
-                        malaria_pasado + #malaria_pasado_num + 
+                        en_zona_endemica +
+                        episodio_previo_num + episodio_previo +  
                         #sev_WHO + sev_WHO_num +
                         presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ sev_WHO #+ 
-                      #malaria_pasado
+                      #episodio_previo
                       ,
                data=sevdb_2,
                overall=FALSE, test=TRUE)
@@ -1482,8 +1651,8 @@ s1 <- Hmisc::summaryM(edad + sexo +
 latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
-      middle.bold=TRUE, long = TRUE,
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = FALSE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
       ) #change here for LaTeX PDF
@@ -1500,13 +1669,13 @@ latex(s1, caption='Epidemiological data',
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
-                        tiempo_local +
-                        #malaria_pasado_num + #malaria_pasado +  
+                        en_zona_endemica +
+                        episodio_previo_num + #episodio_previo +  
                         sev_WHO + #sev_WHO_num +
                         presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ #sev_WHO #+ 
-                      malaria_pasado
+                      episodio_previo
                       ,
                data=sevdb_2,
                overall=FALSE, test=TRUE)
@@ -1514,8 +1683,8 @@ s1 <- Hmisc::summaryM(edad + sexo +
 latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
-      middle.bold=TRUE, long = TRUE,
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = FALSE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
       ) #change here for LaTeX PDF
@@ -1529,13 +1698,13 @@ latex(s1, caption='Epidemiological data',
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
-                        tiempo_local +
-                        #malaria_pasado + #malaria_pasado_num + 
+                        en_zona_endemica +
+                        #episodio_previo + #episodio_previo_num + 
                         #sev_WHO + sev_WHO_num +
                         presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ sev_WHO + 
-                      malaria_pasado
+                      episodio_previo
                       ,
                data=sevdb_2,
                overall=FALSE, test=TRUE)
@@ -1543,8 +1712,8 @@ s1 <- Hmisc::summaryM(edad + sexo +
 latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
-      middle.bold=TRUE, long = TRUE,
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = FALSE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
       ) #change here for LaTeX PDF
@@ -1555,26 +1724,28 @@ latex(s1, caption='Epidemiological data',
 #**age wrt previous episodes among severe cases**
 #- significant differences with respect to 
 #    + mean age
-s1 <- Hmisc::summaryM(edad #+ #sexo +
-                        #presenta_comorb + enf_cronica +
-                        #malaria_pasado_num + #malaria_pasado +
-                        #sev_WHO_num #+ #+ sev_WHO
-                        #parasitemia #+
+s1 <- Hmisc::summaryM(edad + sexo +
+                        en_zona_endemica +
+                        episodio_previo + #episodio_previo_num + 
+                        sev_WHO + sev_WHO_num +
+                        presenta_comorb + enf_cronica +
+                        parasitemia #+
                       ~ #sev_WHO + 
-                      malaria_pasado
+                      episodio_previo
                       ,
                data=sevdb_2 %>% filter(sev_WHO=="severo"),
-               overall=FALSE, test=TRUE)
+               overall=FALSE, test=FALSE)
 
 latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
-      middle.bold=TRUE, long = TRUE,
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = FALSE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
       ) #change here for LaTeX PDF
 ```
+
 ```{r, fig.width=6, fig.height=5, fig.align='center'}
 #plot(s1, which='categorical')
 #Key(0,0)
@@ -1587,9 +1758,21 @@ latex(s1, caption='Epidemiological data',
 ```
 
 
-### Ab profile subset
+### Filter Ab profile samples {#abnomic}
 
-- **60 samples** from the Severe study dataset.
+- en esta sección se:
+    - __filtra__ a las observaciones equivalentes a las 
+    **60 muestras** empleadas en el estudio de microarreglos de proteínas
+    - __corrige__ la data NA de `episodios_previos`
+    - __resume:__ 
+        - las proporciones por criterio
+        - la frecuencia de combinaciones de criterios
+    - __compara__ con la selección __reproducida__ de 30 muestras con malaria vivax severa más representativas.
+    - __realiza__ descripción estadística de las variables epidemiológicas.
+
+***
+
+__FILTERING of **60 samples** from the Severe study dataset__
 
 ```{r, message=FALSE}
 subsev <- readr::read_csv("data-raw/samples.csv") %>% 
@@ -1605,21 +1788,22 @@ sevdb_3 <- dplyr::inner_join(sevdb_2,subsev, by="codigo")
 ```{r}
 #html(Hmisc::contents(sevdb_3), maxlevels=10, levelType='table')
 sevdb_3 %>% dplyr::count(sev_WHO)
-sevdb_3 %>% dplyr::count(malaria_pasado)
-sevdb_3 %>% group_by(malaria_pasado, sev_WHO) %>% dplyr::count()
+sevdb_3 %>% dplyr::count(episodio_previo)
+sevdb_3 %>% group_by(episodio_previo, sev_WHO) %>% dplyr::count()
 ```
 
-__¿malaria_pasado==`NA`?__:
+__¿episodio_previo==`NA`?__:
 
 - ¿podemos corregir `NA` con covariables relacionadas a exposición?, o
-- corregimos en forma insesgada a `sin-episodio-previo`
+- corregimos en forma insesgada a `sin`
 
 ```{r}
 sevdb_3 %>% 
-  select(codigo,malaria_pasado) %>% 
-  filter(is.na(malaria_pasado)) %>% 
+  select(codigo,episodio_previo) %>% 
+  filter(is.na(episodio_previo)) %>% 
   dplyr::inner_join(sevdb_pre %>% 
-                      select(codigo,malaria_pasado_num,
+                      dplyr::rename(episodio_previo_num=malaria_pasado_num)%>% 
+                      select(codigo,episodio_previo_num,
                              fuente_agua:trabajo_riesgo) %>% #glimpse()
                       mutate(codigo= str_replace(codigo,"LIM0","LIM"))
                     , by="codigo")
@@ -1629,15 +1813,15 @@ sevdb_3 %>%
 __POR DEFAULT: `NA`__
 ```{r}
 sevdb_3 <- sevdb_3 %>% 
-  #filter(is.na(malaria_pasado)) %>% 
-  #select(codigo, malaria_pasado) %>% #glimpse()
-  #mutate(malaria_pasado= as.character(malaria_pasado)) %>% 
-  #mutate(malaria_pasado= fct_recode(malaria_pasado,"sin-episodio-previo"=NA_character_)) %>% 
-  #mutate(malaria_pasado= funs(ifelse(is.na(.),"sin-episodio-previo",.)))
-  replace_na(list(malaria_pasado="sin-episodio-previo")) #%>% 
-  #dplyr::count(malaria_pasado)
+  #filter(is.na(episodio_previo)) %>% 
+  #select(codigo, episodio_previo) %>% #glimpse()
+  #mutate(episodio_previo= as.character(episodio_previo)) %>% 
+  #mutate(episodio_previo= fct_recode(episodio_previo,"sin"=NA_character_)) %>% 
+  #mutate(episodio_previo= funs(ifelse(is.na(.),"sin",.)))
+  replace_na(list(episodio_previo="sin")) #%>% 
+  #dplyr::count(episodio_previo)
 
-sevdb_3 %>% dplyr::count(malaria_pasado)
+sevdb_3 %>% dplyr::count(episodio_previo)
 ```
 
 
@@ -1674,7 +1858,7 @@ sevdb_4 <- sevdb_3 %>%
 html(Hmisc::contents(sevdb_4), maxlevels=10, levelType='table')
 ```
 
-__RECLASIFICACIÓN en base a critrio OMS__
+__RECLASIFICACIÓN en base a criterio OMS__
 ```{r}
 sevdb_3 %>% 
   select(codigo, sev_WHO) %>% 
@@ -1692,7 +1876,7 @@ __GRABAR BASE DE DATOS COMO `data/03-sevrcov.rds`__
 sevdb_3 %>% saveRDS("data/03-sevrcov.rds")
 ```
 
-#### proportions per criteria
+#### proportions per criteria {#abnomic-prop}
 
 ```{r}
 s1 <- Hmisc::summaryM(shock_oms + #clinicos
@@ -1717,7 +1901,7 @@ s1 <- Hmisc::summaryM(shock_oms + #clinicos
 latex(s1, caption='WHO classification: Clinical and Laboratory criterias',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = TRUE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
@@ -1727,6 +1911,9 @@ latex(s1, caption='WHO classification: Clinical and Laboratory criterias',
 #### combinations of criterias
 
 __check `sev_WHO`__
+
+- frecuencia por criterios acumulados
+
 ```{r}
 sevdb_3 %>% group_by(sev_WHO_num, sev_WHO#, sev_SNC_num, sev_ALL_num
                      ) %>% dplyr::count()
@@ -1804,9 +1991,8 @@ sevdb_3 %>% select(codigo, sev_WHO, sev_WHO_num) %>%
 __Comparación con la elección de 30 muestras:__
 
 - coinciden en 10 pacientes: incluye al paciente con más criterios
-- excluye a 8 pacientes con dos o más criterios
-- el resto son 13 pacientes con un solo criterio
-
+- excluye a 08 pacientes con dos o más criterios, y
+- excluye a 19 pacientes con un criterio y las características dadas [previamente](#reproducible-subsetting)
 
 ```{r, fig.align='center', fig.width=5, fig.height=5}
 g1_id <- sevdb_30 %>% dplyr::select(codigo)      # 960
@@ -1833,7 +2019,13 @@ dplyr::anti_join(sevdb_3 %>%
                   by="codigo") %>% dplyr::count(sev_WHO_num)
 ```
 
-#### Descriptive statistics
+#### Descriptive statistics {#abnomic-descrip}
+
+* se describen las variables evaluadas en:
+    - @smith2013,
+    - @baldevi2013, y
+    - @quispe2014
+
 
 ```{r, eval=FALSE}
 #- Joint `parasitemia` from `28Nov2014_Ed.dta` **[WARNING]**
@@ -1856,20 +2048,20 @@ sevdb_3x <- sevdb_3 %>%
     + proportion of women patients towards severe cases
 
 - observaciones:
-    + a diferencia de la muestra inicial (n=228), 
+    + a diferencia de la [muestra total](#sev-inf) (n=228), 
         - menor diferencia en la proporción de mujeres severas (37 vs 55%)
         - menor diferencia en la proporción de casos severos con episodio previo (66 vs 46%)
     + PROBLEMA: alta proporción de pacientes con comorbilidades (?) (20 vs 30%)
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
-                        tiempo_local +
-                        malaria_pasado + #malaria_pasado_num + 
+                        en_zona_endemica +
+                        episodio_previo_num + episodio_previo + 
                         #sev_WHO + sev_WHO_num +
                         presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ sev_WHO #+ 
-                      #malaria_pasado
+                      #episodio_previo
                       ,
                data=sevdb_3,
                overall=FALSE, test=FALSE)
@@ -1877,8 +2069,8 @@ s1 <- Hmisc::summaryM(edad + sexo +
 latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
-      middle.bold=TRUE, long = TRUE,
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = FALSE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
       ) #change here for LaTeX PDF
@@ -1895,13 +2087,13 @@ latex(s1, caption='Epidemiological data',
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
-                        tiempo_local +
-                        #malaria_pasado + #malaria_pasado_num + 
+                        en_zona_endemica +
+                        episodio_previo_num + #episodio_previo +
                         sev_WHO + #sev_WHO_num +
                         presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ #sev_WHO #+ 
-                      malaria_pasado
+                      episodio_previo
                       ,
                data=sevdb_3,
                overall=FALSE, test=FALSE)
@@ -1909,8 +2101,8 @@ s1 <- Hmisc::summaryM(edad + sexo +
 latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
-      middle.bold=TRUE, long = TRUE,
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = FALSE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
       ) #change here for LaTeX PDF
@@ -1924,13 +2116,13 @@ latex(s1, caption='Epidemiological data',
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
-                        tiempo_local +
-                        #malaria_pasado + #malaria_pasado_num + 
+                        en_zona_endemica +
+                        #episodio_previo + #episodio_previo_num + 
                         #sev_WHO + #sev_WHO_num +
                         presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ sev_WHO + 
-                      malaria_pasado
+                      episodio_previo
                       ,
                data=sevdb_3,
                overall=FALSE, test=FALSE)
@@ -1938,8 +2130,8 @@ s1 <- Hmisc::summaryM(edad + sexo +
 latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
-      middle.bold=TRUE, long = TRUE,
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      middle.bold=TRUE, long = FALSE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
       ) #change here for LaTeX PDF
@@ -1958,7 +2150,131 @@ latex(s1, caption='Epidemiological data',
 
 ## ANEXO
 
+### Additional plots
+
+- __EDAD__
+
+```{r, message=FALSE, fig.align="center", fig.width=4, fig.height=4}
+ggplot(sevdb_2, aes(x=edad)) + 
+  geom_histogram(
+    #aes(y=..density..), 
+                 breaks=seq(0, 85, by = 5), 
+                 alpha=.5 ,position = "identity") + 
+  labs(title="Histograma de Edad") +
+  #geom_density() #+
+  scale_x_continuous(breaks=seq(0, 85, by = 5)) #+
+  #labs(x="Age", y="Count") + 
+  #xlim(c(18,52)) + 
+  #ylim(c(0,30))
+#scale_y_continuous(limits = c(0,0.05))
+```
+
+```{r, message=FALSE, fig.align="center", fig.width=10, fig.height=7}
+a <- ggplot(sevdb_2, aes(x=edad, fill=sev_WHO)) + 
+  geom_histogram(
+    #aes(y=..density..), 
+                 breaks=seq(0, 85, by = 5), 
+                 alpha=.5 ,position = "identity") + 
+  labs(title="Histograma de Edad") +
+  #geom_density() #+
+  scale_x_continuous(breaks=seq(0, 85, by = 5)) #+
+  #labs(x="Age", y="Count") + 
+  #xlim(c(18,52)) + 
+  #ylim(c(0,30))
+#scale_y_continuous(limits = c(0,0.05))
+
+b <- ggplot(sevdb_2, aes(x=edad, fill=episodio_previo)) + 
+  geom_histogram(
+    #aes(y=..density..), 
+                 breaks=seq(0, 85, by = 5), 
+                 alpha=.5 ,position = "identity") + 
+  labs(title="Histograma de Edad") +
+  #geom_density() #+
+  scale_x_continuous(breaks=seq(0, 85, by = 5)) #+
+  #labs(x="Age", y="Count") + 
+  #xlim(c(18,52)) + 
+  #ylim(c(0,30))
+  #scale_y_continuous(limits = c(0,0.05))
+
+c <- sevdb_2 %>% 
+  filter(sev_WHO=="no-severo") %>% 
+  ggplot(aes(x=edad, fill=episodio_previo)) + 
+  geom_histogram(
+    #aes(y=..density..), 
+                 breaks=seq(0, 85, by = 5), 
+                 alpha=.5 ,position = "identity") + 
+  labs(title="Histograma de Edad",
+       subtitle="filter no-severe samples") +
+  #geom_density() #+
+  scale_x_continuous(breaks=seq(0, 85, by = 5))
+
+d <- sevdb_2 %>% 
+  filter(sev_WHO=="severo") %>% 
+  ggplot(aes(x=edad, fill=episodio_previo)) + 
+  geom_histogram(
+    #aes(y=..density..), 
+                 breaks=seq(0, 85, by = 5), 
+                 alpha=.5 ,position = "identity") + 
+  labs(title="Histograma de Edad",
+       subtitle="filter severe samples") +
+  #geom_density() #+
+  scale_x_continuous(breaks=seq(0, 85, by = 5))
+
+#c <- ggplot(sampleSEV, aes(x=edad, fill=casecontrol)) + 
+  #geom_histogram(
+   # aes(y=..density..), 
+    #             breaks=seq(0, 85, by = 5), position = "dodge") + 
+  #labs(title="Histograma de Edad") +
+  #geom_density(alpha=.3) #+
+  #scale_x_continuous(breaks=seq(0, 85, by = 5))
+  #labs(x="Age", y="Count") + 
+  #xlim(c(18,52)) + 
+  #ylim(c(0,30))
+
+#d <- ggplot(sampleSEV, aes(x=edad, fill=con_exp)) + 
+  ##geom_histogram(
+    ##aes(y=..density..), 
+                 ##breaks=seq(0, 85, by = 5), position = "dodge") + 
+  ##labs(title="Histograma de Edad") +
+  #geom_density(alpha=.3) +
+  ##scale_x_continuous(breaks=seq(0, 85, by = 5)) +
+  ##labs(x="Age", y="Count") + 
+  ##xlim(c(18,52)) + 
+  #scale_y_continuous(limits = c(0,0.025))
+
+
+multiplot(a,c,b,d,cols=2)
+```
+
+- __TROMBOCITOPENIA__
+```{r, message=FALSE, fig.align="center", fig.width=12, fig.height=4}
+a <- sevdb_1oms %>%
+  select(trombocitopenia, cont_plaquetas) %>% #dplyr::count()
+  mutate(trombo_sev= if_else(cont_plaquetas<50000,1,0)) %>% 
+  mutate(trombo_sev= as.factor(trombo_sev)) %>% #glimpse()
+  ggplot(aes(x=cont_plaquetas, fill=trombo_sev)) + 
+  geom_histogram(alpha=.5, position = "identity") + 
+  labs(title="trombocitopenia")
+
+b <- sevdb_1oms %>%
+  select(codigo, trombocitopenia, cont_plaquetas) %>% #dplyr::count()
+  mutate(trombo_sev= if_else(cont_plaquetas<50000,1,0)) %>% 
+  mutate(trombo_sev= as.factor(trombo_sev)) %>% #glimpse()
+  inner_join(sevdb_2 %>% 
+               select(codigo, sev_WHO),
+             by="codigo") %>% 
+  filter(sev_WHO=="severo") %>% 
+  ggplot(aes(x=cont_plaquetas, fill=trombo_sev)) + 
+  geom_histogram(alpha=.5, position = "identity") + 
+  labs(title="trombocitopenia",
+       subtitle="filter severe samples")
+
+Rmisc::multiplot(a,b,cols = 2)
+```
+
 ### Show Consensus covariates
+
+- se __replica__ las variables consenso obtenidas por variable
 
 ##### general
 
