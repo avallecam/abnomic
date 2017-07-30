@@ -14,6 +14,7 @@ output:
     #df_print: paged
 bibliography: malaria.bib
 biblio-style: apalike
+link-citations: yes
 #csl: american-medical-association.csl
 ---
 
@@ -40,7 +41,7 @@ to use them as covariates for the subset of samples provided to the
 
 - se reporta la:
     - __actualización__ de la base de datos del estudio prospectivo de 
-    Malaria Severa Vivax.
+    Malaria Severa Vivax. ([ver](#update-covariates))
         + __comparación__ de variables entre bases y 
         + __ejecución__ de un consenso entre ambas.
     - __creación__ de nuevas variables en base a los criterios OMS.
@@ -53,18 +54,29 @@ to use them as covariates for the subset of samples provided to the
     - __filtración__ de las observaciones (sub-muestra) empleadas en el estudio de microarreglos de proteínas.
         - __estadística descriptiva__ de los criterios OMS de la sub-muestra ([ver](#abnomic-prop)), 
         - __estadística descriptiva__ de variables epidemiológicas relevantes ([ver](#abnomic-descrip)).
+- Ir a la presentación del [problema](#introduction)
+- Ir al resumen de [resultados](#results)
+- Ir al detalle del [análisis](#analysis).
 
-## Questions
+## Help!
+
+__PRINCIPALES__
 
 - con respecto a los criterios OMS:
     - __`convulsión`__ no es un criterio explícito ¿cómo justificarlo? ([ver](#theory))
     - ¿por qué no tomar en cuenta __`trombocitopenia`__ 
     (con valores cuantitativos en `cont_plaquetas`, [ver](#additional-plots)) o __`bleeding`__?
+- ¿hay alguna variable que me permita aplicar algún __criterio de exclusión__?
+    + Presencia de __mono-infecciones__ de _P. vivax_ determinadas por PCR, y
+    + Ausencia de __coinfecciones__ (leptospirosis, dengue u otra arbovirosis).
 - ¿Cómo están __definidas__ `presenta_comorb` y `enf_cronica`?
     - ¿Es relevante que incluya `presenta_comorb` o `enf_crónica` 
     en la descripción de la muestra?
     - __OJO:__ Se identificó una __alta proporción de pacientes con comorbilidades__ en
     la [sub-muestra](#abnomic-descrip) de 60 pacientes con respecto a la [muestra total](#sev-inf).
+
+__SECUNDARIAS__
+
 - ¿Se puede asumir un valor de `episodio_previo` con la ayuda de las __covariables
 asociadas a exposición__? ¿vale la pena corregirlo? ([ver](#abnomic))
 - ¿Cómo validar la variable __`shock`__ ante la falta de valores de `pa_sistolica`? ([ver](#compare-who))
@@ -78,7 +90,7 @@ __Problema:__
 -------------------------------------------------------------
  Dataset   Pros                      Cons
 ---------- ------------------------- -------------------------
-  nov2014   posee valores             __mayor cantidad de
+  nov2014   única con valores        __mayor cantidad de
             cuantitativos             NA's__
             originales,
             incluido los
@@ -88,6 +100,7 @@ __Problema:__
             hemoglobina,
             creatinina,
             bilirrubina,
+            ~~trombocitopenia~~,
             parasitemia.
 
   sep2016   menor cantidad de NA's    difiere en algunas 
@@ -109,6 +122,8 @@ __Pregunta:__
 - ¿Las diferencias y mayor cantidad de _non-missing values_ entre 
 `nov2014` y `sep2016` deben ser consideradas 
 como __actualizaciones__ o __correcciones__?
+    + __rpta:__ `sep2016` ha pasado por control de calidad y reingreso de fichas (Smith-Nuñez, correo 28oct2016)
+    + __repregunta:__ ¿qué variables han pasado por QC?
 
 __Solución:__
 
@@ -123,7 +138,9 @@ __Solución:__
 
 __WHO case definition__
 
-- criterios citados en @WHO2014severe:
+_Tachados están los criterios tomados en cuenta en el presente reporte_
+
+- criterios citados en @WHO2014severe para malaria falciparum severa:
     1. ~~impaired consiousness~~
     2. ~~acidosis~~
     3. ~~hypoglicemia~~
@@ -135,7 +152,7 @@ __WHO case definition__
     9. ~~shock~~
     10. ~~hyperparasitemia~~
 
-- criterios citados en @howes2016global:
+- criterios citados en @howes2016global para malaria vivax severa:
     1. condición neurológica: ~~coma (glasgow), mareo, pérdida conciencia~~;
     2. condición hematológica: ~~anemia severa~~, trombocitopenia severa, y hemoglobinuria;
     3. síntomas sistémicos: ~~shock circulatorio~~; y
@@ -143,6 +160,15 @@ __WHO case definition__
     ~~disfución respiratoria, estrés respiratorio agudo, 
     daño renal agudo~~, ruptura esplénica, 
     ~~disfunción hepática e ictericia (hiperbilirrubina)~~.
+
+- criterios empleados en @smith2013 y @quispe2014 para malaria vivax severa:
+    1. ~~shock~~,
+    2. ~~daño pulmonar~~,
+    3. ~~glasgow~~,
+    4. ~~hiperbilirrubina~~,
+    5. ~~anemia severa~~,
+    6. ~~daño renal~~,
+    7. ~~hipoglicemia~~.
 
 ## Results
 
@@ -187,13 +213,20 @@ __LUEGO DE LA ACTUALIZACIÓN__
         - con un solo criterio: 6+
 
 - __muestra total vs sub-muestra__
-    - en comparación con una selección de 37 casos severos rerpesentativos 
-    ([ver](#reproducible-subsetting)), 
-    la sub-muestra de pacientes definidos como severos (n=23):
-        - __coincide__ en 10 pacientes: #5 (n=1), #3 (n=1), #2 (n=4), #1 (n=4).
-        - __excluye__ a 08 pacientes con dos o más criterios, y
-        - __excluye__ a 19 pacientes con un criterio y [condiciones propuestas](#reproducible-subsetting).
-        - [ver](#reproducible-subsetting-comparison).
+    - al igual que la muestra total, el orden de las proporciones 
+    por criterio se mantienen. ([ver](#abnomic-prop))
+        - en comparación con una selección de 37 casos severos representativos 
+        ([ver](#reproducible-subsetting)), 
+        la sub-muestra de pacientes definidos como severos (n=23):
+            - __coincide__ en 10 pacientes: #5 (n=1), #3 (n=1), #2 (n=4), #1 (n=4).
+            - __excluye__ a 08 pacientes con dos o más criterios, y
+            - __excluye__ a 19 pacientes con un criterio y [condiciones propuestas](#reproducible-subsetting).
+            - [ver](#reproducible-subsetting-comparison).
+    - a diferencia de la muestra total, la variables epidemiológicas 
+    de la [sub-muestra](#abnomic-descrip) poseen:
+        - menor diferencia en la proporción de mujeres severas
+        - menor diferencia en la proporción de casos severos con episodio previo
+        - PROBLEMA: alta proporción de pacientes con comorbilidades (?)
 
 ## Analysis
 
@@ -229,6 +262,8 @@ library("viridis")    # color visualization
 ```
 
 ### Read datasets
+
+- Todas las covariables por base están listadas en el [anexo](#glimpse-of-all-covariates)
 
 #### Input
 
@@ -842,7 +877,7 @@ sevdb_1 %>%
  sevdb_1c <- sevdb_1 %>% 
  
   tidyr::unite(edad_c, edad_1, edad_2) %>% #count()
-  mutate(edad_c=str_replace(edad_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(edad_c=str_replace(edad_c,"(\\d{2})_\\1", "\\1")) %>%
   mutate(edad_c=str_replace(edad_c,"NA_(\\d+)", "\\1")) %>% 
   mutate(edad_c=str_replace(edad_c,"(\\d+)_NA", "\\1")) %>% 
   mutate(edad_c=str_replace(edad_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
@@ -1407,6 +1442,9 @@ sevdb_1oms %>%
         - la frecuencia de combinaciones de criterios
     - __reproduce__ una selección de 30 muestras con malaria vivax severa más representativas
     - __realiza__ inferencia estadística con respecto a las variables epidemiológicas.
+
+_Deben observarse lineas completas._
+___Reducir el zoom__ de la página de ser necesario._
 
 ```{r}
 sevdb_2 <- sevdb_1oms %>% 
@@ -2152,6 +2190,32 @@ latex(s1, caption='Epidemiological data',
 
 ### Additional plots
 
+- __TROMBOCITOPENIA__
+```{r, message=FALSE, fig.align="center", fig.width=12, fig.height=4}
+a <- sevdb_1oms %>%
+  select(trombocitopenia, cont_plaquetas) %>% #dplyr::count()
+  mutate(trombo_sev= if_else(cont_plaquetas<50000,1,0)) %>% 
+  mutate(trombo_sev= as.factor(trombo_sev)) %>% #glimpse()
+  ggplot(aes(x=cont_plaquetas, fill=trombo_sev)) + 
+  geom_histogram(alpha=.5, position = "identity") + 
+  labs(title="trombocitopenia")
+
+b <- sevdb_1oms %>%
+  select(codigo, trombocitopenia, cont_plaquetas) %>% #dplyr::count()
+  mutate(trombo_sev= if_else(cont_plaquetas<50000,1,0)) %>% 
+  mutate(trombo_sev= as.factor(trombo_sev)) %>% #glimpse()
+  inner_join(sevdb_2 %>% 
+               select(codigo, sev_WHO),
+             by="codigo") %>% 
+  filter(sev_WHO=="severo") %>% 
+  ggplot(aes(x=cont_plaquetas, fill=trombo_sev)) + 
+  geom_histogram(alpha=.5, position = "identity") + 
+  labs(title="trombocitopenia",
+       subtitle="filter severe samples")
+
+Rmisc::multiplot(a,b,cols = 2)
+```
+
 - __EDAD__
 
 ```{r, message=FALSE, fig.align="center", fig.width=4, fig.height=4}
@@ -2246,28 +2310,21 @@ d <- sevdb_2 %>%
 multiplot(a,c,b,d,cols=2)
 ```
 
-- __TROMBOCITOPENIA__
+- __TIEMPO VIVENDO EN ZONA ENDÉMICA__
 ```{r, message=FALSE, fig.align="center", fig.width=12, fig.height=4}
-a <- sevdb_1oms %>%
-  select(trombocitopenia, cont_plaquetas) %>% #dplyr::count()
-  mutate(trombo_sev= if_else(cont_plaquetas<50000,1,0)) %>% 
-  mutate(trombo_sev= as.factor(trombo_sev)) %>% #glimpse()
-  ggplot(aes(x=cont_plaquetas, fill=trombo_sev)) + 
-  geom_histogram(alpha=.5, position = "identity") + 
-  labs(title="trombocitopenia")
+a <- sevdb_2 %>% 
+  ggplot() + 
+  geom_point(aes(edad, en_zona_endemica, colour=sev_WHO)) + 
+  #scale_color_viridis() +
+  labs(title="edad vs años vivendo en localidad",
+       subtitle= "sep2016")
 
-b <- sevdb_1oms %>%
-  select(codigo, trombocitopenia, cont_plaquetas) %>% #dplyr::count()
-  mutate(trombo_sev= if_else(cont_plaquetas<50000,1,0)) %>% 
-  mutate(trombo_sev= as.factor(trombo_sev)) %>% #glimpse()
-  inner_join(sevdb_2 %>% 
-               select(codigo, sev_WHO),
-             by="codigo") %>% 
-  filter(sev_WHO=="severo") %>% 
-  ggplot(aes(x=cont_plaquetas, fill=trombo_sev)) + 
-  geom_histogram(alpha=.5, position = "identity") + 
-  labs(title="trombocitopenia",
-       subtitle="filter severe samples")
+b <- sevdb_2 %>% 
+  ggplot() + 
+  geom_point(aes(edad, en_zona_endemica, colour=episodio_previo)) + 
+  #scale_color_viridis() +
+  labs(title="edad vs años vivendo en localidad",
+       subtitle= "sep2016")
 
 Rmisc::multiplot(a,b,cols = 2)
 ```
@@ -2283,7 +2340,7 @@ sevdb_1 %>%
   mutate(edad= edad_1==edad_2) %>%
   select(edad, edad_1, edad_2) %>%
   tidyr::unite(edad_c, edad_1, edad_2, remove=F) %>% #count()
-  mutate(edad_c=str_replace(edad_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(edad_c=str_replace(edad_c,"(\\d{2})_\\1", "\\1")) %>%
   mutate(edad_c=str_replace(edad_c,"NA_(\\d+)", "\\1")) %>% 
   mutate(edad_c=str_replace(edad_c,"(\\d+)_NA", "\\1")) %>% 
   mutate(edad_c=str_replace(edad_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
@@ -2555,6 +2612,18 @@ sevdb_1 %>%
   mutate(malaria_pasado_num_c=str_replace(malaria_pasado_num_c,"NA", replacement = NA_character_)) %>%  #%>% count()
   mutate(malaria_pasado_num_c= as.numeric(malaria_pasado_num_c))
 ```
+### Glimpse of all covariates
 
+_Deben observarse lineas completas._
+___Reducir el zoom__ de la página de ser necesario._
+
+#### nov2014
+```{r}
+sevdb_pre %>% glimpse()
+```
+#### sep2016
+```{r}
+sevdb_pos %>% glimpse()
+```
 
 ## References

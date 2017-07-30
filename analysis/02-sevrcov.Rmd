@@ -614,7 +614,7 @@ sevdb_2 <- sevdb_1oms %>%
          malaria_pasado= as.factor(malaria_pasado)
          #,casecontrol= as.factor(casecontrol)
          ) %>% 
-  mutate(sexo= fct_recode(sexo, "hombre"="1", "mujer"="0")) %>% 
+  mutate(sexo= fct_recode(sexo, "hombre"="1", "mujer"="2")) %>% 
   #relevel(sexo, ref = "female") %>% 
   mutate(sexo= fct_relevel(sexo, "hombre"),
          malaria_pasado= fct_relevel(malaria_pasado, "sin-episodio-previo")) %>% 
@@ -626,7 +626,7 @@ sevdb_2 <- sevdb_1oms %>%
 html(Hmisc::contents(sevdb_2), maxlevels=10, levelType='table')
 #glimpse(sevdb_2)
 ```
-__RECLASIFICACIÓN en base a critrio OMS__
+__RECLASIFICACIÓN en base a criterio OMS__
 ```{r}
 sevdb_2 %>% 
   select(codigo, sev_WHO) %>% 
@@ -662,7 +662,7 @@ s1 <- Hmisc::summaryM(shock_oms + #clinicos
 latex(s1, caption='WHO classification: Clinical and Laboratory criterias',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = TRUE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
@@ -763,7 +763,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
 latex(s1, caption='Clinical data',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = TRUE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
@@ -795,7 +795,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
 latex(s1, caption='Clinical data',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = TRUE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
@@ -824,7 +824,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
 latex(s1, caption='Clinical data',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = TRUE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
@@ -850,7 +850,7 @@ s1 <- Hmisc::summaryM(edad #+ #sexo +
 latex(s1, caption='Clinical data',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = TRUE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
@@ -962,7 +962,7 @@ sevdb_4 <- sevdb_3 %>%
 html(Hmisc::contents(sevdb_4), maxlevels=10, levelType='table')
 ```
 
-__RECLASIFICACIÓN en base a critrio OMS__
+__RECLASIFICACIÓN en base a criterio OMS__
 ```{r}
 sevdb_3 %>% 
   select(codigo, sev_WHO) %>% 
@@ -1005,7 +1005,7 @@ s1 <- Hmisc::summaryM(shock_oms + #clinicos
 latex(s1, caption='WHO classification: Clinical and Laboratory criterias',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = TRUE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
@@ -1110,7 +1110,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
 latex(s1, caption='Clinical data',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = TRUE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
@@ -1143,7 +1143,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
 latex(s1, caption='Clinical data',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = TRUE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
@@ -1173,7 +1173,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
 latex(s1, caption='Clinical data',
       exclude1=TRUE, npct='both', 
       digits=3,
-      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
+      #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = TRUE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
       what="%", html = TRUE
