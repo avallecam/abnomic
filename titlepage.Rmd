@@ -3,7 +3,7 @@ output: pdf_document
 ---
 
 \clearpage
-\newgeometry{left=0.5cm,right=0.5cm,top=1.8cm,bottom=1cm}
+\newgeometry{left=0.5cm,right=0.5cm,top=1.5cm,bottom=1cm}
 
 \begin{centering}
 
@@ -76,7 +76,7 @@ NAMRU-6
 
 Duración: 5 meses
 
-\vspace{1 cm}
+\vspace{1.4 cm}
 
 \Large
 Lima - Perú
