@@ -76,7 +76,7 @@ RESUMEN: CORRIGELO AL FINAL
 
 > _Plasmodium vivax_ es responsable del 80% de la malaria en el Perú.
 Casos de enfermedad severa por mono-infecciones de _P. vivax_ han sido reportados 
-tanto en el noreste amazónico como en norte costero. Sin embargo, dicha condición aún está
+tanto en el Noreste amazónico como en Norte costero. Sin embargo, dicha condición aún está
 subestimada en las normas técnicas a nivel nacional, incrementando el riesgo 
 de posibles diagnósticos tardíos o inapropiados por el personal de salud.
 Con el fin de identificar biomarcadores de relevancia clínica contra la malaria 
@@ -876,14 +876,14 @@ a. Epidemiología
         Latinoamérica (19%), detrás de Brasil (24%) y Venezuela (30%) [@WHO2016world].
         El 80% fueron causados por _P. vivax_ (63,153 en total), en regiones con 
         endemismo y transmisión heterogénea [@rosas2016peru]. El 95% 
-        pertenecieron al noreste amazónico (con una razón Pv/Pf de 4/1) 
-        y el resto al norte costero 
-        y la región minera del suroeste. Notablemente, comunidades en 
+        pertenecieron al Noreste amazónico (con una razón Pv/Pf de 4/1) 
+        y el resto al Norte costero 
+        y la región minera del Suroeste. Notablemente, comunidades en 
         Madre de Dios no han registrado caso de malaria falciparum en 
-        una década (2001-2012). Con respecto a factores ambientales, en el año 1998 
+        una década (2001-2012) [@rosas2016peru]. Con respecto a factores ambientales, en el año 1998 
         durante el fenómeno El Niño-Oscilación Sur (ENSO) se produjo 
         el mayor pico de casos anuales en la historia (200,000 casos), con mayor 
-        efecto en el norte costero [@gagnon2002enso]. Los casos anuales 
+        efecto en el Norte costero [@gagnon2002enso]. Los casos anuales 
         provenientes de Tumbes, Piura y Lambayeque a nivel nacional pasaron de
         representar menos del 7% en 1996, a un 48% entre 1998 y 1999.
 
@@ -981,8 +981,8 @@ b. Epidemiología
     i. __A nivel mundial__
         
         Entre el 2005 y 2015, 1-3% de casos no-complicados fueron asumidos 
-        como malaria severa, causante de la muerte de 429,000 personas [@WHO2016world]
-        y en un 90% niños menores de 5 años en África [@wassmer2015].
+        como malaria severa. Esta causó la muerte de 429,000 personas [@WHO2016world],
+        en su mayoría (90%) niños menores de 5 años en África [@wassmer2015].
         De las estrategias preventivas desarrolladas hasta el momento
         (control vectorial, quimioprevención, vacunas e indicadores),
         la única vacuna en completar un ensayo de fase 3, RTS,S/AS01, solo redujo 
@@ -1011,23 +1011,23 @@ b. Epidemiología
     
     i. __En el Perú__
         
-        En el norte costero, Quispe et al. 2014 [@quispe2014] mediante un estudio 
+        En el Norte costero, Quispe et al. 2014 [@quispe2014] mediante un estudio 
         retrospectivo (2008-2009) identificó 81/6502 casos de malaria vivax severa 
         con anemia severa (57%), 
         shock circulatorio (25%), hiperbilirrubina (25%), daño pulmonar (21%), 
-        daño renal agudo (14%) y malaria cerebral (11%).
+        daño renal agudo (14%) y Glasgow $\le$ 9/14 (11%).
         Comparados con los pacientes no complicados, los severos fueron mayores 
         (38 vs 26 años, P<0.001).
         
-        En el noreste amazónico, un reciente estudio prospectivo dirigido por 
+        En el Noreste amazónico, un reciente estudio prospectivo dirigido por 
         El Centro de Enfermedades Tropicales de la Marina de los Estados Unidos 
         NAMRU-6 (2012-2013) [@smith2013] identificó 55/164 casos de 
         malaria vivax severa con <!--POSTER, PERO REQUIERE ¡¡ACTUALIZAR!!-->
-        postración (83%), confusión (32%), shock (27.6%), daño pulmonar (24.5%)
-        hiperbilirubina (18.1%), daño renal (2%) y anemia severa (1.7%). 
+        <!--postración (83%), confusión (32%),--> shock circulatorio (27.6%), daño pulmonar (24.5%)
+        hiperbilirubina (18.1%), daño renal agudo (2%), Glasgow $\le$ 9/14 (2%) y anemia severa (1.7%). 
         No se encontraron diferencias
         con respecto a la edad entre no-severos y severos (33 vs 29 años, P=0.497).
-        Sin embargo, sí se identificó una mayor proporción de pacientes con malaria 
+        Sin embargo, sí se identificó una mayor proporción de malaria 
         severa en mujeres (52 vs 35%, P=0.039).
 
 
@@ -1540,7 +1540,7 @@ b. Análisis de datos
             Ciencia Reproducible [@CienciaReproducible2016].
         
         \newpage
-        3. __Servidores__
+        3. __Servidores web__
             
             Desventajas otorgadas a los software privativos por sus
             limitados métodos estadísticos y capacidades visuales, 
