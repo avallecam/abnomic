@@ -10,6 +10,8 @@ output:
     fig_caption: yes
     include:
       after_body: tabconsis.tex
+#documentclass: article
+#classoption: a4paper
 header-includes:
 - \usepackage{multirow}
 - \usepackage{pdflscape}
@@ -253,9 +255,10 @@ un menor gasto económico en comparación a las estrategias convencionales
 de monitoreo y control [@elliott2014]. 
 Por esta razón, el presente estudio se justifica en 
 el descubrimiento de antígenos potencialmente
-discriminantes de condiciones clínicas como severidad o exposición 
-que permitirán optimizar y acelerar su ejecución en programas de salud pública contra
-la malaria en el Perú en miras a su control y posterior eliminación [@accelerate2016].
+discriminantes de condiciones clínicas como severidad o exposición. 
+Estos permitirán optimizar y acelerar la ejecución de vigilancias serológicas 
+en los programas de salud pública contra
+la malaria en el Perú, en miras a su control y posterior eliminación [@accelerate2016].
 
 <!-- 
 Históricamente, reemergencias repetitivas de esta infección en la amazonía peruana 
@@ -363,7 +366,7 @@ posible de verificar a dicha escala. Por último, la identificación de antígen
 modificaciones postranscriptacionales, particularmente relevantes en _Plasmodium_ 
 [@leroch2009postmod],<!-- y antígenos no-protéicos, como polisacáridos y glucolípidos,--> 
 no serán posibles de reproducir en su integridad en el sistema de expresión procarionte. 
-A pesar de ello, se evaluará la validez y reproducibilidad del ensayo con controles 
+A pesar de ello, se evaluará la validez<!-- y reproducibilidad--> del ensayo con controles 
 internos a detallar en la [sección 4.3.2.2](#validez).
 
 <!-- Es por ello que parámetros 
@@ -535,8 +538,8 @@ fluorescente producto de esta reacción.
 
 Segundo, los pacientes severos se definirán por la presencia de 
 manifestaciones clínicas severas o complicaciones sistémicas. Esta variable será asignada 
-por la presencia de uno o más parámetros clínicos y de laboratorio para la malaria severa,
-según el criterio recomendado por la Organización Mundial de la Salud (OMS) [@WHO2014severe].
+por la presencia de uno o más criterios clínicos y de laboratorio para la malaria severa,
+según la clasificación recomendada por la Organización Mundial de la Salud (OMS) [@WHO2014severe].
 
 Tercero, la clasificación por episodios previos reportados representará la presencia de 
 infecciones previas con malaria y, consecuentemente, la presencia de una respuesta inmune 
@@ -644,8 +647,8 @@ VARIABLE INTERVINIENTE con OBJETIVO EXPLORATORIO: EDAD (hipotesis sin poder esta
   % anticuerpo secundario y fluoroforo por spot
   & 
   \begin{minipage}{2.2cm} 
-  Microarreglo\\
-  de proteínas
+  %Lector\\ óptico de\\
+  Microarreglo\\de proteínas
   \end{minipage}
   & 
   \begin{minipage}{2.2cm} 
@@ -666,15 +669,15 @@ VARIABLE INTERVINIENTE con OBJETIVO EXPLORATORIO: EDAD (hipotesis sin poder esta
   Presencia de manifestaciones clínicas severas o complicaciones sistémicas
   &
   % aOPERACIONAL:
-  Número de parámetros del criterio OMS para malaria severa
+  Número de criterios de la clasificación OMS para malaria severa
   & 
   \begin{minipage}{2.2cm} 
   Diagnóstico \\clínico \\y pruebas \\bioquímicas 
   \end{minipage}
   & 
   \begin{minipage}{2.2cm} 
-  \textbf{No-severa:} 0 parámetros.\\
-  \textbf{Severa:} 1 o más parámetros.
+  \textbf{No-severa:} 0 criterios\\
+  \textbf{Severa:} 1 o más criterios.
   \end{minipage}
   &
   Categórica dicotómica
@@ -906,7 +909,7 @@ b. Biología
         La ecología natural del parásito de la malaria involucra a dos hospederos: 
         el humano y el mosquito.
         A través de la picadura del mosquito infectado, los esporozoitos 
-        son librerados al fluido sanguíneo del hospedero e
+        son liberados al fluido sanguíneo del hospedero e
         ingresan a las células hepáticas iniciándose su desarrollo asexual,
         llamado estadio hepático.
         Ahí se multiplican hasta formar esquizontes, los cuales egresan al torrente 
@@ -950,7 +953,7 @@ a. General
     i. __Definición__
     
         Ante la ausencia de una descripción especie-específica, la Malaria Vivax
-        Severa está definida por el criterio para _P. falciparum_ otorgado 
+        Severa está definida por los criterios para _P. falciparum_ otorgados 
         por la OMS en el 2014 [@WHO2014severe], el cual incluye una o más de
         las siguientes (todas registradas en mono-infecciones 
         por _P. vivax_):
@@ -1146,7 +1149,7 @@ b. Marcadores
 	        reducción en la producción de la citoquina antiinflamatoria IL-10, un regulador
 	        central en la respuesta contra la malaria [@jagannathan2014].
 	        Es por ello que esta primera fase implicaría la adquisición de
-	        inmunidad a componentes parasitarios que gatillan una respuesta inflamatoria 
+	        inmunidad a componentes parasitarios que desencadenan una respuesta inflamatoria 
 	        innata. Una hipótesis está en anticuerpos que interfieran la unión de 
 	        glucoproteínas proinflamatorias con receptores Toll 
 	        [@schofield2006toll; @coban2005toll].
@@ -1155,11 +1158,11 @@ b. Marcadores
 	        Por otro lado, la adquisición de anticuerpos que bloqueen la adhesión de iRBC 
 	        o invasión parasitaria también son candidatos a otorgar una protección a este
 	        nivel [@wassmer2015].
-	        Antígenos referenciales son las proteínas VIR en _P. vivax_, homólogas a VAR 
+	        Antígenos referenciales son (i) las proteínas VIR en _P. vivax_, homólogas a VAR 
 	        en _P. falciparum_,
 	        posiblemente secretadas en iRBC y causantes de adhesividad a endotelio o 
-	        RBC no infectados, condición gatilladora del rosetamiento y 
-	        posterior obstrucción microvascular [@portillo2001vir], y 
+	        RBC no infectados, condición que desencadena el rosetamiento y 
+	        posterior obstrucción microvascular [@portillo2001vir], y (ii)
 	        las proteínas de la familia PvDBP y PvRBP
 	        (_Duffy-_ y _Reticulocyte- binding proteins_), responsables
 	        de la invasión a reticulocitos por la ruta tradicional y alternativa, respectivamente
@@ -1209,7 +1212,7 @@ d. Enfoque a larga escala
     Por este motivo, tanto los esfuerzos de vacunas por subunidades 
     como por organismos completos atenuados han fracasado,
     en contraste a la eficacia observada de dichas estrategias en otras infecciones como 
-    la HBsAg contra la hepatitis B y BCG contra la tuberculosis, 
+    HBsAg contra la hepatitis B y BCG contra la tuberculosis, 
     respectivamente [@immunomics2016].
     <!--Incluso, ensayos 
     clínicos de fase 3 han demostrado que los actuales candidatos poseen una pobre 
@@ -1237,10 +1240,10 @@ d. Enfoque a larga escala
     ii. __Inmunómica__
         
         Un segundo enfoque <!--que se construyó sobre aquél -->fue llamado _Inmunómica_, 
-        el cual hace uso de la información de ambos agentes interaccionantes.
-        La selección de inmunógenos es realizada por métodos empíricos usando data
+        el cual hace uso de la información de ambos agentes interactuantes: patógeno y hospedero.
+        La selección de inmunógenos es realizada por (i) métodos empíricos usando data
         transcriptómica y proteómica de patógenos dinámicos más la información clínica 
-        del hospedero, o métodos teóricos empleando algoritmos computacionales predictivos 
+        del hospedero, o (ii) métodos teóricos empleando algoritmos computacionales predictivos 
         <!--de proteínas inmunógenas -->que tomen en cuenta la afinidad entre 
         péptidos del patógeno y<!-- determinadas--> moléculas 
         del complejo principal de histocompatibilidad (MHC) del hospedero.
@@ -1252,7 +1255,7 @@ d. Enfoque a larga escala
         Este enfoque ha permitido obtener datos empíricos sobre 
         diferencias en la amplitud, intensidad, cinética y longevidad de respuestas inmunes
         inducidas por patógenos. Además de mayor información sobre aspectos clave como el
-        porcentaje del proteoma reconocido por el hospedero, la capacidad predictora
+        porcentaje del proteoma reconocido por el hospedero, la capacidad predictiva
         de anticuerpos sobre el estado de la enfermedad o de las
         secuencias de aminoácidos sobre su inmunogenicidad [@Davies2015Large].
         Dos plataformas representativas son los microarreglos de proteínas
@@ -1275,7 +1278,7 @@ a. De proteínas
     Esta es una técnica empleada en la medición a larga escala de las interacciones o 
     actividades de proteínas capaz de reconstruir redes biológicas entre 
     diferentes clases de moléculas y estados celulares [@uzoma2013interactome].
-    En el contexto inmunómico, cuantificando la interacción antígeno-anticuerpo,
+    En el contexto inmunómico, al cuantificar las interacciones antígeno-anticuerpo,
     el tamaño y complejidad de los genomas de _Plasmodium_ desafían su
     ejecución a una escala de proteoma completo.
     <!--Por ejemplo, _P. falciparum_ posee más de 3kb de longitud, ~5300 genes, genes 
@@ -1354,40 +1357,39 @@ b. Análisis de datos
             
         1. __Pre procesamiento__ 
             
-            Incluye la transformación, normalización y filtrado de la matriz de datos.
+            Incluye la normalización, transformación y filtrado de la matriz de datos.
             <!--También a los criterios bajo los cuales se controlará la calidad de las
             mediciones del experimento.-->
             
-            Primero, la transformación tiene el objetivo reducir de la
+            Primero, la normalización busca homogeneizar la variabilidad entre arreglos
+            en base a controles (blanco, negativos o positivos), 
+            los cuales se asume que son invariantes entre muestras. 
+            De acuerdo al diseño de arreglos, este procedimiento es 
+            ejecutado de tres formas:
+            - sustracción de controles o _fold over control_ (FOC),
+            aplicado en microarreglos de proteínas con respecto a la mediana del control blanco
+            por muestra [@King2015FOC];<!--[@arevalo2016]-->
+            - estabilización de varianzas o VSN, 
+            aplicado en microarreglos de DNA con respecto a controles de 
+            intensidad invariante entre muestras, e.g. genes _housekeeping_ [@huber2002vsn]; y
+            - modelo robusto lineal o RLM,
+            con la capacidad de controlar la variabilidad entre muestras
+            observada en los diseños experimentales de microarreglos de proteínas 
+            [@sboner2009rlm].
+            
+            Segundo, la transformación tiene el objetivo reducir la
             heterocedasticidad o heterogeneidad de varianzas entre las observaciones 
-            producto de errores aleatorios en proceso de hibridación, 
-            mas no del instrumento [@kreil2005bullet].
-            Este fenómeno se evidencia en el incremento de la varianza de las medidas 
+            por errores aleatorios en el proceso de hibridación [@kreil2005bullet].
+            Este fenómeno se evidencia en el incremento de la varianza <!--de las medidas -->
             directamente proporcional al incremento de su intensidad [@brown2001image].
             Para ello, dos principales transformaciones han sido definidas:
             - logarítmica,
             la cual asume un error multiplicativo que corrige las varianzas de 
-            alta intensidad pero puede inflar a las de baja intensidad; y
+            alta intensidad pero capaz dispersar a las de baja intensidad; y
             - asinh,
-            la cual asume un error aditivo y multiplicativo que corrige a las 
-            varianzas de alta y baja intensidad.
-            
-            Segundo, la normalización busca homogeneizar la variabilidad entre arreglos
-            en base a controles (blanco, negativos o positivos), 
-            los cuales deben ser invariantes entre muestras. 
-            De acuerdo al diseño de arreglos, este procedimiento es 
-            ejecutado de tres formas:
-            - sustracción de controles,
-            aplicado luego de ejecutar una transformación logarítmica y llamado 
-            _fold over control_ (FOC) en microarreglos de proteínas
-            [@King2015FOC]; y<!--[@arevalo2016]-->
-            - estabilización de varianzas o VSN, 
-            aplicado en forma paralela a la transformación asinh con respecto a controles 
-            _spike-in_ de intensidad invariante entre muestras [@huber2002vsn].
-            - modelo robusto lineal o RLM,
-            con la capacidad de controlar la variabilidad entre arreglos (i.e., muestras) 
-            observada en los diseños experimentales de microarreglos de proteínas 
-            [@sboner2009rlm].
+            la cual asume un error multiplicativo y aditivo que corrige esta dispersión, 
+            relevante en contextos donde los valores normalizados menores a la unidad 
+            tienen significado biológico.
             
             Tercero, el filtrado en experimentos a larga escala permite incrementar
             el poder de detección de elementos con expresión diferenciada
@@ -1405,7 +1407,7 @@ b. Análisis de datos
             
             Los objetivos de la inferencia estadística de microarreglos son (i) poner 
             a prueba la hipótesis nula de igualdad de medias en las expresión
-            de elementos por grupo y (ii) ranquear a los elemento en orden a la
+            de elementos por grupo y (ii) ordernar o ranquear a los elemento según la
             evidencia contra la hipótesis nula, incluso luego de fallar en el rechazo
             de dicha hipótesis [@smyth2004ebayes]. 
             Sin embargo, a esta escala existen dos principales problemas: 
@@ -1572,7 +1574,7 @@ a. Acrónimos
     __MFI:__
     Unidad de lectura cruda expresada como
     intensidad fluorescente promedio
-    de todos los pixeles de cada _spot_, 
+    de todos los píxeles de cada _spot_, 
     normalizada localmente mediante la
     sustracción de la intensidad de fondo presente 
     a su alrededor.
@@ -1588,7 +1590,7 @@ b. Términos
     causada por un parásito del género _Plasmodium_.
     
     **Malaria severa.-** Clasificación de los pacientes con malaria 
-    según parámetros clínicos y de laboratorio.
+    según criterios clínicos y de laboratorio.
     -->
     
     i. Generales
@@ -1746,10 +1748,11 @@ No se realizará una seguimiento de la población.
 
 ### Población
 
-El universo teórico está representado por los pacientes con malaria vivax 
-<!--severa -->de la cuenca amazónica del Perú.
+<!--El universo teórico está representado por los pacientes con malaria vivax 
+de la cuenca amazónica del Perú.-->
+<!--El marco muestral-->
 
-El marco muestral está delimitado por pacientes diagnosticados con malaria vivax 
+La población está delimitada por pacientes diagnosticados con malaria vivax 
 <!--y clasificados como severos y no-severos-->de la ciudad de Iquitos, Loreto - Perú, 
 entre enero del 2012 y junio del 2013 a lo largo de un estudio prospectivo 
 ejecutado en dos hospitales de referencia: Hospital de Apoyo y Hospital Regional.
@@ -1760,19 +1763,18 @@ a. Criterios de inclusión
     
     En el estudio prospectivo mencionado, 
     164 pacientes con malaria vivax fueron enrolados mediante vigilancia pasiva.
-    Según la presencia de uno o más parámetros clínicos y de laboratorio del 
-    criterio OMS para la Malaria Severa [@WHO2014severe], los pacientes fueron 
-    clasificados como severos o no-severos.
+    Según la presencia de uno o más criterios clínicos y de laboratorio de la
+    clasificación OMS para la Malaria Severa [@WHO2014severe], los pacientes fueron 
+    estratificados como severos o no-severos.
     <!-- OJO: REDEFINIR LUEGO DE REVISAR sevcov!! -->
     
-    Los parámetros clínicos del criterio OMS son:
+    Los criterios clínicos de la clasificación OMS son:
     Shock circulatorio (presión sanguínea sistólica < 80 mmHg), 
     Deterioro del nivel de conciencia (puntaje Glasgow $\le$ 9/14),
-    Daño del sistema nerviosos central (convulsión, postración, coma, confusión),
-    Daño pulmonar (disnea, taquipnea, infiltración, edema), y el
-    Síndrome de dificultad respiratoria aguda o SDRA.
+    Daño del sistema nerviosos central (convulsión),
+    Daño pulmonar (síndrome de dificultad respiratoria aguda o edema pulmonar).
     
-    Los parámetros de laboratorio del criterio OMS son:
+    Los criterios de laboratorio de la clasificación OMS son:
     Hipoglicemia (glucosa < 40 mg/dL), 
     Anemia severa (hemoglobina < 7mg/dL), 
     Daño renal (creatinina > 3mg/dl), e
@@ -1781,19 +1783,23 @@ a. Criterios de inclusión
     
 b. Criterios de exclusión
     
-    Dos criterios de exclusión fueron empleados:
-    Presencia de mono-infecciones de _P. vivax_ determinadas por PCR y
-    ausencia de coinfecciones como leptospirosis, dengue u otra arbovirosis por 
-    las técnicas de aislamiento viral e inmunofluorescencia.
+    Dos criterios de exclusión fueron empleados: (i) Presencia de coinfecciones con especies de 
+    _Plasmodium_ distintas a _P. vivax_ determinadas por PCR, y (ii)
+    presencia de coinfecciones como leptospirosis, dengue u otra arbovirosis determinada por 
+    técnicas de aislamiento viral e inmunofluorescencia.
+    <!-- Auscencia de mono-infecciones de _P. vivax_ determinadas por PCR y -->
     
 ### Selección de participantes
 
-A partir de esta clasificación, se ejecutará una selección aleatoria simple
-de 30 pacientes con uno o más parámetros del criterio OMS de malaria severa para el grupo de casos y 
-30 no-severos para el grupo control.
+A partir de esta estratificación, se ejecutará 
+una selección arbitraria de 30 pacientes representativos de malaria severa
+con uno o más criterios de la clasificación OMS para el grupo de casos y 
+una selección aleatoria simple de 30 casos no-severos para el grupo control.
 
-__Tipo de muestra: Probabilística.__ Cada elemento de la muestra será seleccionado al azar, 
-con probabilidad de selección conocida.
+__Tipo de muestra: No probabilística y Probabilística.__ 
+Los elementos del grupo caso provendrán de una selección arbitraria,
+mientras que el grupo control será seleccionado al azar, 
+i.e. con probabilidad de selección conocida.
 
 ## Recolección de los datos e instrumento
 <!-- Muestreo -->
@@ -1903,8 +1909,9 @@ intensidad de fondo presente alrededor de cada _spot_, ejecutada en el software 
 (Genepix Pro 7). Finalmente, se procede al análisis de los datos el cual será detallado en 
 la [sección 4.4](#anadata).
 
-#### Validez y confiabilidad {#validez}
- <!--de medición y recolección
+#### Validez {#validez}
+
+<!--de medición y recolección
  
  DOS PUNTOS RELEVANTES: 
 VALIDEZ (PRECISIÓN) -> PURIFIED vs IVTT
@@ -1923,17 +1930,17 @@ sin plásmidos de ADN y control negativo con solo buffer. Se colectarán
 individuos controles de origen norteamericano que no hayan tenido
 contacto alguno con la infección.
 
+estará incluida en la [sección 4.4](#anadata).
+
  -->
 
-Ambos parámetros serán evaluados siguiendo la metodología empleada en estudios previos 
-[@crompton2010] y que estará incluida en la [sección 4.4](#anadata).
-Primero, la validez o exactitud del experimento será evaluada mediante la correlación 
+La validez o exactitud del experimento será evaluada mediante la correlación 
 lineal entre las lecturas de los antígenos-IVTT y sus correspondientes proteínas 
 purificadas por muestra, compuestas por proteínas de inmunogenicidad conocida y expresadas 
-por un sistema dentro de célula.
-Segundo, la confiabilidad o reproducibilidad será evaluada mediante la correlación lineal 
+por un sistema dentro de célula [@crompton2010].
+<!--Segundo, la confiabilidad o reproducibilidad será evaluada mediante la correlación lineal 
 entre controles positivos agregados a las lecturas del primer y segundo día de sondeo de 
-las muestras.
+las muestras.-->
 
 ### Codificación y creación del archivo de datos
 
@@ -1983,15 +1990,15 @@ Para ello se hará empleo de los siguientes paquetes:
 Preliminarmente, se describirá la distribución y proporción de las
 covariables epidemiológicas, clínicas y bioquímicas 
 de los pacientes de la muestra.
-Luego, con las lecturas crudas en MFI se evaluará la validez y 
-reproducibilidad del ensayo mediante un
-test de asociación entre variables continuas, 
-usando correlación de Pearson ($r$) o Spearman ($\rho$), dependiendo de la distribución,
-con un 0.1% de error asumido.
-Posteriormente, se procederá con su 
-transformación a escala logarítmica en base 2, 
-normalización entre muestras por sustracción de la mediana de los control-IVTT a 
-cada antígeno-IVTT por individuo, y 
+Luego, con las lecturas crudas en MFI se evaluará la validez <!--y 
+reproducibilidad--> del ensayo mediante un
+test de asociación entre variables continuas
+con la correlación de Pearson ($r$) o Spearman ($\rho$), de acuerdo a la distribución,
+asumiendo un error del 0.1%.
+Posteriormente, se procederá con la 
+normalización entre muestras de cada antígeno-IVTT 
+con respecto a la mediana de los control-IVTT por individuo,
+transformación a escala logarítmica en base 2, y 
 filtrado de todo antígeno que posea una frecuencia de reactividad menor al 10%.
 Para ello, un antígeno reactivo será definido <!--conceptualmente como el antígeno-IVTT 
 mayor o igual a dos veces la mediana de los control-IVTT por individuo y -->
@@ -2059,29 +2066,102 @@ reproducibilidad [@CienciaReproducible2016].
 # ASPECTOS ADMINISTRATIVOS
 
 ## Cronograma de actividades
+
+El Proyecto de Tesis fue trabajado en el Departamento de Parasitología del 
+Centro de Enfermedades Tropicales de la Marina de los Estados Unidos NAMRU-6,
+del 01 de enero del 2016 al 31 de diciembre del 2016. 
+
+La duración está basada en el programa de actividades paralelas y posteriores 
+a la redacción del Informe.
+
+\begin{table}[ht]
+\begin{center}
+\hspace*{-1cm}
+\begin{tabular}{lp{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}
+p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}
+p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}}
+  \hline
+  \textbf{ACTIVIDAD} & 
+  \textbf{2016} & & & & & & & & & & & & 
+  \textbf{2017} & & & & & & & & & & &\\
+  \hline
+  & 
+  01 & 02 & 03 & 04 & 05 & 06 & 07 & 08 & 09 & 10 & 11 & 12 & 
+  01 & 02 & 03 & 04 & 05 & 06 & 07 & 08 & 09 & 10 & 11 & 12\\
+  \hline
+  Recolección de datos & 
+  x & & & & & & & & & & & & 
+  & & & & & & & & & & &\\
+  \cline{2-25}
+  Análisis de datos & 
+  & x & x & x & x & x & x & x & x & x & x & & 
+  & & & & & & & & & & &\\
+  \cline{2-25}
+  Interpretación de resultados & 
+  & & & & & & & & & x & x & x &
+  x & x & x & & & & & & & & &\\
+  %\cline{2-25}
+  %Redacción de proyecto & 
+  %& & & & & & & & & & & & 
+  %& & x & x & x & x & x & & & & &\\
+  \cline{2-25}
+  Redacción del Informe & 
+  & & & & & & & & & & & & 
+  x & x & x & x & x & x & x & x & x & x & &\\
+  %\cline{2-25}
+  %Redacción de resultados & 
+  %& & & & & & & & & & & & 
+  %& & & x & x & x & x & x & x & & &\\
+  %\cline{2-25}
+  %Redacción conclusiones & 
+  %& & & & & & & & & & & & 
+  %& & & & & & & & x & x & &\\
+  \cline{2-25}
+  Correcciones & 
+  & & & & & & & & & & & & 
+  & & & & & & & & & x & x & x\\
+  \cline{2-25}
+  Sustentación & 
+  & & & & & & & & & & & & 
+  & & & & & & & & & & & x\\
+  %\hline
+  %d1 & 
+  %& & & & & & & & & & & & 
+  %& & & & & & & & & & &\\
+  \hline
+  % etc. ...
+\end{tabular}
+\hspace*{-1cm}
+\end{center}
+        \captionof{table}{Cronograma}
+        \label{tab:crono}
+\end{table}
+
 <!--
 Dado que las muestras ya han sido colectadas, solo se procederá a
 recolectar lo datos a través del instrumento de medición descrito.
--->
+
   **ACTIVIDAD PROGRAMADA**
-  --------------------------------- ----------- --------- --------- --------- --------- ---------
-                                    **Jul**     **Ago**   **Sep**   **Oct**   **Nov**   **Dic**  
+  --------------------------------- ----- ----- ----- ----- ----- -----
+                                    __2016__                                __2017__
+                                    **E**     **Feb-Oct**   **Nov-Dic**   **Ago-Sep**   **Oct-Nov**   **Dic**  
   Recolección de datos              X
   Análisis de datos                             X
   Interpretación de resultados                            X
   Redacción final                                                   X
   Correcciones                                                                X
   **Sustentación**                                                                      X
-
+-->
 
 ## Presupuesto y financiamiento
 
-El proyecto será realizado en El Centro de Enfermedades Tropicales
-de la Marina de los Estados Unidos NAMRU-6 y financiado por<!--\textcolor{red}{\hl{a}}-->
-The Global Emerging Infectious Surveillance and Response System (GEIS) section at the 
+El proyecto fue realizado con financiamiento interno de la institución.
+<!--y financiado por \textcolor{red}{\hl{a}}
+The Global Emerging Infectious Surveillance and Response System 
+(GEIS) section at the 
 Armed Forces Health Surveillance Branch (AFHSC),
 The Military Infectious Diseases Research Program (MIDRP) y el
-NIH Training grant 2D43TW007393.
+NIH Training grant 2D43TW007393.-->
 
 ```{r, eval=TRUE, echo=FALSE}
 a <- c(50,200,25,
@@ -2120,6 +2200,7 @@ b <- format((a*100/sum(a)), digits = 1)
   **TOTAL**                                          31910                 100
   ------------------------------------------------------------------------------------------
 
+  Table: Presupuesto
 
 # BIBLIOGRAFÍA
 <!--
