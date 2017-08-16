@@ -1,0 +1,1275 @@
+---
+title: "Comparación de la respuesta de anticuerpos ante la Malaria vivax mediante Microarreglos de proteínas"
+author: "Andree Valle Campos"
+date: '`r Sys.Date()`'
+output:
+  #html_document:
+  #pdf_document:
+  html_notebook:
+    toc: yes
+    toc_depth: 6
+    toc_float:
+      collapsed: yes
+    #theme: united
+    code_folding: "hide"
+    #fig_caption: TRUE
+    #number_sections: TRUE
+bibliography: malaria.bib
+link-citations: yes
+#csl: american-medical-association.csl
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, #fig.path = "01-",
+                      warning = FALSE)
+knitr::opts_knit$set(root.dir = '../.')
+options(width = 90) # expand limits of CONSOLE output
+```
+
+## Microarray Data Analysis
+
+### Dependencies
+
+This document has the following dependencies:
+```{r, warning=FALSE, message=FALSE}
+library("tidyverse")
+library("haven")
+library("broom")
+library("biobroom")
+library("ggrepel")
+library("Rmisc")       #multiploting ggplots
+
+library("Biobase")     #ExpressionSet
+library("genefilter")  #DataCondensation
+library("limma")       #DifferentialAnalysisOfGenes
+library("NMF")         #AnnotatedHeatmaps!!!
+
+library(PerformanceAnalytics) #GRAPHICAL CORRELATIONS
+library(beeswarm)
+#library(vioplot)
+#library(beanplot)
+#library(htmlTable)  #HTMLtables -minimalistic- without 'ResultsAsis'
+#library(knitr)        #better it seems
+```
+
+
+### Input
+
+```{r}
+raw<-read.csv("data-raw/RawData.csv")
+```
+
+```{r, eval=FALSE}
+raw %>% View()
+raw %>% dplyr::count(Spot.Type)
+```
+
+### 1. Tidy up
+
+#### ivtt antigens
+
+```{r}
+anti <- raw %>% 
+  dplyr::filter(Spot.Type=="IVTT.AG") %>% #head()
+  select(ID,11:ncol(.)) %>% #head()
+  gather(sample_name, expression, -ID) %>% 
+  mutate(expression=as.numeric(expression)) %>% 
+  reshape2::acast(ID ~ sample_name,
+                  value.var = "expression") #%>% class()
+
+# dimensión
+dim(anti)
+# seis lecturas por proteína de las 8 primeras muestras
+head(anti[,1:8])
+```
+
+#### ivtt controls
+
+```{r}
+ctrl <- raw %>% 
+  dplyr::filter(Spot.Type=="IVTT.CTRL") %>% #head()
+  select(ID,11:ncol(.)) %>% #head()
+  summarise_if(is.numeric,funs(median)) %>% # MEDIAN to NORMALIZE against noDNA controls
+  mutate(ID="noDNA") %>% 
+  gather(sample_name, expression, -ID) %>% 
+  mutate(expression=as.numeric(expression)) %>% 
+  reshape2::acast(ID ~ sample_name,
+                  value.var = "expression") #%>% class()
+
+# dimensión
+dim(ctrl)
+# seis lecturas por proteína de las 8 primeras muestras
+ctrl[,1:8]
+```
+
+```{r}
+ctrm <- NULL # crear objeto vacío
+# loop para generar una matriz de las dimensiones de `anti`
+for(i in 1:nrow(anti)){
+  ctrm <- rbind(ctrm,ctrl)
+}
+# dimensiones de la matriz con la mediana de ctrls `noDNA` creada
+dim(ctrm)
+# matriz con la mediana de ctrls `noDNA` para las 8 primeras muestras
+head(ctrm[,1:8]) #%>% class()
+```
+
+#### purified proteins
+
+```{r}
+pure <- raw %>% 
+  dplyr::filter(Spot.Type=="PURIFIED.PROTEIN") %>% #dim() #dplyr::count(Species)
+  #separate(Description,c("gene", "conc"), sep=",",remove = FALSE) %>% #dplyr::count(gene)
+  #select(ID,Species,gene,14:ncol(.)) %>% 
+  select(ID,11:ncol(.)) %>% 
+  gather(sample_name, expression, -ID) %>% 
+  mutate(expression=as.numeric(expression)) %>% 
+  reshape2::acast(ID ~ sample_name,
+                  value.var = "expression") #%>% class()
+```
+
+#### gene names
+
+```{r}
+# generate a list (df) of gene names and gene ID's
+ln <- raw %>% 
+  dplyr::filter(Spot.Type=="IVTT.AG") %>% #head()
+  select(ID,Description) #%>% #head()
+```
+
+#### feature data
+
+```{r}
+feat <- raw %>% 
+  dplyr::filter(Spot.Type=="IVTT.AG") %>%
+  #select(ID,1:10) %>% #head()
+  select(ID,Description,Species) %>% #head()
+  as.data.frame() %>% 
+  column_to_rownames(var="ID")#%>% class()
+
+feat_d <- new("AnnotatedDataFrame", data=feat)
+```
+
+#### phenotype data
+
+- __join__ `sample.csv` with `03-sevrcov.rds` and `primaquine` sample data
+- __create__ categorical variables from numerical: `edad` and `episodio_previo_num`
+    + `cut()`advantage: automatic factor labels.
+
+```{r}
+sevdb_3 <- readRDS("data/03-sevrcov.rds") %>% #dplyr::count(episodio_previo)
+  dplyr::rename(Sample.ID="codigo") %>% 
+  mutate(edad_CAT=cut(edad,c(0,18,40,65,Inf)),
+         expo_CAT=cut(episodio_previo_num,c(-Inf,0,1,4,Inf))) %>%  #%>%
+  select(Sample.ID,#sev_WHO_num,en_zona_endemica,#edad,#episodio_previo_num#,parasitemia
+         sev_WHO:expo_CAT,-Study,-episodio_previo_num)
+```
+
+```{r, message=FALSE}
+pridb <- readr::read_csv("analysis/more/ADi-NAMRU6_Data/samples.csv") %>% ## BUSCAR ORIGINAL!!!
+  filter(Study=="Primaquine") %>% 
+  select(Sample.ID,Cat.Age.WHO:Anemia.HTO)
+```
+
+```{r, message=FALSE}
+pheno <- readr::read_csv("data-raw/samples.csv") %>% #dplyr::count(Sample.Type)
+  dplyr::filter(Sample.Type!="Control") %>% #str()
+  select(Sample.ID, 1:9, -Sample.Type,-Subject.ID) %>% #dplyr::count(Filename)
+  dplyr::arrange(Sample.ID) %>%
+  full_join(sevdb_3,by = "Sample.ID") %>% 
+  full_join(pridb,by = "Sample.ID") %>% 
+  dplyr::arrange(Sample.ID) %>% 
+  as.data.frame() %>% 
+  column_to_rownames(var="Sample.ID")
+
+pheno_d <- new("AnnotatedDataFrame", data=pheno)
+
+#colnames(norx)
+```
+
+### 2. Normalization + Transformation
+
+```{r log-norm}
+# custom function
+# definir resultado para los valores menores o iguales a cero:
+log2.NA = function(x) {log2(ifelse(x>0, x, NA))}
+
+# normalización con respecto a los controles `noDNA` c/ transformación log2
+norm <- log2.NA(anti/ctrm)
+head(norm[,1:6])
+```
+
+```{r ratio-test, eval=FALSE, echo=FALSE}
+test <- anti/ctrm 
+
+test %>% as.data.frame() %>% 
+  rownames_to_column() %>% 
+  gather(sample_name,expression,-rowname) %>% 
+  filter(expression <= 0)
+
+anti %>% as.data.frame() %>% 
+  rownames_to_column() %>% 
+  gather(sample_name,expression,-rowname) %>% 
+  dplyr::filter(rowname=="PVX_113590_2o2.849",sample_name=="LIM2077") # 21
+
+norm %>% as.data.frame() %>% 
+  rownames_to_column() %>% 
+  gather(sample_name,expression,-rowname) %>% 
+  dplyr::filter(rowname=="PVX_113590_2o2.849",sample_name=="LIM2077") # 21
+```
+
+```{r vsn-norm}
+
+```
+
+#### outlier
+
+```{r}
+p <- norm %>% as.data.frame() %>% 
+  gather(sample_name,expression) %>% 
+  ggplot(aes(sample_name,expression)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_blank())
+```
+
+```{r}
+# EDIT specific value under CONDITIONAL STATEMENT: 
+# source: https://github.com/tidyverse/dplyr/issues/425
+norx <- norm %>% as.data.frame() %>% 
+  rownames_to_column() %>% 
+  gather(sample_name,expression,-rowname) %>%
+  #dplyr::filter(expression < -5) #%>% dim()
+  mutate(expression= ifelse(expression < -5, NA, expression)) %>% # RULE TO EDIT a value of a column!
+  #dplyr::filter(rowname=="PVX_111175.544",sample_name=="LIM2017") # 21
+  reshape2::acast(rowname ~ sample_name,
+                  value.var = "expression") #%>% class()
+ 
+#norm["PVX_111175.544","LIM2017"] <- NA ## messy modification
+
+#anti %>% as.data.frame() %>% 
+#  rownames_to_column() %>% 
+#  gather(sample_name,expression,-rowname) %>% 
+#  dplyr::filter(rowname=="PVX_111175.544",sample_name=="LIM2017") # 21
+#
+#ctrl %>% as.data.frame() %>% 
+#  rownames_to_column() %>% 
+#  gather(sample_name,expression,-rowname) %>% 
+#  dplyr::filter(sample_name=="LIM2017") # 13550.5
+```
+
+```{r, fig.height=4, fig.width=15}
+q <- norx %>% as.data.frame() %>% 
+  gather(sample_name,expression) %>% 
+  ggplot(aes(sample_name,expression)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_blank())
+
+Rmisc::multiplot(p,q,cols = 2)
+```
+
+### 3. ExpressionSet
+
+- __arrange__ `norx` rownames wrt `feat_d` ones.
+- __create__ the expression set
+
+```{r}
+head(norx[,1:5])
+head(norx[feat_d %>% rownames(),1:5])
+```
+
+```{r}
+eset <- ExpressionSet(assayData = norx[feat_d %>% rownames(),], 
+                      phenoData = pheno_d,
+                      featureData = feat_d)
+eset
+```
+
+#### subset eset 
+**per Pv/Pf chip and Pq/Sev experiment**
+```{r}
+#eset
+# ExpressionSet subseted by both SAMPLES and FEATURE covariates!!!!
+##
+eset.VIVAX.PQ<-eset[featureData(eset)$Species=="Pv",
+                    phenoData(eset)$Study=="Primaquine"]
+#eset.VIVAX.PQ
+#
+eset.FALCIP.PQ<-eset[featureData(eset)$Species=="Pf",
+                     phenoData(eset)$Study=="Primaquine"]
+#eset.FALCIP.PQ
+##
+eset.VIVAX.SEV<-eset[featureData(eset)$Species=="Pv",
+                     phenoData(eset)$Study!="Primaquine"]
+eset.VIVAX.SEV
+#
+eset.FALCIP.SEV<-eset[featureData(eset)$Species=="Pf",
+                      phenoData(eset)$Study!="Primaquine"]
+#eset.FALCIP.SEV
+##
+```
+
+```{r, eval=FALSE}
+summary(pData(eset))
+varMetadata(eset)
+table(pData(eset)$Study)
+table(pData(eset)$Group)
+```
+
+#### specific pData
+
+```{r}
+pData(eset.VIVAX.SEV) <- pData(eset.VIVAX.SEV) %>% 
+  select(Filename:expo_CAT,-Filename,-Slide,-Pad,-Probing.Day)
+
+eset.VIVAX.SEV
+```
+
+```{r}
+pData(eset.VIVAX.PQ) <- pData(eset.VIVAX.PQ) %>% 
+  select(Study,Group,Weight:Anemia.HTO)
+
+#eset.VIVAX.PQ
+```
+
+### 4. Filtering
+
+```{r, echo=TRUE}
+#
+#eset             # 1014 features X 200 samples   (10%= 20)
+#
+#eset.VIVAX.PQ    # 515 features X 140 samples    (10%= 14)
+#eset.FALCIP.PQ   # 499 features X 140 samples    (10%= 14)
+#eset.VIVAX.SEV   # 515 features X 60 samples     (10%= 6)
+#eset.FALCIP.SEV  # 499 features X 60 samples     (10%= 6)
+#
+############################## [START] GENEFILTER for each DATASET (n=4)
+f1 <- kOverA(20,1)                           ## expression measure above 1 in at least 20 samples
+ffun <- filterfun(f1)
+wh1 <- genefilter(exprs(eset),ffun)  # WHOLE data set
+#sum(wh1) # 526 -> 818 ---------------------------------------------------->>>> (ALL of this are WITHOUT mean centering)
+#
+# GENERATE the NEW ExpressionSet
+eset.FILTER<-eset[wh1,]
+#eset.FILTER
+
+############################## GENEFILTER for VIVAX PRIMAQUINE
+f2 <- kOverA(14,1)                           ## expression measure above 1 in at least 14 samples
+ffun2 <- filterfun(f2)
+wh2 <- genefilter(exprs(eset.VIVAX.PQ),ffun2)  # WHOLE data set
+#sum(wh2) # 252 -> 397
+#
+# GENERATE the NEW ExpressionSet
+eset.VIVAX.PQ.FILTER<-eset.VIVAX.PQ[wh2,]
+#eset.VIVAX.PQ.FILTER
+
+############################## GENEFILTER for FALCIPARUM PRIMAQUINE
+f2 <- kOverA(14,1)                           ## expression measure above 1 in at least 14 samples
+ffun2 <- filterfun(f2)
+wh3 <- genefilter(exprs(eset.FALCIP.PQ),ffun2)  # WHOLE data set
+#sum(wh3) # 279 -> 430
+#
+# GENERATE the NEW ExpressionSet
+eset.FALCIP.PQ.FILTER<-eset.FALCIP.PQ[wh3,]
+#eset.FALCIP.PQ.FILTER
+
+############################## [DONE] GENEFILTER for VIVAX SEVERE
+f3 <- kOverA(6,1)                           ## expression measure above 1 in at least 6 samples
+ffun3 <- filterfun(f3)
+wh4 <- genefilter(exprs(eset.VIVAX.SEV),ffun3)  # WHOLE data set
+#sum(wh4) # 255 -> 394
+#
+# GENERATE the NEW ExpressionSet
+eset.VIVAX.SEV.FILTER<-eset.VIVAX.SEV[wh4,]
+eset.VIVAX.SEV.FILTER
+
+############################## [DONE] GENEFILTER for FALCIPARUM SEVERE
+f3 <- kOverA(6,1)                           ## expression measure above 1 in at least 6 samples
+ffun3 <- filterfun(f3)
+wh5 <- genefilter(exprs(eset.FALCIP.SEV),ffun3)  # WHOLE data set
+#sum(wh5) # 280 -> 419
+#
+# GENERATE the NEW ExpressionSet
+eset.FALCIP.SEV.FILTER<-eset.FALCIP.SEV[wh5,]
+#eset.FALCIP.SEV.FILTER
+
+############################## [END] OF GENEFILTER 
+#
+# results
+#
+#eset.FILTER
+
+#eset.VIVAX.PQ.FILTER      # 252 /515 features X 140 samples
+#eset.FALCIP.PQ.FILTER     # 279 /499 features X 140 samples
+#eset.VIVAX.SEV.FILTER     # 255 /515 features X 60 samples
+#eset.FALCIP.SEV.FILTER    # 280 /499 features X 60 samples
+#
+##########################################################
+
+```
+
+#### QC Graphics 
+raw -> normalized -> transformed -> filtered
+
+```{r, fig.width=16, fig.height=4}
+a <- anti %>% as.data.frame() %>% 
+  gather(sample_name,expression) %>% 
+  ggplot(aes(expression)) +
+  geom_histogram() +
+  labs(title="RAW")
+b <- norx %>% as.data.frame() %>% 
+  gather(sample_name,expression) %>% 
+  ggplot(aes(expression)) +
+  geom_histogram() +
+  labs(title="NORMALIZED+TRANSFORMED")
+c <- exprs(eset.VIVAX.SEV) %>% as.data.frame() %>% 
+  gather(sample_name,expression) %>% 
+  ggplot(aes(expression)) +
+  geom_histogram() +
+  labs(title="SEVERE VIVAX DATA")
+d <- exprs(eset.VIVAX.SEV.FILTER) %>% as.data.frame() %>% 
+  gather(sample_name,expression) %>% 
+  ggplot(aes(expression)) +
+  geom_histogram() +
+  labs(title="SEVERE VIVAX FILTERED DATA")
+Rmisc::multiplot(a,b,c,d,cols = 4)
+```
+
+### 0. Descriptive Statistics
+
+*Of sample covariates, feature covariates and microarray whole dataset*
+
+#### Sample covariates
+
+- just show the results from `03-sevrcov.Rmd`
+- compare against initial stratification and after update!
+
+#### Feature covariates
+
+- maybe a graph of the slides with all the coordinates? :)
+
+#### Microarray data
+
+##### Heteroskedasticity 
+*pre- & post- transformation/normalization*
+
+```{r, fig.height=3, fig.width=6}
+m <- anti %>% as.data.frame() %>% 
+  rownames_to_column() %>% 
+  gather(sample_name, expression, -rowname) %>% 
+  #mutate(expression= ifelse(expression < 30, NA, expression)) %>% 
+  #dplyr::filter(rowname=="PVX_111175.544",sample_name=="LIM2017") # 21
+  #dplyr::filter(sample_name=="PQSJ103")
+  group_by(sample_name) %>% dplyr::summarise(mean= mean(expression),
+                                             sd= sd(expression)) %>% 
+  #dplyr::filter(mean<5000)
+  ggplot(aes(mean,sd)) +
+  geom_point() +
+  geom_smooth() +
+  labs(title="Mean-variance dependence",
+       subtitle="Raw data")
+
+n <- norx %>% as.data.frame() %>% 
+  rownames_to_column() %>% 
+  gather(sample_name, expression, -rowname) %>% 
+  group_by(sample_name) %>% dplyr::summarise(mean= mean(expression),
+                                             sd= sd(expression)) %>% 
+  ggplot(aes(mean,sd)) +
+  geom_point() +
+  geom_smooth() +
+  labs(title="Mean-variance dependence",
+       subtitle="Normalized data")
+
+Rmisc::multiplot(m,n,cols = 2)
+```
+
+#### Test Validity
+
+*Using Pf IVTT and purified proteins*
+
+As a reference, check Crompton, 2010 [@crompton2010] supplementary info [here](http://www.pnas.org/content/suppl/2010/03/25/1001323107.DCSupplemental/pnas.201001323SI.pdf).
+
+All comparison are in raw scale, since normalization can not be done with the purified protein spots.
+
+***
+
+```{r, eval=FALSE}
+rownames(pure)
+```
+
+**Pf EBA175, MSP2, CSP, Pv AMA**
+```{r}
+EBA175 <- as.data.frame(cbind(as.matrix(anti["PF3D7_0731500_e1s2.361",]), 
+                              as.matrix(pure["EBA175, 0.3mg/mL.23",]), 
+                              as.matrix(pure["EBA175, 0.1mg/mL.24",])
+                              )
+                        )
+colnames(EBA175) <- c("PF3D7_0731500_e1s2.361", "EBA175_0.3.23", "EBA175_0.1.24")
+
+# PF3D7_0930300_s1.67   falciparum      IVTT.AG PF3D7_0930300   merozoite surface protein 1 (MSP1)
+MSP1s1 <- as.data.frame(cbind(as.matrix(anti["PF3D7_0930300_s1.67",]), 
+                              as.matrix(pure["MSP1, 0.3mg/mL.601",]), 
+                              as.matrix(pure["MSP1, 0.1mg/mL.602",])))
+colnames(MSP1s1) <- c("PF3D7_0930300_s1.67", "MSP1_0.3.601", "MSP1_0.1.602")
+
+# PF3D7_0930300_s2.941  falciparum      IVTT.AG PF3D7_0930300   merozoite surface protein 1 (MSP1)
+MSP1s2 <- as.data.frame(cbind(as.matrix(anti["PF3D7_0930300_s2.941",]), 
+                              as.matrix(pure["MSP1, 0.3mg/mL.601",]), 
+                              as.matrix(pure["MSP1, 0.1mg/mL.602",])))
+colnames(MSP1s2) <- c("PF3D7_0930300_s2.941", "MSP1_0.3.601", "MSP1_0.1.602")
+
+# PF3D7_0206800.65      falciparum      IVTT.AG PF3D7_0206800   merozoite surface protein 2 (MSP2)
+MSP2 <- as.data.frame(cbind(as.matrix(anti["PF3D7_0206800.65",]), 
+                            as.matrix(pure["MSP2, 0.3mg/mL.890",]), 
+                            as.matrix(pure["MSP2, 0.1mg/mL.891",])))
+colnames(MSP2) <- c("PF3D7_0206800.65", "MSP2_0.3.890", "MSP2_0.1.891")
+
+# PF3D7_0304600.932     falciparum      IVTT.AG PF3D7_0304600   circumsporozoite (CS) protein (CSP)
+CSP <- as.data.frame(cbind(as.matrix(anti["PF3D7_0304600.932",]), 
+                           as.matrix(pure["Pf CSP, 0.3mg/mL.894",]), 
+                           as.matrix(pure["Pf CSP, 0.1mg/mL.895",])))
+colnames(CSP) <- c("PF3D7_0304600.932", "PfCSP_0.3.894", "PfCSP_0.1.895")
+
+# VIVAX AMA1
+PvAMA1 <- as.data.frame(cbind(as.matrix(pure["Pvivax AMA1, 0.3mg/mL.603",]), 
+                              as.matrix(pure["Pvivax AMA1, 0.1mg/mL.604",]), 
+                              as.matrix(pure["Pvivax AMA1 Eoto monomer prep2, 0.3mg/mL.892",]), 
+                              as.matrix(pure["Pvivax AMA1 Eoto monomer prep2, 0.1mg/mL.893",])))
+colnames(PvAMA1) <- c("PvAMA1_0.3.603", "PvAMA1_0.1.604", 
+                      "PvAMA1_Eoto_prep2_0.3.892", "PvAMA1_Eoto_prep2_0.1.893")
+
+```
+
+```{r, warning=FALSE, eval=FALSE, echo=FALSE}
+cor(EBA175, method = "spearman")
+cor(MSP2, method = "spearman")
+cor(CSP, method = "spearman")
+#PerformanceAnalytics::chart.Correlation(log(EBA175), method = "pearson")
+PerformanceAnalytics::chart.Correlation(EBA175, method = "spearman")
+PerformanceAnalytics::chart.Correlation(MSP2, method = "spearman")
+PerformanceAnalytics::chart.Correlation(CSP, method = "spearman")
+#PerformanceAnalytics::chart.Correlation(PvAMA1, method = "spearman")
+
+#summary(lm(PF3D7_0731500_e1s2.361 ~ EBA175_0.3.23, EBA175))$r.squared
+```
+
+```{r}
+f <- EBA175 %>% 
+  cor.test(~ PF3D7_0731500_e1s2.361 + EBA175_0.3.23, 
+           data = ., method = "spearman") %>% 
+  broom::tidy() %>% format(digits=2)
+
+g <- MSP2 %>% 
+  cor.test(~ PF3D7_0206800.65 + MSP2_0.1.891, 
+           data = ., method = "spearman") %>% 
+  broom::tidy() %>% format(digits=2)
+
+h <- CSP %>% 
+  cor.test(~ PF3D7_0304600.932 + PfCSP_0.3.894, 
+           data = ., method = "spearman") %>% 
+  broom::tidy() %>% format(digits=2)
+```
+
+```{r, fig.width=12, fig.height=4}
+v11 <- EBA175 %>% 
+  ggplot(aes(x=EBA175_0.3.23,y=PF3D7_0731500_e1s2.361)) + 
+  geom_point() + #geom_smooth(method = "lm") +
+  labs(title="Test validity: PfEBA175", 
+       subtitle= paste0("S=",f$statistic,", rho=",f$estimate,", P=",f$p.value),
+       caption=paste0("method: ",f$method)) #+ theme_classic()
+  
+
+v32 <- MSP2 %>% 
+  ggplot(aes(x=MSP2_0.1.891,y=PF3D7_0206800.65)) + 
+  geom_point() + #geom_smooth(method = "lm") +
+  labs(title="Test validity: PfMSP2", 
+       subtitle= paste0("S=",g$statistic,", rho=",g$estimate,", P=",g$p.value),
+       caption=paste0("method: ",g$method)) #+ theme_classic()
+
+v41 <- CSP %>% 
+  ggplot(aes(x=PfCSP_0.3.894,y=PF3D7_0304600.932)) + 
+  geom_point() + #geom_smooth(method = "lm") +
+  labs(title="Test validity: PfCSP", 
+       subtitle= paste0("S=",h$statistic,", rho=",h$estimate,", P=",h$p.value),
+       caption=paste0("method: ",h$method)) #+ theme_classic()
+
+multiplot(v11, v32, v41, cols= 3)
+```
+
+```{r}
+w <- cor(EBA175, method = "spearman") %>% as.data.frame() %>% 
+  rownames_to_column(var="ID") %>% 
+  slice(1) %>% 
+  gather(pure.prot,rho,-ID) %>% 
+  filter(rho!=1) %>% 
+  inner_join(ln, by="ID")
+x <- cor(MSP2, method = "spearman") %>% as.data.frame() %>% 
+  rownames_to_column(var="ID") %>% 
+  slice(1) %>% 
+  gather(pure.prot,rho,-ID) %>% 
+  filter(rho!=1) %>% 
+  inner_join(ln, by="ID")
+z <- cor(CSP, method = "spearman") %>% as.data.frame() %>% 
+  rownames_to_column(var="ID") %>% 
+  slice(1) %>% 
+  gather(pure.prot,rho,-ID) %>% 
+  filter(rho!=1) %>% 
+  inner_join(ln, by="ID")
+
+v <- rbind(w,x,z)#; max(v$rho); min(v$rho)
+v
+```
+
+__RANGO__ de valores `rho`: __`r min(v$rho)` - `r max(v$rho)`__
+
+### 5. Group comparison
+
+#### 5.1 severe
+
+```{r}
+eset <- eset.VIVAX.SEV.FILTER
+pData(eset) %>% glimpse()
+```
+
+##### Differential expression
+
+###### Define the control group
+
+```{r}
+#eset$sev_WHO <- factor(eset$sev_WHO)
+
+table(eset$sev_WHO) # debe ser: control (fct referencia) vs caso
+eset$sev_WHO <- relevel(eset$sev_WHO, ref = "severo")
+table(eset$sev_WHO) # debe ser: control (fct referencia) vs caso
+```
+
+###### Matrix + Linear model + eBayes
+
+```{r}
+design <- model.matrix(~ eset$sev_WHO)
+fit <- lmFit(eset, design)
+eb <- eBayes(fit)
+topTable(eb) %>% rownames_to_column()
+```
+
+```{r}
+# tidy toptable
+td <- topTable(eb, coef = 2,               # default: slope
+         sort.by =NULL, resort.by =NULL, 
+         #genelist = NULL,                 # no fit$gene
+         number = Inf,                     # show all the hipothesis
+         confint=0.95) %>% rownames_to_column() %>% as.tbl() %>% 
+  dplyr::rename(Gene.ID=rowname) %>% 
+  arrange(P.Value) %>% 
+  dplyr::mutate(p.order = seq(n())) %>% 
+  mutate(significance=if_else(adj.P.Val<0.05,
+                              "adj.P.Val<0.05","reactive")) %>% #dplyr::count(significance)
+  inner_join(biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #dplyr::count(sev_WHO)
+               group_by(gene,sev_WHO) %>% dplyr::summarise(mean_group=mean(value)) %>% 
+               ungroup() %>% 
+               spread(sev_WHO,mean_group) %>% 
+               #arrange(desc(no_severo)) %>% 
+               dplyr::rename(Gene.ID=gene),
+             by="Gene.ID") 
+```
+
+##### Plots
+
+###### p-value histogram
+
+```{r, fig.height=3, fig.width=6}
+ax <- qplot(td$P.Value, binwidth=.05) +
+  labs(title="P-value histogram",
+       subtitle="Without multiple testing correction")
+bx <- qplot(td$adj.P.Val, binwidth=.05) +
+  coord_cartesian(xlim = c(0,1)) +
+  labs(title="P-value histogram",
+       subtitle="After multiple testing correction")
+Rmisc::multiplot(ax,bx,cols = 2)
+```
+
+###### volcano plot
+
+```{r, fig.height=6, fig.width=5.4}
+td %>% 
+  mutate(unadj_significance=if_else(P.Value<0.05,
+                              "P.Value<0.05","not sig.")) %>% #dplyr::count(significance)
+  ggplot(aes(logFC,-log10(P.Value))) +
+  geom_point(aes(colour=unadj_significance)) + scale_color_manual(values=c("black","red")) +
+  #geom_point(aes(colour=no_severo)) + viridis::scale_color_viridis() +
+  ggrepel::geom_text_repel(data = td %>% 
+                             top_n(-4,P.Value)
+                             #filter(adj.P.Val<0.05 & logFC>1.5 & no_severo>1)# %>% 
+                             #arrange(desc(no_severo)) %>% 
+                             #top_n(10,no_severo)
+                           ,
+                           aes(label=Gene.ID), force = 6,
+                           box.padding = unit(1, "lines"),
+                           point.padding = unit(.5, "lines")
+                           ) +
+  labs(title="No_Severo vs Severo",
+       subtitle="Tamaño del efecto y significancia estadística",
+       caption="annotated features filtered by\nP.Value<0.01")+
+  geom_hline(aes(yintercept=-log10(0.01)), lty=3)+
+  geom_vline(aes(xintercept=1), lty=3) +
+  coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
+```
+
+##### diff reactive
+
+###### list
+
+```{r}
+td %>% 
+  filter(#adj.P.Val<0.05 &
+           P.Value<0.05 #& 
+           #logFC>1 & 
+           #no_severo>1
+           ) %>%
+  #top_n(10,t) %>% 
+  top_n(-10,P.Value) %>% 
+  arrange(P.Value) %>% 
+  #arrange(desc(no_severo)) %>% 
+  select(Gene.ID,Description,logFC,severo,no_severo,t,P.Value,adj.P.Val,p.order) # %>% slice(1:10)
+```
+
+
+##### top reactive
+
+###### list
+
+```{r}
+td %>% 
+  arrange(desc(AveExpr)) %>% 
+  select(Gene.ID,Description,AveExpr,p.order) %>% slice(1:10)
+```
+
+##### both
+
+###### heatmap
+
+```{r}
+eset <- eset.VIVAX.SEV.FILTER
+
+s <- td %>% 
+  #filter(adj.P.Val<0.05 & logFC>1 & no_severo>1) %>% 
+  filter(#adj.P.Val<0.05 &
+           P.Value<0.05 #& 
+           #logFC>1 & 
+           #no_severo>1
+           ) %>%
+  top_n(-10,P.Value) %>% 
+  arrange(P.Value) %>% 
+  #arrange(desc(no_severo)) %>% 
+  select(Gene.ID) %>% as.matrix() 
+
+x <- td %>% 
+  arrange(desc(AveExpr)) %>% 
+  top_n(10,AveExpr) %>% 
+  arrange(desc(no_severo)) %>% # If diff order at boxplot is achieved, then desactivate this line.
+  select(Gene.ID) %>% as.matrix() 
+
+pData(eset) <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  group_by(sample) %>% dplyr::summarise(sample_mean=mean(value, na.rm=TRUE)) %>% 
+  full_join(pData(eset) %>% 
+              rownames_to_column() %>% 
+              dplyr::rename(sample=rowname),
+            by="sample") %>% 
+  select(-Study,-Group,-episodio_previo,-edad_CAT, -expo_CAT) %>% 
+  arrange(sev_WHO,sample_mean) %>% #dplyr::count(sample)
+  as.data.frame() %>% #class()
+  column_to_rownames(var="sample")
+
+y <- pData(eset) %>% rownames_to_column() %>% 
+  select(rowname) %>% as.matrix() %>% as.character()
+
+eset <- eset[c(x,s),y]
+
+aheatmap(exprs(eset), 
+         Rowv = NA, Colv = NA, 
+         annCol = pData(eset), 
+         layout = "_")
+
+aheatmap(exprs(eset), 
+         Rowv = TRUE, Colv = NA, 
+         annCol = pData(eset), 
+         layout = "_")
+```
+
+###### boxplot
+
+```{r, fig.width=6,fig.height=4, echo=TRUE}
+eset <- eset.VIVAX.SEV.FILTER
+
+biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
+  dplyr::rename(Gene.ID="gene") %>% 
+  full_join(td, by = "Gene.ID") %>%
+  full_join(x %>% as.data.frame() %>% 
+              dplyr::mutate(group="Top 10") %>% 
+              #dplyr::rename(gene="Gene.ID") %>% 
+              dplyr::mutate(Gene.ID=as.character(Gene.ID)),
+            by="Gene.ID") %>% 
+  full_join(s %>% as.data.frame() %>% 
+              dplyr::mutate(group="Differentially*") %>% 
+              #dplyr::rename(gene="Gene.ID") %>% 
+              dplyr::mutate(Gene.ID=as.character(Gene.ID)),
+            by="Gene.ID") %>% 
+  unite(group, group.x, group.y) %>% 
+  mutate(group=stringr::str_replace(group,"NA_(.)", "\\1")) %>% 
+  mutate(group=stringr::str_replace(group,"(.)_NA", "\\1")) %>% 
+  mutate(group=forcats::fct_relevel(group,"Top 10")) %>% 
+  filter(group!="NA") %>% 
+  ggplot(aes(reorder(Gene.ID,no_severo),value,fill=sev_WHO))+
+  geom_boxplot()+
+  #geom_point() +
+  facet_grid(group~.,scales = "free", space = "free") +#
+  ylab("log2-transformed normalized MFI")+
+  xlab("antigens")+
+  labs(title="Highly and Differentially reactive antigens",
+       subtitle="All sorted w.r.t. no_severo mean Ab reactivity",
+       caption="*filtered by non-adjust P.Value<0.05")+
+  coord_flip() # ORDENAR eje de proteínas!!!!
+```
+
+#### 5.2 previous episodes
+
+```{r}
+eset <- eset.VIVAX.SEV.FILTER
+pData(eset) %>% glimpse()
+```
+
+##### Differential expression
+
+###### Define the control group
+
+```{r}
+#eset$episodio_previo <- factor(eset$episodio_previo)
+
+table(eset$episodio_previo) # debe ser: control (fct referencia) vs caso
+eset$episodio_previo <- relevel(eset$episodio_previo, ref = "sin")
+table(eset$episodio_previo) # debe ser: control (fct referencia) vs caso
+```
+
+###### Matrix + Linear model + eBayes
+
+```{r}
+design <- model.matrix(~ eset$episodio_previo)
+fit <- lmFit(eset, design)
+eb <- eBayes(fit)
+topTable(eb) %>% rownames_to_column()
+```
+
+```{r}
+# tidy toptable
+td <- topTable(eb, coef = 2,               # default: slope
+         sort.by =NULL, resort.by =NULL, 
+         #genelist = NULL,                 # no fit$gene
+         number = Inf,                     # show all the hipothesis
+         confint=0.95) %>% rownames_to_column() %>% as.tbl() %>% 
+  dplyr::rename(Gene.ID=rowname) %>% 
+  arrange(P.Value) %>% 
+  dplyr::mutate(p.order = seq(n())) %>% 
+  mutate(significance=if_else(adj.P.Val<0.05,
+                              "adj.P.Val<0.05","reactive")) %>% #dplyr::count(significance)
+  inner_join(biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #dplyr::count(episodio_previo)
+               group_by(gene,episodio_previo) %>% dplyr::summarise(mean_group=mean(value)) %>% 
+               ungroup() %>% 
+               spread(episodio_previo,mean_group) %>% 
+               #arrange(desc(con)) %>% 
+               dplyr::rename(Gene.ID=gene),
+             by="Gene.ID") 
+```
+
+##### Plots
+
+###### p-value histogram
+
+```{r, fig.height=3, fig.width=6}
+ax <- qplot(td$P.Value, binwidth=.05) +
+  labs(title="P-value histogram",
+       subtitle="Without multiple testing correction")
+bx <- qplot(td$adj.P.Val, binwidth=.05) +
+  coord_cartesian(xlim = c(0,1)) +
+  labs(title="P-value histogram",
+       subtitle="After multiple testing correction")
+Rmisc::multiplot(ax,bx,cols = 2)
+```
+
+###### volcano plot
+
+```{r, fig.height=6, fig.width=4.5}
+td %>% 
+  ggplot(aes(logFC,-log10(P.Value))) +
+  #geom_point(aes(colour=significance)) + scale_color_manual(values=c("red","black")) +
+  geom_point(aes(colour=con)) + viridis::scale_color_viridis() +
+  ggrepel::geom_text_repel(data = td %>% 
+                             filter((adj.P.Val<0.05 & logFC>1.5 & con>1) | 
+                                      (adj.P.Val<0.001 & #logFC>0.9 & 
+                                         con>2.7) )# %>% 
+                             #arrange(desc(con)) %>% 
+                             #top_n(10,con)
+                           ,
+                           aes(label=Gene.ID), force = 15,
+                           box.padding = unit(1, "lines"),
+                           point.padding = unit(1, "lines")
+                           ) +
+  labs(title="Con vs Sin episodio previo",
+       subtitle="Tamaño del efecto y significancia estadística",
+       caption="annotated features filtered by\n(adj.P.Val<0.05 & logFC>1.5 & con>1)")+
+  # or (adj.P.Val<0.001 & con>AveExpr(top1))
+  geom_hline(aes(yintercept=-log10(0.01)), lty=3)+
+  geom_vline(aes(xintercept=1), lty=3) +
+  coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
+```
+
+##### diff reactive
+
+###### list
+
+```{r}
+td %>% 
+  filter(adj.P.Val<0.05 & (logFC>1 & con>1) | (logFC>0.9 & con>2)) %>%
+  arrange(desc(con)) %>% 
+  select(Gene.ID,Description,logFC,con,sin,P.Value,adj.P.Val,p.order) # %>% slice(1:10)
+```
+
+
+##### top reactive
+
+###### list
+
+```{r}
+td %>% 
+  arrange(desc(AveExpr)) %>% 
+  select(Gene.ID,Description,AveExpr,p.order) %>% slice(1:10)
+```
+
+##### both
+
+###### heatmap
+
+```{r}
+eset <- eset.VIVAX.SEV.FILTER
+
+s <- td %>% 
+  filter(adj.P.Val<0.05 & (logFC>1 & con>1) | (logFC>0.9 & con>2)) %>% 
+  arrange(desc(con)) %>% 
+  select(Gene.ID) %>% as.matrix() 
+
+x <- td %>% 
+  arrange(desc(AveExpr)) %>% 
+  top_n(10,AveExpr) %>% 
+  arrange(desc(con)) %>% # If diff order at boxplot is achieved, then desactivate this line.
+  select(Gene.ID) %>% as.matrix() 
+
+pData(eset) <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  group_by(sample) %>% dplyr::summarise(sample_mean=mean(value, na.rm=TRUE)) %>% 
+  full_join(pData(eset) %>% 
+              rownames_to_column() %>% 
+              dplyr::rename(sample=rowname),
+            by="sample") %>% 
+  select(-Study,-Group,-sev_WHO,-edad_CAT, -expo_CAT) %>% 
+  arrange(episodio_previo,sample_mean) %>% #dplyr::count(sample)
+  as.data.frame() %>% #class()
+  column_to_rownames(var="sample")
+
+y <- pData(eset) %>% rownames_to_column() %>% 
+  select(rowname) %>% as.matrix() %>% as.character()
+
+eset <- eset[c(x,s),y]
+
+aheatmap(exprs(eset), 
+         Rowv = NA, Colv = NA, 
+         annCol = pData(eset), 
+         layout = "_")
+
+aheatmap(exprs(eset), 
+         Rowv = TRUE, Colv = NA, 
+         annCol = pData(eset), 
+         layout = "_")
+```
+
+###### boxplot
+
+```{r, fig.width=6,fig.height=4.5, echo=TRUE}
+eset <- eset.VIVAX.SEV.FILTER
+
+biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
+  dplyr::rename(Gene.ID="gene") %>% 
+  full_join(td, by = "Gene.ID") %>%
+  full_join(x %>% as.data.frame() %>% 
+              dplyr::mutate(group="Top 10") %>% 
+              #dplyr::rename(gene="Gene.ID") %>% 
+              dplyr::mutate(Gene.ID=as.character(Gene.ID)),
+            by="Gene.ID") %>% 
+  full_join(s %>% as.data.frame() %>% 
+              dplyr::mutate(group="Differentially*") %>% 
+              #dplyr::rename(gene="Gene.ID") %>% 
+              dplyr::mutate(Gene.ID=as.character(Gene.ID)),
+            by="Gene.ID") %>% 
+  unite(group, group.x, group.y) %>% 
+  mutate(group=stringr::str_replace(group,"NA_(.)", "\\1")) %>% 
+  mutate(group=stringr::str_replace(group,"(.)_NA", "\\1")) %>% 
+  mutate(group=forcats::fct_relevel(group,"Top 10")) %>% 
+  mutate(episodio_previo=forcats::fct_relevel(episodio_previo,"con")) %>% 
+  filter(group!="NA") %>% 
+  ggplot(aes(reorder(Gene.ID,con),value,fill=episodio_previo))+
+  geom_boxplot()+
+  #geom_point() +
+  facet_grid(group~.,scales = "free", space = "free") +#
+  ylab("log2-transformed normalized MFI")+
+  xlab("antigens")+
+  labs(title="Highly and Differentially reactive antigens",
+       subtitle="All sorted w.r.t. con mean Ab reactivity",
+       caption="*filtered by adj.P.Val<0.05 and \n (logFC>1 & con>1) | (logFC>0.9 & con>2)")+
+  coord_flip() # ORDENAR eje de proteínas!!!!
+```
+
+### 6. Breath and Intensity of response
+
+- Método:
+    + __Primero,__ Prueba de Hipótesis para comparar varianzas:
+        + Rpta: Bajo n.s. 0.05, F cae en Región de no-Rechazo de Hipótesis Nula (__RnoRHo__).
+            + Conclusión: Supuesto de igualdad de varianzas poblacionales SÍ es válido.
+        + Rpta: Bajo n.s. 0.05, F cae en Región de Rechazo de Hipótesis Nula (__RRHo__).
+            + Conclusión: Supuesto de igualdad de varianzas poblacionales NO es válido.
+    + __Segundo,__ Prueba de Hipótesis para comparar medias:
+        + Si se asume que las varianzas son iguales: __Student t-test__
+        + Si no se asume que las varianzas son iguales: __Welch t-test__
+
+```{r}
+eset <- eset.VIVAX.SEV.FILTER
+
+fin <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  group_by(sample) %>% 
+  dplyr::summarise(sample_mean=mean(value, na.rm=TRUE),
+                   sample_freq=(sum(value>1, na.rm=TRUE)*100/n())) %>% 
+  full_join(pData(eset) %>% 
+              rownames_to_column() %>% 
+              dplyr::rename(sample=rowname),
+            by="sample") %>% 
+  select(-Study,-Group) %>% 
+  mutate(episodio_previo=forcats::fct_relevel(episodio_previo,"con")) %>% 
+  mutate(sev_WHO=forcats::fct_relevel(sev_WHO,"no-severo"))
+
+#biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+#filter(sample=="LIM2071") %>% select(value) %>% filter(value > 1)
+```
+
+#### 6.1 severe
+
+```{r}
+## Primero, Prueba de Hipótesis para comparar varianzas:
+#fin %>% var.test(sample_freq ~ sev_WHO, data = .) %>% broom::tidy()
+## Rpta: Bajo n.s. 0.05, F cae en Región de no-Rechazo de Hipótesis Nula (RnoRHo)
+## Conclusión: Supuesto de igualdad de varianzas poblacionales SÍ es válido
+## Segundo, Prueba de Hipótesis para comparar medias:
+j <- fin %>% 
+  t.test(sample_freq ~ sev_WHO, data = ., var.equal=TRUE) %>% 
+  broom::tidy() %>% format(digits=2)
+
+## Primero, Prueba de Hipótesis para comparar varianzas
+#fin %>% var.test(sample_mean ~ sev_WHO, data = .) %>% broom::tidy()
+## Rpta: Bajo n.s. 0.05, F cae en Región de no-Rechazo de Hipótesis Nula (RnoRHo)
+## Conclusión: Supuesto de igualdad de varianzas poblacionales SÍ es válido
+## Segundo, Prueba de Hipótesis para comparar medias:
+k <- fin %>% 
+  t.test(sample_mean ~ sev_WHO, data = ., var.equal=TRUE) %>% 
+  broom::tidy() %>% format(digits=2)
+```
+
+```{r, fig.height=6, fig.width=3}
+r <- fin %>% 
+  ggplot(aes(sev_WHO,sample_freq)) +
+  geom_boxplot(#position=position_dodge(0.8)
+               ) +
+  geom_dotplot(#aes(fill=sev_WHO), 
+               binaxis='y', stackdir='center', 
+               dotsize=1#, position=position_dodge(0.8)
+               ) +
+  labs(title="Breadth of Ab response", 
+       subtitle= paste0("t=",j$statistic,", df=",j$parameter,", P=",j$p.value),
+       caption=paste0("method:",j$method)) #+ theme_classic()
+
+s <- fin %>% 
+  ggplot(aes(sev_WHO,sample_mean)) +
+  geom_boxplot(#position=position_dodge(0.8)
+               ) +
+  geom_dotplot(#aes(fill=sev_WHO), 
+               binaxis='y', stackdir='center', 
+               dotsize=1#, position=position_dodge(0.8)
+               ) +
+  labs(title="Intensity of Ab response", 
+       subtitle= paste0("t=",k$statistic,", df=",k$parameter,", P=",k$p.value),
+       caption=paste0("method:",k$method)) #+ theme_classic()
+
+Rmisc::multiplot(r,s,cols = 1)
+```
+
+#### 6.2 previous episodes
+
+```{r}
+## Primero, Prueba de Hipótesis para comparar varianzas:
+#fin %>% var.test(sample_freq ~ episodio_previo, data = .) %>% broom::tidy() %>% 
+#  mutate(decide= p.value<0.05) %>% select(decide)#TRUE
+## Rpta: Bajo n.s. 0.05, F cae en Región de Rechazo de Hipótesis Nula (RRHo)
+## Conclusión: Supuesto de igualdad de varianzas poblacionales NO es válido
+## Segundo, Prueba de Hipótesis para comparar medias:
+j <- fin %>% 
+  t.test(sample_freq ~ episodio_previo, data = ., var.equal=FALSE) %>% 
+  broom::tidy() %>% format(digits=3)
+
+## Primero, Prueba de Hipótesis para comparar varianzas:
+#fin %>% var.test(sample_mean ~ episodio_previo, data = .) %>% broom::tidy()
+## Rpta: Bajo n.s. 0.05, F cae en Región de no-Rechazo de Hipótesis Nula (RnoRHo)
+## Conclusión: Supuesto de igualdad de varianzas poblacionales SÍ es válido
+## Segundo, Prueba de Hipótesis para comparar medias:
+k <- fin %>% 
+  t.test(sample_mean ~ episodio_previo, data = ., var.equal=TRUE) %>% 
+  broom::tidy() %>% format(digits=3)
+```
+
+```{r, fig.height=6, fig.width=3}
+r <- fin %>% 
+  ggplot(aes(episodio_previo,sample_freq)) +
+  geom_boxplot(#position=position_dodge(0.8)
+               ) +
+  geom_dotplot(#aes(fill=sev_WHO), 
+               binaxis='y', stackdir='center', 
+               dotsize=1#, position=position_dodge(0.8)
+               ) +
+  labs(title="Breadth of Ab response", 
+       subtitle= paste0("t=",j$statistic,", df=",j$parameter,", P=",j$p.value),
+       caption=paste0("method: ",j$method)) #+ theme_classic()
+
+s <- fin %>% 
+  ggplot(aes(episodio_previo,sample_mean)) +
+  geom_boxplot(#position=position_dodge(0.8)
+               ) +
+  geom_dotplot(#aes(fill=sev_WHO), 
+               binaxis='y', stackdir='center', 
+               dotsize=1#, position=position_dodge(0.8)
+               ) +
+  labs(title="Intensity of Ab response", 
+       subtitle= paste0("t=",k$statistic,", df=",k$parameter,", P=",k$p.value),
+       caption=paste0("method:",k$method)) #+ theme_classic()
+
+Rmisc::multiplot(r,s,cols = 1)
+```
+
+#### Exploratory
+
+##### Per age
+
+```{r}
+fin %>% 
+  dplyr::count(edad_CAT)
+```
+
+```{r, fig.height=3, fig.width=6}
+r <- fin %>%
+  ggplot(aes(edad_CAT,sample_freq#, fill=sev_WHO
+             )) +
+  geom_boxplot(position=position_dodge(0.8)) +
+  geom_dotplot(#aes(fill=sev_WHO), 
+               binaxis='y', stackdir='center', 
+               dotsize=1, position=position_dodge(0.8)) +
+  labs(title="Breadth of Ab response", subtitle="per age category") #+ theme_classic()
+
+s <- fin %>% 
+  ggplot(aes(edad_CAT,sample_mean#, fill=sev_WHO
+             )) +
+  geom_boxplot(position=position_dodge(0.8)) +
+  geom_dotplot(#aes(fill=sev_WHO), 
+               binaxis='y', stackdir='center', 
+               dotsize=1, position=position_dodge(0.8)) +
+  labs(title="Intensity of Ab response", subtitle="per age category") #+ theme_classic()
+
+#t <- fin %>% filter(expo_CAT != "NA") %>% 
+#  ggplot(aes(expo_CAT,sample_freq#, fill=episodio_previo
+#             )) +
+#  geom_boxplot(position=position_dodge(0.8)) +
+#  geom_dotplot(#aes(fill=episodio_previo), 
+#               binaxis='y', stackdir='center', 
+#               dotsize=1, position=position_dodge(0.8)) +
+#  labs(title="Breadth of Ab response", 
+#       subtitle="per previous episode category") #+ theme_classic()
+#
+#u <- fin %>% filter(expo_CAT != "NA") %>%  
+#  ggplot(aes(expo_CAT,sample_mean#, fill=episodio_previo
+#             )) +
+#  geom_boxplot(position=position_dodge(0.8)) +
+#  geom_dotplot(#aes(fill=episodio_previo), 
+#               binaxis='y', stackdir='center', 
+#               dotsize=1, position=position_dodge(0.8)) +
+#  labs(title="Intensity of Ab response", 
+#       subtitle="per previous episode category") #+ theme_classic()
+
+Rmisc::multiplot(r,s,cols = 2)
+```
+
+
+##### severe and episodes per age
+
+```{r}
+fin %>% 
+  group_by(sev_WHO) %>% 
+  dplyr::count(edad_CAT)
+
+fin %>% 
+  group_by(episodio_previo) %>% 
+  dplyr::count(edad_CAT)
+```
+
+
+```{r, fig.height=6, fig.width=8.5}
+r <- fin %>% 
+  ggplot(aes(edad_CAT,sample_freq, fill=sev_WHO)) +
+  geom_boxplot(position=position_dodge(0.8)) +
+  geom_dotplot(aes(fill=sev_WHO), 
+               binaxis='y', stackdir='center', 
+               dotsize=1, position=position_dodge(0.8)) +
+  labs(title="Breadth of Ab response", subtitle="per age category") #+ theme_classic()
+
+s <- fin %>% 
+  ggplot(aes(edad_CAT,sample_mean, fill=sev_WHO)) +
+  geom_boxplot(position=position_dodge(0.8)) +
+  geom_dotplot(aes(fill=sev_WHO), 
+               binaxis='y', stackdir='center', 
+               dotsize=1, position=position_dodge(0.8)) +
+  labs(title="Intensity of Ab response", subtitle="per age category") #+ theme_classic()
+
+t <- fin %>% 
+  ggplot(aes(edad_CAT,sample_freq, fill=episodio_previo)) +
+  geom_boxplot(position=position_dodge(0.8)) +
+  geom_dotplot(aes(fill=episodio_previo), 
+               binaxis='y', stackdir='center', 
+               dotsize=1, position=position_dodge(0.8)) +
+  labs(title="Breadth of Ab response", subtitle="per previous episode category") #+ theme_classic()
+
+u <- fin %>% 
+  ggplot(aes(edad_CAT,sample_mean, fill=episodio_previo)) +
+  geom_boxplot(position=position_dodge(0.8)) +
+  geom_dotplot(aes(fill=episodio_previo), 
+               binaxis='y', stackdir='center', 
+               dotsize=1, position=position_dodge(0.8)) +
+  labs(title="Intensity of Ab response", subtitle="per previous episode category") #+ theme_classic()
+
+Rmisc::multiplot(r,t,s,u,cols = 2)
+```
+
+### Results
+
+### Discusion
+
+### Conclusions
+
+### Recommendations
+
+### Computer environment
+
+```{r}
+devtools::session_info()
+```
+
+
+### References

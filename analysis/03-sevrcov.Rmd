@@ -1466,7 +1466,7 @@ sevdb_2 <- sevdb_1oms %>%
                 en_zona_endemica=tiempo_local) %>% 
   mutate(#sev_ALL_num= rowSums(.[c(18,19)],na.rm = T),
          sev_WHO= if_else(sev_WHO_num>0# | sev_ALL_num>1
-                          ,"severo","no-severo"),# OJO: severo con 1 o más criterios + 2 de SNC
+                          ,"severo","no_severo"),# OJO: severo con 1 o más criterios + 2 de SNC
          episodio_previo=if_else(episodio_previo_num>0,"con","sin")
          ) %>% 
   mutate(sexo= as.factor(sexo),
@@ -2261,14 +2261,14 @@ b <- ggplot(sevdb_2, aes(x=edad, fill=episodio_previo)) +
   #scale_y_continuous(limits = c(0,0.05))
 
 c <- sevdb_2 %>% 
-  filter(sev_WHO=="no-severo") %>% 
+  filter(sev_WHO=="no_severo") %>% 
   ggplot(aes(x=edad, fill=episodio_previo)) + 
   geom_histogram(
     #aes(y=..density..), 
                  breaks=seq(0, 85, by = 5), 
                  alpha=.5 ,position = "identity") + 
   labs(title="Histograma de Edad",
-       subtitle="filter no-severe samples") +
+       subtitle="filter no_severe samples") +
   #geom_density() #+
   scale_x_continuous(breaks=seq(0, 85, by = 5))
 
@@ -2624,6 +2624,12 @@ sevdb_pre %>% glimpse()
 #### sep2016
 ```{r}
 sevdb_pos %>% glimpse()
+```
+
+## Computer environment
+
+```{r}
+devtools::session_info()
 ```
 
 ## References
