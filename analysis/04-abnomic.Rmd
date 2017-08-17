@@ -199,6 +199,10 @@ norm <- log2.NA(anti/ctrm)
 head(norm[,1:6])
 ```
 
+```{r}
+test <- anti/ctrm 
+```
+
 ```{r ratio-test, eval=FALSE, echo=FALSE}
 test <- anti/ctrm 
 
@@ -416,16 +420,17 @@ a <- anti %>% as.data.frame() %>%
   ggplot(aes(expression)) +
   geom_histogram() +
   labs(title="RAW")
-b <- norx %>% as.data.frame() %>% 
+b <- test %>% as.data.frame() %>% 
+  gather(sample_name,expression) %>% 
+  filter(expression >= 0) %>% 
+  ggplot(aes(expression)) +
+  geom_histogram() +
+  labs(title="NORMALIZED")
+c <- norx %>% as.data.frame() %>% 
   gather(sample_name,expression) %>% 
   ggplot(aes(expression)) +
   geom_histogram() +
-  labs(title="NORMALIZED+TRANSFORMED")
-c <- exprs(eset.VIVAX.SEV) %>% as.data.frame() %>% 
-  gather(sample_name,expression) %>% 
-  ggplot(aes(expression)) +
-  geom_histogram() +
-  labs(title="SEVERE VIVAX DATA")
+  labs(title="TRANSFORMED")
 d <- exprs(eset.VIVAX.SEV.FILTER) %>% as.data.frame() %>% 
   gather(sample_name,expression) %>% 
   ggplot(aes(expression)) +
@@ -482,7 +487,7 @@ n <- norx %>% as.data.frame() %>%
 Rmisc::multiplot(m,n,cols = 2)
 ```
 
-#### Test Validity
+#### Validity test
 
 *Using Pf IVTT and purified proteins*
 
@@ -496,7 +501,24 @@ All comparison are in raw scale, since normalization can not be done with the pu
 rownames(pure)
 ```
 
-**Pf EBA175, MSP2, CSP, Pv AMA**
+__Non Present Reactive Targets__
+
+- AMA1, CSP, GEST, CelTOS
+- Here, AMA1 and all the proteins in the list with a known _nick_ name:
+
+```{r}
+np <- readxl::read_xlsx("data-raw/PfPv500_NonpresentReactiveTargets.xlsx")
+#np %>% filter(`[Gene ID]`=="PVX_092275")
+np %>% filter(stringr::str_detect(`[Product Description]`, "AMA1"))
+#np %>% filter(stringr::str_detect(`[Product Description]`, "CSP"))
+#np %>% filter(stringr::str_detect(`[Product Description]`, "GEST"))
+#np %>% filter(stringr::str_detect(`[Product Description]`, "CelTOS"))
+np %>% filter(stringr::str_detect(`[Product Description]`, "\\("))
+```
+
+- In this list, __ADi__ reports a __total of `r nrow(np)`__ Non present Reactive Targets.
+
+**Validate w.r.t Pf EBA175, MSP2, CSP**
 ```{r}
 EBA175 <- as.data.frame(cbind(as.matrix(anti["PF3D7_0731500_e1s2.361",]), 
                               as.matrix(pure["EBA175, 0.3mg/mL.23",]), 
@@ -573,23 +595,29 @@ h <- CSP %>%
 v11 <- EBA175 %>% 
   ggplot(aes(x=EBA175_0.3.23,y=PF3D7_0731500_e1s2.361)) + 
   geom_point() + #geom_smooth(method = "lm") +
-  labs(title="Test validity: PfEBA175", 
-       subtitle= paste0("S=",f$statistic,", rho=",f$estimate,", P=",f$p.value),
+  xlab("Ab reactivity to Purified EBA175") + ylab("Ab reactivity to IVTT EBA175") +
+  labs(title="Validity test: PfEBA175", 
+       subtitle= paste0(#"S=",f$statistic,", rho="
+                        "rho=",f$estimate,", P=",f$p.value),
        caption=paste0("method: ",f$method)) #+ theme_classic()
   
 
 v32 <- MSP2 %>% 
   ggplot(aes(x=MSP2_0.1.891,y=PF3D7_0206800.65)) + 
   geom_point() + #geom_smooth(method = "lm") +
-  labs(title="Test validity: PfMSP2", 
-       subtitle= paste0("S=",g$statistic,", rho=",g$estimate,", P=",g$p.value),
+  xlab("Ab reactivity to Purified MSP2") + ylab("Ab reactivity to IVTT MSP2") +
+  labs(title="Validity test: PfMSP2", 
+       subtitle= paste0(#"S=",g$statistic,", rho="
+                        "rho=",g$estimate,", P=",g$p.value),
        caption=paste0("method: ",g$method)) #+ theme_classic()
 
 v41 <- CSP %>% 
   ggplot(aes(x=PfCSP_0.3.894,y=PF3D7_0304600.932)) + 
   geom_point() + #geom_smooth(method = "lm") +
-  labs(title="Test validity: PfCSP", 
-       subtitle= paste0("S=",h$statistic,", rho=",h$estimate,", P=",h$p.value),
+  xlab("Ab reactivity to Purified CSP") + ylab("Ab reactivity to IVTT CSP") +
+  labs(title="Validity test: PfCSP", 
+       subtitle= paste0(#"S=",h$statistic,", rho="
+                        "rho=",h$estimate,", P=",h$p.value),
        caption=paste0("method: ",h$method)) #+ theme_classic()
 
 multiplot(v11, v32, v41, cols= 3)
@@ -619,7 +647,7 @@ v <- rbind(w,x,z)#; max(v$rho); min(v$rho)
 v
 ```
 
-__RANGO__ de valores `rho`: __`r min(v$rho)` - `r max(v$rho)`__
+__RANGO__ de valores `rho`: __`r format(min(v$rho),digits=2)` - `r max(v$rho) %>% format(digits=2)`__
 
 ### 5. Group comparison
 
@@ -679,22 +707,23 @@ td <- topTable(eb, coef = 2,               # default: slope
 ```{r, fig.height=3, fig.width=6}
 ax <- qplot(td$P.Value, binwidth=.05) +
   labs(title="P-value histogram",
-       subtitle="Without multiple testing correction")
+       subtitle="Without multiple testing correction") + xlab("p.value")
 bx <- qplot(td$adj.P.Val, binwidth=.05) +
   coord_cartesian(xlim = c(0,1)) +
   labs(title="P-value histogram",
-       subtitle="After multiple testing correction")
+       subtitle="After multiple testing correction") + xlab("adjust p.value")
 Rmisc::multiplot(ax,bx,cols = 2)
 ```
 
 ###### volcano plot
 
-```{r, fig.height=6, fig.width=5.4}
+```{r, fig.height=6, fig.width=5.15}
 td %>% 
   mutate(unadj_significance=if_else(P.Value<0.05,
                               "P.Value<0.05","not sig.")) %>% #dplyr::count(significance)
   ggplot(aes(logFC,-log10(P.Value))) +
-  geom_point(aes(colour=unadj_significance)) + scale_color_manual(values=c("black","red")) +
+  geom_point(aes(colour=unadj_significance)) + scale_color_manual(name="unadjust\nsignificance",
+                                                                  values=c("black","red")) +
   #geom_point(aes(colour=no_severo)) + viridis::scale_color_viridis() +
   ggrepel::geom_text_repel(data = td %>% 
                              top_n(-4,P.Value)
@@ -702,12 +731,14 @@ td %>%
                              #arrange(desc(no_severo)) %>% 
                              #top_n(10,no_severo)
                            ,
-                           aes(label=Gene.ID), force = 6,
+                           aes(label=Gene.ID), force = 5,
                            box.padding = unit(1, "lines"),
                            point.padding = unit(.5, "lines")
                            ) +
-  labs(title="No_Severo vs Severo",
-       subtitle="Tamaño del efecto y significancia estadística",
+  labs(title="Non-severe vs Severe",
+       #title="No-severo vs Severo",
+       subtitle="Effect size against statistical significance",
+       #subtitle="Tamaño del efecto y significancia estadística",
        caption="annotated features filtered by\nP.Value<0.01")+
   geom_hline(aes(yintercept=-log10(0.01)), lty=3)+
   geom_vline(aes(xintercept=1), lty=3) +
@@ -821,12 +852,15 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   ggplot(aes(reorder(Gene.ID,no_severo),value,fill=sev_WHO))+
   geom_boxplot()+
   #geom_point() +
-  facet_grid(group~.,scales = "free", space = "free") +#
+  facet_grid(group~.,scales = "free", space = "free") +
+  scale_fill_discrete(name="WHO criteria",
+                      #breaks=c("with", "without"),
+                      labels=c("non-severe", "severe")) +
   ylab("log2-transformed normalized MFI")+
   xlab("antigens")+
   labs(title="Highly and Differentially reactive antigens",
-       subtitle="All sorted w.r.t. no_severo mean Ab reactivity",
-       caption="*filtered by non-adjust P.Value<0.05")+
+       subtitle="All sorted w.r.t. Case mean reactivity",
+       caption="*filtered by unadjust P.Value<0.05")+
   coord_flip() # ORDENAR eje de proteínas!!!!
 ```
 
@@ -886,21 +920,49 @@ td <- topTable(eb, coef = 2,               # default: slope
 ```{r, fig.height=3, fig.width=6}
 ax <- qplot(td$P.Value, binwidth=.05) +
   labs(title="P-value histogram",
-       subtitle="Without multiple testing correction")
+       subtitle="Without multiple testing correction") + xlab("p.value")
 bx <- qplot(td$adj.P.Val, binwidth=.05) +
   coord_cartesian(xlim = c(0,1)) +
   labs(title="P-value histogram",
-       subtitle="After multiple testing correction")
+       subtitle="After multiple testing correction") + xlab("adjust p.value")
 Rmisc::multiplot(ax,bx,cols = 2)
 ```
 
 ###### volcano plot
 
-```{r, fig.height=6, fig.width=4.5}
+```{r, fig.height=6, fig.width=5.2}
+td %>% 
+  ggplot(aes(logFC,-log10(P.Value))) +
+  geom_point(aes(colour=significance)) + scale_color_manual(values=c("red","black")) +
+  #geom_point(aes(colour=con)) + viridis::scale_color_viridis() +
+  ggrepel::geom_text_repel(data = td %>% 
+                             filter((adj.P.Val<0.05 & logFC>1.5 & con>1)# | 
+                                      #(adj.P.Val<0.001 & #logFC>0.9 & 
+                                      #   con>2.7) 
+                                    )# %>% 
+                             #arrange(desc(con)) %>% 
+                             #top_n(10,con)
+                           ,
+                           aes(label=Gene.ID), force = 15,
+                           box.padding = unit(1, "lines"),
+                           point.padding = unit(1, "lines")
+                           ) +
+  labs(title="With vs Without previous episode",
+       #title="Con vs Sin episodio previo",
+       subtitle="Effect size against statistical significance",
+       #subtitle="Tamaño del efecto y significancia estadística",
+       caption="annotated features filtered by\n(adj.P.Val<0.05 & con>1 & logFC>1.5)")+
+  # or (adj.P.Val<0.001 & con>AveExpr(top1))
+  geom_hline(aes(yintercept=-log10(0.01)), lty=3)+
+  geom_vline(aes(xintercept=1), lty=3) +
+  coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
+```
+
+```{r, fig.height=6, fig.width=4.7}
 td %>% 
   ggplot(aes(logFC,-log10(P.Value))) +
   #geom_point(aes(colour=significance)) + scale_color_manual(values=c("red","black")) +
-  geom_point(aes(colour=con)) + viridis::scale_color_viridis() +
+  geom_point(aes(colour=con)) + viridis::scale_color_viridis(name="Case\nmean\nintensity") +
   ggrepel::geom_text_repel(data = td %>% 
                              filter((adj.P.Val<0.05 & logFC>1.5 & con>1) | 
                                       (adj.P.Val<0.001 & #logFC>0.9 & 
@@ -912,9 +974,11 @@ td %>%
                            box.padding = unit(1, "lines"),
                            point.padding = unit(1, "lines")
                            ) +
-  labs(title="Con vs Sin episodio previo",
-       subtitle="Tamaño del efecto y significancia estadística",
-       caption="annotated features filtered by\n(adj.P.Val<0.05 & logFC>1.5 & con>1)")+
+  labs(title="With vs Without previous episode",
+       #title="Con vs Sin episodio previo",
+       subtitle="Effect size against statistical significance",
+       #subtitle="Tamaño del efecto y significancia estadística",
+       caption="annotated features filtered by\n(adj.P.Val<0.05 & logFC>1.5) | con>AveExpr(top1)")+
   # or (adj.P.Val<0.001 & con>AveExpr(top1))
   geom_hline(aes(yintercept=-log10(0.01)), lty=3)+
   geom_vline(aes(xintercept=1), lty=3) +
@@ -925,13 +989,79 @@ td %>%
 
 ###### list
 
+```{r, fig.height=6, fig.width=3}
+sp <- td %>% filter(adj.P.Val<0.05, logFC>0) %>% dplyr::count()
+sc <- td %>% filter(adj.P.Val<0.05, con>1) %>% dplyr::count()
+sf <- td %>% filter(adj.P.Val<0.05, con>1, logFC>1) %>% dplyr::count()
+top <- td %>% top_n(1,AveExpr) %>% select(AveExpr)
+
+l <- td %>% 
+  filter(adj.P.Val<0.05) %>% 
+  select(p.order, logFC) %>% 
+  arrange(logFC) %>% 
+  ggplot(aes(logFC)) + geom_histogram() +
+  geom_vline(aes(xintercept=1), lty=3, col="red") +
+  labs(title="Distribution of logFC",
+       subtitle="filtered by adj.P.Val<0.05")
+
+t <- td %>% 
+  filter(adj.P.Val<0.05, logFC>0) %>% 
+  select(p.order, logFC,con) %>% 
+  arrange(logFC) %>% 
+  ggplot(aes(logFC,con)) + geom_line() + #geom_point(size=.5) +
+  geom_vline(aes(xintercept=1), lty=3, col="red") +
+  geom_hline(aes(yintercept=top$AveExpr), lty=2, col="grey") +
+  ylab("case mean intensity") +
+  labs(title="Case mean intensity vs logFC",
+       subtitle="filtered by adj.P.Val<0.05")
+
+Rmisc::multiplot(l,t,cols = 1)
+```
+
+- __PROBLEMA:__
+    - Regla de decisión y gráficas.
+    - Tradicionalmente,
+        + Primero, generar lista de antígenos con reactividad diferenciada 
+        (p.value o adj.p.val<0.05).
+        + Segundo, ordenar lista por __intensidad del grupo Caso__.
+        + Tercero, graficar con doble eje: (i) lista en diagramas de barra y (ii)
+        p.value en diagrama barra opuesto o puntos+línea sobrelapante.
+    - Bajo este protocolo, 
+        + luego de generada la lista, ni la __significancia estadística__ 
+        ni el __tamaño del efecto__ (del caso sobre el control) 
+        son tomados en cuenta. 
+        + Se pierde resolución sobre la distribución real de los datos por antígeno.
+    - __Parámetros relevantes__:
+        + significancia estadística,
+        + intensidad del grupo Caso,
+        + tamaño del efecto.
+
+- __SOLUTION:__
+    
+    1. __Statistical significance:__
+        - __previously exposed__ patients differentially recognized __`r sp$n`__ P. vivax proteins
+    2. __Case mean intensity:__
+        - __previously exposed__ patients differentially recognized __`r sc$n`__ P. vivax proteins 
+        with a __case mean intensity higher than 1__ (i.e., 2-fold higher than __noDNA control__).
+    3. __Size Effect:__
+        - __previously exposed__ patients differentially recognized __`r sf$n`__ P. vivax proteins 
+        with a __fold change higher than 1__ (i.e., 2-fold reactivity in Case vs Control).
+    4. __Exception:__
+        - __previously exposed__ patients differentially recognized __1__ P. vivax protein
+        with a __fold change higher than 0.97__ and with __the highest case mean intensity__ among 
+        this subset.
+        (moreover, higher than the average intensity of the antigen with the highest reactivity).
+    4. __Report of discoveries:__
+        - Final sorting w.r.t Case mean intensity.
+        - __Boxplot__ declaring the parameters of the executed sorting.
+
 ```{r}
 td %>% 
   filter(adj.P.Val<0.05 & (logFC>1 & con>1) | (logFC>0.9 & con>2)) %>%
+  #top_n(-16, p.order) %>% 
   arrange(desc(con)) %>% 
   select(Gene.ID,Description,logFC,con,sin,P.Value,adj.P.Val,p.order) # %>% slice(1:10)
 ```
-
 
 ##### top reactive
 
@@ -990,7 +1120,7 @@ aheatmap(exprs(eset),
 
 ###### boxplot
 
-```{r, fig.width=6,fig.height=4.5, echo=TRUE}
+```{r, fig.width=5.7,fig.height=4.5, echo=TRUE}
 eset <- eset.VIVAX.SEV.FILTER
 
 biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
@@ -1015,12 +1145,16 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   ggplot(aes(reorder(Gene.ID,con),value,fill=episodio_previo))+
   geom_boxplot()+
   #geom_point() +
-  facet_grid(group~.,scales = "free", space = "free") +#
+  facet_grid(group~.,scales = "free", space = "free") +
+  scale_fill_discrete(name="Previous\nEpisodes",
+                      #breaks=c("with", "without"),
+                      labels=c("with", "without")) +
   ylab("log2-transformed normalized MFI")+
   xlab("antigens")+
   labs(title="Highly and Differentially reactive antigens",
-       subtitle="All sorted w.r.t. con mean Ab reactivity",
-       caption="*filtered by adj.P.Val<0.05 and \n (logFC>1 & con>1) | (logFC>0.9 & con>2)")+
+       subtitle="All sorted w.r.t. Case mean reactivity",
+       caption="*filtered by adj.P.Val<0.05 & logFC>1")+
+  # and \n (logFC>1 & con>1) | (logFC>0.9 & con>2)
   coord_flip() # ORDENAR eje de proteínas!!!!
 ```
 
@@ -1086,6 +1220,8 @@ r <- fin %>%
                binaxis='y', stackdir='center', 
                dotsize=1#, position=position_dodge(0.8)
                ) +
+  scale_x_discrete(labels = c("non-severe","severe")) +
+  xlab("WHO criteria") + ylab("Percent Reactive") +
   labs(title="Breadth of Ab response", 
        subtitle= paste0("t=",j$statistic,", df=",j$parameter,", P=",j$p.value),
        caption=paste0("method:",j$method)) #+ theme_classic()
@@ -1098,6 +1234,8 @@ s <- fin %>%
                binaxis='y', stackdir='center', 
                dotsize=1#, position=position_dodge(0.8)
                ) +
+  scale_x_discrete(labels = c("non-severe","severe")) +
+  xlab("WHO criteria") + ylab("Mean Intensity") +
   labs(title="Intensity of Ab response", 
        subtitle= paste0("t=",k$statistic,", df=",k$parameter,", P=",k$p.value),
        caption=paste0("method:",k$method)) #+ theme_classic()
@@ -1137,6 +1275,8 @@ r <- fin %>%
                binaxis='y', stackdir='center', 
                dotsize=1#, position=position_dodge(0.8)
                ) +
+  scale_x_discrete(labels = c("with","without")) +
+  xlab("Previous Episodes") + ylab("Percent Reactive") +
   labs(title="Breadth of Ab response", 
        subtitle= paste0("t=",j$statistic,", df=",j$parameter,", P=",j$p.value),
        caption=paste0("method: ",j$method)) #+ theme_classic()
@@ -1149,6 +1289,8 @@ s <- fin %>%
                binaxis='y', stackdir='center', 
                dotsize=1#, position=position_dodge(0.8)
                ) +
+  scale_x_discrete(labels = c("with","without")) +
+  xlab("Previous Episodes") + ylab("Mean Intensity") +
   labs(title="Intensity of Ab response", 
        subtitle= paste0("t=",k$statistic,", df=",k$parameter,", P=",k$p.value),
        caption=paste0("method:",k$method)) #+ theme_classic()
@@ -1173,6 +1315,7 @@ r <- fin %>%
   geom_dotplot(#aes(fill=sev_WHO), 
                binaxis='y', stackdir='center', 
                dotsize=1, position=position_dodge(0.8)) +
+  xlab("Categorized Age") + ylab("Percent Reactive") +
   labs(title="Breadth of Ab response", subtitle="per age category") #+ theme_classic()
 
 s <- fin %>% 
@@ -1182,6 +1325,7 @@ s <- fin %>%
   geom_dotplot(#aes(fill=sev_WHO), 
                binaxis='y', stackdir='center', 
                dotsize=1, position=position_dodge(0.8)) +
+  xlab("Categorized Age") + ylab("Mean Intensity") +
   labs(title="Intensity of Ab response", subtitle="per age category") #+ theme_classic()
 
 #t <- fin %>% filter(expo_CAT != "NA") %>% 
@@ -1228,7 +1372,11 @@ r <- fin %>%
   geom_dotplot(aes(fill=sev_WHO), 
                binaxis='y', stackdir='center', 
                dotsize=1, position=position_dodge(0.8)) +
-  labs(title="Breadth of Ab response", subtitle="per age category") #+ theme_classic()
+  scale_fill_discrete(name="WHO criteria",
+                      #breaks=c("with", "without"),
+                      labels=c("non-severe", "severe")) +
+  xlab("Categorized Age") + ylab("Percent Reactive") +
+  labs(title="Breadth of Ab response", subtitle="per Age and Severity") #+ theme_classic()
 
 s <- fin %>% 
   ggplot(aes(edad_CAT,sample_mean, fill=sev_WHO)) +
@@ -1236,7 +1384,11 @@ s <- fin %>%
   geom_dotplot(aes(fill=sev_WHO), 
                binaxis='y', stackdir='center', 
                dotsize=1, position=position_dodge(0.8)) +
-  labs(title="Intensity of Ab response", subtitle="per age category") #+ theme_classic()
+  scale_fill_discrete(name="WHO criteria",
+                      #breaks=c("with", "without"),
+                      labels=c("non-severe", "severe")) +
+  xlab("Categorized Age") + ylab("Mean Intensity") +
+  labs(title="Intensity of Ab response", subtitle="per Age and Severity") #+ theme_classic()
 
 t <- fin %>% 
   ggplot(aes(edad_CAT,sample_freq, fill=episodio_previo)) +
@@ -1244,7 +1396,11 @@ t <- fin %>%
   geom_dotplot(aes(fill=episodio_previo), 
                binaxis='y', stackdir='center', 
                dotsize=1, position=position_dodge(0.8)) +
-  labs(title="Breadth of Ab response", subtitle="per previous episode category") #+ theme_classic()
+  scale_fill_discrete(name="Previous\nEpisodes",
+                      #breaks=c("with", "without"),
+                      labels=c("with", "without")) +
+  xlab("Categorized Age") + ylab("Percent Reactive") +
+  labs(title="Breadth of Ab response", subtitle="per Age and Previous Episodes") #+ theme_classic()
 
 u <- fin %>% 
   ggplot(aes(edad_CAT,sample_mean, fill=episodio_previo)) +
@@ -1252,7 +1408,11 @@ u <- fin %>%
   geom_dotplot(aes(fill=episodio_previo), 
                binaxis='y', stackdir='center', 
                dotsize=1, position=position_dodge(0.8)) +
-  labs(title="Intensity of Ab response", subtitle="per previous episode category") #+ theme_classic()
+  scale_fill_discrete(name="Previous\nEpisodes",
+                      #breaks=c("with", "without"),
+                      labels=c("with", "without")) +
+  xlab("Categorized Age") + ylab("Mean Intensity") +
+  labs(title="Intensity of Ab response", subtitle="per Age and Previous Episodes") #+ theme_classic()
 
 Rmisc::multiplot(r,t,s,u,cols = 2)
 ```
