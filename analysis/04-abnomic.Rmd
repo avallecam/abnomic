@@ -44,8 +44,8 @@ library("genefilter")  #DataCondensation
 library("limma")       #DifferentialAnalysisOfGenes
 library("NMF")         #AnnotatedHeatmaps!!!
 
-library(PerformanceAnalytics) #GRAPHICAL CORRELATIONS
-library(beeswarm)
+#library(PerformanceAnalytics) #GRAPHICAL CORRELATIONS
+#library(beeswarm)
 #library(vioplot)
 #library(beanplot)
 #library(htmlTable)  #HTMLtables -minimalistic- without 'ResultsAsis'
@@ -134,7 +134,13 @@ pure <- raw %>%
 # generate a list (df) of gene names and gene ID's
 ln <- raw %>% 
   dplyr::filter(Spot.Type=="IVTT.AG") %>% #head()
-  select(ID,Description) #%>% #head()
+  select(ID,Gene.ID,Description,Species)
+
+lg <- ln %>% #dplyr::count(Gene.ID)
+  group_by(Gene.ID,Species) %>% dplyr::count() %>% #filter(Species=="Pv") %>% arrange(desc(n))
+  ungroup()
+
+readr::write_csv(lg %>% select(Gene.ID), "data/04-listgen.csv")
 ```
 
 #### feature data
@@ -142,8 +148,21 @@ ln <- raw %>%
 ```{r}
 feat <- raw %>% 
   dplyr::filter(Spot.Type=="IVTT.AG") %>%
+  
+  #DO NOT WORKS!
+  #dplyr::mutate(ID=as.character(ID)) %>% 
+  #dplyr::mutate(ID= stringr::str_replace(ID, "(.....)_(\\d{6})_(.+)","\\3"))
+  #separate(ID,c("id.sp","id.cod","id.res"),sep = "_",remove = FALSE) %>% 
+  #separate(id.cod,c("id.cod","id.num")) %>% 
+  #unite(id.num,id.num,id.res)
+  
+  #THIS WORKS!
+  #dplyr::mutate(num=seq(from=33, to=32+n())) %>% #dplyr::count(num) %>% dplyr::count(n)
+  #unite(Description,Description,num,sep=" _") %>%
+  #dplyr::mutate(Description=as.factor(Description)) %>% 
+  
   #select(ID,1:10) %>% #head()
-  select(ID,Description,Species) %>% #head()
+  select(ID,Gene.ID,Description,Species) %>% #head()
   as.data.frame() %>% 
   column_to_rownames(var="ID")#%>% class()
 
@@ -161,8 +180,9 @@ sevdb_3 <- readRDS("data/03-sevrcov.rds") %>% #dplyr::count(episodio_previo)
   dplyr::rename(Sample.ID="codigo") %>% 
   mutate(edad_CAT=cut(edad,c(0,18,40,65,Inf)),
          expo_CAT=cut(episodio_previo_num,c(-Inf,0,1,4,Inf))) %>%  #%>%
-  select(Sample.ID,#sev_WHO_num,en_zona_endemica,#edad,#episodio_previo_num#,parasitemia
-         sev_WHO:expo_CAT,-Study,-episodio_previo_num)
+  select(Sample.ID,sev_WHO_num,episodio_previo_num,#en_zona_endemica,#edad,#,parasitemia
+         sev_WHO:expo_CAT,-Study#,-episodio_previo_num
+         )
 ```
 
 ```{r, message=FALSE}
@@ -229,11 +249,21 @@ norm %>% as.data.frame() %>%
 #### outlier
 
 ```{r}
-p <- norm %>% as.data.frame() %>% 
-  gather(sample_name,expression) %>% 
-  ggplot(aes(sample_name,expression)) +
+
+ndb <- norm %>% as.data.frame() %>% 
+  gather(sample_name,expression)
+
+p <- ndb %>% 
+  full_join(ndb %>% 
+              group_by(sample_name) %>% 
+              dplyr::summarise(avg=mean(expression)) %>% 
+              ungroup(), 
+            by="sample_name") %>% 
+  dplyr::arrange(avg) %>% 
+  ggplot(aes(reorder(sample_name,avg,order = TRUE),expression)) +
   geom_boxplot() +
-  theme(axis.text.x = element_blank())
+  theme(axis.text.x = element_blank()) +
+  labs(title="Outlier visualization")
 ```
 
 ```{r}
@@ -264,9 +294,16 @@ norx <- norm %>% as.data.frame() %>%
 ```{r, fig.height=4, fig.width=15}
 q <- norx %>% as.data.frame() %>% 
   gather(sample_name,expression) %>% 
-  ggplot(aes(sample_name,expression)) +
+  full_join(ndb %>% 
+              group_by(sample_name) %>% 
+              dplyr::summarise(avg=mean(expression)) %>% 
+              ungroup(), 
+            by="sample_name") %>% 
+  dplyr::arrange(avg) %>% 
+  ggplot(aes(reorder(sample_name,avg,order = TRUE),expression)) +
   geom_boxplot() +
-  theme(axis.text.x = element_blank())
+  theme(axis.text.x = element_blank()) +
+  labs(title="Conditional edition of a single element")
 
 Rmisc::multiplot(p,q,cols = 2)
 ```
@@ -419,23 +456,23 @@ a <- anti %>% as.data.frame() %>%
   gather(sample_name,expression) %>% 
   ggplot(aes(expression)) +
   geom_histogram() +
-  labs(title="RAW")
+  labs(title="RAW") + theme_bw()
 b <- test %>% as.data.frame() %>% 
   gather(sample_name,expression) %>% 
   filter(expression >= 0) %>% 
   ggplot(aes(expression)) +
   geom_histogram() +
-  labs(title="NORMALIZED")
+  labs(title="NORMALIZED") + theme_bw()
 c <- norx %>% as.data.frame() %>% 
   gather(sample_name,expression) %>% 
   ggplot(aes(expression)) +
   geom_histogram() +
-  labs(title="TRANSFORMED")
+  labs(title="TRANSFORMED") + theme_bw()
 d <- exprs(eset.VIVAX.SEV.FILTER) %>% as.data.frame() %>% 
   gather(sample_name,expression) %>% 
   ggplot(aes(expression)) +
   geom_histogram() +
-  labs(title="SEVERE VIVAX FILTERED DATA")
+  labs(title="SEVERE VIVAX FILTERED DATA") + theme_bw()
 Rmisc::multiplot(a,b,c,d,cols = 4)
 ```
 
@@ -448,9 +485,38 @@ Rmisc::multiplot(a,b,c,d,cols = 4)
 - just show the results from `03-sevrcov.Rmd`
 - compare against initial stratification and after update!
 
+##### Reclassification
+
+```{r}
+pData(eset) %>% 
+  group_by(Group,sev_WHO) %>% dplyr::count()
+```
+
+```{r}
+pData(eset) %>% 
+  group_by(sev_WHO, episodio_previo) %>% dplyr::count()
+```
+
 #### Feature covariates
 
 - maybe a graph of the slides with all the coordinates? :)
+
+##### Load PlasmoDB Metadata
+
+```{r, message=FALSE}
+all <- readr::read_tsv("data/04-listgen.tsv") %>% 
+  dplyr::rename(Gene.ID="[Gene ID]") %>% 
+  dplyr::rename(Gene.Name="[Gene Name or Symbol]") %>% 
+  dplyr::mutate(Gene.Name= stringr::str_replace(Gene.Name,"N/A",replacement = NA_character_)) %>% 
+  dplyr::mutate(Gene.Name= ifelse(Gene.ID == "PVX_003775", "MSP4", Gene.Name)) %>%
+  dplyr::mutate(Gene.Name= ifelse(Gene.ID == "PVX_003770", "MSP5", Gene.Name)) %>% 
+  dplyr::mutate(Gene.Name= ifelse(Gene.ID == "PVX_097625", "MSP8", Gene.Name)) %>% 
+  dplyr::mutate(Gene.Name= ifelse(Gene.ID == "PVX_114145", "MSP10", Gene.Name)) %>% 
+  dplyr::mutate(Gene.Name= ifelse(Gene.ID == "PVX_116780", "SFT2", Gene.Name))
+#lg
+head(all)
+#raw %>% filter(Gene.ID=="PVX_003775")#only_2o2
+```
 
 #### Microarray data
 
@@ -471,7 +537,7 @@ m <- anti %>% as.data.frame() %>%
   geom_point() +
   geom_smooth() +
   labs(title="Mean-variance dependence",
-       subtitle="Raw data")
+       subtitle="Raw data") + theme_bw()
 
 n <- norx %>% as.data.frame() %>% 
   rownames_to_column() %>% 
@@ -482,12 +548,12 @@ n <- norx %>% as.data.frame() %>%
   geom_point() +
   geom_smooth() +
   labs(title="Mean-variance dependence",
-       subtitle="Normalized data")
+       subtitle="Normalized data") + theme_bw()
 
 Rmisc::multiplot(m,n,cols = 2)
 ```
 
-#### Validity test
+##### Validity test
 
 *Using Pf IVTT and purified proteins*
 
@@ -598,8 +664,9 @@ v11 <- EBA175 %>%
   xlab("Ab reactivity to Purified EBA175") + ylab("Ab reactivity to IVTT EBA175") +
   labs(title="Validity test: PfEBA175", 
        subtitle= paste0(#"S=",f$statistic,", rho="
-                        "rho=",f$estimate,", P=",f$p.value),
-       caption=paste0("method: ",f$method)) #+ theme_classic()
+                        "rho=",f$estimate,", P=",f$p.value)#,
+       #caption=paste0("method: ",f$method)
+       ) + theme_bw()
   
 
 v32 <- MSP2 %>% 
@@ -608,8 +675,9 @@ v32 <- MSP2 %>%
   xlab("Ab reactivity to Purified MSP2") + ylab("Ab reactivity to IVTT MSP2") +
   labs(title="Validity test: PfMSP2", 
        subtitle= paste0(#"S=",g$statistic,", rho="
-                        "rho=",g$estimate,", P=",g$p.value),
-       caption=paste0("method: ",g$method)) #+ theme_classic()
+                        "rho=",g$estimate,", P=",g$p.value)#,
+       #caption=paste0("method: ",g$method)
+       ) + theme_bw()
 
 v41 <- CSP %>% 
   ggplot(aes(x=PfCSP_0.3.894,y=PF3D7_0304600.932)) + 
@@ -617,8 +685,9 @@ v41 <- CSP %>%
   xlab("Ab reactivity to Purified CSP") + ylab("Ab reactivity to IVTT CSP") +
   labs(title="Validity test: PfCSP", 
        subtitle= paste0(#"S=",h$statistic,", rho="
-                        "rho=",h$estimate,", P=",h$p.value),
-       caption=paste0("method: ",h$method)) #+ theme_classic()
+                        "rho=",h$estimate,", P=",h$p.value)#,
+       #caption=paste0("method: ",h$method)
+       ) + theme_bw()
 
 multiplot(v11, v32, v41, cols= 3)
 ```
@@ -686,18 +755,18 @@ td <- topTable(eb, coef = 2,               # default: slope
          #genelist = NULL,                 # no fit$gene
          number = Inf,                     # show all the hipothesis
          confint=0.95) %>% rownames_to_column() %>% as.tbl() %>% 
-  dplyr::rename(Gene.ID=rowname) %>% 
+  dplyr::rename(ID=rowname) %>% 
   arrange(P.Value) %>% 
   dplyr::mutate(p.order = seq(n())) %>% 
   mutate(significance=if_else(adj.P.Val<0.05,
-                              "adj.P.Val<0.05","reactive")) %>% #dplyr::count(significance)
+                              "FDR<0.05","not sig.")) %>% #dplyr::count(significance)
   inner_join(biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #dplyr::count(sev_WHO)
                group_by(gene,sev_WHO) %>% dplyr::summarise(mean_group=mean(value)) %>% 
                ungroup() %>% 
                spread(sev_WHO,mean_group) %>% 
                #arrange(desc(no_severo)) %>% 
-               dplyr::rename(Gene.ID=gene),
-             by="Gene.ID") 
+               dplyr::rename(ID=gene),
+             by="ID")
 ```
 
 ##### Plots
@@ -705,19 +774,25 @@ td <- topTable(eb, coef = 2,               # default: slope
 ###### p-value histogram
 
 ```{r, fig.height=3, fig.width=6}
-ax <- qplot(td$P.Value, binwidth=.05) +
+ax <- td %>% ggplot(aes(P.Value)) +
+  geom_histogram(breaks=seq(0, 1, by = .05)) +
+  scale_x_continuous(breaks=seq(0, 1, by = .5)) +
+  geom_vline(aes(xintercept=0.05), lty=3, col="red") +
   labs(title="P-value histogram",
-       subtitle="Without multiple testing correction") + xlab("p.value")
-bx <- qplot(td$adj.P.Val, binwidth=.05) +
+       subtitle="Without multiple testing correction") + xlab("p.value") + theme_bw()
+bx <-  td %>% ggplot(aes(adj.P.Val)) +
+  geom_histogram(breaks=seq(0, 1, by = .05)) +
+  scale_x_continuous(breaks=seq(0, 1, by = .5)) +
+  geom_vline(aes(xintercept=0.05), lty=3, col="red") +
   coord_cartesian(xlim = c(0,1)) +
   labs(title="P-value histogram",
-       subtitle="After multiple testing correction") + xlab("adjust p.value")
+       subtitle="After multiple testing correction") + xlab("adjust p.value") + theme_bw()
 Rmisc::multiplot(ax,bx,cols = 2)
 ```
 
 ###### volcano plot
 
-```{r, fig.height=6, fig.width=5.15}
+```{r, fig.height=6, fig.width=3.4}
 td %>% 
   mutate(unadj_significance=if_else(P.Value<0.05,
                               "P.Value<0.05","not sig.")) %>% #dplyr::count(significance)
@@ -726,23 +801,30 @@ td %>%
                                                                   values=c("black","red")) +
   #geom_point(aes(colour=no_severo)) + viridis::scale_color_viridis() +
   ggrepel::geom_text_repel(data = td %>% 
-                             top_n(-4,P.Value)
+                             top_n(-10,P.Value) %>% 
+                             inner_join(all, by="Gene.ID") %>% 
+                             inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
                              #filter(adj.P.Val<0.05 & logFC>1.5 & no_severo>1)# %>% 
                              #arrange(desc(no_severo)) %>% 
                              #top_n(10,no_severo)
                            ,
-                           aes(label=Gene.ID), force = 5,
-                           box.padding = unit(1, "lines"),
+                           aes(label=Gene.Name), #force = 5,
+                           #direction = "both",
+                           box.padding = unit(5.5, "lines"),
                            point.padding = unit(.5, "lines")
-                           ) +
+                           ) + theme_bw() +
+  theme(legend.position=c(.2, .91),#"bottom"
+        legend.margin = margin(2,2,2,2)) +
   labs(title="Non-severe vs Severe",
        #title="No-severo vs Severo",
-       subtitle="Effect size against statistical significance",
+       subtitle="Effect size against statistical significance"#,
        #subtitle="Tamaño del efecto y significancia estadística",
-       caption="annotated features filtered by\nP.Value<0.01")+
-  geom_hline(aes(yintercept=-log10(0.01)), lty=3)+
+       #caption="annotated features filtered by\nP.Value<0.01"
+       )+
+  geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
   geom_vline(aes(xintercept=1), lty=3) +
-  coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
+  geom_vline(aes(xintercept=-1), lty=3) +
+  coord_cartesian(xlim = c(-2, 2), ylim = c(0,15))
 ```
 
 ##### diff reactive
@@ -750,7 +832,7 @@ td %>%
 ###### list
 
 ```{r}
-td %>% 
+sev_d <- td %>% 
   filter(#adj.P.Val<0.05 &
            P.Value<0.05 #& 
            #logFC>1 & 
@@ -760,7 +842,9 @@ td %>%
   top_n(-10,P.Value) %>% 
   arrange(P.Value) %>% 
   #arrange(desc(no_severo)) %>% 
-  select(Gene.ID,Description,logFC,severo,no_severo,t,P.Value,adj.P.Val,p.order) # %>% slice(1:10)
+  select(ID,Gene.ID,Description,logFC,severo,no_severo,t,P.Value,adj.P.Val,p.order) # %>% slice(1:10)
+
+sev_d %>% inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
 ```
 
 
@@ -769,9 +853,11 @@ td %>%
 ###### list
 
 ```{r}
-td %>% 
+sev_t <- td %>% 
   arrange(desc(AveExpr)) %>% 
-  select(Gene.ID,Description,AveExpr,p.order) %>% slice(1:10)
+  select(ID,Gene.ID,Description,AveExpr,p.order) %>% slice(1:10)
+
+sev_t %>% inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
 ```
 
 ##### both
@@ -791,13 +877,13 @@ s <- td %>%
   top_n(-10,P.Value) %>% 
   arrange(P.Value) %>% 
   #arrange(desc(no_severo)) %>% 
-  select(Gene.ID) %>% as.matrix() 
+  select(ID) %>% as.matrix() 
 
 x <- td %>% 
   arrange(desc(AveExpr)) %>% 
   top_n(10,AveExpr) %>% 
   arrange(desc(no_severo)) %>% # If diff order at boxplot is achieved, then desactivate this line.
-  select(Gene.ID) %>% as.matrix() 
+  select(ID) %>% as.matrix() 
 
 pData(eset) <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
   group_by(sample) %>% dplyr::summarise(sample_mean=mean(value, na.rm=TRUE)) %>% 
@@ -805,7 +891,7 @@ pData(eset) <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>%
               rownames_to_column() %>% 
               dplyr::rename(sample=rowname),
             by="sample") %>% 
-  select(-Study,-Group,-episodio_previo,-edad_CAT, -expo_CAT) %>% 
+  select(-Study,-Group,-episodio_previo,-edad_CAT, -expo_CAT, -episodio_previo_num) %>% 
   arrange(sev_WHO,sample_mean) %>% #dplyr::count(sample)
   as.data.frame() %>% #class()
   column_to_rownames(var="sample")
@@ -828,34 +914,44 @@ aheatmap(exprs(eset),
 
 ###### boxplot
 
-```{r, fig.width=6,fig.height=4, echo=TRUE}
+```{r, fig.width=5.1,fig.height=4, echo=TRUE}
 eset <- eset.VIVAX.SEV.FILTER
 
 biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
-  dplyr::rename(Gene.ID="gene") %>% 
-  full_join(td, by = "Gene.ID") %>%
+  dplyr::rename(ID="gene") %>% 
+  full_join(td, by = "ID") %>%
   full_join(x %>% as.data.frame() %>% 
               dplyr::mutate(group="Top 10") %>% 
-              #dplyr::rename(gene="Gene.ID") %>% 
-              dplyr::mutate(Gene.ID=as.character(Gene.ID)),
-            by="Gene.ID") %>% 
+              #dplyr::rename(gene="ID") %>% 
+              dplyr::mutate(ID=as.character(ID)),
+            by="ID") %>% 
   full_join(s %>% as.data.frame() %>% 
               dplyr::mutate(group="Differentially*") %>% 
-              #dplyr::rename(gene="Gene.ID") %>% 
-              dplyr::mutate(Gene.ID=as.character(Gene.ID)),
-            by="Gene.ID") %>% 
+              #dplyr::rename(gene="ID") %>% 
+              dplyr::mutate(ID=as.character(ID)),
+            by="ID") %>% 
   unite(group, group.x, group.y) %>% 
   mutate(group=stringr::str_replace(group,"NA_(.)", "\\1")) %>% 
   mutate(group=stringr::str_replace(group,"(.)_NA", "\\1")) %>% 
   mutate(group=forcats::fct_relevel(group,"Top 10")) %>% 
   filter(group!="NA") %>% 
-  ggplot(aes(reorder(Gene.ID,no_severo),value,fill=sev_WHO))+
+  inner_join(all, by="Gene.ID") %>% 
+  inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") %>% 
+  #unite(id.name, `[Product Description]`,Gene.Name, sep = " / ", remove = FALSE) %>% 
+  unite(id.name, Gene.Name, Gene.ID, sep = " / ", remove = FALSE) %>% 
+  ggplot(aes(reorder(id.name,no_severo),value,fill=sev_WHO))+
   geom_boxplot()+
   #geom_point() +
   facet_grid(group~.,scales = "free", space = "free") +
-  scale_fill_discrete(name="WHO criteria",
+  scale_fill_discrete(name="WHO\ncriteria",
                       #breaks=c("with", "without"),
-                      labels=c("non-severe", "severe")) +
+                      labels=c("non-severe", "severe")) + theme_bw() +
+  guides(fill = guide_legend(title.position = "left")) +
+  theme(legend.position=c(-.25, -.13),#"bottom"
+        legend.margin = margin(0,0,0,0)#,
+        #legend.text = element_text(size = 8),
+        #legend.title = element_text(size = 8)
+        ) +
   ylab("log2-transformed normalized MFI")+
   xlab("antigens")+
   labs(title="Highly and Differentially reactive antigens",
@@ -864,7 +960,7 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   coord_flip() # ORDENAR eje de proteínas!!!!
 ```
 
-#### 5.2 previous episodes
+#### 5.2 previous episode
 
 ```{r}
 eset <- eset.VIVAX.SEV.FILTER
@@ -899,18 +995,18 @@ td <- topTable(eb, coef = 2,               # default: slope
          #genelist = NULL,                 # no fit$gene
          number = Inf,                     # show all the hipothesis
          confint=0.95) %>% rownames_to_column() %>% as.tbl() %>% 
-  dplyr::rename(Gene.ID=rowname) %>% 
+  dplyr::rename(ID=rowname) %>% 
   arrange(P.Value) %>% 
   dplyr::mutate(p.order = seq(n())) %>% 
   mutate(significance=if_else(adj.P.Val<0.05,
-                              "adj.P.Val<0.05","reactive")) %>% #dplyr::count(significance)
+                              "FDR<0.05","not sig.")) %>% #dplyr::count(significance)
   inner_join(biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #dplyr::count(episodio_previo)
                group_by(gene,episodio_previo) %>% dplyr::summarise(mean_group=mean(value)) %>% 
                ungroup() %>% 
                spread(episodio_previo,mean_group) %>% 
                #arrange(desc(con)) %>% 
-               dplyr::rename(Gene.ID=gene),
-             by="Gene.ID") 
+               dplyr::rename(ID=gene),
+             by="ID") 
 ```
 
 ##### Plots
@@ -918,69 +1014,96 @@ td <- topTable(eb, coef = 2,               # default: slope
 ###### p-value histogram
 
 ```{r, fig.height=3, fig.width=6}
-ax <- qplot(td$P.Value, binwidth=.05) +
+ax <- td %>% ggplot(aes(P.Value)) +
+  geom_histogram(breaks=seq(0, 1, by = .05)) +
+  scale_x_continuous(breaks=seq(0, 1, by = .5)) +
+  geom_vline(aes(xintercept=0.05), lty=3, col="red") +
   labs(title="P-value histogram",
-       subtitle="Without multiple testing correction") + xlab("p.value")
-bx <- qplot(td$adj.P.Val, binwidth=.05) +
+       subtitle="Without multiple testing correction") + xlab("p.value") + theme_bw()
+bx <-  td %>% ggplot(aes(adj.P.Val)) +
+  geom_histogram(breaks=seq(0, 1, by = .05)) +
+  scale_x_continuous(breaks=seq(0, 1, by = .5)) +
+  geom_vline(aes(xintercept=0.05), lty=3, col="red") +
   coord_cartesian(xlim = c(0,1)) +
   labs(title="P-value histogram",
-       subtitle="After multiple testing correction") + xlab("adjust p.value")
+       subtitle="After multiple testing correction") + xlab("adjust p.value") + theme_bw()
 Rmisc::multiplot(ax,bx,cols = 2)
 ```
 
 ###### volcano plot
 
-```{r, fig.height=6, fig.width=5.2}
+```{r, fig.height=6, fig.width=3.4}
 td %>% 
   ggplot(aes(logFC,-log10(P.Value))) +
   geom_point(aes(colour=significance)) + scale_color_manual(values=c("red","black")) +
   #geom_point(aes(colour=con)) + viridis::scale_color_viridis() +
   ggrepel::geom_text_repel(data = td %>% 
-                             filter((adj.P.Val<0.05 & logFC>1.5 & con>1)# | 
+                             filter((adj.P.Val<0.05 & logFC>1 & con>1)# | 
                                       #(adj.P.Val<0.001 & #logFC>0.9 & 
                                       #   con>2.7) 
-                                    )# %>% 
+                                    ) %>% 
+                             inner_join(all, by="Gene.ID") %>% 
+                             inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") #%>% 
+                             #mutate(Gene.Name= ifelse(Gene.ID == "PVX_003775", "MSP4", Gene.Name)) %>%
+                             #mutate(Gene.Name= ifelse(Gene.ID == "PVX_003770", "MSP5", Gene.Name))
                              #arrange(desc(con)) %>% 
                              #top_n(10,con)
                            ,
-                           aes(label=Gene.ID), force = 15,
-                           box.padding = unit(1, "lines"),
-                           point.padding = unit(1, "lines")
-                           ) +
-  labs(title="With vs Without previous episode",
+                           aes(label=Gene.Name), #force = 15,
+                           direction = "x",
+                           box.padding = unit(4, "lines"),
+                           point.padding = unit(.5, "lines")
+                           ) + theme_bw() +
+  #theme(legend.position="bottom") +
+  theme(#legend.position=c(.18, .44),
+        legend.position=c(.17, .92),
+        legend.margin = margin(2,2,2,2)) +
+    labs(title="With vs Without previous episode",
        #title="Con vs Sin episodio previo",
-       subtitle="Effect size against statistical significance",
+       subtitle="Effect size against statistical significance"#,
        #subtitle="Tamaño del efecto y significancia estadística",
-       caption="annotated features filtered by\n(adj.P.Val<0.05 & con>1 & logFC>1.5)")+
+       #caption="annotated features filtered by\n(adj.P.Val<0.05 & con>1 & logFC>1.5)"
+       )+
   # or (adj.P.Val<0.001 & con>AveExpr(top1))
-  geom_hline(aes(yintercept=-log10(0.01)), lty=3)+
+  geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
   geom_vline(aes(xintercept=1), lty=3) +
+  #geom_vline(aes(xintercept=-1), lty=3) +
   coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
 ```
 
-```{r, fig.height=6, fig.width=4.7}
+```{r, fig.height=6, fig.width=3.4}
 td %>% 
   ggplot(aes(logFC,-log10(P.Value))) +
   #geom_point(aes(colour=significance)) + scale_color_manual(values=c("red","black")) +
   geom_point(aes(colour=con)) + viridis::scale_color_viridis(name="Case\nmean\nintensity") +
   ggrepel::geom_text_repel(data = td %>% 
-                             filter((adj.P.Val<0.05 & logFC>1.5 & con>1) | 
+                             filter(#(adj.P.Val<0.05 & logFC>1.5 & con>1) | 
                                       (adj.P.Val<0.001 & #logFC>0.9 & 
-                                         con>2.7) )# %>% 
+                                         con>2.7) ) %>% 
+                             inner_join(all, by="Gene.ID") %>% 
+                             inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
                              #arrange(desc(con)) %>% 
                              #top_n(10,con)
                            ,
-                           aes(label=Gene.ID), force = 15,
-                           box.padding = unit(1, "lines"),
-                           point.padding = unit(1, "lines")
-                           ) +
+                           aes(label=`[Product Description]`), #force = 15,
+                           direction = "x",
+                           box.padding = unit(7, "lines"),
+                           point.padding = unit(.4, "lines")
+                           ) + theme_bw() +
+  #theme(legend.position="bottom") +
+  theme(legend.position=c(.11, .84),
+        legend.margin = margin(2,2,2,2),
+        legend.title = element_text(size=10)) +
+  guides(colour = guide_colorbar(barwidth = 1, barheight = 5)) +
+  #guides(colour = guide_legend(title.theme = element_text(size = 15))) +
   labs(title="With vs Without previous episode",
        #title="Con vs Sin episodio previo",
-       subtitle="Effect size against statistical significance",
+       subtitle="Effect size against statistical significance"#,
        #subtitle="Tamaño del efecto y significancia estadística",
-       caption="annotated features filtered by\n(adj.P.Val<0.05 & logFC>1.5) | con>AveExpr(top1)")+
+       #caption="annotated features filtered by\nlogFC>1.5 or Case>AveExpr(top1)"
+       )+
   # or (adj.P.Val<0.001 & con>AveExpr(top1))
-  geom_hline(aes(yintercept=-log10(0.01)), lty=3)+
+  geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
   geom_vline(aes(xintercept=1), lty=3) +
   coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
 ```
@@ -1002,7 +1125,7 @@ l <- td %>%
   ggplot(aes(logFC)) + geom_histogram() +
   geom_vline(aes(xintercept=1), lty=3, col="red") +
   labs(title="Distribution of logFC",
-       subtitle="filtered by adj.P.Val<0.05")
+       subtitle="filtered by adj.P.Val<0.05") + theme_bw()
 
 t <- td %>% 
   filter(adj.P.Val<0.05, logFC>0) %>% 
@@ -1010,10 +1133,11 @@ t <- td %>%
   arrange(logFC) %>% 
   ggplot(aes(logFC,con)) + geom_line() + #geom_point(size=.5) +
   geom_vline(aes(xintercept=1), lty=3, col="red") +
+  #geom_hline(aes(yintercept=1), lty=3, col="red") +
   geom_hline(aes(yintercept=top$AveExpr), lty=2, col="grey") +
   ylab("case mean intensity") +
   labs(title="Case mean intensity vs logFC",
-       subtitle="filtered by adj.P.Val<0.05")
+       subtitle="filtered by adj.P.Val<0.05") + theme_bw()
 
 Rmisc::multiplot(l,t,cols = 1)
 ```
@@ -1054,13 +1178,17 @@ Rmisc::multiplot(l,t,cols = 1)
     4. __Report of discoveries:__
         - Final sorting w.r.t Case mean intensity.
         - __Boxplot__ declaring the parameters of the executed sorting.
+            + _issue:_ observed variance, not posterior variance (after eBayes).
 
 ```{r}
-td %>% 
+exp_d <- td %>% 
   filter(adj.P.Val<0.05 & (logFC>1 & con>1) | (logFC>0.9 & con>2)) %>%
   #top_n(-16, p.order) %>% 
+  #arrange(desc(logFC)) %>% 
   arrange(desc(con)) %>% 
-  select(Gene.ID,Description,logFC,con,sin,P.Value,adj.P.Val,p.order) # %>% slice(1:10)
+  select(ID,Gene.ID,Description,logFC,con,sin,P.Value,adj.P.Val,p.order) # %>% slice(1:10)
+
+exp_d %>% inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
 ```
 
 ##### top reactive
@@ -1068,9 +1196,11 @@ td %>%
 ###### list
 
 ```{r}
-td %>% 
+exp_t <- td %>% 
   arrange(desc(AveExpr)) %>% 
-  select(Gene.ID,Description,AveExpr,p.order) %>% slice(1:10)
+  select(ID,Gene.ID,Description,AveExpr,p.order) %>% slice(1:10)
+
+exp_t %>% inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
 ```
 
 ##### both
@@ -1083,13 +1213,13 @@ eset <- eset.VIVAX.SEV.FILTER
 s <- td %>% 
   filter(adj.P.Val<0.05 & (logFC>1 & con>1) | (logFC>0.9 & con>2)) %>% 
   arrange(desc(con)) %>% 
-  select(Gene.ID) %>% as.matrix() 
+  select(ID) %>% as.matrix() 
 
 x <- td %>% 
   arrange(desc(AveExpr)) %>% 
   top_n(10,AveExpr) %>% 
   arrange(desc(con)) %>% # If diff order at boxplot is achieved, then desactivate this line.
-  select(Gene.ID) %>% as.matrix() 
+  select(ID) %>% as.matrix() 
 
 pData(eset) <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
   group_by(sample) %>% dplyr::summarise(sample_mean=mean(value, na.rm=TRUE)) %>% 
@@ -1097,7 +1227,7 @@ pData(eset) <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>%
               rownames_to_column() %>% 
               dplyr::rename(sample=rowname),
             by="sample") %>% 
-  select(-Study,-Group,-sev_WHO,-edad_CAT, -expo_CAT) %>% 
+  select(-Study,-Group,-sev_WHO,-edad_CAT, -expo_CAT, -sev_WHO_num) %>% 
   arrange(episodio_previo,sample_mean) %>% #dplyr::count(sample)
   as.data.frame() %>% #class()
   column_to_rownames(var="sample")
@@ -1120,35 +1250,46 @@ aheatmap(exprs(eset),
 
 ###### boxplot
 
-```{r, fig.width=5.7,fig.height=4.5, echo=TRUE}
+```{r, fig.width=5.15,fig.height=4.5, echo=TRUE}
 eset <- eset.VIVAX.SEV.FILTER
 
 biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
-  dplyr::rename(Gene.ID="gene") %>% 
-  full_join(td, by = "Gene.ID") %>%
+  dplyr::rename(ID="gene") %>% 
+  full_join(td, by = "ID") %>%
   full_join(x %>% as.data.frame() %>% 
               dplyr::mutate(group="Top 10") %>% 
-              #dplyr::rename(gene="Gene.ID") %>% 
-              dplyr::mutate(Gene.ID=as.character(Gene.ID)),
-            by="Gene.ID") %>% 
+              #dplyr::rename(gene="ID") %>% 
+              dplyr::mutate(ID=as.character(ID)),
+            by="ID") %>% 
   full_join(s %>% as.data.frame() %>% 
               dplyr::mutate(group="Differentially*") %>% 
-              #dplyr::rename(gene="Gene.ID") %>% 
-              dplyr::mutate(Gene.ID=as.character(Gene.ID)),
-            by="Gene.ID") %>% 
+              #dplyr::rename(gene="ID") %>% 
+              dplyr::mutate(ID=as.character(ID)),
+            by="ID") %>% 
   unite(group, group.x, group.y) %>% 
   mutate(group=stringr::str_replace(group,"NA_(.)", "\\1")) %>% 
   mutate(group=stringr::str_replace(group,"(.)_NA", "\\1")) %>% 
   mutate(group=forcats::fct_relevel(group,"Top 10")) %>% 
   mutate(episodio_previo=forcats::fct_relevel(episodio_previo,"con")) %>% 
   filter(group!="NA") %>% 
-  ggplot(aes(reorder(Gene.ID,con),value,fill=episodio_previo))+
+  inner_join(all, by="Gene.ID") %>% 
+  inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") %>% 
+  #unite(id.name, `[Product Description]`,Gene.Name, sep = " / ", remove = FALSE) %>% 
+  unite(id.name, Gene.Name, Gene.ID, sep = " / ", remove = FALSE) %>%
+  #unite(id.name, id.name, p.order, sep = " / ", remove = FALSE) %>% 
+  ggplot(aes(reorder(id.name,con),value,fill=episodio_previo))+
   geom_boxplot()+
   #geom_point() +
   facet_grid(group~.,scales = "free", space = "free") +
   scale_fill_discrete(name="Previous\nEpisodes",
                       #breaks=c("with", "without"),
-                      labels=c("with", "without")) +
+                      labels=c("with", "without")) + theme_bw() +
+  guides(fill = guide_legend(title.position = "left")) +
+  theme(legend.position=c(-.25, -.1),#"bottom"
+        legend.margin = margin(0,0,0,0)#,
+        #legend.text = element_text(size = 8),
+        #legend.title = element_text(size = 8)
+        ) +  
   ylab("log2-transformed normalized MFI")+
   xlab("antigens")+
   labs(title="Highly and Differentially reactive antigens",
@@ -1223,8 +1364,9 @@ r <- fin %>%
   scale_x_discrete(labels = c("non-severe","severe")) +
   xlab("WHO criteria") + ylab("Percent Reactive") +
   labs(title="Breadth of Ab response", 
-       subtitle= paste0("t=",j$statistic,", df=",j$parameter,", P=",j$p.value),
-       caption=paste0("method:",j$method)) #+ theme_classic()
+       subtitle= paste0("t=",j$statistic,", df=",j$parameter,", P=",j$p.value)#,
+       #caption=paste0("method:",j$method)
+       ) + theme_bw()
 
 s <- fin %>% 
   ggplot(aes(sev_WHO,sample_mean)) +
@@ -1237,13 +1379,14 @@ s <- fin %>%
   scale_x_discrete(labels = c("non-severe","severe")) +
   xlab("WHO criteria") + ylab("Mean Intensity") +
   labs(title="Intensity of Ab response", 
-       subtitle= paste0("t=",k$statistic,", df=",k$parameter,", P=",k$p.value),
-       caption=paste0("method:",k$method)) #+ theme_classic()
+       subtitle= paste0("t=",k$statistic,", df=",k$parameter,", P=",k$p.value)#,
+       #caption=paste0("method:",k$method)
+       ) + theme_bw()
 
 Rmisc::multiplot(r,s,cols = 1)
 ```
 
-#### 6.2 previous episodes
+#### 6.2 previous episode
 
 ```{r}
 ## Primero, Prueba de Hipótesis para comparar varianzas:
@@ -1276,10 +1419,11 @@ r <- fin %>%
                dotsize=1#, position=position_dodge(0.8)
                ) +
   scale_x_discrete(labels = c("with","without")) +
-  xlab("Previous Episodes") + ylab("Percent Reactive") +
+  xlab("Previous Episode") + ylab("Percent Reactive") +
   labs(title="Breadth of Ab response", 
-       subtitle= paste0("t=",j$statistic,", df=",j$parameter,", P=",j$p.value),
-       caption=paste0("method: ",j$method)) #+ theme_classic()
+       subtitle= paste0("t=",j$statistic,", df=",j$parameter,", P=",j$p.value)#,
+       #caption=paste0("method: ",j$method)
+       ) + theme_bw()
 
 s <- fin %>% 
   ggplot(aes(episodio_previo,sample_mean)) +
@@ -1290,15 +1434,16 @@ s <- fin %>%
                dotsize=1#, position=position_dodge(0.8)
                ) +
   scale_x_discrete(labels = c("with","without")) +
-  xlab("Previous Episodes") + ylab("Mean Intensity") +
+  xlab("Previous Episode") + ylab("Mean Intensity") +
   labs(title="Intensity of Ab response", 
-       subtitle= paste0("t=",k$statistic,", df=",k$parameter,", P=",k$p.value),
-       caption=paste0("method:",k$method)) #+ theme_classic()
+       subtitle= paste0("t=",k$statistic,", df=",k$parameter,", P=",k$p.value)#,
+       #caption=paste0("method:",k$method)
+       ) + theme_bw()
 
 Rmisc::multiplot(r,s,cols = 1)
 ```
 
-#### Exploratory
+#### 6.3 Exploratory
 
 ##### Per age
 
@@ -1316,7 +1461,7 @@ r <- fin %>%
                binaxis='y', stackdir='center', 
                dotsize=1, position=position_dodge(0.8)) +
   xlab("Categorized Age") + ylab("Percent Reactive") +
-  labs(title="Breadth of Ab response", subtitle="per age category") #+ theme_classic()
+  labs(title="Breadth of Ab response", subtitle="per age category")  + theme_bw()
 
 s <- fin %>% 
   ggplot(aes(edad_CAT,sample_mean#, fill=sev_WHO
@@ -1326,7 +1471,7 @@ s <- fin %>%
                binaxis='y', stackdir='center', 
                dotsize=1, position=position_dodge(0.8)) +
   xlab("Categorized Age") + ylab("Mean Intensity") +
-  labs(title="Intensity of Ab response", subtitle="per age category") #+ theme_classic()
+  labs(title="Intensity of Ab response", subtitle="per age category")  + theme_bw()
 
 #t <- fin %>% filter(expo_CAT != "NA") %>% 
 #  ggplot(aes(expo_CAT,sample_freq#, fill=episodio_previo
@@ -1336,7 +1481,7 @@ s <- fin %>%
 #               binaxis='y', stackdir='center', 
 #               dotsize=1, position=position_dodge(0.8)) +
 #  labs(title="Breadth of Ab response", 
-#       subtitle="per previous episode category") #+ theme_classic()
+#       subtitle="per previous episode category")  + theme_bw()
 #
 #u <- fin %>% filter(expo_CAT != "NA") %>%  
 #  ggplot(aes(expo_CAT,sample_mean#, fill=episodio_previo
@@ -1346,7 +1491,7 @@ s <- fin %>%
 #               binaxis='y', stackdir='center', 
 #               dotsize=1, position=position_dodge(0.8)) +
 #  labs(title="Intensity of Ab response", 
-#       subtitle="per previous episode category") #+ theme_classic()
+#       subtitle="per previous episode category")  + theme_bw()
 
 Rmisc::multiplot(r,s,cols = 2)
 ```
@@ -1376,7 +1521,7 @@ r <- fin %>%
                       #breaks=c("with", "without"),
                       labels=c("non-severe", "severe")) +
   xlab("Categorized Age") + ylab("Percent Reactive") +
-  labs(title="Breadth of Ab response", subtitle="per Age and Severity") #+ theme_classic()
+  labs(title="Breadth of Ab response", subtitle="per Age and Severity")  + theme_bw()
 
 s <- fin %>% 
   ggplot(aes(edad_CAT,sample_mean, fill=sev_WHO)) +
@@ -1388,7 +1533,7 @@ s <- fin %>%
                       #breaks=c("with", "without"),
                       labels=c("non-severe", "severe")) +
   xlab("Categorized Age") + ylab("Mean Intensity") +
-  labs(title="Intensity of Ab response", subtitle="per Age and Severity") #+ theme_classic()
+  labs(title="Intensity of Ab response", subtitle="per Age and Severity")  + theme_bw()
 
 t <- fin %>% 
   ggplot(aes(edad_CAT,sample_freq, fill=episodio_previo)) +
@@ -1400,7 +1545,7 @@ t <- fin %>%
                       #breaks=c("with", "without"),
                       labels=c("with", "without")) +
   xlab("Categorized Age") + ylab("Percent Reactive") +
-  labs(title="Breadth of Ab response", subtitle="per Age and Previous Episodes") #+ theme_classic()
+  labs(title="Breadth of Ab response", subtitle="per Age and Previous Episode")  + theme_bw()
 
 u <- fin %>% 
   ggplot(aes(edad_CAT,sample_mean, fill=episodio_previo)) +
@@ -1412,10 +1557,39 @@ u <- fin %>%
                       #breaks=c("with", "without"),
                       labels=c("with", "without")) +
   xlab("Categorized Age") + ylab("Mean Intensity") +
-  labs(title="Intensity of Ab response", subtitle="per Age and Previous Episodes") #+ theme_classic()
+  labs(title="Intensity of Ab response", subtitle="per Age and Previous Episode")  + theme_bw()
 
 Rmisc::multiplot(r,t,s,u,cols = 2)
 ```
+
+### 0. Extra-Analysis
+
+#### Shared proteins
+
+```{r, fig.align='center', fig.width=4.7, fig.height=5}
+g1_id <- exp_t %>% dplyr::select(Gene.ID)      # 960
+g2_id <- exp_d %>% dplyr::select(Gene.ID)     # 963
+g3_id <- sev_d %>% dplyr::select(Gene.ID)     # 963
+
+g1_idl= unlist(as.list(g1_id))
+g2_idl= unlist(as.list(g2_id))
+g3_idl= unlist(as.list(g3_id))
+
+tmp <- gplots::venn(list("severe\nmalaria"=g3_idl, "with\nexposure"=g2_idl, "top reactive"=g1_idl))
+```
+
+```{r}
+sg <- exp_t %>% inner_join(exp_d, by="Gene.ID") %>% select(Gene.ID)
+td %>% filter(Gene.ID==sg$Gene.ID) %>% 
+  inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
+```
+
+#### Plots
+
+```{r}
+
+```
+
 
 ### Results
 
