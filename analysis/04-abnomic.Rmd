@@ -487,6 +487,14 @@ Rmisc::multiplot(a,b,c,d,cols = 4)
 
 ##### Reclassification
 
+- Smith-Nuñez, correo __28oct2016__:
+    + La base de datos epidemiológicos inicial pasó por __control de calidad y reingreso de fichas__.
+    + __Acción:__
+        - Contrastar y Crear una DB consenso,
+        - Redefinir clasificación OMS de Malaria Severa,
+        - Reclasificar muestras,
+        - Filtrar muestras seleccionadas para el ensayo de Microarreglo de Proteínas.
+
 ```{r}
 pData(eset) %>% 
   group_by(Group,sev_WHO) %>% dplyr::count()
@@ -503,11 +511,34 @@ pData(eset) %>%
 
 ##### Load PlasmoDB Metadata
 
+- __Tidy PlasmoDB data frame__ output:
+    + __Programaticaly renamed all__ variable/column names using __regex__.
+
 ```{r, message=FALSE}
-all <- readr::read_tsv("data/04-listgen.tsv") %>% 
-  dplyr::rename(Gene.ID="[Gene ID]") %>% 
-  dplyr::rename(Gene.Name="[Gene Name or Symbol]") %>% 
-  dplyr::mutate(Gene.Name= stringr::str_replace(Gene.Name,"N/A",replacement = NA_character_)) %>% 
+all <- readr::read_tsv("data/04-listgen.tsv") %>% #colnames() %>% #class()
+  #make.names(unique = TRUE) %>% 
+  rename_all(
+      funs(
+        #stringr::str_to_lower(.) %>%
+        stringr::str_replace_all(., '\\s', '\\.') %>% 
+        stringr::str_replace_all(., '\\[|\\]', '') %>% 
+        stringr::str_replace_all(., '\\#.', '') %>% 
+        stringr::str_replace_all(., 'Computed.', '') %>% 
+        stringr::str_replace_all(., '\\/', '\\_')
+      )
+  ) %>% 
+  select(-source_id,-X18) %>% 
+  dplyr::rename(Gene.Name=Gene.Name.or.Symbol) %>% 
+  dplyr::mutate_all(
+    funs(
+      stringr::str_replace_all(.,"N/A",replacement = NA_character_)
+    )) %>% 
+  dplyr::mutate(SignalP.Scores=stringr::str_replace(SignalP.Scores, "^NN.{0,}","SP")) %>% 
+  dplyr::mutate(NonSyn_Syn.SNP.Ratio.All.Strains=as.numeric(NonSyn_Syn.SNP.Ratio.All.Strains),
+                Total.SNPs.All.Strains=as.numeric(Total.SNPs.All.Strains)) %>% 
+  #dplyr::mutate(SignalP=stringr::str_replace(SignalP.Scores, "^NN.{0,}","SP")) %>% 
+  #group_by(SignalP.Scores,SignalP) %>% dplyr::count()
+  dplyr::rename(SignalP=SignalP.Scores) %>% 
   dplyr::mutate(Gene.Name= ifelse(Gene.ID == "PVX_003775", "MSP4", Gene.Name)) %>%
   dplyr::mutate(Gene.Name= ifelse(Gene.ID == "PVX_003770", "MSP5", Gene.Name)) %>% 
   dplyr::mutate(Gene.Name= ifelse(Gene.ID == "PVX_097625", "MSP8", Gene.Name)) %>% 
@@ -515,7 +546,8 @@ all <- readr::read_tsv("data/04-listgen.tsv") %>%
   dplyr::mutate(Gene.Name= ifelse(Gene.ID == "PVX_116780", "SFT2", Gene.Name))
 #lg
 head(all)
-#raw %>% filter(Gene.ID=="PVX_003775")#only_2o2
+#raw %>% filter(Gene.ID=="PVX_003775")#only_2o2 --> IS THIS SUGGESTING A MISTAKE IN ID TIPYING? --> COMPARE!
+#raw %>% filter(stringr::str_detect(Description, "MSP7"))
 ```
 
 #### Microarray data
@@ -535,7 +567,7 @@ m <- anti %>% as.data.frame() %>%
   #dplyr::filter(mean<5000)
   ggplot(aes(mean,sd)) +
   geom_point() +
-  geom_smooth() +
+  #geom_smooth() +
   labs(title="Mean-variance dependence",
        subtitle="Raw data") + theme_bw()
 
@@ -546,9 +578,9 @@ n <- norx %>% as.data.frame() %>%
                                              sd= sd(expression)) %>% 
   ggplot(aes(mean,sd)) +
   geom_point() +
-  geom_smooth() +
+  #geom_smooth() +
   labs(title="Mean-variance dependence",
-       subtitle="Normalized data") + theme_bw()
+       subtitle="FOC Normalization method") + theme_bw()
 
 Rmisc::multiplot(m,n,cols = 2)
 ```
@@ -569,17 +601,26 @@ rownames(pure)
 
 __Non Present Reactive Targets__
 
+- __Load and tidy up__ the file sent in __28sep2015__ by Joe Campo.
+
 - AMA1, CSP, GEST, CelTOS
-- Here, AMA1 and all the proteins in the list with a known _nick_ name:
+- Here, AMA1 and all the proteins in the list with a known _Gene Name_:
 
 ```{r}
-np <- readxl::read_xlsx("data-raw/PfPv500_NonpresentReactiveTargets.xlsx")
-#np %>% filter(`[Gene ID]`=="PVX_092275")
-np %>% filter(stringr::str_detect(`[Product Description]`, "AMA1"))
-#np %>% filter(stringr::str_detect(`[Product Description]`, "CSP"))
-#np %>% filter(stringr::str_detect(`[Product Description]`, "GEST"))
-#np %>% filter(stringr::str_detect(`[Product Description]`, "CelTOS"))
-np %>% filter(stringr::str_detect(`[Product Description]`, "\\("))
+np <- readxl::read_xlsx("data-raw/PfPv500_NonpresentReactiveTargets.xlsx") %>% 
+  rename_all(
+      funs(
+        #stringr::str_to_lower(.) %>%
+        stringr::str_replace_all(., '\\s', '\\.') %>% 
+        stringr::str_replace_all(., '\\[|\\]', '')
+      )
+  )
+#np %>% filter(Gene ID=="PVX_092275")
+np %>% filter(stringr::str_detect(Product.Description, "AMA1"))
+#np %>% filter(stringr::str_detect(Product.Description, "CSP"))
+#np %>% filter(stringr::str_detect(Product.Description, "GEST"))
+#np %>% filter(stringr::str_detect(Product.Description, "CelTOS"))
+np %>% filter(stringr::str_detect(Product.Description, "\\("))
 ```
 
 - In this list, __ADi__ reports a __total of `r nrow(np)`__ Non present Reactive Targets.
@@ -657,7 +698,7 @@ h <- CSP %>%
   broom::tidy() %>% format(digits=2)
 ```
 
-```{r, fig.width=12, fig.height=4}
+```{r, fig.width=9, fig.height=3}
 v11 <- EBA175 %>% 
   ggplot(aes(x=EBA175_0.3.23,y=PF3D7_0731500_e1s2.361)) + 
   geom_point() + #geom_smooth(method = "lm") +
@@ -842,9 +883,10 @@ sev_d <- td %>%
   top_n(-10,P.Value) %>% 
   arrange(P.Value) %>% 
   #arrange(desc(no_severo)) %>% 
-  select(ID,Gene.ID,Description,logFC,severo,no_severo,t,P.Value,adj.P.Val,p.order) # %>% slice(1:10)
+  select(ID,Gene.ID,Description,logFC,severo,no_severo,t,P.Value,adj.P.Val,p.order) %>% #slice(1:10)
+  inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
 
-sev_d %>% inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
+sev_d
 ```
 
 
@@ -855,9 +897,10 @@ sev_d %>% inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.
 ```{r}
 sev_t <- td %>% 
   arrange(desc(AveExpr)) %>% 
-  select(ID,Gene.ID,Description,AveExpr,p.order) %>% slice(1:10)
+  select(ID,Gene.ID,Description,AveExpr,p.order) %>% slice(1:10) %>% 
+  inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
 
-sev_t %>% inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
+sev_t
 ```
 
 ##### both
@@ -937,7 +980,7 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   filter(group!="NA") %>% 
   inner_join(all, by="Gene.ID") %>% 
   inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") %>% 
-  #unite(id.name, `[Product Description]`,Gene.Name, sep = " / ", remove = FALSE) %>% 
+  #unite(id.name, Product.Description,Gene.Name, sep = " / ", remove = FALSE) %>% 
   unite(id.name, Gene.Name, Gene.ID, sep = " / ", remove = FALSE) %>% 
   ggplot(aes(reorder(id.name,no_severo),value,fill=sev_WHO))+
   geom_boxplot()+
@@ -985,7 +1028,7 @@ table(eset$episodio_previo) # debe ser: control (fct referencia) vs caso
 design <- model.matrix(~ eset$episodio_previo)
 fit <- lmFit(eset, design)
 eb <- eBayes(fit)
-topTable(eb) %>% rownames_to_column()
+topTable(eb) %>% rownames_to_column() #%>% filter(adj.P.Val<0.05)#number=Inf
 ```
 
 ```{r}
@@ -1044,8 +1087,6 @@ td %>%
                                     ) %>% 
                              inner_join(all, by="Gene.ID") %>% 
                              inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") #%>% 
-                             #mutate(Gene.Name= ifelse(Gene.ID == "PVX_003775", "MSP4", Gene.Name)) %>%
-                             #mutate(Gene.Name= ifelse(Gene.ID == "PVX_003770", "MSP5", Gene.Name))
                              #arrange(desc(con)) %>% 
                              #top_n(10,con)
                            ,
@@ -1085,7 +1126,7 @@ td %>%
                              #arrange(desc(con)) %>% 
                              #top_n(10,con)
                            ,
-                           aes(label=`[Product Description]`), #force = 15,
+                           aes(label=Product.Description), #force = 15,
                            direction = "x",
                            box.padding = unit(7, "lines"),
                            point.padding = unit(.4, "lines")
@@ -1110,7 +1151,7 @@ td %>%
 
 ##### diff reactive
 
-###### list
+###### Cutt-off points
 
 ```{r, fig.height=6, fig.width=3}
 sp <- td %>% filter(adj.P.Val<0.05, logFC>0) %>% dplyr::count()
@@ -1142,6 +1183,8 @@ t <- td %>%
 Rmisc::multiplot(l,t,cols = 1)
 ```
 
+###### Application
+
 - __PROBLEMA:__
     - Regla de decisión y gráficas.
     - Tradicionalmente,
@@ -1163,15 +1206,15 @@ Rmisc::multiplot(l,t,cols = 1)
 - __SOLUTION:__
     
     1. __Statistical significance:__
-        - __previously exposed__ patients differentially recognized __`r sp$n`__ P. vivax proteins
+        - __previously exposed__ patients differentially recognized __`r sp$n`__ P. vivax protein segments
     2. __Case mean intensity:__
-        - __previously exposed__ patients differentially recognized __`r sc$n`__ P. vivax proteins 
+        - __previously exposed__ patients differentially recognized __`r sc$n`__ P. vivax protein segments
         with a __case mean intensity higher than 1__ (i.e., 2-fold higher than __noDNA control__).
     3. __Size Effect:__
-        - __previously exposed__ patients differentially recognized __`r sf$n`__ P. vivax proteins 
+        - __previously exposed__ patients differentially recognized __`r sf$n`__ P. vivax protein segments
         with a __fold change higher than 1__ (i.e., 2-fold reactivity in Case vs Control).
     4. __Exception:__
-        - __previously exposed__ patients differentially recognized __1__ P. vivax protein
+        - __previously exposed__ patients differentially recognized __1__ P. vivax protein segment
         with a __fold change higher than 0.97__ and with __the highest case mean intensity__ among 
         this subset.
         (moreover, higher than the average intensity of the antigen with the highest reactivity).
@@ -1180,15 +1223,28 @@ Rmisc::multiplot(l,t,cols = 1)
         - __Boxplot__ declaring the parameters of the executed sorting.
             + _issue:_ observed variance, not posterior variance (after eBayes).
 
+###### list
+
 ```{r}
-exp_d <- td %>% 
+exp_da <- td %>% filter(adj.P.Val<0.05, logFC>0) %>% #dplyr::count(Gene.ID) %>% filter(n==2)
+  arrange(desc(con)) %>% 
+  select(ID,Gene.ID,Description,logFC,con,sin,t,P.Value,adj.P.Val,p.order) %>% #slice(1:10)
+  inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
+
+exp_dc <- td %>% filter(adj.P.Val<0.05, con>1) %>% #dplyr::count(Gene.ID) %>% filter(n==2)
+  arrange(desc(con)) %>% 
+  select(ID,Gene.ID,Description,logFC,con,sin,t,P.Value,adj.P.Val,p.order) %>% #slice(1:10)
+  inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
+
+exp_df <- td %>% 
   filter(adj.P.Val<0.05 & (logFC>1 & con>1) | (logFC>0.9 & con>2)) %>%
   #top_n(-16, p.order) %>% 
   #arrange(desc(logFC)) %>% 
   arrange(desc(con)) %>% 
-  select(ID,Gene.ID,Description,logFC,con,sin,P.Value,adj.P.Val,p.order) # %>% slice(1:10)
+  select(ID,Gene.ID,Description,logFC,con,sin,t,P.Value,adj.P.Val,p.order) %>% #slice(1:10)
+  inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
 
-exp_d %>% inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
+exp_df
 ```
 
 ##### top reactive
@@ -1198,9 +1254,10 @@ exp_d %>% inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.
 ```{r}
 exp_t <- td %>% 
   arrange(desc(AveExpr)) %>% 
-  select(ID,Gene.ID,Description,AveExpr,p.order) %>% slice(1:10)
+  select(ID,Gene.ID,Description,AveExpr,p.order) %>% slice(1:10) %>% 
+  inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
 
-exp_t %>% inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
+exp_t 
 ```
 
 ##### both
@@ -1274,7 +1331,7 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   filter(group!="NA") %>% 
   inner_join(all, by="Gene.ID") %>% 
   inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") %>% 
-  #unite(id.name, `[Product Description]`,Gene.Name, sep = " / ", remove = FALSE) %>% 
+  #unite(id.name, Product.Description,Gene.Name, sep = " / ", remove = FALSE) %>% 
   unite(id.name, Gene.Name, Gene.ID, sep = " / ", remove = FALSE) %>%
   #unite(id.name, id.name, p.order, sep = " / ", remove = FALSE) %>% 
   ggplot(aes(reorder(id.name,con),value,fill=episodio_previo))+
@@ -1566,38 +1623,454 @@ Rmisc::multiplot(r,t,s,u,cols = 2)
 
 #### Shared proteins
 
+- __MSP1__ was shared with Previous Exposure and Highly reactive antigens:
+    + __S1__, N-terminal (PvMSP1~NT~), was differentially reactive.
+    + __S2__, C-terminal (PvMSP1~19~), was highly reactive.
+
 ```{r, fig.align='center', fig.width=4.7, fig.height=5}
 g1_id <- exp_t %>% dplyr::select(Gene.ID)      # 960
-g2_id <- exp_d %>% dplyr::select(Gene.ID)     # 963
+g2_id <- exp_df %>% dplyr::select(Gene.ID)     # 963
 g3_id <- sev_d %>% dplyr::select(Gene.ID)     # 963
 
 g1_idl= unlist(as.list(g1_id))
 g2_idl= unlist(as.list(g2_id))
 g3_idl= unlist(as.list(g3_id))
 
-tmp <- gplots::venn(list("severe\nmalaria"=g3_idl, "with\nexposure"=g2_idl, "top reactive"=g1_idl))
+tmp <- gplots::venn(list("severe\nmalaria"=g3_idl, "with\nepisode"=g2_idl, "top reactive"=g1_idl))
 ```
 
 ```{r}
-sg <- exp_t %>% inner_join(exp_d, by="Gene.ID") %>% select(Gene.ID)
+sg <- exp_t %>% inner_join(exp_df, by="Gene.ID") %>% select(Gene.ID)
 td %>% filter(Gene.ID==sg$Gene.ID) %>% 
-  inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
+  inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") %>% 
+  select(ID,Gene.ID,Product.Description,Gene.Name,adj.P.Val,p.order,logFC,AveExpr,con,GO.Components,GO.Processes)
 ```
 
-#### Plots
+#### Shared proteins all
+
+- against all with previous episode
+- Intensidad de reactividad por Episodios Previos __interviene__ en la intensidad por Malaria Severa:
+    + __5__ antigens identified in Severe Malaria  were differentially reactive (adj.P.Val<0.05) 
+    in samples with Previous Episode.
+
+```{r, fig.align='center', fig.width=4.7, fig.height=5}
+g1_id <- exp_t %>% dplyr::select(Gene.ID)      # 960
+g2_id <- exp_da %>% dplyr::select(Gene.ID)     # 963
+g3_id <- sev_d %>% dplyr::select(Gene.ID)     # 963
+
+g1_idl= unlist(as.list(g1_id))
+g2_idl= unlist(as.list(g2_id))
+g3_idl= unlist(as.list(g3_id))
+
+tmp <- gplots::venn(list("severe\nmalaria"=g3_idl, "with\nepisode"=g2_idl, "top reactive"=g1_idl))
+```
 
 ```{r}
-
+exp_da %>% inner_join(sev_d, by="Gene.ID") %>% 
+  select(Gene.ID,Product.Description.x,Gene.Name.x,con,sin,adj.P.Val.x,p.order.x,severo,no_severo,P.Value.y,adj.P.Val.y,p.order.y)
+#sg <- exp_da %>% inner_join(sev_d, by="Gene.ID") %>% select(Gene.ID)
+#sev_d %>% 
+#  inner_join(exp_da %>% inner_join(sev_d, by="Gene.ID"),
+#             by="Gene.ID")
+#all %>% filter(Gene.ID==sg$Gene.ID)
+#td %>% filter(Gene.ID==sg$Gene.ID) %>% 
+#  inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
 ```
 
+#### PlasmoDB summaries
+
+##### TMD proportion
+
+```{r, fig.height=3, fig.width=6}
+a <- exp_t %>% #dplyr::count(TM.Domains)
+  dplyr::mutate(TM.Domains.p= ifelse(TM.Domains>0,"1+",0),
+                summary.db="top 10") %>%  #dplyr::count(TM.Domains.p)
+  select(summary.db,TM.Domains.p)
+b <- sev_d %>% #dplyr::count(TM.Domains)
+  dplyr::mutate(TM.Domains.p= ifelse(TM.Domains>0,"1+",0),
+                summary.db="severe p<0.05") %>%  #dplyr::count(TM.Domains.p)
+  select(summary.db,TM.Domains.p)
+c <- exp_da %>% #dplyr::count(TM.Domains) %>% dplyr::arrange(desc(n))
+  dplyr::mutate(TM.Domains.p= ifelse(TM.Domains>0,"1+",0),
+                summary.db="with episode FDR<0.05") %>%  #dplyr::count(TM.Domains.p)
+  select(summary.db,TM.Domains.p)
+d <- exp_df %>% #dplyr::count(TM.Domains)
+  dplyr::mutate(TM.Domains.p= ifelse(TM.Domains>0,"1+",0),
+                summary.db="with episode FDR<0.05 & logFC>1") %>%  #dplyr::count(TM.Domains.p)
+  select(summary.db,TM.Domains.p)
+
+rbind(a,b,c,d) %>% 
+  ggplot(aes(x=summary.db, fill=TM.Domains.p)) +
+  geom_bar(position = "fill") +
+  scale_fill_discrete(name="TM\nDomains") +
+  coord_flip() + theme_bw()
+```
+
+##### SP proportion
+
+```{r, fig.height=3, fig.width=6}
+a <- exp_t %>%  #dplyr::count(SignalP)
+  dplyr::mutate(summary.db="top 10") %>%
+  select(summary.db,SignalP)
+b <- sev_d %>%  #dplyr::count(SignalP)
+  dplyr::mutate(summary.db="severe p<0.05") %>%
+  select(summary.db,SignalP)
+c <- exp_da %>%  #dplyr::count(SignalP)
+  dplyr::mutate(summary.db="with episode FDR<0.05") %>%
+  select(summary.db,SignalP)
+d <- exp_df %>%  #dplyr::count(SignalP)
+  dplyr::mutate(summary.db="with episode FDR<0.05 & logFC>1") %>%
+  select(summary.db,SignalP)
+
+rbind(a,b,c,d) %>% 
+  replace_na(list(SignalP = "na")) %>% 
+  ggplot(aes(x=summary.db, fill=SignalP)) +
+  geom_bar(position = "fill") +
+  scale_fill_discrete(name="Signal\nPeptide") +
+  coord_flip() + theme_bw()
+```
+
+##### GO component proportion
+
+```{r,fig.height=5,fig.width=12}
+a <- exp_t %>%  #dplyr::count(GO.Components) %>% dplyr::arrange(desc(n))
+  dplyr::mutate(summary.db="top 10") %>%
+  select(summary.db,GO.Components)
+b <- sev_d %>%  #dplyr::count(GO.Components) %>% dplyr::arrange(desc(n))
+  dplyr::mutate(summary.db="severe p<0.05") %>%
+  select(summary.db,GO.Components)
+#exp_da %>% filter(GO.Components!="NA") %>%  dplyr::count(GO.Components) %>% dplyr::arrange(desc(n)) %>% filter(n>1)
+c <- exp_da %>% select(Gene.ID,GO.Components) %>% 
+  separate(GO.Components, c("c1","c2","c3"),sep = ",") %>% 
+  mutate_at(vars(c1:c3), funs(trimws)) %>% 
+  gather(component,GO.Components,-Gene.ID) %>% 
+  filter(GO.Components!="NA") %>% #dplyr::count(GO.Components) %>% dplyr::arrange(desc(n)) %>% filter(n>1)
+  dplyr::mutate(summary.db="w/ episode FDR<0.05") %>%
+  select(summary.db,GO.Components)
+#exp_df %>%  dplyr::count(GO.Components) %>% dplyr::arrange(desc(n))
+d <- exp_df %>% select(Gene.ID,GO.Components) %>% 
+  separate(GO.Components, c("c1","c2","c3"),sep = ",") %>% 
+  mutate_at(vars(c1:c3), funs(trimws)) %>% 
+  gather(component,GO.Components,-Gene.ID) %>% 
+  filter(GO.Components!="NA") %>% #dplyr::count(GO.Components) %>% dplyr::arrange(desc(n)) #%>% filter(n>1)
+  dplyr::mutate(summary.db="w/ episode FDR<0.05 & logFC>1") %>%
+  select(summary.db,GO.Components)
+
+rbind(a,b,c,
+      d) %>% 
+  #replace_na(list(SignalP = "na")) %>% 
+  ggplot(aes(#x=summary.db#, fill=GO.Components
+             x=GO.Components#, fill=
+             )) +
+  geom_bar(#position = "fill"
+           position = "identity") +
+  facet_grid(.~summary.db,
+             scales = "free"
+             #space = "free"
+             ) +#
+  coord_flip() + theme_bw()
+```
+
+##### GO proportion others
+
+```{r}
+all %>% select(GO.Components,GO.Functions,GO.Processes) %>% 
+  replace_na(list(GO.Components="na",
+                  GO.Functions="na",
+                  GO.Processes="na")
+             ) %>% 
+  dplyr::mutate(GO.Components=ifelse(GO.Components!="na",1,0),
+                GO.Functions=ifelse(GO.Functions!="na",1,0),
+                GO.Processes=ifelse(GO.Processes!="na",1,0)
+                ) %>% 
+  summarise_all(sum,na.rm=T) #%>% t()
+```
+
+```{r, eval=FALSE}
+exp_t %>%  dplyr::count(GO.Functions) %>% dplyr::arrange(desc(n))
+sev_d %>%  dplyr::count(GO.Functions) %>% dplyr::arrange(desc(n))
+sev_d %>% select(Gene.ID,GO.Functions) %>% 
+  separate(GO.Functions, c("c1","c2","c3"),sep = ",") %>% 
+  mutate_at(vars(c1:c3), funs(trimws)) %>% 
+  gather(component,value,-Gene.ID) %>% 
+  filter(value!="NA") %>% dplyr::count(value) %>% dplyr::arrange(desc(n)) #%>% filter(n>1)
+exp_da %>% filter(GO.Functions!="NA") %>%  dplyr::count(GO.Functions) %>% dplyr::arrange(desc(n)) %>% filter(n>1)
+exp_da %>% select(Gene.ID,GO.Functions) %>% 
+  separate(GO.Functions, c("c1","c2","c3"),sep = ",") %>% 
+  mutate_at(vars(c1:c3), funs(trimws)) %>% 
+  gather(component,value,-Gene.ID) %>% 
+  filter(value!="NA") %>% dplyr::count(value) %>% dplyr::arrange(desc(n)) %>% filter(n>1)
+exp_df %>%  dplyr::count(GO.Functions) %>% dplyr::arrange(desc(n))
+exp_df %>% select(Gene.ID,GO.Functions) %>% 
+  separate(GO.Functions, c("c1","c2","c3"),sep = ",") %>% 
+  mutate_at(vars(c1:c3), funs(trimws)) %>% 
+  gather(component,value,-Gene.ID) %>% 
+  filter(value!="NA") %>% dplyr::count(value) %>% dplyr::arrange(desc(n)) #%>% filter(n>1)
+```
+
+```{r,fig.height=5,fig.width=12, eval=FALSE, echo=FALSE}
+a <- exp_t %>%  #dplyr::count(GO.Functions) %>% dplyr::arrange(desc(n))
+  dplyr::mutate(summary.db="top 10") %>%
+  select(summary.db,GO.Functions)
+b <- sev_d %>%  #dplyr::count(GO.Functions) %>% dplyr::arrange(desc(n))
+  dplyr::mutate(summary.db="severe p<0.05") %>%
+  select(summary.db,GO.Functions)
+#exp_da %>% filter(GO.Functions!="NA") %>%  dplyr::count(GO.Functions) %>% dplyr::arrange(desc(n)) %>% filter(n>1)
+c <- exp_da %>% select(Gene.ID,GO.Functions) %>% 
+  separate(GO.Functions, c("c1","c2","c3"),sep = ",") %>% 
+  mutate_at(vars(c1:c3), funs(trimws)) %>% 
+  gather(component,GO.Functions,-Gene.ID) %>% 
+  filter(GO.Functions!="NA") %>% #dplyr::count(GO.Functions) %>% dplyr::arrange(desc(n)) %>% filter(n>1)
+  dplyr::mutate(summary.db="w/episode FDR<0.05") %>%
+  select(summary.db,GO.Functions)
+#exp_df %>%  dplyr::count(GO.Functions) %>% dplyr::arrange(desc(n))
+d <- exp_df %>% select(Gene.ID,GO.Functions) %>% 
+  separate(GO.Functions, c("c1","c2","c3"),sep = ",") %>% 
+  mutate_at(vars(c1:c3), funs(trimws)) %>% 
+  gather(component,GO.Functions,-Gene.ID) %>% 
+  filter(GO.Functions!="NA") %>% #dplyr::count(GO.Functions) %>% dplyr::arrange(desc(n)) #%>% filter(n>1)
+  dplyr::mutate(summary.db="w/episode FDR<0.05 & logFC>1") %>%
+  select(summary.db,GO.Functions)
+
+rbind(a,b,c,
+      d) %>% 
+  #replace_na(list(SignalP = "na")) %>% 
+  ggplot(aes(#x=summary.db#, fill=GO.Functions
+    x=GO.Functions#, fill=
+  )) +
+  geom_bar(#position = "fill"
+    position = "identity") +
+  facet_grid(.~summary.db,
+             scales = "free"
+             #space = "free"
+  ) +#
+  coord_flip()
+```
+
+```{r, eval=FALSE}
+exp_t %>%  dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n))
+sev_d %>%  dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n))
+exp_da %>% filter(GO.Processes!="NA") %>%  dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n)) %>% filter(n>1)
+exp_da %>% select(Gene.ID,GO.Processes) %>% 
+  separate(GO.Processes, c("c1","c2","c3"),sep = ",") %>% 
+  mutate_at(vars(c1:c3), funs(trimws)) %>% 
+  gather(component,value,-Gene.ID) %>% 
+  filter(value!="NA") %>% dplyr::count(value) %>% dplyr::arrange(desc(n)) %>% filter(n>1)
+exp_df %>%  dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n))
+```
+
+```{r,fig.height=5,fig.width=12, eval=FALSE, echo=FALSE}
+a <- exp_t %>%  #dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n))
+  dplyr::mutate(summary.db="top 10") %>%
+  select(summary.db,GO.Processes)
+b <- sev_d %>%  #dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n))
+  dplyr::mutate(summary.db="severe p<0.05") %>%
+  select(summary.db,GO.Processes)
+#exp_da %>% filter(GO.Processes!="NA") %>%  dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n)) %>% filter(n>1)
+c <- exp_da %>% select(Gene.ID,GO.Processes) %>% 
+  separate(GO.Processes, c("c1","c2","c3"),sep = ",") %>% 
+  mutate_at(vars(c1:c3), funs(trimws)) %>% 
+  gather(component,GO.Processes,-Gene.ID) %>% 
+  filter(GO.Processes!="NA") %>% #dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n)) %>% filter(n>1)
+  dplyr::mutate(summary.db="w/episode FDR<0.05") %>%
+  select(summary.db,GO.Processes)
+#exp_df %>%  dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n))
+d <- exp_df %>% select(Gene.ID,GO.Processes) %>% 
+  separate(GO.Processes, c("c1","c2","c3"),sep = ",") %>% 
+  mutate_at(vars(c1:c3), funs(trimws)) %>% 
+  gather(component,GO.Processes,-Gene.ID) %>% 
+  filter(GO.Processes!="NA") %>% #dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n)) #%>% filter(n>1)
+  dplyr::mutate(summary.db="w/episode FDR<0.05 & logFC>1") %>%
+  select(summary.db,GO.Processes)
+
+rbind(a,b,c,
+      d) %>% 
+  #replace_na(list(SignalP = "na")) %>% 
+  ggplot(aes(#x=summary.db#, fill=GO.Processes
+    x=GO.Processes#, fill=
+  )) +
+  geom_bar(#position = "fill"
+    position = "identity") +
+  facet_grid(.~summary.db,
+             scales = "free"
+             #space = "free"
+  ) +#
+  coord_flip()
+```
+
+
+##### HYPOTHETICAL proportion
+
+```{r, eval=FALSE}
+exp_t %>%  #dplyr::count(Product.Description) %>% dplyr::arrange(desc(n)) %>% 
+  filter(stringr::str_detect(Product.Description, "hypothetical")) %>% 
+  select(ID,Gene.ID,Product.Description,GO.Components)
+sev_d %>%  #dplyr::count(Product.Description) %>% dplyr::arrange(desc(n)) %>% 
+  filter(stringr::str_detect(Product.Description, "hypothetical")) %>% 
+  select(ID,Gene.ID,Product.Description,P.Value,p.order,GO.Components)
+```
+
+- Among highly reactive antigens (n=10), __03__ were hypothetical
+- Among differentially reactive antigens in:
+    + severe malaria (n=10), __02__ were hypothetical.
+    + previous exposure (n=140), __46__ were hypothetical. (table below)
+
+```{r}
+exp_da %>%  #dplyr::count(Product.Description) %>% dplyr::arrange(desc(n)) %>% 
+  filter(stringr::str_detect(Product.Description, "hypothetical")) %>% 
+  select(ID,Gene.ID,Product.Description,adj.P.Val,p.order,GO.Components)
+```
+
+##### KNOWN proportion
+
+- Using Product Descriptions:
+    + In previous exposure (adj.P.Val < 0.05):
+        + __9__ antigens with known gene names were differentially reactive.
+        + __5__ antigens belong to __MSP7__.
+    + In previous exposure (adj.P.Val < 0.05, logFC > 1):
+        + __14__ antigens were differentially reactive.
+        + __2__ antigens belong to __MSP4__.
+
+```{r}
+exp_da %>%  dplyr::count(Product.Description) %>% dplyr::arrange(desc(n)) %>% 
+  filter(stringr::str_detect(Product.Description, "\\(.{2,}\\)"))
+#exp_df %>%  dplyr::count(Product.Description) %>% dplyr::arrange(desc(n))
+
+#exp_da %>%  dplyr::count(Product.Description) %>% dplyr::arrange(desc(n)) %>% 
+#  filter(stringr::str_detect(Product.Description, "MSP7"))
+exp_da %>%  #dplyr::count(Product.Description) %>% dplyr::arrange(desc(n)) %>% 
+  filter(stringr::str_detect(Product.Description, "MSP7")) %>% 
+  select(ID,Gene.ID,Product.Description,adj.P.Val,p.order)
+```
+
+```{r, eval=FALSE}
+exp_t %>%  dplyr::count(Gene.Name) %>% dplyr::arrange(desc(n))
+sev_d %>%  dplyr::count(Gene.Name) %>% dplyr::arrange(desc(n))
+exp_da %>%  dplyr::count(Gene.Name) %>% dplyr::arrange(desc(n))
+exp_df %>%  dplyr::count(Gene.Name) %>% dplyr::arrange(desc(n))
+```
+
+##### ORTHOLOGS count
+
+```{r, eval=FALSE}
+exp_t %>% dplyr::mutate(Ortholog.count=as.numeric(Ortholog.count)) %>% 
+  dplyr::count(Ortholog.count) %>% dplyr::arrange(Ortholog.count)
+sev_d %>% dplyr::mutate(Ortholog.count=as.numeric(Ortholog.count)) %>% 
+  dplyr::count(Ortholog.count) %>% dplyr::arrange(Ortholog.count)
+exp_da %>% dplyr::mutate(Ortholog.count=as.numeric(Ortholog.count)) %>% 
+  dplyr::count(Ortholog.count) %>% dplyr::arrange(Ortholog.count)
+exp_df %>% dplyr::mutate(Ortholog.count=as.numeric(Ortholog.count)) %>% 
+  dplyr::count(Ortholog.count) %>% dplyr::arrange(Ortholog.count)
+```
+
+- __PVX_082685 (MSP7)__ and __PVX_097730 (hypothetical protein, conserved)__ 
+were differentially reactive in samples with previous exposure and have only __two orthologs__: 
+_P. vivax_ and _P. cynomolgi_.
+    + __MSP7__ had an adj.P.Val<0.05 and a Case mean intensity > 1,
+    + __PVX_097730__ had an adj.P.Val<0.05, logFC>0.97, and Case mean intensity > 2.8
+
+```{r}
+exp_da %>% dplyr::mutate(Ortholog.count=as.numeric(Ortholog.count)) %>% 
+  filter(Ortholog.count==2) %>% 
+  select(ID,Gene.ID,Product.Description,adj.P.Val,p.order,logFC,con,Ortholog.count)
+#exp_df %>% dplyr::mutate(Ortholog.count=as.numeric(Ortholog.count)) %>% 
+#  filter(Ortholog.count==2)
+```
+
+##### SNP summary
+
+```{r, fig.width=6, fig.height=3}
+#exp_t
+a <- exp_t %>% select(Gene.ID,NonSyn_Syn.SNP.Ratio.All.Strains,Total.SNPs.All.Strains) %>% 
+  ggplot(aes(NonSyn_Syn.SNP.Ratio.All.Strains,Total.SNPs.All.Strains)) +
+  geom_point() + 
+  ggrepel::geom_text_repel(data = exp_t %>% 
+                             mutate(Gene.Name=ifelse(NonSyn_Syn.SNP.Ratio.All.Strains<1,
+                                                     Gene.ID,Gene.Name))
+                           ,aes(label=Gene.Name),
+                           box.padding = unit(.11, "lines"),
+                           #direction = "y",
+                           point.padding = unit(.5, "lines"),
+                           segment.color = "red"
+                           ) +
+  labs(title="SNP space",subtitle="Top 10") + theme_bw()
+b <- sev_d %>% select(Gene.ID,NonSyn_Syn.SNP.Ratio.All.Strains,Total.SNPs.All.Strains) %>% 
+  ggplot(aes(NonSyn_Syn.SNP.Ratio.All.Strains,Total.SNPs.All.Strains)) +
+  geom_point() + ggrepel::geom_text_repel(data = sev_d,aes(label=Gene.Name)) +
+  labs(title="SNP space",subtitle="Severe Malaria") + theme_bw()
+#exp_da %>% select(Gene.ID,NonSyn_Syn.SNP.Ratio.All.Strains,Total.SNPs.All.Strains) %>% 
+#  ggplot(aes(NonSyn_Syn.SNP.Ratio.All.Strains,Total.SNPs.All.Strains)) +
+#  geom_point()
+c <- exp_df %>% select(Gene.ID,NonSyn_Syn.SNP.Ratio.All.Strains,Total.SNPs.All.Strains) %>%
+  ggplot(aes(NonSyn_Syn.SNP.Ratio.All.Strains,Total.SNPs.All.Strains)) +
+  geom_point() + 
+  ggrepel::geom_text_repel(data = exp_df,
+                           aes(label=Gene.Name),
+                           box.padding = unit(.15, "lines"),
+                           point.padding = unit(.5, "lines"),
+                           segment.color = "red") +
+  labs(title="SNP space",subtitle="with Previous Episode") + theme_bw()
+
+Rmisc::multiplot(a,#b,
+                 c,cols = 2)
+```
+
+- Subset of __differentially reactive antigens__ in samples __with previous episodes__ having:
+    + __total SNPs__ lower than 100
+    + __NS/S SNP ratio__ lower than 2.5
+
+```{r}
+exp_df %>% filter(Total.SNPs.All.Strains<100,NonSyn_Syn.SNP.Ratio.All.Strains<2.5) %>% 
+  dplyr::arrange(NonSyn_Syn.SNP.Ratio.All.Strains) %>% 
+  select(NonSyn_Syn.SNP.Ratio.All.Strains,Total.SNPs.All.Strains,everything())
+```
+
+```{r, eval=FALSE, echo=FALSE}
+exp_t
+#sev_t
+
+sev_d
+
+exp_da
+exp_dc
+exp_df
+```
+
+### Introduction
+
+### Methods
+
+#### Ethics statement
+
+#### Study participants and sample collection
+
+#### Protein microarray
+
+#### Data analysis
 
 ### Results
+
+#### Study population characteristics
+
+#### Characterization of P.vivax proteins on microarray
+
+#### Antibody reactivity induced by Severe Vivax Malaria
+
+#### Antibody profile associated with previous episode to P. vivax malaria
 
 ### Discusion
 
 ### Conclusions
 
 ### Recommendations
+
+### Appendix
+
+#### Supporting information
+
+#### Acknowledgments
+
+#### Author contributions
 
 ### Computer environment
 
