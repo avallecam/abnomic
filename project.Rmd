@@ -10,8 +10,8 @@ output:
     fig_caption: yes
     include:
       after_body: tabconsis.tex
-#documentclass: article
-#classoption: a4paper
+documentclass: article
+classoption: a4paper
 header-includes:
 - \usepackage{multirow}
 - \usepackage{pdflscape}
@@ -77,17 +77,17 @@ RESUMEN: CORRIGELO AL FINAL
 > _Plasmodium vivax_ es responsable del 80% de la malaria en el Perú.
 Casos de enfermedad severa por mono-infecciones de _P. vivax_ han sido reportados 
 tanto en el Noreste amazónico como en Norte costero. Sin embargo, dicha condición aún está
-subestimada en las normas técnicas a nivel nacional, incrementando el riesgo 
+subestimada en la Normas Técnica a nivel nacional, incrementando el riesgo 
 de posibles diagnósticos tardíos o inapropiados por el personal de salud.
 Con el fin de identificar biomarcadores de relevancia clínica contra la malaria 
-vivax severa, el presente proyecto de tesis propone
+<!--vivax-->severa por _P. vivax_, el presente proyecto de tesis propone
 comparar la respuesta de anticuerpos ante la infección 
 en pacientes severos y no-severos provenientes de un estudio prospectivo caso-control
 ejecutado en la ciudad de Iquitos, Loreto - Perú, empleando microarreglos de proteínas.
 Los resultados permitirán proponer marcadores serológicos discriminantes 
 de severidad<!-- o episodios previos--> 
 con el potencial de implementarse en programas de 
-serovigilancia en miras al control y eliminación de la malaria en la región.
+serovigilancia en miras al control y eliminación de la malaria por _P. vivax_ en la región.
 <!-- complementar las actuales medidas de control "MALARIA CERO 2017" -->
 
 # PLANTEAMIENTO DEL PROBLEMA
@@ -130,7 +130,7 @@ una reducción en la intensidad de transmisión [@reyburn2015].
 Por ello, tanto su actual subestimación [@norma2001] como la ausencia de marcadores 
 serológicos de protección contra la severidad en las actuales estrategias de eliminación 
 [@accelerate2016] podría incrementar su prevalencia a largo plazo. 
-En contraste con dicha hipótesis, pacientes de la Amazonía peruana con malaria vivax severa 
+En contraste con dicha hipótesis, pacientes de la Amazonía Peruana con malaria por _P. vivax_ severa 
 y no complicada mostraron un grado similar de exposición previa,
 basado en la respuesta humoral contra un marcador tradicional [@baldevi2013].
 Sin embargo, recientes estudios a larga escala han desafiado su validez como indicador de 
@@ -138,8 +138,8 @@ inmunidad o exposición [@crompton2010; @Helb2015exposure].
 
 Por esta razón,
 el presente estudio tiene como objetivo comparar la respuesta de anticuerpos
-ante la infección con malaria vivax 
-contra más de 500 antígenos de _P. vivax_
+ante la infección con _P. vivax_ 
+contra más de 500 antígenos del parásito
 <!-- expresados en el estadio eritrocítico de la infección. -->
 en pacientes severos y no-severos
 <!--provenientes-->de <!--un estudio prospectivo conducido en--> la 
@@ -171,17 +171,17 @@ Comparador: ¿Cuál es el grupo de comparación?
 Outcome: ¿Cuál es el resultado o desenlace de interés?
 -->
 
-1. ¿Cuáles son los antígenos de _P. vivax_ con reactividad serológica diferenciada
-ante la infección con malaria vivax entre pacientes severos y no-severos<!--, 
+1. ¿Cuáles son los antígenos con reactividad serológica diferenciada
+ante la infección por _P. vivax_ entre pacientes severos y no-severos<!--, 
 de la ciudad de Iquitos (Loreto-Perú)-->?
 
-2. ¿Cuáles son los antígenos de _P. vivax_ con reactividad serológica diferenciada
-ante la infección con malaria vivax entre pacientes con y sin episodios previos<!--, 
+2. ¿Cuáles son los antígenos con reactividad serológica diferenciada
+ante la infección por _P. vivax_ entre pacientes con y sin episodios previos<!--, 
 de la ciudad de Iquitos (Loreto-Perú)-->?
 
-3. ¿Cuáles son las características proteicas de los antígenos de _P. vivax_
-con reactividad diferenciada o predominante
-en pacientes con malaria vivax?
+3. ¿Cuáles son las características proteicas de los antígenos
+con reactividad serológica diferenciada o predominante
+en pacientes con malaria por _P. vivax_?
 
 ## Objetivos
 
@@ -197,8 +197,8 @@ Hipótesis:
   
 ### General
   
-- Identificar un subconjunto de antígenos de _P. vivax_ con reactividad serológica 
-discriminante de condiciones clínicas relevantes ante la infección con malaria vivax.
+- Identificar un subconjunto de antígenos con reactividad serológica 
+discriminante de condiciones clínicas relevantes ante la infección por _P. vivax_.
 
 <!-- 
 - Identificar antígenos de _P. vivax_ con reactividad serológica 
@@ -218,11 +218,11 @@ con malaria vivax.
 sintomática
 -->
 - Identificar antígenos de _P. vivax_ con reactividad serológica 
-diferenciada ante la infección con malaria vivax entre pacientes 
+diferenciada ante la infección entre pacientes 
 severos y no-severos.
 
 - Identificar antígenos de _P. vivax_ con reactividad serológica 
-diferenciada ante la infección con malaria vivax entre pacientes 
+diferenciada ante la infección entre pacientes 
 con y sin episodios previos.
 
 - Describir las características proteicas de los antígenos con reactividad 
@@ -233,7 +233,7 @@ PlasmoDB-->.
 ### Exploratorio
 
 - Comparar la amplitud e intensidad de respuesta de anticuerpos según 
-la<!-- severidad, episodios previos y--> edad de los pacientes con malaria vivax.
+la<!-- severidad, episodios previos y--> edad de los pacientes con malaria por _P. vivax_.
 
 <!--
 - Comparar la amplitud e intensidad de respuesta de anticuerpos
@@ -246,7 +246,7 @@ la severidad y episodios previos por rangos de edad de los pacientes con malaria
 
 <!-- e importancia -->
 
-Ante la reemergencia repetitiva de la malaria en la Amazonía peruana 
+Ante la reemergencia repetitiva de la malaria en la Amazonía Peruana 
 [@griffing2013history; @rosas2016peru], 
 la implementación de vigilancias serológicas programáticas en nuestro país
 es una prioridad [@hotspots2015]. 
@@ -448,7 +448,7 @@ y relevancia clínica contra la malaria vivax severa.
 
 ### De diferencia entre grupos
 
-1. Los pacientes con malaria vivax no-severa poseen 
+1. Los pacientes con malaria no-severa poseen 
 mayor reactividad serológica contra<!-- un subconjunto de--> antígenos de _P. vivax_
 asociados a exposición, invasión o adhesión celular
 <!--ante la infección -->con respecto a los pacientes<!-- con malatia vivax--> severos.
@@ -524,7 +524,7 @@ los pacientes sin eventos previos reportados.
 -->
 
 El presente estudio busca contrastar la respuesta de anticuerpos ante la infección con 
-malaria vivax entre pacientes clasificados según su severidad y episodios previos. 
+_P. vivax_ entre pacientes clasificados según su severidad y episodios previos. 
 Para ello se medirá la variable de reactividad serológica de antígenos de _P. vivax_ luego 
 de sondear plasma de pacientes en un microarreglo de proteínas. Además se clasificará a los 
 pacientes como severos o no-severos de acuerdo a diagnóstico clínico y bioquímico, y como 
@@ -764,22 +764,23 @@ a. En África
     En contraste a los marcadores tradicionalmente empleados para evaluar exposición
     a nivel poblacional (CSP, MSP1, MSP2, AMA1) [@elliott2014], se identificaron
     marcadores más informativos como hyp2, GEXP18, EMP1, ETRAMP4, HSP40-II y PF70.
-    La validación de este método permitirá seleccionar mejores marcadores para la 
+    La validación de este método permitirá optimizar la selección tradicional de marcadores.
+    <!--seleccionar mejores marcadores para la 
     vigilancia seroepidemiológica, relevante para el guiado y evaluación de los 
-    programas de control y eliminación de malaria a nivel mundial.
+    programas de control y eliminación de malaria a nivel mundial-->.
 
 b. En Perú
     
     El primer estudio en publicarse fue de Torres et al. 2014 [@Torres2014asymptomatic] 
     donde reportaron marcadores de inmunidad clínica -no esterilizante- de adquisición 
-    natural a la malaria falciparum.
+    natural a la malaria por _P. falciparum_.
     Además de ello, el resultado con mayor implicancias fue que
     estos marcadores presentaron un enriquecimiento de polimorfismos no-sinónimos, 
     indicativo de una presión de selección positiva por parte del sistema inmune, a pesar
     de provenir de una zona con baja transmisión.
     Las 51 proteínas con mayor reactividad en 14 pacientes infectados y asintomáticos
     se obtuvieron al comparar
-    las respuestas con 24 paciente sintomáticos provenientes de la Amazonía peruana 
+    las respuestas con 24 paciente sintomáticos provenientes de la Amazonía Peruana 
     (Departamento de Loreto, Provincia de Maynas y Requena)
     contra 824 fragmentos (699 proteínas) de _P. falciparum_.
     
@@ -853,7 +854,7 @@ o especie-específicas (sin ortología con otras especies).
 
     
 
-### Malaria Vivax
+### Malaria por _Plasmodium vivax_
 
 a. Epidemiología
     
@@ -879,36 +880,39 @@ a. Epidemiología
         pertenecieron al Noreste amazónico (con una razón Pv/Pf de 4/1) 
         y el resto al Norte costero 
         y la región minera del Suroeste. Notablemente, comunidades en 
-        Madre de Dios no han registrado caso de malaria falciparum en 
+        Madre de Dios no han registrado caso por _P. falciparum_ en 
         una década (2001-2012) [@rosas2016peru]. Con respecto a factores ambientales, en el año 1998 
         durante el fenómeno El Niño-Oscilación Sur (ENSO) se produjo 
-        el mayor pico de casos anuales en la historia (200,000 casos), con mayor 
-        efecto en el Norte costero [@gagnon2002enso]. Los casos anuales 
+        el mayor pico de casos anuales en la historia (200,000 casos), donde la región
+        del Norte costero representó el 48% de los casos a nivel nacional [@gagnon2002enso]. 
+        <!--Los casos anuales 
         provenientes de Tumbes, Piura y Lambayeque a nivel nacional pasaron de
-        representar menos del 7% en 1996, a un 48% entre 1998 y 1999.
+        representar menos del 7% en 1996, a un 48% entre 1998 y 1999.-->
 
 b. Biología
     
     i. __Ciclo de vida__
     
         La ecología natural del parásito de la malaria involucra a dos hospederos: 
-        el humano y el mosquito.
-        A través de la picadura del mosquito infectado, los esporozoitos 
-        son liberados al fluido sanguíneo del hospedero e
+        el humano y el mosquito. 
+        1. A través de la picadura del mosquito infectado, los esporozoitos 
+        son liberados al fluido sanguíneo del humano e
         ingresan a las células hepáticas iniciándose su desarrollo asexual,
-        llamado estadio hepático.
+        llamado _ciclo hepático o exo-eritrocítico_.
         Ahí se multiplican hasta formar esquizontes, los cuales egresan al torrente 
         sanguíneo en la forma de 
-        merozoitos. El segundo estadio, llamado eritrocítico, se inicia al invadir 
-        glóbulos rojos (RBC) y 
-        desarrollar en forma consecutiva trofozoitos 
+        merozoitos. 
+        2. El segundo estadio, llamado _ciclo eritrocítico_, se inicia a la invasión de
+        glóbulos rojos (RBC) y el
+        desarrollo consecutivo de trofozoitos 
         inmaduros (en forma de anillo), maduros y esquizontes, los cuales a su
-        ruptura liberan nuevos merozoitos que reinfectan a más glóbulos rojos. 
+        ruptura liberan nuevos merozoitos que reinfectan a más RBC. 
         <!--La rapidez de este ciclo determina la razón de multiplicación parasitaria.-->
         Por motivos aún desconocidos, 
         a partir de los trofozoitos inmaduros se inicia el desarrollo de gametocitos
-        diferenciándose sexualmente dentro del torrente sanguíneo del humano.
-        La fase sexual en el mosquito se inicia mediante la
+        diferenciándose sexualmente dentro del torrente sanguíneo del humano. 
+        3.
+        La fase sexual, o _ciclo esporogónico_, en el mosquito se inicia mediante la
         ingestión accidental de gametocitos en la alimentación sanguínea de mosquitos 
         hembra, con la intención inicial de proveer nutrientes a sus huevos.
         En su tracto digestivo, se desarrollan los esporozoitos, 
@@ -919,41 +923,48 @@ b. Biología
         
         _P. vivax_ posee importantes variantes biológicas que caracterizan su 
         epidemiología y dinámica de infección [@howes2016global]. Tres de las 
-        más importantes son (i) la presencia de relapsos por la activación de 
-        hipnozoitos, el cual es un estado de latencia o dormacia en las células hepáticas, 
+        más importantes son:
+        1. la presencia de relapsos por la activación de 
+        hipnozoitos, el cual es un estado de latencia o dormacia en el _ciclo hepático_, 
         condición que puede generar tanto una liberación prolongada y lenta de merozoitos 
         como reservorios de infección que prolongan 
-        su transmisión; (ii) el tropismo hacia reticulocitos o RBC inmaduros
-        (1-2% de RBC circulantes), 
+        su transmisión; 
+        2. el tropismo hacia reticulocitos o RBC inmaduros
+        (1-2% de RBC circulantes) en el _ciclo eritrocítico_, 
         condición que genera bajas parasitemias en comparación a _P. falciparum_; 
-        y (iii) la dependencia del antígeno _Duffy_ para la invasión de RBC, cuya
+        y 
+        3. la dependencia del antígeno _Duffy_ para la invasión de RBC, cuya
         ausencia en individuos con ancestría africana 
         ha sido considerada como un factor de resistencia a _P. vivax_.
         <!--tiene una alta frecuencia en las poblaciones-->
 
 ### Malaria Severa
 
-a. General
+a. Definición
     
-    i. __Definición__
+    Ante la ausencia de una descripción especie-específica, la malaria
+    severa por _P. vivax_ está definida por los criterios para _P. falciparum_ otorgados 
+    por la OMS en el 2014 [@WHO2014severe], el cual incluye una o más de
+    las siguientes (todas registradas en mono-infecciones 
+    por _P. vivax_):
+    1. Condición neurológica: coma, mareo, pérdida conciencia;
+    2. Condición hematológica: anemia/trombocitopenia severa;
+    3. Síntomas sistémicos: shock circulatorio; y
+    4. Fallo de órganos vitales:
+    disfución respiratoria, estrés respiratorio agudo, 
+    daño renal agudo, ruptura esplénica, 
+    disfunción hepática e ictericia (hiperbilirrubina).
+
+b. Epidemiología
     
-        Ante la ausencia de una descripción especie-específica, la Malaria Vivax
-        Severa está definida por los criterios para _P. falciparum_ otorgados 
-        por la OMS en el 2014 [@WHO2014severe], el cual incluye una o más de
-        las siguientes (todas registradas en mono-infecciones 
-        por _P. vivax_):
-        1. condición neurológica: coma, mareo, pérdida conciencia;
-        2. condición hematológica: anemia/trombocitopenia severa;
-        3. síntomas sistémicos: shock circulatorio; y
-        4. fallo de órganos vitales:
-        disfución respiratoria, estrés respiratorio agudo, 
-        daño renal agudo, ruptura esplénica, 
-        disfunción hepática e ictericia (hiperbilirrubina).
+    i. __A nivel mundial__
         
-    ii. __Riesgo__
+        Entre el 2005 y 2015, 1-3% de casos no-complicados fueron asumidos 
+        como malaria severa. Esta causó la muerte de 429,000 personas [@WHO2016world],
+        en su mayoría (90%) niños menores de 5 años en África [@wassmer2015].
         
         La vulnerabilidad a la Malaria Severa ha sido asociada a la intensidad de 
-        transmisión y el desarrollo de la inmunidad independiente a la edad [@reyburn2015].
+        transmisión y el desarrollo de la inmunidad dependiente a la edad [@reyburn2015].
         Por ejemplo, en zonas de alta transmisión como en el África subsahariana, 
         las poblaciones más vulnerables son: niños menores de 5 años con un desarrollo 
         incompleto de inmunidad parcial contra la malaria [@Stanisic2015], 
@@ -963,56 +974,23 @@ a. General
         Por otro lado, en zonas de baja transmisión como en Asia y América Latina, 
         al haber una menor exposición a la infección, la mayoría de la población 
         llega a la adultez sin haber desarrollado una inmunidad protectiva. 
-        Como consecuencia, tanto en la Amazonía peruana como en el Norte costero la 
+        Como consecuencia, <!--tanto en la Amazonía Peruana como en el Norte costero -->la 
         población adolescente y adulta joven es la más susceptible a desarrollar esta 
-        patología [@quispe2014; @llanoschea2015], comúnmente al iniciar trabajos a campo 
+        patología [@llanoschea2015], comúnmente al iniciar trabajos a campo 
         abierto, e.g. actividades madereras o mineras, en zonas de alto riesgo de 
         contacto con mosquitos infectados [@factores2001].
         
-        Cabe agregar que la presencia de comorbilidades, coinfecciones y malnutrición 
+        <!--Cabe agregar que la presencia de comorbilidades, coinfecciones y malnutrición 
         son reconocidos como factores contribuyentes a la Malaria Severa, los cuales deben
         ser adecuadamente registrados. Sin embargo, se ha sugerido que la coinfección de 
         _Plasmodium_ con Dengue no está asociada con una peor enfermedad,
         asemejándose a una mono-infección con Dengue tanto en frecuencia de síntomas como 
-        en el nivel de marcadores inmunológicos [@baldevi2016].
-
-b. Epidemiología
-    
-    i. __A nivel mundial__
+        en el nivel de marcadores inmunológicos [@baldevi2016].-->
         
-        Entre el 2005 y 2015, 1-3% de casos no-complicados fueron asumidos 
-        como malaria severa. Esta causó la muerte de 429,000 personas [@WHO2016world],
-        en su mayoría (90%) niños menores de 5 años en África [@wassmer2015].
-        De las estrategias preventivas desarrolladas hasta el momento
-        (control vectorial, quimioprevención, vacunas e indicadores),
-        la única vacuna en completar un ensayo de fase 3, RTS,S/AS01, solo redujo 
-        en un 39% la incidencia de enfermedad y en 31.5% la de malaria severa en niños
-        entre 5-17 meses [@rts2015].
-        
-        Con respecto a la malaria vivax severa, un reciente meta-análisis con 
-        46,411 casos registrados desde el año 1900 identificó patrones geográficos 
-        en la prevalencia de manifestaciones clínicas [@rahimi2014meta].
-        Concluyeron que en las zonas de alta transmisión (e.g., Papúa Nueva Guinea)
-        la anemia severa fue el síntoma con mayor prevalencia en niños jóvenes. 
-        <!--Por ejemplo, en India Kochar et al. 2009 [@kochar2009] en un estudio 
-        prospectivo reportó 
-        40/456 casos de malaria vivax severa, entre 18-60 años de edad, con 
-        hiperbilirrubina (58%), daño renal agudo (45%),
-        anemia severa (33%), malaria cerebral (13%), daño pulmonar (10%), shock 
-        circulatorio (8%) e hipoglicemia (3%).-->
-        Por otro lado, en zonas con baja transmisión (e.g., la región de las 
-        Américas) los adultos eran los más susceptibles a la severidad con una 
-        mayor variedad de disfunciones orgánicas.
-        Por ejemplo, en Brasil un estudio retrospectivo
-        identifico 17/11,251 casos de malaria vivax severa, entre 28-80 años de edad, 
-        con hiperbilirrubina (59%), 
-        anemia severa (29%), daño renal agudo (12%), daño pulmonar (12%) y shock 
-        circulatorio (6%) [@alexandre2010].
-    
     i. __En el Perú__
         
         En el Norte costero, Quispe et al. 2014 [@quispe2014] mediante un estudio 
-        retrospectivo (2008-2009) identificó 81/6502 casos de malaria vivax severa 
+        retrospectivo (2008-2009) identificó 81/6502 casos de malaria severa por _P. vivax_
         con anemia severa (57%), 
         shock circulatorio (25%), hiperbilirrubina (25%), daño pulmonar (21%), 
         daño renal agudo (14%) y Glasgow $\le$ 9/14 (11%).
@@ -1022,55 +1000,103 @@ b. Epidemiología
         En el Noreste amazónico, un reciente estudio prospectivo dirigido por 
         El Centro de Enfermedades Tropicales de la Marina de los Estados Unidos 
         NAMRU-6 (2012-2013) [@smith2013] identificó 55/164 casos de 
-        malaria vivax severa con <!--POSTER, PERO REQUIERE ¡¡ACTUALIZAR!!-->
-        <!--postración (83%), confusión (32%),--> shock circulatorio (27.6%), daño pulmonar (24.5%)
+        malaria severa por _P. vivax_ con
+        shock circulatorio (27.6%), daño pulmonar (24.5%)
         hiperbilirubina (18.1%), daño renal agudo (2%), Glasgow $\le$ 9/14 (2%) y anemia severa (1.7%). 
         No se encontraron diferencias
         con respecto a la edad entre no-severos y severos (33 vs 29 años, P=0.497).
         Sin embargo, sí se identificó una mayor proporción de malaria 
         severa en mujeres (52 vs 35%, P=0.039).
 
+<!--
+b. Epidemiología
+    
+    i. __A nivel mundial__
+        
+        Entre el 2005 y 2015, 1-3% de casos no-complicados fueron asumidos 
+        como malaria severa. Esta causó la muerte de 429,000 personas [@WHO2016world],
+        en su mayoría (90%) niños menores de 5 años en África [@wassmer2015].
+        <!--De las estrategias preventivas desarrolladas hasta el momento
+        (control vectorial, quimioprevención, vacunas e indicadores)
+        la única vacuna en completar un ensayo de fase 3, RTS,S/AS01, solo redujo 
+        en un 39% la incidencia de enfermedad y en 31.5% la de malaria severa en niños
+        entre 5-17 meses [@rts2015].
+        
+        Con respecto a la malaria severa por _P. vivax_, un reciente meta-análisis con 
+        46,411 casos registrados desde el año 1900 identificó patrones geográficos 
+        en la prevalencia de manifestaciones clínicas [@rahimi2014meta].
+        Concluyeron que en las zonas de alta transmisión (e.g., Papúa Nueva Guinea)
+        la anemia severa fue el síntoma con mayor prevalencia en niños jóvenes. 
+        <!--Por ejemplo, en India Kochar et al. 2009 [@kochar2009] en un estudio 
+        prospectivo reportó 
+        40/456 casos de malaria vivax severa, entre 18-60 años de edad, con 
+        hiperbilirrubina (58%), daño renal agudo (45%),
+        anemia severa (33%), malaria cerebral (13%), daño pulmonar (10%), shock 
+        circulatorio (8%) e hipoglicemia (3%).
+        Por otro lado, en zonas con baja transmisión (e.g., la región de las 
+        Américas) los adultos eran los más susceptibles a la severidad con una 
+        mayor variedad de disfunciones orgánicas.
+        Por ejemplo, en Brasil un estudio retrospectivo
+        identifico 17/11,251 casos de malaria vivax severa, entre 28-80 años de edad, 
+        con hiperbilirrubina (59%), 
+        anemia severa (29%), daño renal agudo (12%), daño pulmonar (12%) y shock 
+        circulatorio (6%) [@alexandre2010].
+-->    
+
 
 c. Biología
     
-    i. __Comparación__
-    
-        Históricamente, la malaria vivax 
-        ha sido considerada como "benigna" en comparación a _P. falciparum_ 
-        debido a su: (i) baja invasión parasitaria, sesgada 
-        a reticulocitos y rutas alternas de menor efectividad; y (ii) pobre 
-        citoadhesión de sus iRBC, dada por la ausencia de 
-        protrusiones abastonadas o _knob protrusions_. 
-        Sin embargo, la presencia de genes homólogos a Pf _var_, o genes Pv _vir_, y
-        la baja proporción de esquizontes tardíos sugieren la presencia de secuestramiento 
-        tisular, corroborado en necropsias mas no experimentalmente
-        en sistemas de cultivo continuo [@wassmer2015].
-        En línea con esta evidencia, 
-        recientemente se ha demostrado que en los casos severos por 
-        _P. vivax_ 
-        la parasitemia periférica subestima la biomasa parasitaria 
-        total [@barber2015]. En este estudio, la parasitemia oculta fue la 
-        mayor contribuyente de citoquinas proinflamatorias, semejante a lo
-        observado con _P. falciparum_, mas no de la activación endotelial, 
-        sugiriendo una posible acumulación parasitaria en partes de órganos sin endotelio.
+    i. __Patogénesis__
         
-    ii. __Patogénesis__
-        
-        <!--Aún no está completamente entendida. Sin embargo, s-->Se han propuesto 
-        mecanismos
-        en base a lo observado en los casos de malaria cerebral por _P. falciparum_,
+        Se han propuesto mecanismos
+        en base a lo observado en los casos<!-- de malaria cerebral --> por _P. falciparum_,
         donde los procesos de invasión y adhesión parasitaria son relevantes.
-        La respuesta celular contra la parasitemia, dependiente de su 
-        tasa de multiplicación, sumada a la citoadherencia 
-        de iRBC en estadio esquizonte a endotelio o RBC no infectados (rosetamiento), 
-        desencadena una obstrucción microvascular que activa a sus células endoteliales. 
+        La respuesta celular contra la parasitemia, <!--dependiente de su tasa de multiplicación,-->
+        sumada a la citoadherencia 
+        de iRBC en estadio esquizonte a endotelio o RBC no infectados (proceso llamado "rosetamiento"), 
+        desencadena una obstrucción microvascular que activa a las células endoteliales. 
         En respuesta, estas liberan una mayor cantidad de citoquinas proinflamatorias, 
         provocando 
         la pérdida de perfusión y una consecuente disfunción microvascular que progresa 
         por retroalimentación positiva.
+    
+    ii. __Comparación__
+    
+        Históricamente, la malaria por _P. vivax_
+        ha sido considerada como "benigna" en comparación a _P. falciparum_ 
+        debido a su: (1) baja invasión parasitaria, sesgada 
+        a reticulocitos y rutas alternas de menor efectividad; y (2) pobre 
+        citoadhesión de sus iRBC, dada por la ausencia de 
+        protrusiones abastonadas o _knob protrusions_,
+        codificadas por genes _var_. 
+        Sin embargo, la identificación de genes homólogos a _Pf var_ (_Pv vir_)
+        <!--la baja proporción de esquizontes tardíos -->y 
+        evindencias _post mortem_ de iRBC en capilares pulmonares
+        han sugerido la presencia de secuestramiento tisular por _P. vivax_ [@wassmer2015].
+        En línea con esta evidencia, 
+        recientemente se ha demostrado que en los casos severos por _P. vivax_ 
+        la parasitemia periférica subestima la biomasa parasitaria total,
+        siendo la fracción oculta la mayor contribuyente de citoquinas proinflamatorias, 
+        semejante a los casos por _P. falciparum_ [@barber2015]. 
+        <!--En este estudio, la parasitemia oculta fue la 
+        mayor contribuyente de citoquinas proinflamatorias, semejante a lo
+        observado con _P. falciparum_, pero no de la activación endotelial, 
+        sugiriendo una posible acumulación parasitaria en partes de órganos sin endotelio.-->
 
-### Anticuerpos
+### Respuesta de anticuerpos
 
+La concentración de anticuerpos contra antígenos de _Plasmodium_ es un
+biomarcador sensible a la exposición de malaria<!-- a nivel individual--> [@elliott2014].
+Sin embargo, las evidencias a favor de dianas para _P. vivax_ continúan estando 
+limitadas por la ausencia de cultivos _in vitro_ y modelos animales de infección.
+Este problema se ve reflejado en su escaso número de candidatos a vacuna (PvDBP y PvCSP) 
+<!--(PvDBP en ensayos clínicos fase 1 y PvCSP en estudios pre-clínicos) -->
+en comparación a los 23 de _P. falciparum_ [@rainbow2016].
+Por ello, la principal fuente de evidencia a favor de biomarcadores para _P. vivax_ está en la
+identificación de antígenos con respuestas de anticuerpos asociadas a la adquisición 
+natural de inmunidad en poblaciones endémicas.
+
+<!--
 a. Relevancia
     
     La concentración de anticuerpos contra antígenos de _Plasmodium_ es un
@@ -1089,24 +1115,24 @@ a. Relevancia
     Por ello, la principal fuente de evidencia en aquella especie está en la
     identificación de antígenos con respuestas asociadas a la adquisición 
     natural de inmunidad en poblaciones endémicas.
+-->
     
-b. Marcadores
+a. Marcadores
     
     i. __de exposición__
     	
-    	Su presencia es un paso previo a la adquisición de inmunidad.
-    	Estudios longitudinales han sugerido que en un inicio la intensidad de la 
+    	<!--Su presencia es un paso previo a la adquisición de inmunidad.-->
+    	Estudios longitudinales han sugerido que, en un inicio, la intensidad de la 
     	respuesta de anticuerpos actúa como marcador de exposición la cual, luego de una 
-    	exposición constante, incrementa hasta superar un umbral de protección
+    	constante exposición, incrementa hasta superar un umbral de protección
     	[@Stanisic2015].
-    	
 	    En este sentido, estudios seroepidemiológicos en _P. vivax_ han logrado 
 	    asociar marcadores
 	    con exposición (PvCSP, PvMSP-1~19~, PvMSP-9~RIRII~ y PvAMA-1) 
 	    e inmunidad (PvMSP-1~19~, PvMSP-1~NT~, PvMSP-3$\alpha$ y PvMSP-9~NT~) 
-	    [@cutts2014meta]. Sin embargo, su principal limitante está en la
+	    [@cutts2014meta].<!-- Sin embargo, su principal limitante está en la
 	    carencia de evaluaciones en su cinética de adquisición, desarrollo y 
-	    mantenimiento en cohortes longitudinales.
+	    mantenimiento en cohortes longitudinales.-->
 	    <!--
 	    Actualmente, el cálculo de la razón de seroconversiónn (SCR) es el método más 
 	    estandarizado para la evaluación de la exposición y caracterización
@@ -1116,13 +1142,13 @@ b. Marcadores
 	ii. __de inmunidad__
 	    
 	    En áreas de alta transmisión, los niños adquieren resistencia a la manifestación
-	    severa de la malaria a la edad de cinco años, aproximadamente. Sin embargo,
+	    _severa_ de la malaria a la edad de cinco años, aproximadamente. Sin embargo,
 	    continúan siendo susceptibles a episodios no-complicados hasta la adolescencia,
-	    donde adquieren un estado resistente a la malaria sintomática. A pesar de ello,
+	    donde adquieren un estado resistente a la malaria _sintomática_. A pesar de ello,
 	    no se ha demostrado que esta adquisición natural de inmunidad por la exposición 
-	    acumulada a malaria otorgue una protección esterilizante o de resistencia a la 
+	    acumulada a malaria otorgue una protección _esterilizante_ o de resistencia a la 
 	    infección [@crompton2014rev].
-	    Los detalles de los procesos involucrados en cada una de estas fases no están
+	    Los detalles de los procesos involucrados en cada una de estas tres fases no están
 	    completamente entendidos, pero se tiene detalles de algunos componentes:
     	
 	    1. __contra la severidad__
@@ -1138,7 +1164,6 @@ b. Marcadores
 	        innata. Una hipótesis está en anticuerpos que interfieran la unión de 
 	        glucoproteínas proinflamatorias con receptores Toll 
 	        [@schofield2006toll; @coban2005toll].
-	        
         	
 	        Por otro lado, la adquisición de anticuerpos que bloqueen la adhesión de iRBC 
 	        o invasión parasitaria también son candidatos a otorgar una protección a este
@@ -1153,7 +1178,6 @@ b. Marcadores
 	        de la invasión a reticulocitos por la ruta tradicional y alternativa, respectivamente
 	        [@galinski1992rbp].
     	
-    	\newpage
 	    2. __contra la enfermedad__
 	        
 	        Los antígenos del estadio eritrocítico (merozoitos) fueron los primeros 
@@ -1190,33 +1214,56 @@ b. Marcadores
 	        las respuestas de células T CD8^+^ como importantes mediadores de este tipo de 
 	        inmunidad.-->
         	
-d. Enfoque a larga escala
+b. Enfoques a larga escala
     
     El parásito de la malaria, al tener un ciclo de vida complejo con múltiples estadios
     de desarrollo en el humano, posee también un transcriptoma, proteoma y, por lo tanto, 
-    un inmunoma estadio-específico que deriva de un total de ~5300 proteínas putativas. 
+    un _inmunoma_ estadio-específico que deriva de un total de ~5300 proteínas putativas. 
     Por este motivo, tanto los esfuerzos de vacunas por subunidades 
     como por organismos completos atenuados han fracasado,
-    en contraste a la eficacia observada de dichas estrategias en otras infecciones como 
-    HBsAg contra la hepatitis B y BCG contra la tuberculosis, 
-    respectivamente [@immunomics2016].
+    en contraste a su eficacia en otras infecciones como 
+    hepatitis B (HBsAg) y tuberculosis (BCG), respectivamente [@immunomics2016].
     <!--Incluso, ensayos 
     clínicos de fase 3 han demostrado que los actuales candidatos poseen una pobre 
     inmunogenicidad y protección contra la malaria (e.g., RTS,S) [@rts2015].-->
     
-    La era genómica permitió un cambio de perspectiva en la investigación inmunológica:
+    <!--La era genómica permitió un cambio de perspectiva en la investigación inmunológica:
     se pasó de una enfocada en plataformas de vacunación a una 
     en antígenos de vacunación.
     Es por ello que, actualmente, el objetivo de mayor importancia está en la
     identificación de subgrupos de antígenos capaces de inducir respuestas inmunes
-    protectivas [@Davies2015Large].    
+    protectivas [@Davies2015Large].-->
     
+    i. __Inmunómica__
+        
+        
+        En respuesta a las limitaciones de la _vacunología reversa_, basada en el
+    uso de la información genómica de patógenos, el enfoque _inmunómico_
+    hace uso de la información de ambos agentes interactuantes: patógeno y hospedero.
+    Su estrategia selecciona inmunógenos tanto por (i) _métodos empíricos_, usando data
+    transcriptómica y proteómica de patógenos dinámicos más la información clínica 
+    del hospedero, como por (ii) _métodos teóricos_, empleando algoritmos computacionales predictivos 
+    que tomen en cuenta la afinidad entre péptidos del patógeno y moléculas 
+    del complejo principal de histocompatibilidad (MHC) del hospedero.
+    
+        Particularmente, el primer método
+    ha permitido obtener datos empíricos sobre 
+    diferencias en la amplitud, intensidad, cinética y longevidad de respuestas inmunes
+    inducidas por patógenos. Además de mayor información sobre aspectos clave como el
+    porcentaje del proteoma reconocido por el hospedero, la capacidad predictiva
+    de anticuerpos sobre el estado de la enfermedad o de las
+    secuencias de aminoácidos sobre su inmunogenicidad [@Davies2015Large].
+    <!--Dos plataformas representativas son los microarreglos de proteínas
+    y péptidos, este último con mayor resolución en el mapeo de epítopes 
+    [@carmona2015peptide].-->
+    
+<!--
     i. __Vacunología reversa__
     
-        El primer enfoque en respuesta a esta problemática fue llamado 
-        _Vacunología Reversa_,
-        el cual hace uso de la información genómica de los patógenos
-        para la predicción bioinformática de 
+        El primer enfoque en respuesta a esta problemática
+        hizo uso de la información genómica de los patógenos. 
+        Su estrategia se basó en
+        la predicción bioinformática de 
         antígenos candidatos a vacuna a partir de características protéticas asociadas a 
         inmunogenicidad y efectividad en vacunación. La principal limitación de este 
         enfoque 
@@ -1225,20 +1272,21 @@ d. Enfoque a larga escala
     
     ii. __Inmunómica__
         
-        Un segundo enfoque <!--que se construyó sobre aquél -->fue llamado _Inmunómica_, 
-        el cual hace uso de la información de ambos agentes interactuantes: patógeno y hospedero.
-        La selección de inmunógenos es realizada por (i) métodos empíricos usando data
+        Un reciente enfoque
+        hace uso de la información de ambos agentes interactuantes: patógeno y hospedero.
+        Su estrategia se basa en
+        la selección de inmunógenos por (i) _métodos empíricos_ usando data
         transcriptómica y proteómica de patógenos dinámicos más la información clínica 
-        del hospedero, o (ii) métodos teóricos empleando algoritmos computacionales predictivos 
-        <!--de proteínas inmunógenas -->que tomen en cuenta la afinidad entre 
-        péptidos del patógeno y<!-- determinadas--> moléculas 
+        del hospedero, o (ii) _métodos teóricos_ empleando algoritmos computacionales predictivos 
+        que tomen en cuenta la afinidad entre 
+        péptidos del patógeno y moléculas 
         del complejo principal de histocompatibilidad (MHC) del hospedero.
         La principal ventaja del primer método
         está en la capacidad de priorizar la selección de antígenos en
         base a criterios clínicamente relevantes, como el de individuos con inmunidad por 
         adquisición natural [@immunomics2016].
         
-        Este enfoque ha permitido obtener datos empíricos sobre 
+        Este método ha permitido obtener datos empíricos sobre 
         diferencias en la amplitud, intensidad, cinética y longevidad de respuestas inmunes
         inducidas por patógenos. Además de mayor información sobre aspectos clave como el
         porcentaje del proteoma reconocido por el hospedero, la capacidad predictiva
@@ -1247,6 +1295,7 @@ d. Enfoque a larga escala
         Dos plataformas representativas son los microarreglos de proteínas
         y péptidos, este último con mayor resolución en el mapeo de epítopes 
         [@carmona2015peptide].
+-->
 
 <!-- 
 han alimentado a los actuales algoritmos de predicción computacional
@@ -1257,26 +1306,57 @@ diverge entre individuos sin exposición previa (_naive_) y semi-inmunes,
 en base estos dos parámetros [@arevalo2016].
 -->
 
-### Microarreglos
+### Microarreglos de proteínas
 
-a. De proteínas
+Esta es una técnica empleada en la medición a larga escala de las interacciones o 
+actividades de proteínas capaz de reconstruir redes biológicas entre 
+diferentes clases de moléculas y estados celulares [@uzoma2013interactome].
+Su empleo en el contexto _inmunómico_, al cuantificar las interacciones antígeno-anticuerpo,
+ha identificado biomarcadores de exposición o protección ante distintos patógenos
+mediante perfiles de respuesta humoral en individuos infectados o vacunados.
+
+a. Diseño del microarreglo
     
-    Esta es una técnica empleada en la medición a larga escala de las interacciones o 
-    actividades de proteínas capaz de reconstruir redes biológicas entre 
-    diferentes clases de moléculas y estados celulares [@uzoma2013interactome].
-    En el contexto inmunómico, al cuantificar las interacciones antígeno-anticuerpo,
-    el tamaño y complejidad de los genomas de _Plasmodium_ desafían su
-    ejecución a una escala de proteoma completo.
-    <!--Por ejemplo, _P. falciparum_ posee más de 3kb de longitud, ~5300 genes, genes 
+    El primer diseño de microarreglos para _P. vivax_ y _P. falciparum_ fue estandarizado 
+        por Finney et al. 2014 [@Finney2014]. Seis características fueron empleadas: (i) 
+        proteínas predichas para el estadio eritrocítico con capacidad de ser 
+        expuestas a superficie, (ii) evidencia en microarreglos, proteomas, EST, 
+        o secretoma predicho para _P. falciparum_, (iii) proteínas únicas y ortólogas con
+        presencia de péptidos señal (SP) o dominios transmembrana (TMD) para _P. vivax_, (iv)
+        proteínas putativas citoplasmáticas carentes de SP o TMD en base a filtros
+        de punto isoeléctrico por especie, (v) exclusión de proteínas con alta variabilidad 
+        antigénica (e.g., PfEMP1, RIFIN, surfin, stevors; Pv _var_ y pseudogenes), 
+        e (vi) inclusión de genes simples y multi-exónicos.
+    
+    Posteriormente, en el 2015 el Centro Internacional de Excelencia para la Investigación de la 
+        Malaria ICEMR realizó una subselección empírica del microarreglo anteriormente
+        detallado [@King2015FOC]. 
+        Para ello sondearon los microarreglos de _P. falciparum_ con muestras 
+        de Papúa Nueva Guinea, Kenya y Mali, mientras que
+        los de _P. vivax_ con muestras de Papúa Nueva Guinea, China, Perú y Tailandia,
+        ambos con controles de individuos norteamericanos sin exposición a malaria.
+        A partir de ello<!-- se seleccionó a todos los antígenos seroreactivos por 
+        país, cumpliendo la condición de ser mayores a dos veces la desviación estándar
+        de la media de la reactividad serológica en los controles. Finalmente, -->
+        se seleccionó el top 500 de antígenos para ambas especies empleando un filtrado jerárquico,
+        dándole prioridad a los elementos con seroreactividad en todos los países<!-- y
+        en las posiciones restantes los antígenos en orden descendiente a su reactividad
+        promedio-->. <!--Este diseño se encuentra en la base de datos GEO
+        con el código [GPL18316](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL18316).-->
+    
+    <!--
+    El tamaño y complejidad de los genomas de _Plasmodium_ desafían el diseño de
+    microarreglos a una escala de proteoma completo.
+    Por ejemplo, _P. falciparum_ posee más de 3kb de longitud, ~5300 genes, genes 
     multi-exónicos complejos y segmentos largos de secuencias repetitivas por el bajo 
-    contenido de GC. -->
-    Por esta razón,
-    su diseño requiere de procesos de selección en base
-    a características proteicas y conocimiento empírico. De esta manera se ha logrado 
+    contenido de GC.
+    Por esta razón, se requiere de procesos de selección en base
+    a características proteicas y conocimiento empírico. <!--De esta manera se ha logrado 
     desarrollar plataformas costo-efectivas y rápidas de emplear, capaces de facilitar el 
     descubrimiento de antígenos para vacunas o serovigilancia con el menor trabajo en 
-    laboratorio e independiente de algoritmos predictivos.
-    
+    laboratorio e independiente de algoritmos predictivos.-->
+        
+    <!--
     i. __Primera generación__
     
         Finney et al. 2014 [@Finney2014] diseñaron microarreglos de _P. vivax_ y 
@@ -1286,7 +1366,7 @@ a. De proteínas
         o secretoma predicho para _P. falciparum_, (iii) proteínas únicas y ortólogas con
         presencia de péptidos señal (SP) o dominios transmembrana (TMD) para _P. vivax_, (iv)
         proteínas putativas citoplasmáticas carentes de SP o TMD en base a filtros
-        de punto isoeléctrico por especie, (v) exclusión de proteínas con variabilidad 
+        de punto isoeléctrico por especie, (v) exclusión de proteínas con alta variabilidad 
         antigénica (e.g., PfEMP1, RIFIN, surfin, stevors; Pv _var_ y pseudogenes), 
         e (vi) inclusión de genes simples y multi-exónicos.
         
@@ -1306,23 +1386,10 @@ a. De proteínas
         en las posiciones restantes los antígenos en orden descendiente a su reactividad
         promedio. Este diseño ha sido depositado en la base de datos GEO
         con el código [GPL18316](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL18316).
-        
-b. Análisis de datos
-    
-    Sundaresh et al. 2006 demostró que las características de las mediciones en 
-    microarreglos de proteínas permitían la adaptación y aplicación de las técnicas de
-    análisis desarrolladas para microarreglos de ADN [@sundaresh2006].
-    Ambas plataformas buscan resolver el mismo problema: 
-    realizar un análisis diferencial de señales de luz 
-    derivadas de eventos de unión molecular.
-    Por este motivo, su análisis debe de incluir a los componentes estandarizados para el 
-    análisis de microarreglos [@allison2006], además de parámetros de relevancia 
-    exclusiva para el análisis de respuestas humorales. Finalmente, se detallarán las 
-    ventajas del uso de software libre para su ejecución, con respecto a los privativos
-    y servidores web.
-    
-    i. __Componentes__
-        
+    -->
+
+
+<!--
         1. __Diseño__
             
             De acuerdo al MIAME o información mínima sobre experimentos basados 
@@ -1340,21 +1407,39 @@ b. Análisis de datos
             descripción del progreso de las imágenes escaneadas a la matriz de datos; y
             - Controles de normalización:
             descripción de los elementos conocidos o invariantes.
+-->
+
+b. Análisis de datos
+    
+    Sundaresh et al. 2006 demostró que las características de las mediciones en 
+    microarreglos de proteínas permitían la adaptación y aplicación de las técnicas de
+    análisis desarrolladas para microarreglos de ADN [@sundaresh2006].
+    <!--Ambas plataformas buscan resolver el mismo problema: 
+    realizar un análisis diferencial de señales de luz 
+    derivadas de eventos de unión molecular.-->
+    Por este motivo, su análisis debe de incluir a los componentes estandarizados para el 
+    análisis de microarreglos [@allison2006], además de parámetros de relevancia 
+    exclusiva para el análisis de respuestas humorales.<!-- Finalmente, se detallarán las 
+    ventajas del uso de software libre para su ejecución, con respecto a los privativos
+    y servidores web.-->
+    
+    i. __Pre procesamiento__ 
             
-        1. __Pre procesamiento__ 
-            
-            Incluye la normalización, transformación y filtrado de la matriz de datos.
+        Incluye la normalización, transformación y filtrado de la matriz de datos.
             <!--También a los criterios bajo los cuales se controlará la calidad de las
             mediciones del experimento.-->
-            
-            Primero, la normalización busca homogeneizar la variabilidad entre arreglos
-            en base a controles (blanco, negativos o positivos), 
-            los cuales se asume que son invariantes entre muestras. 
+        1. Primero, la normalización busca homogeneizar la variabilidad entre arreglos
+            en base a controles, los cuales se asume que son invariantes entre muestras. 
+            Este procedimiento es ejecutado tradicionalmente a través de la 
+            sustracción de controles o _fold over control_ (FOC),
+            obteniendo el cociente de las lecturas objetivo con respecto 
+            a la mediana de los controles negativos por muestra [@King2015FOC];<!--[@arevalo2016]-->
+            <!--
             De acuerdo al diseño de arreglos, este procedimiento es 
             ejecutado de tres formas:
             - sustracción de controles o _fold over control_ (FOC),
-            aplicado en microarreglos de proteínas con respecto a la mediana del control blanco
-            por muestra [@King2015FOC];<!--[@arevalo2016]-->
+            aplicado en microarreglos de proteínas con respecto a la mediana del control negativo
+            por muestra [@King2015FOC]
             - estabilización de varianzas o VSN, 
             aplicado en microarreglos de DNA con respecto a controles de 
             intensidad invariante entre muestras, e.g. genes _housekeeping_ [@huber2002vsn]; y
@@ -1362,54 +1447,51 @@ b. Análisis de datos
             con la capacidad de controlar la variabilidad entre muestras
             observada en los diseños experimentales de microarreglos de proteínas 
             [@sboner2009rlm].
-            
-            Segundo, la transformación tiene el objetivo reducir la
+            -->
+        2. Segundo, la transformación tiene el objetivo reducir la
             heterocedasticidad o heterogeneidad de varianzas entre las observaciones 
             por errores aleatorios en el proceso de hibridación [@kreil2005bullet].
             Este fenómeno se evidencia en el incremento de la varianza <!--de las medidas -->
             directamente proporcional al incremento de su intensidad [@brown2001image].
-            Para ello, dos principales transformaciones han sido definidas:
-            - logarítmica,
+            Dependiendo de la dispersión de los datos, se asumen modelos de error
+            multiplicativo o aditivo, donde la transformación logarítmica o
+            arcoseno hiperbólico es ejecutada sobre los valores normalizados.
+            <!--Para ello, dos principales transformaciones han sido definidas:
+            - Logarítmica (log),
             la cual asume un error multiplicativo que corrige las varianzas de 
             alta intensidad pero capaz dispersar a las de baja intensidad; y
-            - asinh,
+            - Arcoseno hiperbólico (asinh),
             la cual asume un error multiplicativo y aditivo que corrige esta dispersión, 
             relevante en contextos donde los valores normalizados menores a la unidad 
-            tienen significado biológico.
-            
-            Tercero, el filtrado en experimentos a larga escala permite incrementar
-            el poder de detección de elementos con expresión diferenciada
-            [@bourgon2010filter].
-            Las estrategias de corrección posteriores a la comparación múltiple e 
-            independiente 
-            de varios elementos son sensibles a esta cantidad.
+            tienen significado biológico.-->
+        3. Tercero, el filtrado en experimentos a larga escala permite incrementar
+            el poder de detección de elementos con expresión diferenciada [@bourgon2010filter].
+            En estos, las estrategias de corrección posteriores a la comparación de múltiples
+            hipótesis son sensibles a esta cantidad.
             En este sentido, este procedimiento retira de forma preliminar a los elementos 
-            con reducidas probabilidades de expresarse diferencialmente sin la 
-            necesidad de realizar la prueba de hipótesis.
+            con reducidas probabilidades de expresarse diferencialmente<!-- sin la 
+            necesidad de realizar la prueba de hipótesis-->.
             
-            <!--Cuarto, el control de calidad-->
-            
-        2. __Inferencia__
-            
-            Los objetivos de la inferencia estadística de microarreglos son (i) poner 
+    ii. __Inferencia__
+    
+        <!--Los objetivos de la inferencia estadística de microarreglos son (i) poner 
             a prueba la hipótesis nula de igualdad de medias en las expresión
             de elementos por grupo y (ii) ordernar o ranquear a los elemento según la
             evidencia contra la hipótesis nula, incluso luego de fallar en el rechazo
-            de dicha hipótesis [@smyth2004ebayes]. 
-            Sin embargo, a esta escala existen dos principales problemas: 
-            - presencia de varianzas artificialmente altas o bajas producto del 
-            bajo número de réplicas entre arreglos o muestras [@baldi2001cybert]; y un
-            - amplio número de hipótesis puestas a prueba en forma simultánea, donde los 
+            de dicha hipótesis [@smyth2004ebayes]. -->
+        La inferencia estadística esta escala posee dos principales problemas: (1)
+            presencia de varianzas artificialmente altas o bajas producto del 
+            bajo número de réplicas entre arreglos o muestras [@baldi2001cybert]; y (2) un
+            amplio número de hipótesis puestas a prueba en forma simultánea, donde los 
             test estadísticos tradicionales pueden generar un largo número de 
             falsos positivos [@kayala2012cyber].
-            
-            Ante el primer problema, 
+        1. Ante el primer problema, 
             un enfoque bayesiano empírico permite reducir (o moderar) las varianzas de 
             todas las lecturas. 
-            Una primera estrategia corregía la varianza observada de cada gen tomando en 
-            cuenta la varianza de genes vecinos con medias de expresión 
+            Inicialmente, cada varianza observada por gen se corregía con respecto a
+            la varianza de genes vecinos con medias de expresión 
             similar [@baldi2001cybert].
-            Posteriormente, esta se extendió y optimizó mediante la estimación de 
+            Posteriormente, esta metodología se extendió y optimizó mediante la estimación de 
             una varianza general previa para la actualización de todas las varianzas 
             observadas [@smyth2004ebayes].
             <!--A diferencia de un enfoque bayesiano puro, donde se asume una 
@@ -1419,33 +1501,41 @@ b. Análisis de datos
             Con ello, la ejecución de un test-t con varianzas moderadas 
             (o test-t moderado) es capaz de obtener inferencias más estables que el 
             test-t ordinario con un número limitado de réplicas [@kayala2012cyber].
-            
-            Ante el segundo problema, 
+        2. Ante el segundo problema, 
             los métodos de corrección o ajuste de valores p permiten que el 
-            investigador pueda controlar la razón de falsos positivos con 
-            respecto a todos los descubrimientos o razón de falsos descubrimientos 
-            (FDR) [@brazma2001].
-            Dos principales enfoques han sido propuestos. El enfoque
+            investigador pueda controlar la razón de falsos descubrimientos con 
+            respecto a todas las hipótesis positivas (FDR) [@brazma2001].
+            Ante este problema, el método Benjamini-Hochberg
+            determina un valor crítico de valores p dependiente del total 
+            de hipótesis puestas a prueba y el valor de FDR deseado [@benjamini1995fdr].
+            <!-- EXPLAIN STOREY's METHOD! -->
+            <!--Dos principales enfoques han sido propuestos. El enfoque
             probabilístico emplea modelos mixtos sobre la distribución de valores p
-            para diferenciar a las poblaciones de hipótesis nulas y alternativas 
+            para diferenciar a las poblaciones de hipótesis nulas y alternativas
             [@allison2002mmm].
             El enfoque frecuentista emplea el método Benjamini-Hochberg basado en
             la determinación de un valor crítico de valores p dependiente del total 
-            de hipótesis puestas a prueba y el valor de FDR deseado [@benjamini1995fdr].
+            de hipótesis puestas a prueba y el valor de FDR deseado [@benjamini1995fdr].-->
             
-        3. __Clasificación__
+    iii. __Clasificación__
             
-            Una aplicación importante de los microarreglos de proteínas está en la
+        <!--Una aplicación importante de los microarreglos de proteínas está en la
             identificación de un conjunto de antígenos de serodiagnóstico que 
             puedan detectar patrones y clasificar perfiles de respuesta humoral
             [@sundaresh2007].
             Por ello, el esquema de ranqueo de elementos comúnmente ha sido complementado 
-            con técnicas de clasificación.
-            Este proceso involucra la asignación de objetos (e.g., genes) en categorías
+            con técnicas de clasificación.-->
+        Este proceso involucra la asignación de objetos (e.g., genes) en categorías
             pre-existentes (clasificación supervisada), o el desarrollo progresivo de 
             un conjunto de categorías por características de los objetos.
             (clasificación no supervisada) [@allison2006].
-            
+            Ejemplos de esta técnica son
+            _support vector machines_ (SVM) con validación
+            por _leave-one-out cross-validation_ (LOOCV) y
+            el agrupamiento jerárquico o _hierarchical clustering_
+            de acuerdo a la distancia Euclidiana entre elementos.
+        
+        <!--
             La clasificación supervisada o predicción de clase, define _a priori_ 
             el número de categorías, el conjunto de entrenamiento y el de prueba. 
             Requiere del
@@ -1460,8 +1550,8 @@ b. Análisis de datos
             en base a métricas de similaridad de los objetos a lo largo de las muestras.
             Para ello requiere definir 2 tipos de algoritmos: de distancia y agrupamiento.
             Ejemplos del primero son la distancia Euclidiana, en la que se prioriza la 
-            magnitud sobre la forma de la distribución de señales, y la correlación de 
-            Pearson, en la que se prioriza la forma sobre la magnitud.
+            magnitud sobre la dispersión de señales, y la correlación de 
+            Pearson, en la que se prioriza la dispersión sobre la magnitud.
             Ejemplo del segundo es el agrupamiento jerárquico o _hierarchical clustering_,
             en la que los racimos o _clusters_ se forman iterativamente al calcular 
             la distancia entre elementos y racimos en formación. Otros son el 
@@ -1470,8 +1560,9 @@ b. Análisis de datos
             Las principales desventajas de la técnica están en el requerimiento 
             de decisiones entre varios algoritmos sin consenso y su escasa reproducibilidad
             entre experimentos.
-            
-            <!-- 4. __Validación__ ||| PARA LA DISCUSIÓN o RECOMENDACIONES!
+            -->
+        
+        <!-- 4. __Validación__ ||| PARA LA DISCUSIÓN o RECOMENDACIONES!
             (i)Estrategia de 3 fases para la identificación de biomarcadores!!!
             [@song2009novel; @uzoma2013interactome]
             I Selección (baja escala) -> 
@@ -1486,7 +1577,7 @@ b. Análisis de datos
             poblaciones con reactividad diferenciada para un elemento (Falsos Positivos)
             -> Usar nuevos casos con mismo diseño experimental-->
             
-    ii. __Parámetros adicionales__
+    iv. __Parámetros adicionales__
         
         Además de la reactividad serológica, dos parámetros han demostrado ser
         de vital importancia para la caracterización de la respuesta humoral: 
@@ -1505,41 +1596,43 @@ b. Análisis de datos
         __Amplitud de respuesta:__
         Porcentaje de antígenos reactivos por individuo.
         -->
+
+<!--        
+c. Softwares
+    
+    i. __Privativo__
         
-    iii. __Software__
+        La amplia variedad de herramientas desarrolladas para la solución de 
+        cada uno de los componentes mencionados ha generado una alta 
+        heterogeneidad de metodologías observadas en la literatura.
+        Este problema limita la reproducibilidad de estos estudios debido al 
+        reporte excesivo o escaso de parámetros empleados, 
+        además de desacelerar el progreso del área. Ejemplos de ello son 
+        Molina et al. 2012 (Cyber-T y GraphPad Prism) [@molina2012],
+        Baum et al. 2013, 2015 (SAM, MeV, JMP9.0 y Systat11) [@baum2013; @baum2015],
+        Lu et al. 2014
+        (GraphPad, SigmaPlot10.0, Cluster3.0, TreeView y pearsoncorrelation.com)
+        [@lu2014rama], y
+        Chen et al. 2015 (SAS, MULTTEST y TIGR MeV) [@chen2015immunomics].
+        <!-- PRE-PRINT of TIPS TP MAKE YOUR RESEARCH IRREPRODUCIBLIBLE (2015)
         
-        1. __Privativo__
-            
-            La amplia variedad de herramientas desarrolladas para la solución de 
-            cada uno de los componentes mencionados ha generado una alta 
-            heterogeneidad de metodologías observadas en la literatura.
-            Este problema limita la reproducibilidad de estos estudios debido al 
-            reporte excesivo o escaso de parámetros empleados, 
-            además de desacelerar el progreso del área. Ejemplos de ello son 
-            Molina et al. 2012 (Cyber-T y GraphPad Prism) [@molina2012],
-            Baum et al. 2013, 2015 (SAM, MeV, JMP9.0 y Systat11) [@baum2013; @baum2015],
-            Lu et al. 2014
-            (GraphPad, SigmaPlot10.0, Cluster3.0, TreeView y pearsoncorrelation.com)
-            [@lu2014rama], y
-            Chen et al. 2015 (SAS, MULTTEST y TIGR MeV) [@chen2015immunomics].
-            <!-- PRE-PRINT of TIPS TP MAKE YOUR RESEARCH IRREPRODUCIBLIBLE (2015) -->
-            
-        2. __Libre__
-            
-            En respuesta a esta problemática, el uso de lenguajes de programación de
-            alto nivel como R [@R2016] junto a ambientes de análisis como Bioconductor 
-            [@bioconductor2004] han
-            reducido las barreras de acceso a la investigación interdisciplinaria
-            para el análisis transparente de datos moleculares de larga escala.
-            Su flexibilidad a la
-            creación de _scripts_ de análisis o _workflows_ combinando diferentes
-            tipos de data, herramientas estadísticas y visualizaciones [@Biobase]
-            dentro de reportes dinámicos [@knitr]
-            con registro explícito de todas las ediciones a data cruda y parámetros
-            empleados, permite seguir los principios de 
-            Ciencia Reproducible [@CienciaReproducible2016].
+    ii. __Libre__
         
-        \newpage
+        En respuesta a esta problemática, el uso de lenguajes de programación de
+        alto nivel como R [@R2016] junto a ambientes de análisis como Bioconductor 
+        [@bioconductor2004] han
+        reducido las barreras de acceso a la investigación interdisciplinaria
+        para el análisis transparente de datos moleculares de larga escala.
+        Su flexibilidad a la
+        creación de _scripts_ de análisis o _workflows_ combinando diferentes
+        tipos de data, herramientas estadísticas y visualizaciones [@Biobase]
+        dentro de reportes dinámicos [@knitr]
+        con registro explícito de todas las ediciones a data cruda y parámetros
+        empleados, permite seguir los principios de 
+        Ciencia Reproducible [@CienciaReproducible2016].
+-->    
+
+<!--
         3. __Servidores web__
             
             Desventajas otorgadas a los software privativos por sus
@@ -1550,6 +1643,7 @@ b. Análisis de datos
             para el análisis integral y exploratorio.
             Sin embargo, la falta de reporte o registro de los de parámetros empleados
             nuevamente cae en una escasa o dilatada reproducibilidad no automatizada.
+-->
 
 ## Definiciones conceptuales
 
@@ -1739,7 +1833,7 @@ No se realizará una seguimiento de la población.
 de la cuenca amazónica del Perú.-->
 <!--El marco muestral-->
 
-La población está delimitada por pacientes diagnosticados con malaria vivax 
+La población está delimitada por pacientes diagnosticados con malaria por _P. vivax_ 
 <!--y clasificados como severos y no-severos-->de la ciudad de Iquitos, Loreto - Perú, 
 entre enero del 2012 y junio del 2013 a lo largo de un estudio prospectivo 
 ejecutado en dos hospitales de referencia: Hospital de Apoyo y Hospital Regional.
@@ -1749,7 +1843,7 @@ ejecutado en dos hospitales de referencia: Hospital de Apoyo y Hospital Regional
 a. Criterios de inclusión
     
     En el estudio prospectivo mencionado, 
-    164 pacientes con malaria vivax fueron enrolados mediante vigilancia pasiva.
+    164 pacientes con malaria por _P. vivax_ fueron enrolados mediante vigilancia pasiva.
     Según la presencia de uno o más criterios clínicos y de laboratorio de la
     clasificación OMS para la Malaria Severa [@WHO2014severe], los pacientes fueron 
     estratificados como severos o no-severos.
@@ -1781,7 +1875,7 @@ b. Criterios de exclusión
 A partir de esta estratificación, se ejecutará 
 una selección arbitraria de 30 pacientes representativos de malaria severa
 con uno o más criterios de la clasificación OMS para el grupo de casos y 
-una selección aleatoria simple de 30 casos no-severos para el grupo control.
+una selección aleatoria simple de 30 no-severos para el grupo control.
 
 __Tipo de muestra: No probabilística y Probabilística.__ 
 Los elementos del grupo caso provendrán de una selección arbitraria,
@@ -1801,7 +1895,7 @@ POSTER+PAPER METHODS
 
 Previo al tratamiento antimalárico del paciente, 
 se extrajeron las muestras de sangre
-tanto para el diagnóstico de malaria vivax por la técnica de frotis
+tanto para el diagnóstico de malaria por _P. vivax_ con la técnica de frotis
 como para las pruebas bioquímicas.
 Al momento del diagnóstico positivo, 
 bajo consentimiento informado y de forma voluntaria, 
@@ -1981,7 +2075,7 @@ Luego, con las lecturas crudas en MFI se evaluará la validez <!--y
 reproducibilidad--> del ensayo mediante un
 test de asociación entre variables continuas
 con la correlación de Pearson ($r$) o Spearman ($\rho$), de acuerdo a la distribución,
-asumiendo un error del 0.1%.
+asumiendo un error del 5%.
 Posteriormente, se procederá con la 
 normalización entre muestras de cada antígeno-IVTT 
 con respecto a la mediana de los control-IVTT por individuo,
@@ -2024,7 +2118,7 @@ Segundo, se realizará un test de reactividad diferenciada de anticuerpos entre 
 usando el test-t moderado [@smyth2004ebayes] 
 con corrección por comparación múltiple de la razón de falsos descubrimientos (FDR)
 por el método de Benjamini-Hochberg, disponible en el paquete `limma` [@limma],
-con un 0.1% de error asumido.
+con un 5% de error asumido.
 Tercero, se realizará un agrupamiento jerárquico o _hierarchical clustering_ de los
 antígenos identificados en base a su distancia euclidiana, disponible en el paquete `NMF`
 [@Gaujoux2010NMF].
@@ -2056,64 +2150,52 @@ reproducibilidad [@CienciaReproducible2016].
 
 El Proyecto de Tesis fue trabajado en el Departamento de Parasitología del 
 Centro de Enfermedades Tropicales de la Marina de los Estados Unidos NAMRU-6,
-del 01 de enero del 2016 al 31 de diciembre del 2016. 
+del 01 de enero del 2016 al 31 de diciembre del 2016, 
+de acuerdo al cronograma de la \autoref{tab:crono}.
 
-En la \autoref{tab:crono} se programan las actividades paralelas y posteriores 
-a la redacción del Informe.
+<!--En la \autoref{tab:crono} se programan las actividades paralelas y posteriores 
+a la redacción del Informe.-->
 
 \begin{table}[ht]
         \captionof{table}{Cronograma}
         \label{tab:crono}
         \vspace{3mm}
 \begin{center}
-\hspace*{-1cm}
-\begin{tabular}{lp{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}
-p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}
-p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}}
+%\hspace*{-1cm}
+\begin{tabular}{lcccccccccccc}
   \hline
   \textbf{ACTIVIDAD} & 
-  \textbf{2016} & & & & & & & & & & & & 
-  \textbf{2017} & & & & & & & & & & &\\
+  \textbf{2016} & & & & & & & & & & &\\
   \hline
   & 
-  01 & 02 & 03 & 04 & 05 & 06 & 07 & 08 & 09 & 10 & 11 & 12 & 
-  01 & 02 & 03 & 04 & 05 & 06 & 07 & 08 & 09 & 10 & 11 & 12\\
-  \hline
+  ene & feb & mar & abr & may & jun & jul & ago & set & oct & nov & dic\\
+  \cline{2-13}
   Recolección de datos & 
-  x & & & & & & & & & & & & 
-  & & & & & & & & & & &\\
-  \cline{2-25}
+  x & & & & & & & & & & &\\
+  \cline{2-13}
   Análisis de datos & 
-  & x & x & x & x & x & x & x & x & x & x & & 
-  & & & & & & & & & & &\\
-  \cline{2-25}
+  & x & x & x & x & x & & & & & &\\
+  \cline{2-13}
   Interpretación de resultados & 
-  & & & & & & & & & x & x & x &
-  x & x & x & & & & & & & & &\\
-  %\cline{2-25}
+  & & & & & x & x & x & & & &\\
+  %\cline{2-13}
   %Redacción de proyecto & 
-  %& & & & & & & & & & & & 
-  %& & x & x & x & x & x & & & & &\\
-  \cline{2-25}
-  Redacción del Informe & 
-  & & & & & & & & & & & & 
-  x & x & x & x & x & x & x & x & x & x & &\\
-  %\cline{2-25}
-  %Redacción de resultados & 
-  %& & & & & & & & & & & & 
-  %& & & x & x & x & x & x & x & & &\\
-  %\cline{2-25}
-  %Redacción conclusiones & 
-  %& & & & & & & & & & & & 
-  %& & & & & & & & x & x & &\\
-  \cline{2-25}
-  Correcciones & 
-  & & & & & & & & & & & & 
+  %& & & & & & & & & & &\\
+  %\cline{2-13}
+  %Redacción del Informe & 
+  %& & & & & & & & & & &\\
+  \cline{2-13}
+  Redacción de discusión & 
+  & & & & & & & x & x & x & &\\
+  \cline{2-13}
+  Redacción de conclusiones & 
   & & & & & & & & & x & x & x\\
-  \cline{2-25}
-  Sustentación & 
-  & & & & & & & & & & & & 
-  & & & & & & & & & & & x\\
+  %\cline{2-13}
+  %Correcciones & 
+  %& & & & & & & & & & &\\
+  %\cline{2-13}
+  %Sustentación & 
+  %& & & & & & & & & & &\\
   %\hline
   %d1 & 
   %& & & & & & & & & & & & 
@@ -2121,9 +2203,10 @@ p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}p{1mm}}
   \hline
   % etc. ...
 \end{tabular}
-\hspace*{-1cm}
+%\hspace*{-1cm}
 \end{center}
 \end{table}
+
 
 <!--
 Dado que las muestras ya han sido colectadas, solo se procederá a
