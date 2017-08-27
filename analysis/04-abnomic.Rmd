@@ -28,6 +28,9 @@ options(width = 90) # expand limits of CONSOLE output
 
 ## Microarray Data Analysis
 
++ __UPDATE:__ 
+    - Ir al contraste de los __resultados__ con la __lista de Ag de N6__. [Ver aquí.](#n6-subset)
+
 ### Dependencies
 
 This document has the following dependencies:
@@ -603,7 +606,7 @@ __Non Present Reactive Targets__
 
 - __Load and tidy up__ the file sent in __28sep2015__ by Joe Campo.
 
-- AMA1, CSP, GEST, CelTOS
+- AMA1, ~~CSP, GEST, CelTOS~~
 - Here, AMA1 and all the proteins in the list with a known _Gene Name_:
 
 ```{r}
@@ -2032,9 +2035,110 @@ exp_t
 sev_d
 
 exp_da
-exp_dc
+#exp_dc
 exp_df
 ```
+
+#### N6 subset
+
+- __OBJETIVO:__
+    + __Comparar__ lista de proteínas de interés para el Dept.Parasitología NAMRU-6
+
+- __PROTOCOLO:__
+    + __Leer__ data
+        + Problema: Nombre de columna es observación
+        + Limpieza: 
+            - __Agregar__ nombre de columna como fila, y
+            - __Renombrar__ columna a `Gene.ID`
+    + __Unir__ dos bases de datos, conservando solo las observaciones (filas) en común.
+        - Lista de Ag de __interés para N6__ con:
+            - Lista de Ag reactivos __no presentes__ en el microarreglo,
+            - Lista de Ag con mayor reactividad en toda la muestra __(Top10)__,
+            - Lista de Ag dif. reactivos en __Malaria Severa (P.Value<0.05)__,
+            - Lista de Ag dif. reactivos en pacientes __CON episodio previo (adj.P.Val<0.05)__, y
+            - Lista de Ag dif. reactivos en pacientes __CON episodio previo (adj.P.Val<0.05 & logFC>1)__.
+
+```{r}
+a <- readxl::read_xlsx("data/00-protn6c.xlsx") %>% colnames()
+prt_n6 <- readxl::read_xlsx("data/00-protn6c.xlsx") %>% 
+  add_row(PVX_119355=a) %>% 
+  dplyr::rename(Gene.ID=PVX_119355)
+```
+- __RESULTADOS:__
+    + De un total de __`r dim(prt_n6)[1]`__ Ag en lista de __N6__:
+        - __07__ son Ag reactivos __no presentes__ en el microarreglo,
+        - __01__ es Ag con mayor reactividad en toda la muestra __(Top10)__,
+        - __00__ son Ag dif. reactivos en __Malaria Severa (P.Value<0.05)__,
+        - __05__ son Ag dif. reactivos en pacientes __CON episodio previo (adj.P.Val<0.05)__, y
+        - __03__ son Ag dif. reactivos en pacientes __CON episodio previo (adj.P.Val<0.05 & logFC>1)__.
+
+- __EXPLORAR:__
+    + Explorar tablas con:
+        + __Resultados__ de la comparación entre grupos, e
+        + __Información__ molecular extraida de PlasmoDB
+
++ __07 AG REACTIVOS NO PRESENTES EN MICROARREGLO__
+    - Relevancia:
+        + 07 de 38 proteínas de interés presentan __evidencia de reactividad__ 
+        ante la respuesta humoral contra _Plasmodium vivax_.
+
+```{r}
+np %>% inner_join(prt_n6,by="Gene.ID") #%>% #select(ID,Gene.ID,Gene.Name,Product.Description,Description)
+```
+
++ __01 AG MÁS REACTIVOS__
+    - NOTA: MSP1 __Segmento 2__
+
+```{r}
+exp_t %>% inner_join(prt_n6,by="Gene.ID") %>% select(-Description)
+```
+
++ __00 AG EN MALARIA SEVERA__
+```{r}
+sev_d %>% inner_join(prt_n6,by="Gene.ID") %>% select(ID,Gene.ID,Product.Description,Gene.Name,everything())
+```
+
++ __05 AG EN 140 DIF REACTIVOS CON EPISODIO PREVIO__
+    - NOTA: 
+        + MSP1 __Segmento 1__
+        + Dos variantes de 6-cysteine protein
+            - PVX_113775: __P12__
+            - PVX_000995: __P41__ (antes llamada _transmission-blocking target antigen Pfs230, putative_)
+    - INESPERADO: __StAR (PVX_081550)__ sí está en microarreglo.
+```{r}
+exp_da %>% inner_join(prt_n6,by="Gene.ID") %>% select(ID,Gene.ID,Product.Description,Gene.Name,everything())
+```
+
++ __03 AG EN 15 DIF REACTIVOS CON EPISODIO PREVIO CON DUPLICACIÓN SOBRE CONTROL__
+
+```{r}
+exp_df %>% inner_join(prt_n6,by="Gene.ID") %>% select(ID,Gene.ID,Product.Description,Gene.Name,everything())
+```
+
+- __YAPA:__
+    + Unir lista de microarreglos con Ag reportados como "reactivos no presentes" por ADi.
+
+- __RESULTADOS__
+    + De un total de 151, __54 Ag SÍ están presentes__ en el microarreglos
+    + De un total de __`r dim(prt_n6)[1]`__ Ag en lista de __N6__:
+        - __05__ son Ag reactivos que __SÍ están presentes__ en el microarreglo
+
+```{r}
+yp <- raw %>% inner_join(np,by="Gene.ID") %>% #filter(Gene.ID=="PVX_081550")
+  select(ID,Gene.ID,Description) %>% 
+  inner_join(all %>% select(Gene.ID,Product.Description,Gene.Name),by="Gene.ID") %>% 
+  select(ID,Gene.ID,Gene.Name,everything())
+
+yp
+```
+
++ __05 AG REACTIVOS DECLARADOS COMO "NO PRESENTES EN MICROARREGLO", ¡SÍ LO ESTÁN!__
+    - CelTOS, GEST, CSP, ICP.
+
+```{r}
+yp %>% inner_join(prt_n6,by="Gene.ID") %>% select(ID,Gene.ID,Gene.Name,Product.Description,Description)
+```
+
 
 ### Introduction
 
