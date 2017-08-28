@@ -77,7 +77,7 @@ RESUMEN: CORRIGELO AL FINAL
 > _Plasmodium vivax_ es responsable del 80% de la malaria en el Perú.
 Casos de enfermedad severa por mono-infecciones de _P. vivax_ han sido reportados 
 tanto en el Noreste amazónico como en Norte costero. Sin embargo, dicha condición aún está
-subestimada en la Normas Técnica a nivel nacional, incrementando el riesgo 
+subestimada en la Norma Técnica a nivel nacional, incrementando el riesgo 
 de posibles diagnósticos tardíos o inapropiados por el personal de salud.
 Con el fin de identificar biomarcadores de relevancia clínica contra la malaria 
 <!--vivax-->severa por _P. vivax_, el presente proyecto de tesis propone
@@ -893,47 +893,46 @@ b. Biología
     
     i. __Ciclo de vida__
     
-        La ecología natural del parásito de la malaria involucra a dos hospederos: 
-        el humano y el mosquito. 
-        1. A través de la picadura del mosquito infectado, los esporozoitos 
-        son liberados al fluido sanguíneo del humano e
-        ingresan a las células hepáticas iniciándose su desarrollo asexual,
-        llamado _ciclo hepático o exo-eritrocítico_.
-        Ahí se multiplican hasta formar esquizontes, los cuales egresan al torrente 
-        sanguíneo en la forma de 
-        merozoitos. 
-        2. El segundo estadio, llamado _ciclo eritrocítico_, se inicia a la invasión de
-        glóbulos rojos (RBC) y el
-        desarrollo consecutivo de trofozoitos 
-        inmaduros (en forma de anillo), maduros y esquizontes, los cuales a su
+        La ecología natural del parásito de la malaria involucra a dos hospederos, 
+        el humano y el mosquito, y tres ciclos de vida:
+        1. El _ciclo hepático o exo-eritrocítico_
+        inicia con la picadura del mosquito infectado, la liberación de los esporozoitos 
+        al fluido sanguíneo del humano y su ingreso a las células hepáticas. 
+        Aquí se da su desarrollo asexual
+        donde se multiplican hasta formar esquizontes, los cuales egresan al torrente 
+        sanguíneo en la forma de merozoitos.
+        2. El _ciclo eritrocítico_ se inicia con la invasión de
+        glóbulos rojos (RBC) y el desarrollo consecutivo de trofozoitos 
+        inmaduros <!--(estadio "anillo")-->, maduros y esquizontes, los cuales a su
         ruptura liberan nuevos merozoitos que reinfectan a más RBC. 
         <!--La rapidez de este ciclo determina la razón de multiplicación parasitaria.-->
-        Por motivos aún desconocidos, 
+        Por motivos aún no determinados, 
         a partir de los trofozoitos inmaduros se inicia el desarrollo de gametocitos
         diferenciándose sexualmente dentro del torrente sanguíneo del humano. 
-        3.
-        La fase sexual, o _ciclo esporogónico_, en el mosquito se inicia mediante la
-        ingestión accidental de gametocitos en la alimentación sanguínea de mosquitos 
-        hembra, con la intención inicial de proveer nutrientes a sus huevos.
-        En su tracto digestivo, se desarrollan los esporozoitos, 
-        los cuales migran a las glándulas salivares para continuar
-        la transmisión en la siguiente alimentación de los mosquitos hembra.
+        3. El _ciclo esporogónico_ o fase sexual se inicia en el mosquito hembra mediante la
+        ingestión accidental de gametocitos en la alimentación sanguínea, 
+        con la intención inicial de proveer de nutrientes a sus huevos.
+        En su tracto digestivo se generan cigotos mótiles
+        que invaden las paredes para formar un oocisto
+        donde los esporozoitos se desarrollan y replican hasta su ruptura y liberación.
+        Finalmente migran a las glándulas salivares para continuar
+        la transmisión en la siguiente alimentación del mosquito.
     
     ii. __Particularidades__
         
         _P. vivax_ posee importantes variantes biológicas que caracterizan su 
         epidemiología y dinámica de infección [@howes2016global]. Tres de las 
         más importantes son:
-        1. la presencia de relapsos por la activación de 
+        1. Presencia de relapsos por la activación de 
         hipnozoitos, el cual es un estado de latencia o dormacia en el _ciclo hepático_, 
         condición que puede generar tanto una liberación prolongada y lenta de merozoitos 
         como reservorios de infección que prolongan 
         su transmisión; 
-        2. el tropismo hacia reticulocitos o RBC inmaduros
+        2. Tropismo hacia reticulocitos o RBC inmaduros
         (1-2% de RBC circulantes) en el _ciclo eritrocítico_, 
         condición que genera bajas parasitemias en comparación a _P. falciparum_; 
         y 
-        3. la dependencia del antígeno _Duffy_ para la invasión de RBC, cuya
+        3. Dependencia del antígeno _Duffy_ para la invasión de RBC, cuya
         ausencia en individuos con ancestría africana 
         ha sido considerada como un factor de resistencia a _P. vivax_.
         <!--tiene una alta frecuencia en las poblaciones-->
@@ -962,16 +961,15 @@ b. Epidemiología
         Entre el 2005 y 2015, 1-3% de casos no-complicados fueron asumidos 
         como malaria severa. Esta causó la muerte de 429,000 personas [@WHO2016world],
         en su mayoría (90%) niños menores de 5 años en África [@wassmer2015].
-        
-        La vulnerabilidad a la Malaria Severa ha sido asociada a la intensidad de 
+        La vulnerabilidad a esta manifestación ha sido asociada con la intensidad de 
         transmisión y el desarrollo de la inmunidad dependiente a la edad [@reyburn2015].
-        Por ejemplo, en zonas de alta transmisión como en el África subsahariana, 
+        1. En zonas de _alta transmisión_ como en el África subsahariana, 
         las poblaciones más vulnerables son: niños menores de 5 años con un desarrollo 
         incompleto de inmunidad parcial contra la malaria [@Stanisic2015], 
         mujeres embarazadas en parte a la adhesión placentaria de 
         glóbulos rojos infectados (iRBC) [@rogerson2007preg], y viajeros o migrantes sin 
         inmunidad provenientes de áreas con baja o ninguna transmisión de malaria. 
-        Por otro lado, en zonas de baja transmisión como en Asia y América Latina, 
+        2. En zonas de _baja transmisión_ como en Asia y América Latina, 
         al haber una menor exposición a la infección, la mayoría de la población 
         llega a la adultez sin haber desarrollado una inmunidad protectiva. 
         Como consecuencia, <!--tanto en la Amazonía Peruana como en el Norte costero -->la 
@@ -990,7 +988,7 @@ b. Epidemiología
     i. __En el Perú__
         
         En el Norte costero, Quispe et al. 2014 [@quispe2014] mediante un estudio 
-        retrospectivo (2008-2009) identificó 81/6502 casos de malaria severa por _P. vivax_
+        retrospectivo (2008-2009) identificaron 81/6502 casos de malaria severa por _P. vivax_
         con anemia severa (57%), 
         shock circulatorio (25%), hiperbilirrubina (25%), daño pulmonar (21%), 
         daño renal agudo (14%) y Glasgow $\le$ 9/14 (11%).
@@ -1141,19 +1139,19 @@ a. Marcadores
     
 	ii. __de inmunidad__
 	    
-	    En áreas de alta transmisión, los niños adquieren resistencia a la manifestación
-	    _severa_ de la malaria a la edad de cinco años, aproximadamente. Sin embargo,
-	    continúan siendo susceptibles a episodios no-complicados hasta la adolescencia,
-	    donde adquieren un estado resistente a la malaria _sintomática_. A pesar de ello,
+	    En áreas de alta transmisión, los niños adquieren resistencia a la 
+	    _manifestación severa_ de la malaria a la edad de cinco años, aproximadamente. 
+	    Sin embargo, continúan siendo susceptibles a episodios no-complicados hasta la adolescencia,
+	    donde adquieren un estado resistente a la _malaria sintomática_. A pesar de ello,
 	    no se ha demostrado que esta adquisición natural de inmunidad por la exposición 
-	    acumulada a malaria otorgue una protección _esterilizante_ o de resistencia a la 
+	    acumulada a malaria otorgue una _protección esterilizante_ o de resistencia a la 
 	    infección [@crompton2014rev].
 	    Los detalles de los procesos involucrados en cada una de estas tres fases no están
 	    completamente entendidos, pero se tiene detalles de algunos componentes:
     	
 	    1. __contra la severidad__
         	
-	        Se conoce que la respuesta contra esta manifestación está guiada por una
+	        <!--Se conoce que la respuesta contra esta manifestación está guiada por una
 	        excesiva respuesta inflamatoria que incluye la producción de las citoquinas 
 	        proinflamatorias TNF-$\alpha$, INF-$\alpha$, IL-1$\beta$ e IL-6 [@baird2013]
 	        junto a una 
@@ -1163,10 +1161,10 @@ a. Marcadores
 	        inmunidad a componentes parasitarios que desencadenan una respuesta inflamatoria 
 	        innata. Una hipótesis está en anticuerpos que interfieran la unión de 
 	        glucoproteínas proinflamatorias con receptores Toll 
-	        [@schofield2006toll; @coban2005toll].
+	        [@schofield2006toll; @coban2005toll].-->
         	
-	        Por otro lado, la adquisición de anticuerpos que bloqueen la adhesión de iRBC 
-	        o invasión parasitaria también son candidatos a otorgar una protección a este
+	        La adquisición de anticuerpos que bloqueen la adhesión de iRBC 
+	        o invasión parasitaria son candidatos a otorgar una protección a este
 	        nivel [@wassmer2015].
 	        Antígenos referenciales son (i) las proteínas VIR en _P. vivax_, homólogas a VAR 
 	        en _P. falciparum_,
@@ -1180,7 +1178,7 @@ a. Marcadores
     	
 	    2. __contra la enfermedad__
 	        
-	        Los antígenos del estadio eritrocítico (merozoitos) fueron los primeros 
+	        <!--Los antígenos del estadio eritrocítico (merozoitos) fueron los primeros 
 	        marcadores en ser propuestos como importantes para la protección a este nivel,
 	        tal como lo sugirió en 1961 la terapia efectiva por transferencia pasiva de 
 	        anticuerpos donados por adultos con inmunidad adquirida de forma natural
@@ -1238,11 +1236,11 @@ b. Enfoques a larga escala
         
         
         En respuesta a las limitaciones de la _vacunología reversa_, basada en el
-    uso de la información genómica de patógenos, el enfoque _inmunómico_
+    uso inicial de la información genómica de patógenos, el enfoque _inmunómico_
     hace uso de la información de ambos agentes interactuantes: patógeno y hospedero.
-    Su estrategia selecciona inmunógenos tanto por (i) _métodos empíricos_, usando data
+    Su estrategia selecciona inmunógenos tanto por (1) _métodos empíricos_, usando data
     transcriptómica y proteómica de patógenos dinámicos más la información clínica 
-    del hospedero, como por (ii) _métodos teóricos_, empleando algoritmos computacionales predictivos 
+    del hospedero, como por (2) _métodos teóricos_, empleando algoritmos computacionales predictivos 
     que tomen en cuenta la afinidad entre péptidos del patógeno y moléculas 
     del complejo principal de histocompatibilidad (MHC) del hospedero.
     
@@ -1311,14 +1309,41 @@ en base estos dos parámetros [@arevalo2016].
 Esta es una técnica empleada en la medición a larga escala de las interacciones o 
 actividades de proteínas capaz de reconstruir redes biológicas entre 
 diferentes clases de moléculas y estados celulares [@uzoma2013interactome].
-Su empleo en el contexto _inmunómico_, al cuantificar las interacciones antígeno-anticuerpo,
-ha identificado biomarcadores de exposición o protección ante distintos patógenos
-mediante perfiles de respuesta humoral en individuos infectados o vacunados.
+Su empleo en el contexto _inmunómico_, con la cuantificación de las interacciones antígeno-anticuerpo,
+<!--ha identificado biomarcadores de exposición o protección ante distintos patógenos
+mediante perfiles de respuesta humoral en individuos infectados o vacunados.-->
+posee características similares a los microarreglos de ADN [@sundaresh2006],
+lo que ha facilitado la adaptación de los componentes estandarizados para 
+el diseño de experimentos en esta tecnología [@allison2006].
+<!--además de parámetros de relevancia 
+exclusiva para el estudio de la respuesta humoral.-->
+<!--Ambas plataformas buscan resolver el mismo problema: 
+    realizar un análisis diferencial de señales de luz 
+    derivadas de eventos de unión molecular.-->
+    <!-- Finalmente, se detallarán las 
+    ventajas del uso de software libre para su ejecución, con respecto a los privativos
+    y servidores web.-->
 
-a. Diseño del microarreglo
+a. Componentes
     
-    El primer diseño de microarreglos para _P. vivax_ y _P. falciparum_ fue estandarizado 
-        por Finney et al. 2014 [@Finney2014]. Seis características fueron empleadas: (i) 
+    i. __Diseño__
+        
+        El desarrollo de un plan de experimentación tiene el objetivo de maximizar la calidad
+        y cantidad de la información obtenida.
+        Una de las secciones clave dentro del MIAME o "información mínima sobre experimentos basados 
+            en microarreglos" [@brazma2001] es el
+            detalle de la información de los elementos a incluir 
+            (e.g., secuencias de moléculas correspondiente a genes específicos).
+        El primer diseño de microarreglos para _P. vivax_ y _P. falciparum_ fue estandarizado 
+        por Finney et al. 2014 [@Finney2014] en base a la evidencia transcriptómica, proteómica
+        y características inmunogénicas de proteínas predichas en ambos genomas.
+        Posteriormente, en el 2015 el Centro Internacional de Excelencia para la Investigación de la 
+        Malaria (ICEMR) realizó una subselección empírica de este microarreglo 
+        con muestras de 10 paises con malaria endémica, entre ellos Perú [@King2015FOC]. 
+        
+        <!--El primer diseño de microarreglos para _P. vivax_ y _P. falciparum_ fue estandarizado 
+        por Finney et al. 2014 [@Finney2014]
+        Seis características fueron empleadas: (i) 
         proteínas predichas para el estadio eritrocítico con capacidad de ser 
         expuestas a superficie, (ii) evidencia en microarreglos, proteomas, EST, 
         o secretoma predicho para _P. falciparum_, (iii) proteínas únicas y ortólogas con
@@ -1326,9 +1351,9 @@ a. Diseño del microarreglo
         proteínas putativas citoplasmáticas carentes de SP o TMD en base a filtros
         de punto isoeléctrico por especie, (v) exclusión de proteínas con alta variabilidad 
         antigénica (e.g., PfEMP1, RIFIN, surfin, stevors; Pv _var_ y pseudogenes), 
-        e (vi) inclusión de genes simples y multi-exónicos.
-    
-    Posteriormente, en el 2015 el Centro Internacional de Excelencia para la Investigación de la 
+        e (vi) inclusión de genes simples y multi-exónicos.-->
+        
+        <!--Posteriormente, en el 2015 el Centro Internacional de Excelencia para la Investigación de la 
         Malaria ICEMR realizó una subselección empírica del microarreglo anteriormente
         detallado [@King2015FOC]. 
         Para ello sondearon los microarreglos de _P. falciparum_ con muestras 
@@ -1337,28 +1362,26 @@ a. Diseño del microarreglo
         ambos con controles de individuos norteamericanos sin exposición a malaria.
         A partir de ello<!-- se seleccionó a todos los antígenos seroreactivos por 
         país, cumpliendo la condición de ser mayores a dos veces la desviación estándar
-        de la media de la reactividad serológica en los controles. Finalmente, -->
+        de la media de la reactividad serológica en los controles. Finalmente, 
         se seleccionó el top 500 de antígenos para ambas especies empleando un filtrado jerárquico,
         dándole prioridad a los elementos con seroreactividad en todos los países<!-- y
         en las posiciones restantes los antígenos en orden descendiente a su reactividad
-        promedio-->. <!--Este diseño se encuentra en la base de datos GEO
+        promedio.<!--Este diseño se encuentra en la base de datos GEO
         con el código [GPL18316](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL18316).-->
-    
-    <!--
-    El tamaño y complejidad de los genomas de _Plasmodium_ desafían el diseño de
-    microarreglos a una escala de proteoma completo.
-    Por ejemplo, _P. falciparum_ posee más de 3kb de longitud, ~5300 genes, genes 
-    multi-exónicos complejos y segmentos largos de secuencias repetitivas por el bajo 
-    contenido de GC.
-    Por esta razón, se requiere de procesos de selección en base
-    a características proteicas y conocimiento empírico. <!--De esta manera se ha logrado 
-    desarrollar plataformas costo-efectivas y rápidas de emplear, capaces de facilitar el 
-    descubrimiento de antígenos para vacunas o serovigilancia con el menor trabajo en 
-    laboratorio e independiente de algoritmos predictivos.-->
         
-    <!--
-    i. __Primera generación__
-    
+        <!--El tamaño y complejidad de los genomas de _Plasmodium_ desafían el diseño de
+        microarreglos a una escala de proteoma completo.
+        Por ejemplo, _P. falciparum_ posee más de 3kb de longitud, ~5300 genes, genes 
+        multi-exónicos complejos y segmentos largos de secuencias repetitivas por el bajo 
+        contenido de GC.
+        Por esta razón, se requiere de procesos de selección en base
+        a características proteicas y conocimiento empírico. <!--De esta manera se ha logrado 
+        desarrollar plataformas costo-efectivas y rápidas de emplear, capaces de facilitar el 
+        descubrimiento de antígenos para vacunas o serovigilancia con el menor trabajo en 
+        laboratorio e independiente de algoritmos predictivos.-->
+        
+        <!--i. __Primera generación__
+        
         Finney et al. 2014 [@Finney2014] diseñaron microarreglos de _P. vivax_ y 
         _P. falciparum_ en base
         a (i) proteínas predichas para el estadio eritrocítico con capacidad de ser 
@@ -1370,7 +1393,7 @@ a. Diseño del microarreglo
         antigénica (e.g., PfEMP1, RIFIN, surfin, stevors; Pv _var_ y pseudogenes), 
         e (vi) inclusión de genes simples y multi-exónicos.
         
-    ii. __Segunda generación__
+        ii. __Segunda generación__
         
         En el 2015, el Centro Internacional de Excelencia para la Investigación de la 
         Malaria ICEMR realizó una subselección empírica del microarreglo anteriormente
@@ -1385,12 +1408,9 @@ a. Diseño del microarreglo
         dándole prioridad a los antígenos con seroreactividad en todos los países y
         en las posiciones restantes los antígenos en orden descendiente a su reactividad
         promedio. Este diseño ha sido depositado en la base de datos GEO
-        con el código [GPL18316](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL18316).
-    -->
-
-
-<!--
-        1. __Diseño__
+        con el código [GPL18316](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL18316).-->
+        
+        <!--1. __Diseño__
             
             De acuerdo al MIAME o información mínima sobre experimentos basados 
             en microarreglos [@brazma2001], se requiere definir 6 secciones a 
@@ -1406,29 +1426,16 @@ a. Diseño del microarreglo
             - Mediciones:
             descripción del progreso de las imágenes escaneadas a la matriz de datos; y
             - Controles de normalización:
-            descripción de los elementos conocidos o invariantes.
--->
-
-b. Análisis de datos
-    
-    Sundaresh et al. 2006 demostró que las características de las mediciones en 
-    microarreglos de proteínas permitían la adaptación y aplicación de las técnicas de
-    análisis desarrolladas para microarreglos de ADN [@sundaresh2006].
-    <!--Ambas plataformas buscan resolver el mismo problema: 
-    realizar un análisis diferencial de señales de luz 
-    derivadas de eventos de unión molecular.-->
-    Por este motivo, su análisis debe de incluir a los componentes estandarizados para el 
-    análisis de microarreglos [@allison2006], además de parámetros de relevancia 
-    exclusiva para el análisis de respuestas humorales.<!-- Finalmente, se detallarán las 
-    ventajas del uso de software libre para su ejecución, con respecto a los privativos
-    y servidores web.-->
-    
-    i. __Pre procesamiento__ 
+            descripción de los elementos conocidos o invariantes.-->
             
-        Incluye la normalización, transformación y filtrado de la matriz de datos.
+    ii. __Pre procesamiento__ 
+            
+        Con el objetivo de remover variaciones sistemáticas en el experimento, 
+        se ejecutan en forma consecutiva los tres siguientes pasos:
+        <!--Incluye la normalización, transformación y filtrado de la matriz de datos.-->
             <!--También a los criterios bajo los cuales se controlará la calidad de las
             mediciones del experimento.-->
-        1. Primero, la normalización busca homogeneizar la variabilidad entre arreglos
+        1. Normalización: Permite homogeneizar la variabilidad entre arreglos
             en base a controles, los cuales se asume que son invariantes entre muestras. 
             Este procedimiento es ejecutado tradicionalmente a través de la 
             sustracción de controles o _fold over control_ (FOC),
@@ -1448,7 +1455,7 @@ b. Análisis de datos
             observada en los diseños experimentales de microarreglos de proteínas 
             [@sboner2009rlm].
             -->
-        2. Segundo, la transformación tiene el objetivo reducir la
+        2. Transformación: Reduce la
             heterocedasticidad o heterogeneidad de varianzas entre las observaciones 
             por errores aleatorios en el proceso de hibridación [@kreil2005bullet].
             Este fenómeno se evidencia en el incremento de la varianza <!--de las medidas -->
@@ -1456,68 +1463,83 @@ b. Análisis de datos
             Dependiendo de la dispersión de los datos, se asumen modelos de error
             multiplicativo o aditivo, donde la transformación logarítmica o
             arcoseno hiperbólico es ejecutada sobre los valores normalizados.
-            <!--Para ello, dos principales transformaciones han sido definidas:
+            <!--
+            Para ello, dos principales transformaciones han sido definidas:
             - Logarítmica (log),
             la cual asume un error multiplicativo que corrige las varianzas de 
             alta intensidad pero capaz dispersar a las de baja intensidad; y
             - Arcoseno hiperbólico (asinh),
             la cual asume un error multiplicativo y aditivo que corrige esta dispersión, 
             relevante en contextos donde los valores normalizados menores a la unidad 
-            tienen significado biológico.-->
-        3. Tercero, el filtrado en experimentos a larga escala permite incrementar
+            tienen significado biológico.
+            -->
+        3. Filtrado: En experimentos a larga escala permite incrementar
             el poder de detección de elementos con expresión diferenciada [@bourgon2010filter].
             En estos, las estrategias de corrección posteriores a la comparación de múltiples
             hipótesis son sensibles a esta cantidad.
             En este sentido, este procedimiento retira de forma preliminar a los elementos 
-            con reducidas probabilidades de expresarse diferencialmente<!-- sin la 
-            necesidad de realizar la prueba de hipótesis-->.
+            con reducidas probabilidades de expresarse diferencialmente
+            <!-- sin la 
+            necesidad de realizar la prueba de hipótesis
+            -->.
             
-    ii. __Inferencia__
-    
-        <!--Los objetivos de la inferencia estadística de microarreglos son (i) poner 
-            a prueba la hipótesis nula de igualdad de medias en las expresión
-            de elementos por grupo y (ii) ordernar o ranquear a los elemento según la
-            evidencia contra la hipótesis nula, incluso luego de fallar en el rechazo
-            de dicha hipótesis [@smyth2004ebayes]. -->
-        La inferencia estadística esta escala posee dos principales problemas: (1)
-            presencia de varianzas artificialmente altas o bajas producto del 
-            bajo número de réplicas entre arreglos o muestras [@baldi2001cybert]; y (2) un
-            amplio número de hipótesis puestas a prueba en forma simultánea, donde los 
-            test estadísticos tradicionales pueden generar un largo número de 
-            falsos positivos [@kayala2012cyber].
-        1. Ante el primer problema, 
-            un enfoque bayesiano empírico permite reducir (o moderar) las varianzas de 
-            todas las lecturas. 
+    iii. __Inferencia__
+        
+        Su objetivo es poner a prueba hipótesis estadísticas relacionadas 
+        a la expression o reactividad diferencial de elementos entre grupos.
+        <!--(i) poner a prueba la hipótesis nula de igualdad de medias en las expresión
+        de elementos por grupo y (ii) ordernar o ranquear a los elemento según la
+        evidencia contra la hipótesis nula, incluso luego de fallar en el rechazo
+        de dicha hipótesis [@smyth2004ebayes]. -->
+        Sin embargo, a esta escala se posee dos principales problemas: (1)
+        presencia de varianzas artificialmente altas o bajas producto del 
+        bajo número de réplicas entre arreglos o muestras [@baldi2001cybert]; y (2) un
+        amplio número de hipótesis puestas a prueba en forma simultánea, donde los 
+        test estadísticos tradicionales pueden generar un largo número de 
+        falsos positivos [@kayala2012cyber]. 
+        1. Test-t moderado: 
+        Un enfoque bayesiano empírico permite reducir (o moderar) las varianzas de 
+            todas las lecturas. Bajo el supuesto que las diferencias entre grupos 
+            generan cambios en la intensidad promedio del gen mas no en su varianza,
+            se estima una varianza general como probabilidad previa para actualizar (corregir)
+            todas las varianzas observadas en el experimento [@smyth2004ebayes]
+            <!--
             Inicialmente, cada varianza observada por gen se corregía con respecto a
             la varianza de genes vecinos con medias de expresión 
             similar [@baldi2001cybert].
             Posteriormente, esta metodología se extendió y optimizó mediante la estimación de 
             una varianza general previa para la actualización de todas las varianzas 
             observadas [@smyth2004ebayes].
-            <!--A diferencia de un enfoque bayesiano puro, donde se asume una 
+            -->
+            <!--
+            A diferencia de un enfoque bayesiano puro, donde se asume una 
             probabilidad previa para su actualización dado un evento condicionante,
             en un enfoque empírico esta información es obtenida de un _pool_ de
-            elementos observados en el mismo experimento.-->
-            Con ello, la ejecución de un test-t con varianzas moderadas 
-            (o test-t moderado) es capaz de obtener inferencias más estables que el 
-            test-t ordinario con un número limitado de réplicas [@kayala2012cyber].
-        2. Ante el segundo problema, 
-            los métodos de corrección o ajuste de valores p permiten que el 
+            elementos observados en el mismo experimento.
+            -->
+            Con ello, <!--la ejecución de un test-t con varianzas moderadas 
+            (o test-t moderado)-->es posible obtener inferencias más estables que el 
+            test-t ordinario bajo un contexto limitado de réplicas [@kayala2012cyber].
+        2. Razón de falsos descubrimientos (FDR):
+            Los métodos de corrección o ajuste de valores P permiten que el 
             investigador pueda controlar la razón de falsos descubrimientos con 
-            respecto a todas las hipótesis positivas (FDR) [@brazma2001].
-            Ante este problema, el método Benjamini-Hochberg
-            determina un valor crítico de valores p dependiente del total 
-            de hipótesis puestas a prueba y el valor de FDR deseado [@benjamini1995fdr].
+            respecto al total de hipótesis positivas [@brazma2001].
+            El método Benjamini-Hochberg
+            determina un valor crítico dependiente del total 
+            de hipótesis puestas a prueba y el FDR que se desee tolerar,
+            comúnmente del 5% [@benjamini1995fdr].
             <!-- EXPLAIN STOREY's METHOD! -->
-            <!--Dos principales enfoques han sido propuestos. El enfoque
+            <!--
+            Dos principales enfoques han sido propuestos. El enfoque
             probabilístico emplea modelos mixtos sobre la distribución de valores p
             para diferenciar a las poblaciones de hipótesis nulas y alternativas
             [@allison2002mmm].
             El enfoque frecuentista emplea el método Benjamini-Hochberg basado en
-            la determinación de un valor crítico de valores p dependiente del total 
-            de hipótesis puestas a prueba y el valor de FDR deseado [@benjamini1995fdr].-->
-            
-    iii. __Clasificación__
+            la determinación de un valor crítico de valores P dependiente del total 
+            de hipótesis puestas a prueba y el valor de FDR deseado [@benjamini1995fdr].
+            -->
+    
+    iv. __Clasificación__
             
         <!--Una aplicación importante de los microarreglos de proteínas está en la
             identificación de un conjunto de antígenos de serodiagnóstico que 
@@ -1583,7 +1605,7 @@ b. Análisis de datos
         de vital importancia para la caracterización de la respuesta humoral: 
         la amplitud e intensidad de respuesta 
         [@crompton2010; @Helb2015exposure; @King2015FOC].
-        El primero se obtiene calculando la proporción o porcentaje de antígenos 
+        El primero se obtiene calculando el número de antígenos 
         reactivos por individuo
         y el segundo por el promedio de sus intensidades<!-- por individuo-->.
         Particularmente, la amplitud ha demostrado ser tan relevante como la
@@ -1594,13 +1616,12 @@ b. Análisis de datos
         __Intensidad de respuesta:__
         Promedio de intensidades de antígenos reactivos por individuo
         __Amplitud de respuesta:__
-        Porcentaje de antígenos reactivos por individuo.
+        Número de antígenos reactivos por individuo.
         -->
 
-<!--        
-c. Softwares
+<!--b. Plataformas de análisis
     
-    i. __Privativo__
+    <!--i. __Privativo__
         
         La amplia variedad de herramientas desarrolladas para la solución de 
         cada uno de los componentes mencionados ha generado una alta 
@@ -1617,20 +1638,25 @@ c. Softwares
         <!-- PRE-PRINT of TIPS TP MAKE YOUR RESEARCH IRREPRODUCIBLIBLE (2015)
         
     ii. __Libre__
-        
-        En respuesta a esta problemática, el uso de lenguajes de programación de
-        alto nivel como R [@R2016] junto a ambientes de análisis como Bioconductor 
-        [@bioconductor2004] han
+    
+    La amplia variedad de herramientas desarrolladas para la solución de 
+        cada uno de los componentes mencionados ha generado una alta 
+        heterogeneidad de metodologías observadas en la literatura.
+    En respuesta a esta problemática, el uso de lenguajes de programación
+        libre como R [@R2016] junto a ambientes de análisis como Bioconductor 
+        [@bioconductor2004] ha
+        homogenizado protocolos,
         reducido las barreras de acceso a la investigación interdisciplinaria
-        para el análisis transparente de datos moleculares de larga escala.
+        y facilitado el análisis transparente de datos moleculares de larga escala.
         Su flexibilidad a la
-        creación de _scripts_ de análisis o _workflows_ combinando diferentes
-        tipos de data, herramientas estadísticas y visualizaciones [@Biobase]
-        dentro de reportes dinámicos [@knitr]
-        con registro explícito de todas las ediciones a data cruda y parámetros
-        empleados, permite seguir los principios de 
+        creación de _scripts_ de análisis o _workflows_ permite combinar diferentes
+        tipos de datos (e.g., epidemiológicos y genómicos), 
+        herramientas estadísticas y visualizaciones [@Biobase].
+        Finalmente, el uso de reportes dinámicos [@knitr]
+        también ha permitido el
+        registro explícito de ediciones a data cruda y parámetros
+        empleados en el análisis, siguiendo principios de 
         Ciencia Reproducible [@CienciaReproducible2016].
--->    
 
 <!--
         3. __Servidores web__
@@ -1674,7 +1700,7 @@ b. Términos
     según criterios clínicos y de laboratorio.
     -->
     
-    i. Generales
+    <!--i. Generales
         
         **Antígeno.-** Molécula que se une con productos de la respuesta inmune, 
         como anticuerpos o receptores de linfocitos T o B [@abbas2012].
@@ -1697,32 +1723,32 @@ b. Términos
         de fluorescencia, comúnmente conjugada con estreptavidina para la detección de 
         moléculas biotiniladas.
         
-    ii. Específicos
+    ii. Específicos-->
         
-        __Antígeno-IVTT:__
+    __Antígeno-IVTT:__
         Antígeno objetivo o 
         _spot_ con proteína IVTT a partir de un plásmido con ADN insertado 
         correspondiente al polipéptido, segmento o exón de interés.
         
-        __Control-IVTT:__
+    __Control-IVTT:__
         Control negativo o 
         _spot_ con mix de expresión RTS y plásmido sin ADN insertado,
         representante de la intensidad de fondo específica del paciente.
         
-        __Proteína purificada:__
+    __Proteína purificada:__
         Control de comparación o 
         _spot_ con proteína de antigenicidad conocida expresada dentro de célula.
         
-        __Intensidad de antígeno:__
+    __Intensidad de antígeno:__
         Lectura normalizada de cada antígeno-IVTT entre individuos. 
         También llamada "reactividad serológica".
         
-        __Antígeno reactivo:__
+    __Antígeno reactivo:__
         Lectura transformada de cada antígeno-IVTT mayor o igual a 
         dos veces la mediana de los control-IVTT por individuo.
         
-        __Frecuencia del antígeno:__
-        Porcentaje de individuos con antígeno reactivo por antígeno-IVTT. 
+    <!--__Frecuencia del antígeno:__
+        Número de individuos con antígeno reactivo por antígeno-IVTT. -->
         
 # METODOLOGÍA {#meto}
 
@@ -1793,8 +1819,8 @@ recolectaremos los datos después de planificado el estudio.
 <!--__Por la dirección temporal: Hacia atrás/adelante.__ La población será selecionada por 
 la variable Efecto/Exposición-->
 
-__Por la unidad de análisis: Basado en individuo.__ A diferencia de uno ecológico, la 
-unidad de observación son individuos o pacientes.
+<!--__Por la unidad de análisis: Basado en individuo.__ A diferencia de uno ecológico, la 
+unidad de observación son individuos o pacientes.-->
 
 <!--
 **Por el tipo de conocimiento previo usado en la investigación:** Científica
@@ -1929,13 +1955,15 @@ representando 873 proteínas predichas (427 de _P. falciparum_ y 446 de _P. viva
 ~8% del total predicho para el genoma de _P. vivax_ Sal1) 
 seleccionadas luego de una extensiva evaluación serológica con uno 
 de mayor escala (Pf2208/Pv2233) [@Finney2014].
-Las proteínas son transcritas/traducidas _in vitro_ 
+<!--Las proteínas son transcritas/traducidas _in vitro_ 
 empleando un sistema de expresión de _Escherichia coli_ libre de células e 
 impresas en bloques de nitrocelulosa sobre una lámina portaobjetos 
 con 8 bloques paralelos, 
-cada uno con 4 arreglos paralelos compuestos por cuadrículas de 17x17 _spots_.
+cada uno con 4 arreglos paralelos compuestos por cuadrículas de 17x17 _spots_.-->
 Este diseño ha sido validado mediante el sondeo con plasma 
-colectado de pacientes con malaria y controles sanos alrededor del mundo [@King2015FOC].
+colectado de pacientes con malaria y controles sanos alrededor del mundo [@King2015FOC]
+y depositado en la base de datos GEO
+([GPL18316](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL18316)).
 
 <!--
 a utilizar fue desarrollado
@@ -1987,8 +2015,7 @@ estreptavidina. Cuarto, luego de centrifugar las láminas, se procede al escaneo
 fluorescencias con lectores de microarreglos de láser confocal (e.g., Genepix 4300A). Las 
 medidas crudas se obtienen al aplicar una normalización local mediante la sustracción de la 
 intensidad de fondo presente alrededor de cada _spot_, ejecutada en el software del lector 
-(Genepix Pro 7). Finalmente, se procede al análisis de los datos el cual será detallado en 
-la [sección 4.4](#anadata).
+(Genepix Pro 7). Finalmente, se procede al análisis de datos detallado en la [sección 4.4](#anadata).
 
 #### Validez {#validez}
 
@@ -2080,7 +2107,8 @@ Posteriormente, se procederá con la
 normalización entre muestras de cada antígeno-IVTT 
 con respecto a la mediana de los control-IVTT por individuo,
 transformación a escala logarítmica en base 2, y 
-filtrado de todo antígeno que posea una frecuencia de reactividad menor al 10%.
+filtrado de todo antígeno que posea una frecuencia de reactividad menor al 10% 
+de individuos en la muestra.
 Para ello, un antígeno reactivo será definido <!--conceptualmente como el antígeno-IVTT 
 mayor o igual a dos veces la mediana de los control-IVTT por individuo y -->
 operacionalmente como el antígeno-IVTT con intensidad normalizada mayor o igual a 1.
@@ -2124,8 +2152,10 @@ antígenos identificados en base a su distancia euclidiana, disponible en el paq
 [@Gaujoux2010NMF].
 Finalmente, se describirá la<!-- siguientes características proteicas -->
 presencia de dominios transmembrana, péptido señal, 
-número de ortólogos en _Plasmodium_, ontología génica y razón de mutaciones no-sinónimas 
-sobre sinónimas para el subgrupo de interés,
+número de ortólogos en _Plasmodium_, ontología génica, 
+número de polimorfismos de nucleótido simple y
+la razón de mutaciones no-sinónimas 
+por sinónimas para el subgrupo de interés,
 disponible en la base de datos PlasmoDB [@plasmodb].
 <!-- ¿EN QUÉ MOMENTO HABLAS DE PLASMODB EN EL PROYECTO? ¿QUÉ ES PLASMODB? -->
 
@@ -2136,7 +2166,7 @@ Las correlaciones y pruebas de hipótesis serán reportadas con el valor del
 estadístico de prueba y el valor p. Las distribuciones serán visualizadas con
 diagramas de dispersión para la correlación entre variables continuas, 
 diagramas de cajas y barras para la comparación de variables continuas y frecuencias, respectivamente.
-Las comparaciones múltiples reportarán el valor p-ajustado y serán visualizadas con dos
+Las comparaciones múltiples reportarán el valor P-ajustado y serán visualizadas con dos
 gráficos: un diagrama tipo volcán o _volcano plot_ con la diferencia de reactividad 
 entre grupos en escala logarítmica contra sus respectivos valores p<!-- no-ajustados-->
 y un mapa de calor o _heat map_ segmentado por racimos o _clusters_.
@@ -2159,7 +2189,7 @@ a la redacción del Informe.-->
 \begin{table}[ht]
         \captionof{table}{Cronograma}
         \label{tab:crono}
-        \vspace{3mm}
+        \vspace{2mm}
 \begin{center}
 %\hspace*{-1cm}
 \begin{tabular}{lcccccccccccc}
@@ -2236,9 +2266,11 @@ The Military Infectious Diseases Research Program (MIDRP) y el
 NIH Training grant 2D43TW007393.-->
 
 ```{r, eval=TRUE, echo=FALSE}
-a <- c(50,200,25,
+a <- c(50,200,#25,
        60*150*3.29,# (muestras)*(precio_por_muestra)*(tipo_de_cambio_sol-dolar)
-       2000,25)
+       2000
+       #,25
+       )
 b <- format((a*100/sum(a)), digits = 1)
 #sum(a)
 #rbind(a,b)
@@ -2247,32 +2279,32 @@ b <- format((a*100/sum(a)), digits = 1)
 # (200*150*3.29)+(2*500*3.29) 
 ```
 
-  ------------------------------------------------------------------------------------------
-  **DESCRIPCIÓN**                                 **MONTO (S/)**        **PORCENTAJE (%)** 
-  ---------------------------------------------- --------------------- ---------------------
+  -------------------------------------------------------------------------------------
+  **DESCRIPCIÓN**                            **MONTO (S/)**        **PORCENTAJE (%)** 
+  ----------------------------------------- --------------------- ---------------------
   **Bienes**                             
   
   Papelería, útiles y material de oficina            50                    `r b[1]`
   
-  Insumos, instrumental y accesorios                 200                   `r b[2]`
-  de laboratorio
-  
-  Productos químicos                                 25                    `r b[3]`
+  Insumos e instrumental de laboratorio              200                   `r b[2]`
   
   **Servicios**
 
-  Compra, sondeo y lectura                           29610                 `r b[4]`
+  Compra, sondeo y lectura                           29610                 `r b[3]`
   de microarreglos
   
-  Gastos en el transporte de muestras                2000                  `r b[5]`
-  
-  Impresiones, encuadernación                        25                    `r b[6]`
-  y empastado
+  Gastos en el transporte de muestras                2000                  `r b[4]`
   
   **TOTAL**                                          31910                 100
-  ------------------------------------------------------------------------------------------
+  -------------------------------------------------------------------------------------
 
   Table: Presupuesto \label{tab:presup}
+
+<!--   
+  Productos químicos                                 25                    `r b[3]`
+  Impresiones, encuadernación                        25                    `r b[6]`
+  y empastado 
+-->
 
 # BIBLIOGRAFÍA
 <!--

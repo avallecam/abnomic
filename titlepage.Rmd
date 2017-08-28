@@ -3,7 +3,7 @@ output: pdf_document
 ---
 
 \clearpage
-\newgeometry{left=0.5cm,right=0.5cm,top=1.8cm,bottom=1cm}
+\newgeometry{left=0.5cm,right=0.5cm,top=2cm,bottom=1cm}
 
 \begin{centering}
 
@@ -31,7 +31,7 @@ ESCUELA PROFESIONAL DE
 
 GENÉTICA Y BIOTECNOLOGÍA
 
-\vspace{2.8 cm}
+\vspace{3 cm}
 
 \Large
 Comparación de la respuesta de anticuerpos ante %la %infección con 
@@ -43,7 +43,7 @@ mediante microarreglos de proteínas
 %mediante un enfoque inmunómico .
 %% con sintomatología severa y no complicada/ pre-inmunes/ semi-inmunes
 
-\vspace{2.8 cm}
+\vspace{3 cm}
 
 \large
 Proyecto de Tesis 
@@ -72,11 +72,11 @@ Institución
 Centro de Enfermedades Tropicales de la Marina de los Estados Unidos 
 NAMRU-6
 
-\vspace{.3 cm}
+%\vspace{.3 cm}
 
-Duración: 5 meses
+%Duración: 5 meses
 
-\vspace{1.5 cm}
+\vspace{1.7 cm}
 
 \Large
 Lima - Perú
