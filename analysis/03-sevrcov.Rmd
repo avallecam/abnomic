@@ -26,10 +26,10 @@ knitr::opts_knit$set(root.dir = '../.')
 options(width = 110) # expand limits of CONSOLE output
 
 require(Hmisc)
-mu <- markupSpecs$html   # markupSpecs is in Hmisc
+#mu <- markupSpecs$html   # markupSpecs is in Hmisc
 # hidden command (<code>r mu$widescreen()</code>) to use an entire wide screen. # mu$widescreen()
+#`r mu$widescreen()`
 ```
-`r mu$widescreen()`
 
 ## Aim
 
@@ -1189,7 +1189,7 @@ sevdb_1 %>%
   ) #%>% glimpse()
 ```
 
-### Create WHO criterias
+### Create WHO criteria
 
 - en esta sección se:
     - __renombra__ a todas las variables consenso
@@ -1429,7 +1429,7 @@ sevdb_1oms %>%
   dplyr::count()
 ```
 
-### Classify wrt WHO criterias
+### Classify wrt WHO criteria
 
 - en esta sección se:
     - __clasifica__ a las observaciones en base a los criterios OMS [@WHO2014severe]
@@ -1466,24 +1466,105 @@ sevdb_2 <- sevdb_1oms %>%
                 en_zona_endemica=tiempo_local) %>% 
   mutate(#sev_ALL_num= rowSums(.[c(18,19)],na.rm = T),
          sev_WHO= if_else(sev_WHO_num>0# | sev_ALL_num>1
-                          ,"severo","no_severo"),# OJO: severo con 1 o más criterios + 2 de SNC
-         episodio_previo=if_else(episodio_previo_num>0,"con","sin")
+                          ,"severo","no_severo"),# OJO: AQUI TRADUCCION!!!!
+         episodio_previo=if_else(episodio_previo_num>0,"con","sin")# OJO: AQUI TRADUCCION!!!!
          ) %>% 
   mutate(sexo= as.factor(sexo),
          sev_WHO= as.factor(sev_WHO),
          episodio_previo= as.factor(episodio_previo)
          #,casecontrol= as.factor(casecontrol)
          ) %>% 
-  mutate(sexo= fct_recode(sexo, "masculino"="1", "femenino"="0")) %>% 
+  mutate(sexo= fct_recode(sexo, "masculino"="1", "femenino"="0")) %>% # OJO: AQUI TRADUCCION!!!!
   #relevel(sexo, ref = "female") %>% 
   mutate(sexo= fct_relevel(sexo, "masculino"),
-         episodio_previo= fct_relevel(episodio_previo, "sin")) %>% 
+         episodio_previo= fct_relevel(episodio_previo, "sin")) %>% # OJO: AQUI TRADUCCION!!!!
   glimpse()
+```
+
+```{r}
+###### TEST Hmisc::upData
+sevdb_2x <- Hmisc::upData(sevdb_2,
+                         labels = c(edad="Age (years)",
+                                    sexo="Sex",
+                                    shock_oms="Shock (systolic blood pressure < 80mmHg)",
+                                    glas_oms="Coma (Glasgow score < 9/14)",
+                                    pulmonar_oms="Lung injury (ARDS or pulmonary edema)",
+                                    anemia_oms="Severe anemia (hemoglobin < 7mg/dL)",
+                                    renal_oms="Acute renal failure (creatinin > 3mg/dL)",
+                                    hiperbil_oms="Hyperbilirubinemia (bilirubin > 2.5mg/dL)", #Jaundice
+                                    hipoglic_oms="Hypoglicemia (glucose < 40mg/dL)",
+                                    convulsion="Convulsion",
+                                    presenta_comorb="Comorbidity",
+                                    enf_cronica="Chronic disease",
+                                    #enf_sum="",
+                                    parasitemia="Parasite density (par/uL)",
+                                    #shock_oms_pa="",
+                                    en_zona_endemica="Time in endemic area (years)",
+                                    episodio_previo_num="Previous episodes (number)",
+                                    sev_WHO_num="Cumulative WHO criteria",
+                                    sev_WHO="WHO criteria",
+                                    episodio_previo="Previous episodes"
+                         ),
+                         levels = list(sev_WHO=list("Non-severe"="no_severo",
+                                                    "Severe"="severo"),
+                                       episodio_previo=list("Without"="sin",
+                                                            "With"="con"),
+                                       sexo=list("Male"="masculino",
+                                                 "Female"="femenino")
+                                       )
+                         )
+```
+
+```{r, eval=FALSE}
+###### TEST Hmisc::upData
+sevdb_2x <- Hmisc::upData(sevdb_2,
+                         labels = c(edad="Age",
+                                    sexo="Sex",
+                                    shock_oms="Shock",
+                                    glas_oms="Coma",
+                                    pulmonar_oms="Lung injury",
+                                    anemia_oms="Severe anemia",
+                                    renal_oms="Acute renal failure",
+                                    hiperbil_oms="Hyperbilirubinemia", #Jaundice
+                                    hipoglic_oms="Hypoglicemia",
+                                    convulsion="Convulsion",
+                                    presenta_comorb="Comorbidity",
+                                    enf_cronica="Chronic disease",
+                                    #enf_sum="",
+                                    parasitemia="Parasite density",
+                                    #shock_oms_pa="",
+                                    en_zona_endemica="Time in endemic area",
+                                    episodio_previo_num="Previous episodes",
+                                    sev_WHO_num="Cumulative WHO criteria",
+                                    sev_WHO="WHO criteria",
+                                    episodio_previo="Previous episodes"
+                         ),
+                         units = c(edad="(years)",
+                                   shock_oms="(systolic blood pressure < 80mmHg)",
+                                   glas_oms="(Glasgow score < 9/14)",
+                                   pulmonar_oms="(ARDS or pulmonary edema)",
+                                   anemia_oms="(hemoglobin < 7mg/dL)",
+                                   renal_oms="(creatinin > 3mg/dL)",
+                                   hiperbil_oms="(bilirubin > 2.5mg/dL)",
+                                   hipoglic_oms="(glucose < 40mg/dL)",
+                                   parasitemia="(par/uL)",
+                                   en_zona_endemica="(years)",
+                                   episodio_previo_num="(number)"
+                                   #episodio_previo="prop"
+                         ),
+                         levels = list(sev_WHO=list("Non-severe"="no_severo",
+                                                    "Severe"="severo"),
+                                       episodio_previo=list("Without"="sin",
+                                                            "With"="con"),
+                                       sexo=list("Male"="masculino",
+                                                 "Female"="femenino")
+                                       )
+                         )
 ```
 
 <!-- reduced dictionary -->
 ```{r}
-html(Hmisc::contents(sevdb_2), maxlevels=10, levelType='table')
+html(Hmisc::contents(sevdb_2x), maxlevels=10, levelType='table')
 #glimpse(sevdb_2)
 ```
 
@@ -1506,20 +1587,20 @@ s1 <- Hmisc::summaryM(shock_oms + #clinicos
                         sev_WHO_num
                       ~ sev_WHO
                       ,
-               data=sevdb_2,
+               data=sevdb_2x,
                overall=FALSE, test=FALSE)
 
-latex(s1, caption='WHO classification: Clinical and Laboratory criterias',
+latex(s1, caption='WHO classification: Clinical and Laboratory criteria',
       exclude1=TRUE, npct='both', 
-      digits=3,
+      digits=2,
       #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = TRUE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
-      what="%", html = TRUE
+      what="%", html = TRUE, width="100%"
       ) #change here for LaTeX PDF
 ```
 
-#### combination of criterias
+#### combination of criteria
 
 __check `sev_WHO`__
 
@@ -1531,7 +1612,7 @@ sevdb_2 %>% group_by(sev_WHO_num, sev_WHO#, sev_SNC_num, sev_ALL_num
 ```
 
 ```{r}
-# SUM SEVERITY CRITERIAS
+# SUM SEVERITY CRITERIA
 #sevdb_o <- sevdb_2 %>% 
 #  dplyr::rename(glas=glas_11,
 #         #sdra,
@@ -1678,17 +1759,17 @@ s1 <- Hmisc::summaryM(edad + sexo +
                         en_zona_endemica +
                         episodio_previo_num + episodio_previo +  
                         #sev_WHO + sev_WHO_num +
-                        presenta_comorb + enf_cronica +
+                        #presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ sev_WHO #+ 
                       #episodio_previo
                       ,
-               data=sevdb_2,
+               data=sevdb_2x,
                overall=FALSE, test=TRUE)
 
 latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
-      digits=3,
+      digits=2, eps = 0.01,
       #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = FALSE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
@@ -1715,12 +1796,12 @@ s1 <- Hmisc::summaryM(edad + sexo +
                       ~ #sev_WHO #+ 
                       episodio_previo
                       ,
-               data=sevdb_2,
+               data=sevdb_2x,
                overall=FALSE, test=TRUE)
 
 latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
-      digits=3,
+      digits=2,
       #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = FALSE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
@@ -1744,12 +1825,12 @@ s1 <- Hmisc::summaryM(edad + sexo +
                       ~ sev_WHO + 
                       episodio_previo
                       ,
-               data=sevdb_2,
+               data=sevdb_2x,
                overall=FALSE, test=TRUE)
 
 latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
-      digits=3,
+      digits=2,
       #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = FALSE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
@@ -1776,7 +1857,7 @@ s1 <- Hmisc::summaryM(edad + sexo +
 
 latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
-      digits=3,
+      digits=2,
       #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = FALSE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
@@ -1917,6 +1998,87 @@ sevdb_3 %>% saveRDS("data/03-sevrcov.rds")
 #### proportions per criteria {#abnomic-prop}
 
 ```{r}
+###### TEST Hmisc::upData
+sevdb_3x <- Hmisc::upData(sevdb_3,
+                         labels = c(edad="Age (years)",
+                                    sexo="Sex",
+                                    shock_oms="Shock (systolic blood pressure < 80mmHg)",
+                                    glas_oms="Coma (Glasgow score < 9/14)",
+                                    pulmonar_oms="Lung injury (ARDS or pulmonary edema)",
+                                    anemia_oms="Severe anemia (hemoglobin < 7mg/dL)",
+                                    renal_oms="Acute renal failure (creatinin > 3mg/dL)",
+                                    hiperbil_oms="Hyperbilirubinemia (bilirubin > 2.5mg/dL)", #Jaundice
+                                    hipoglic_oms="Hypoglicemia (glucose < 40mg/dL)",
+                                    convulsion="Convulsion",
+                                    presenta_comorb="Comorbidity",
+                                    enf_cronica="Chronic disease",
+                                    #enf_sum="",
+                                    parasitemia="Parasite density (par/uL)",
+                                    #shock_oms_pa="",
+                                    en_zona_endemica="Time in endemic area (years)",
+                                    episodio_previo_num="Previous episodes (number)",
+                                    sev_WHO_num="Cumulative WHO criteria",
+                                    sev_WHO="WHO criteria",
+                                    episodio_previo="Previous episodes"
+                         ),
+                         levels = list(sev_WHO=list("Non-severe"="no_severo",
+                                                    "Severe"="severo"),
+                                       episodio_previo=list("Without"="sin",
+                                                            "With"="con"),
+                                       sexo=list("Male"="masculino",
+                                                 "Female"="femenino")
+                                       )
+                         )
+```
+
+```{r, eval=FALSE}
+###### TEST Hmisc::upData
+sevdb_3x <- Hmisc::upData(sevdb_3,
+                         labels = c(edad="Age",
+                                    sexo="Sex",
+                                    shock_oms="Shock",
+                                    glas_oms="Coma",
+                                    pulmonar_oms="Lung injury",
+                                    anemia_oms="Severe anemia",
+                                    renal_oms="Acute renal failure",
+                                    hiperbil_oms="Hyperbilirubinemia", #Jaundice
+                                    hipoglic_oms="Hypoglicemia",
+                                    convulsion="Convulsion",
+                                    presenta_comorb="Comorbidity",
+                                    enf_cronica="Chronic disease",
+                                    #enf_sum="",
+                                    parasitemia="Parasite density",
+                                    #shock_oms_pa="",
+                                    en_zona_endemica="Time in endemic area",
+                                    episodio_previo_num="Previous episodes",
+                                    sev_WHO_num="Cumulative WHO criteria",
+                                    sev_WHO="WHO criteria",
+                                    episodio_previo="Previous episodes"
+                         ),
+                         units = c(edad="(years)",
+                                   shock_oms="(systolic blood pressure < 80mmHg)",
+                                   glas_oms="(Glasgow score < 9/14)",
+                                   pulmonar_oms="(ARDS or pulmonary edema)",
+                                   anemia_oms="(hemoglobin < 7mg/dL)",
+                                   renal_oms="(creatinin > 3mg/dL)",
+                                   hiperbil_oms="(bilirubin > 2.5mg/dL)",
+                                   hipoglic_oms="(glucose < 40mg/dL)",
+                                   parasitemia="(par/uL)",
+                                   en_zona_endemica="(years)",
+                                   episodio_previo_num="(number)"
+                                   #episodio_previo="prop"
+                         ),
+                         levels = list(sev_WHO=list("Non-severe"="no_severo",
+                                                    "Severe"="severo"),
+                                       episodio_previo=list("Without"="sin",
+                                                            "With"="con"),
+                                       sexo=list("Male"="masculino",
+                                                 "Female"="femenino")
+                                       )
+                         )
+```
+
+```{r}
 s1 <- Hmisc::summaryM(shock_oms + #clinicos
                         pulmonar_oms +
                         glas_oms +
@@ -1933,12 +2095,12 @@ s1 <- Hmisc::summaryM(shock_oms + #clinicos
                         sev_WHO_num
                       ~ sev_WHO
                       ,
-               data=sevdb_3,
+               data=sevdb_3x,
                overall=FALSE, test=FALSE)
 
-latex(s1, caption='WHO classification: Clinical and Laboratory criterias',
+latex(s1, caption='WHO classification: Clinical and Laboratory criteria',
       exclude1=TRUE, npct='both', 
-      digits=3,
+      digits=2,
       #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = TRUE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
@@ -1946,7 +2108,7 @@ latex(s1, caption='WHO classification: Clinical and Laboratory criterias',
       ) #change here for LaTeX PDF
 ```
 
-#### combinations of criterias
+#### combinations of criteria
 
 __check `sev_WHO`__
 
@@ -1960,7 +2122,7 @@ sevdb_3 %>% group_by(sev_WHO_num, sev_WHO#, sev_SNC_num, sev_ALL_num
 - frecuencia por combinación de criterios
 
 ```{r}
-# SUM SEVERITY CRITERIAS
+# SUM SEVERITY CRITERIA
 #sevdb_o <- sevdb_2 %>% 
 #  dplyr::rename(glas=glas_11,
 #         #sdra,
@@ -2089,24 +2251,26 @@ sevdb_3x <- sevdb_3 %>%
     + a diferencia de la [muestra total](#sev-inf) (n=228), 
         - menor diferencia en la proporción de mujeres severas (37 vs 55%)
         - menor diferencia en la proporción de casos severos con episodio previo (66 vs 46%)
-    + PROBLEMA: alta proporción de pacientes con comorbilidades (?) (20 vs 30%)
+    + ~~PROBLEMA: alta proporción de pacientes con comorbilidades (?) (20 vs 30%)~~
+        - comorbilidad: 14% (5/37) vs 43% (10/23)
+        - enf_cronica: 8% (3/37) vs 17% (4/23)
 
 ```{r}
 s1 <- Hmisc::summaryM(edad + sexo +
                         en_zona_endemica +
                         episodio_previo_num + episodio_previo + 
                         #sev_WHO + sev_WHO_num +
-                        presenta_comorb + enf_cronica +
+                        #presenta_comorb + enf_cronica +
                         parasitemia #+
                       ~ sev_WHO #+ 
                       #episodio_previo
                       ,
-               data=sevdb_3,
-               overall=FALSE, test=FALSE)
+               data=sevdb_3x,
+               overall=FALSE, test=TRUE)
 
 latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
-      digits=3,
+      digits=2, eps = 0.01,
       #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = FALSE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
@@ -2133,12 +2297,12 @@ s1 <- Hmisc::summaryM(edad + sexo +
                       ~ #sev_WHO #+ 
                       episodio_previo
                       ,
-               data=sevdb_3,
+               data=sevdb_3x,
                overall=FALSE, test=FALSE)
 
 latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
-      digits=3,
+      digits=2,
       #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = FALSE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
@@ -2162,12 +2326,12 @@ s1 <- Hmisc::summaryM(edad + sexo +
                       ~ sev_WHO + 
                       episodio_previo
                       ,
-               data=sevdb_3,
+               data=sevdb_3x,
                overall=FALSE, test=FALSE)
 
 latex(s1, caption='Epidemiological data',
       exclude1=TRUE, npct='both', 
-      digits=3,
+      digits=2,
       #prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2, #NOT-EVALUATE if PDF
       middle.bold=TRUE, long = FALSE,
       #legend.bottom = TRUE, #insert.bottom = TRUE, 
