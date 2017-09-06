@@ -767,7 +767,7 @@ a. En África
     La validación de este método permitirá optimizar la selección tradicional de marcadores.
     <!--seleccionar mejores marcadores para la 
     vigilancia seroepidemiológica, relevante para el guiado y evaluación de los 
-    programas de control y eliminación de malaria a nivel mundial-->.
+    programas de control y eliminación de malaria a nivel mundial.-->
 
 b. En Perú
     
@@ -1070,7 +1070,7 @@ c. Biología
         Sin embargo, la identificación de genes homólogos a _Pf var_ (_Pv vir_)
         <!--la baja proporción de esquizontes tardíos -->y 
         evindencias _post mortem_ de iRBC en capilares pulmonares
-        han sugerido la presencia de secuestramiento tisular por _P. vivax_ [@wassmer2015].
+        han sugerido la posibilidad de secuestramiento tisular por _P. vivax_ [@wassmer2015].
         En línea con esta evidencia, 
         recientemente se ha demostrado que en los casos severos por _P. vivax_ 
         la parasitemia periférica subestima la biomasa parasitaria total,
@@ -1206,8 +1206,8 @@ a. Marcadores
 	        que luego de siete inmunizaciones a lo largo de 56 semanas y una reexposición 
 	        con esporozoitos 
 	        infecciosos, 5/12 voluntarios obtuvieron dicha protección y 
-	        las respuestas de anticuerpos 
-	        IgG1 anti-PvCSP estuvieron asociadas a ella [@arevalo2016spz].
+	        la respuesta de anticuerpos 
+	        IgG1 anti-PvCSP estuvo asociada a ella [@arevalo2016spz].
 	        <!-- Estudios en modelos murinos han señalado a 
 	        las respuestas de células T CD8^+^ como importantes mediadores de este tipo de 
 	        inmunidad.-->
@@ -1312,7 +1312,7 @@ diferentes clases de moléculas y estados celulares [@uzoma2013interactome].
 Su empleo en el contexto _inmunómico_, con la cuantificación de las interacciones antígeno-anticuerpo,
 <!--ha identificado biomarcadores de exposición o protección ante distintos patógenos
 mediante perfiles de respuesta humoral en individuos infectados o vacunados.-->
-posee características similares a los microarreglos de ADN [@sundaresh2006],
+posee características analíticas similares a los microarreglos de ADN [@sundaresh2006],
 lo que ha facilitado la adaptación de los componentes estandarizados para 
 el diseño de experimentos en esta tecnología [@allison2006].
 <!--además de parámetros de relevancia 
@@ -1339,7 +1339,7 @@ a. Componentes
         y características inmunogénicas de proteínas predichas en ambos genomas.
         Posteriormente, en el 2015 el Centro Internacional de Excelencia para la Investigación de la 
         Malaria (ICEMR) realizó una subselección empírica de este microarreglo 
-        con muestras de 10 paises con malaria endémica, entre ellos Perú [@King2015FOC]. 
+        con 142 muestras de 10 paises con malaria endémica, entre ellos Perú [@King2015FOC]. 
         
         <!--El primer diseño de microarreglos para _P. vivax_ y _P. falciparum_ fue estandarizado 
         por Finney et al. 2014 [@Finney2014]
@@ -2163,12 +2163,12 @@ disponible en la base de datos PlasmoDB [@plasmodb].
 
 <!--De acuerdo a las guía SAMPL [@lang2013basic],-->
 Las correlaciones y pruebas de hipótesis serán reportadas con el valor del 
-estadístico de prueba y el valor p. Las distribuciones serán visualizadas con
+estadístico de prueba y el valor P. Las distribuciones serán visualizadas con
 diagramas de dispersión para la correlación entre variables continuas, 
 diagramas de cajas y barras para la comparación de variables continuas y frecuencias, respectivamente.
 Las comparaciones múltiples reportarán el valor P-ajustado y serán visualizadas con dos
-gráficos: un diagrama tipo volcán o _volcano plot_ con la diferencia de reactividad 
-entre grupos en escala logarítmica contra sus respectivos valores p<!-- no-ajustados-->
+gráficos: un diagrama tipo volcán o _volcano plot_ con el tamaño del efecto o diferencia de reactividad 
+entre grupos en escala logarítmica contra sus respectivos valores P<!-- no-ajustados-->
 y un mapa de calor o _heat map_ segmentado por racimos o _clusters_.
 El informe final consistirá de un reporte en formato `R Notebook` con extensión `.Rmd` 
 que integrará texto, código y resultados [@knitr], siguiendo principios de 
