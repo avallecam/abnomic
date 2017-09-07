@@ -702,6 +702,39 @@ rbind(full_go,all_go) %>%
                                     ))
 ```
 
+```{r,fig.height=3.5,fig.width=6}
+#rbind(a,b,c,d) 
+rbind(full_go,all_go) %>% 
+  inner_join(go_ord %>% 
+               filter(micro>3),by = "GO.Components") %>% 
+  dplyr::arrange(desc(micro)) %>% 
+  #replace_na(list(SignalP = "na")) %>% 
+  ggplot(aes(#x=summary.db#, fill=GO.Components
+             x=reorder(GO.Components,micro,order = TRUE), fill=protype
+             )) +
+  geom_bar(#position = "fill"
+           #position = "identity"
+           ) +
+  facet_grid(.~summary.db#, scales = "free"#, space = "free"
+             ) +#
+  coord_flip() + theme_bw() +
+  scale_fill_discrete(name="Protein",
+                      labels=c("with annotation", "hypothetical")) +
+  theme(#legend.position=c(-.38, -0.04),#"bottom"
+        legend.position=c(.85, 0.15),
+        legend.margin = margin(0,0,0,0),
+        axis.title.y=element_blank()
+        #legend.text = element_text(size = 8),
+        #legend.title = element_text(size = 8)
+        ) +
+  labs(title="Gene Ontology: Pf/Pv500 microarray proteins",
+       subtitle="Predicted Cellular Components compared to P. vivax genome") +
+  theme(strip.background = element_rect(colour = "black"#, fill = "white"
+                                        ),
+        strip.text.x = element_text(colour = "black"#,#size = 12, 
+                                    #face = "bold"
+                                    ))
+```
 
 #### Microarray data
 
@@ -1083,21 +1116,21 @@ td %>%
                               "P.Value<0.05","not sig.")) %>% #dplyr::count(significance)
   ggplot(aes(logFC,-log10(P.Value))) +
   geom_point(aes(colour=unadj_significance)) + scale_color_manual(name="unadjust\nsignificance",
-                                                                  values=c("black","red")) +
+                                                                  values=c("black","red")) + theme_bw() +
   #geom_point(aes(colour=no_severo)) + viridis::scale_color_viridis() +
-  ggrepel::geom_text_repel(data = td %>% 
-                             top_n(-10,P.Value) %>% 
-                             inner_join(all, by="Gene.ID") %>% 
-                             inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
-                             #filter(adj.P.Val<0.05 & logFC>1.5 & no_severo>1)# %>% 
-                             #arrange(desc(no_severo)) %>% 
-                             #top_n(10,no_severo)
-                           ,
-                           aes(label=Gene.Name), #force = 5,
-                           #direction = "both",
-                           box.padding = unit(5.5, "lines"),
-                           point.padding = unit(.5, "lines")
-                           ) + theme_bw() +
+  #ggrepel::geom_text_repel(data = td %>% 
+  #                           top_n(-10,P.Value) %>% 
+  #                           inner_join(all, by="Gene.ID") %>% 
+  #                           inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
+  #                           #filter(adj.P.Val<0.05 & logFC>1.5 & no_severo>1)# %>% 
+  #                           #arrange(desc(no_severo)) %>% 
+  #                           #top_n(10,no_severo)
+  #                         ,
+  #                         aes(label=Gene.Name), #force = 5,
+  #                         #direction = "both",
+  #                         box.padding = unit(5.5, "lines"),
+  #                         point.padding = unit(.5, "lines")
+  #                         ) + 
   theme(legend.position=c(.2, .91),#"bottom"
         legend.margin = margin(2,2,2,2)) +
   labs(title="Non-severe vs Severe",
@@ -1953,8 +1986,11 @@ tmp <- gplots::venn(list("severe\nmalaria"=g3_idl, "with\nepisode"=g2_idl, "top 
 ```
 
 ```{r}
-exp_da %>% inner_join(sev_d, by="Gene.ID") %>% 
-  select(Gene.ID,Product.Description.x,Gene.Name.x,con,sin,adj.P.Val.x,p.order.x,severo,no_severo,P.Value.y,adj.P.Val.y,p.order.y)
+exp_da %>% 
+  inner_join(sev_d, by="Gene.ID") %>% 
+  select(Gene.ID,Product.Description.x,Gene.Name.x,
+         con,sin,adj.P.Val.x,p.order.x,
+         severo,no_severo,P.Value.y,adj.P.Val.y,p.order.y)
 #sg <- exp_da %>% inner_join(sev_d, by="Gene.ID") %>% select(Gene.ID)
 #sev_d %>% 
 #  inner_join(exp_da %>% inner_join(sev_d, by="Gene.ID"),
@@ -1964,13 +2000,28 @@ exp_da %>% inner_join(sev_d, by="Gene.ID") %>%
 #  inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
 ```
 
+#### Subset severe Ag
+
+- __Update__ `sev_d` with `anti_join()`
+
+```{r}
+sev_d <- sev_d %>%
+  anti_join(exp_da, by="Gene.ID") 
+
+sev_d %>%
+  dplyr::arrange(p.order) %>% 
+  select(Gene.ID,Product.Description,Gene.Name,p.order, 
+         everything(), -Description
+         #severo,no_severo,P.Value,adj.P.Val,p.order
+         )
+```
+
+
 ### 7. PlasmoDB summaries
 
 ##### TMD + SP proportion
 
-- __add__ total number per bar
-
-```{r, fig.height=3, fig.width=8}
+```{r, fig.height=3, fig.width=7}
 a <- exp_t %>% #dplyr::count(TM.Domains)
   dplyr::mutate(TM.Domains.p= ifelse(TM.Domains>0,"present","absent"),
                 SignalP= ifelse(SignalP=="SP","present","absent"),
@@ -2020,15 +2071,15 @@ rbind(a,b,c,d) %>%
   facet_grid(.~key,scales = "free", space = "free") +
   scale_fill_discrete(name="Value") + theme_bw() +
   #guides(fill = guide_legend(title.position = "left")) +
-  theme(legend.position=c(-.28, .18),#"bottom"
+  theme(legend.position=c(-.33, .18),#"bottom"
         legend.margin = margin(0,0,0,0),
         axis.title.y=element_blank()
         #legend.text = element_text(size = 8),
         #legend.title = element_text(size = 8)
         ) +  
-  #ylab("log2-transformed normalized MFI")+
+  ylab("proportion")+
   #xlab(label = "")+
-  labs(title="Protein targeting and localization per subset") +
+  labs(title="Protein targeting and localization") +
   #labs(title="Proportion of Secretory or Membrane proteins per subset") +
   #     subtitle="") +
   #     caption="*filtered by adj.P.Val<0.05 & logFC>1")+
@@ -2091,7 +2142,7 @@ rbind(a,b,c,d) %>%
 
 ##### GO component proportion
 
-```{r,fig.height=5,fig.width=12}
+```{r}
 a <- exp_t %>%  #dplyr::count(GO.Components) %>% dplyr::arrange(desc(n))
   dplyr::mutate(summary.db="Top 10",
                 protype= stringr::str_count(Product.Description, "hypothetical"),
@@ -2129,7 +2180,9 @@ d <- exp_df %>% select(Gene.ID,ID,Product.Description,GO.Components) %>%
                 protype=as.factor(protype),
                 protype= forcats::fct_recode(protype, "hypothetical"="1", "known"="0")) %>%
   select(Gene.ID,ID,Product.Description,protype,summary.db,GO.Components) #%>% dplyr::count(protype)
+```
 
+```{r,fig.height=5,fig.width=7}
 go_ord <- rbind(a,b,c,d) %>% #class()
   group_by(GO.Components,summary.db) %>% 
   dplyr::summarise(count=n()) %>% ungroup() %>% 
@@ -2139,9 +2192,9 @@ go_ord <- rbind(a,b,c,d) %>% #class()
                 top="Top 10",
                 epida="w/ Episode (FDR<0.05)",
                 epidf="w/ Episode (FDR<0.05 & logFC>1)") %>% 
-  dplyr::arrange(desc(epida)) #%>% 
-  #replace_na(list(epida = 0)) %>% 
-  #filter(micro>1)
+  dplyr::arrange(desc(epida)) %>% 
+  replace_na(list(epida = 0)) %>% 
+  filter(epida==0 | epida>1)
 
 rbind(a,b,c,d) %>% 
   inner_join(go_ord,by = "GO.Components") %>% 
@@ -2153,106 +2206,27 @@ rbind(a,b,c,d) %>%
   geom_bar(#position = "fill"
            #position = "identity"
            ) +
-  facet_grid(.~summary.db, scales = "free" # CON O SIN scala
+  facet_wrap(~summary.db, scales = "free_x" # CON O SIN scala
              #space = "free"
              ) +#
   coord_flip() + theme_bw() +
   scale_fill_discrete(name="Protein",
                       labels=c("with annotation", "hypothetical")) +
-  theme(legend.position=c(-.38, 0.08),#"bottom"
+  theme(legend.position=c(.86, .09),#"bottom"
         legend.margin = margin(0,0,0,0),
         axis.title.y=element_blank()
         #legend.text = element_text(size = 8),
         #legend.title = element_text(size = 8)
         ) +
-  labs(title="Gene Ontology: Cellular Component prediction per subset") +
+  labs(title="Gene Ontology: Predicted Cellular Components") +
   theme(strip.background = element_rect(colour = "black"#, fill = "white"
                                         ),
         strip.text.x = element_text(colour = "black"#,size = 10#, face = "bold"
                                     ))
 ```
 
-```{r,fig.height=5,fig.width=10}
-rbind(a,#b,
-      c,d) %>% 
-  inner_join(go_ord,by = "GO.Components") %>% 
-  dplyr::arrange(desc(epida)) %>% 
-  #replace_na(list(SignalP = "na")) %>% 
-  ggplot(aes(#x=summary.db#, fill=GO.Components
-             x=reorder(GO.Components,epida,order = TRUE), fill=protype
-             )) +
-  geom_bar(#position = "fill"
-           #position = "identity"
-           ) +
-  facet_grid(.~summary.db#, scales = "free" # CON O SIN scala
-             #space = "free"
-             ) +#
-  coord_flip() + theme_bw() +
-  scale_fill_discrete(name="Protein",
-                      labels=c("with annotation", "hypothetical")) +
-  theme(legend.position=c(-.5, 0.07),#"bottom"
-        legend.margin = margin(0,0,0,0),
-        axis.title.y=element_blank()
-        #legend.text = element_text(size = 8),
-        #legend.title = element_text(size = 8)
-        ) +
-  labs(title="Gene Ontology: Cellular Component prediction per subset") +
-  theme(strip.background = element_rect(colour = "black"#, fill = "white"
-                                        ),
-        strip.text.x = element_text(colour = "black"#,size = 10#, face = "bold"
-                                    ))
-```
-
-
-```{r,fig.height=8.5,fig.width=10, eval=FALSE}
-go_ord <- rbind(all_go,
-      #a %>% select(-ID),
-      c %>% select(-ID),
-      d %>% select(-ID)
-      ) %>% #class()
-  group_by(GO.Components,summary.db) %>% 
-  dplyr::summarise(count=n()) %>% ungroup() %>% 
-  dplyr::arrange(desc(count)) %>% 
-  spread(summary.db,count) %>% 
-  dplyr::rename(all="Pf/Pv500 microarray",
-                #top="Top 10",
-                epida="w/ Episode (FDR<0.05)",
-                epidf="w/ Episode (FDR<0.05 & logFC>1)") %>% 
-  dplyr::arrange(desc(all)) #%>% 
-  #replace_na(list(epida = 0)) %>% 
-  #filter(micro>1)
-
-rbind(all_go,
-      #a %>% select(-ID),
-      c %>% select(-ID),
-      d %>% select(-ID)
-      ) %>% 
-  inner_join(go_ord,by = "GO.Components") %>% 
-  dplyr::arrange(desc(all)) %>% 
-  #replace_na(list(SignalP = "na")) %>% 
-  ggplot(aes(#x=summary.db#, fill=GO.Components
-             x=reorder(GO.Components,all,order = TRUE), fill=protype
-             )) +
-  geom_bar(#position = "fill"
-           #position = "identity"
-           ) +
-  facet_grid(.~summary.db#, scales = "free" # CON O SIN scala
-             #space = "free"
-             ) +#
-  coord_flip() + theme_bw() +
-  scale_fill_discrete(name="Protein",
-                      labels=c("with annotation", "hypothetical")) +
-  theme(legend.position=c(-.5, 0.07),#"bottom"
-        legend.margin = margin(0,0,0,0),
-        axis.title.y=element_blank()
-        #legend.text = element_text(size = 8),
-        #legend.title = element_text(size = 8)
-        ) +
-  labs(title="Gene Ontology: Cellular Component prediction per subset")
-```
-
-```{r,fig.height=5,fig.width=10}
-go_ord <- rbind(all_go,
+```{r,fig.height=5,fig.width=6.5}
+go_ord <- rbind(full_go,all_go,
       #a %>% select(-ID),
       c %>% select(-ID),
       d %>% select(-ID)
@@ -2267,9 +2241,9 @@ go_ord <- rbind(all_go,
                 epidf="w/ Episode (FDR<0.05 & logFC>1)") %>% 
   dplyr::arrange(desc(all)) %>% 
   #replace_na(list(epida = 0)) %>% 
-  filter(all>1)
-
-rbind(all_go,
+  filter(all>3)
+  
+rbind(full_go,all_go,
       #a %>% select(-ID),
       c %>% select(-ID),
       d %>% select(-ID)
@@ -2283,19 +2257,19 @@ rbind(all_go,
   geom_bar(#position = "fill"
            #position = "identity"
            ) +
-  facet_grid(.~summary.db#, scales = "free" # CON O SIN scala
+  facet_wrap(~summary.db, scales = "free_x" # CON O SIN scala
              #space = "free"
              ) +#
   coord_flip() + theme_bw() +
   scale_fill_discrete(name="Protein",
                       labels=c("with annotation", "hypothetical")) +
-  theme(legend.position=c(-.48, 0.04),#"bottom"
+  theme(legend.position=c(.87, .09),#"bottom"
         legend.margin = margin(0,0,0,0),
         axis.title.y=element_blank()
         #legend.text = element_text(size = 8),
         #legend.title = element_text(size = 8)
         ) +
-  labs(title="Gene Ontology: Cellular Component prediction per subset") +
+  labs(title="Gene Ontology: Predicted Cellular Components") +
   theme(strip.background = element_rect(colour = "black"#, fill = "white"
                                         ),
         strip.text.x = element_text(colour = "black"#,size = 10#, face = "bold"
