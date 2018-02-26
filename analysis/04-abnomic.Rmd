@@ -456,7 +456,7 @@ eset.FALCIP.SEV.FILTER<-eset.FALCIP.SEV[wh5,]
 
 ### 0. Descriptive Statistics
 
-#### Pre-Processing
+#### Preprocessing
 
 ##### Distributions per step
 
@@ -487,8 +487,8 @@ rbind(a,b,c,d) %>%
   geom_histogram() + theme_bw() +
   #facet_grid(.~labl,scales = "free") +
   facet_wrap(~labl,nrow = 1,ncol = 4,scales = "free") +
-  labs(title="Data distribution per pre-processing step",
-       caption="*Samples by Severe Malaria Study\nProbes by P. vivax antigens") +
+  labs(title="Preprocessing: Data distribution per step",
+       caption="*Samples by Severe Malaria Study\nand Probes by P. vivax antigens") +
   theme(strip.background = element_rect(colour = "black"#, fill = "white"
                                         ),
         strip.text.x = element_text(colour = "black",size = 12#, face = "bold"
@@ -1535,7 +1535,7 @@ exp_df
 ```{r}
 exp_t <- td %>% 
   arrange(desc(AveExpr)) %>% 
-  select(ID,Gene.ID,Description,AveExpr,p.order) %>% slice(1:10) %>% 
+  select(ID,Gene.ID,Description,AveExpr,p.order,logFC) %>% slice(1:10) %>% 
   inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
 
 exp_t 
@@ -2628,6 +2628,7 @@ exp_df
 ##### (**) EXPRESSION pattern
 
 - __Load RNA-seq profile__ from Zhu et al.
+    - __Transcription profile of intraerythrocytic cycle (Zhu et al. 2016) per subset__
 
 ```{r, message=FALSE}
 rna <- readr::read_tsv("data/04-listgit.tsv") %>% #colnames() %>% #class()
@@ -2672,12 +2673,16 @@ tail(rna)
 ```
 
 ```{r,fig.height=5.3,fig.width=10}
-rna_dt <- rbind(exp_df %>% 
-  mutate(subset="diff") %>% 
-  select(ID,Gene.ID,subset),
+rna_dt <- rbind(
+  exp_df %>% 
+    mutate(subset="diff") %>% 
+    select(ID,Gene.ID,subset,con,logFC) %>% #
+    dplyr::rename(intensity=con),
   exp_t %>% 
-  mutate(subset="atop") %>% 
-  select(ID,Gene.ID,subset)) %>% 
+    mutate(subset="atop") %>% 
+    select(ID,Gene.ID,subset,AveExpr,logFC) %>% #,logFC
+    dplyr::rename(intensity=AveExpr)
+  ) %>% 
   inner_join(rna,by = "Gene.ID") %>% 
   gather(rna,fpkm,-(ID:Gene.Name)) %>% 
   separate(rna,c("rna_s","rna_t")) %>% #dplyr::count(rna_t)
@@ -2696,7 +2701,8 @@ rna_dt <- rbind(exp_df %>%
 rna_dt %>% 
   ggplot(aes(rna_t,fpkm,colour=id.name)) +
   #geom_point() + 
-  geom_line() + theme_bw() +
+  geom_point() + theme_bw() +
+  geom_smooth(method = "lm", se = FALSE) +
   #viridis::scale_color_viridis(discrete = T,) +
   coord_cartesian(xlim = c(min(rna_dt$rna_t), max(rna_dt$rna_t) + 13)) +
   facet_grid(.~subset) +
@@ -2719,24 +2725,49 @@ rna_dt %>%
                                     ))
 ```
 
-```{r,fig.height=5,fig.width=6}
-rna_dtm <- rna_dt %>% 
+```{r}
+rna_dtm.ann <- rna_dt %>% 
   dplyr::mutate(id.name= ifelse(ID == "PVX_003775_2o2.150", "MSP4. / PVX_003775", id.name),
                 id.name=ifelse(ID=="PVX_099980_1o1_S2.504","MSP1_S2 / PVX_099980",id.name),
                 id.name=ifelse(ID=="PVX_099980_1o1_S1.793","MSP1_S1 / PVX_099980",id.name)) %>% 
+  separate(id.name,c("gene.name","gene.id"),sep = " / ") %>% 
+  unite(id.name,gene.id,gene.name,sep = " / ") %>% 
   #mutate_at(vars(id.name), funs(trimws)) %>% 
   #filter(rna_s=="s1") %>% 
   #filter(subset=="diff") %>%
-  select(ID,id.name,rna_t,fpkm) %>% 
+  select(ID,id.name,subset,rna_t,fpkm,intensity,logFC) #%>% 
   #dplyr::mutate(fpkm=log2(fpkm)) %>%
-  #filter(fpkm!="-Inf") %>% 
+  #filter(fpkm!="-Inf") 
+  
+rna_dtm <- rna_dtm.ann  %>% 
+  select(-subset) %>% 
   reshape2::acast(id.name ~ rna_t,
                   value.var = "fpkm") #%>% class()
-aheatmap(rna_dtm, #info = TRUE,
-         #main = "Transcription profile of intraerythrocytic cycle (Zhu et al. 2016)",
-         Rowv = TRUE, Colv = NA#, 
-         #annCol = pData(eset), 
-         #layout = "_"
+```
+
+```{r,fig.height=5,fig.width=7.7}
+x.ann <- rna_dtm.ann %>%
+  group_by(id.name) %>% 
+  dplyr::mutate(fpkm.max=max(fpkm,na.rm = T),
+                fpkm.min=min(fpkm,na.rm = T),
+                fold.change=fpkm.max-fpkm.min) %>% 
+  ungroup() %>% 
+  filter(fpkm==fpkm.max) %>% 
+  dplyr::arrange(subset,rna_t,fpkm.max) #fold.change
+
+x <- x.ann %>% 
+  select(id.name) %>% as.matrix() 
+
+aheatmap(rna_dtm[x,], Rowv = NA, Colv = NA,
+         annRow = x.ann %>% 
+           select(subset,intensity,logFC,rna_t) %>% 
+           dplyr::rename("time of maximum expression (FPKM)"=rna_t)
+         )
+
+aheatmap(rna_dtm[x,],Rowv = FALSE, Colv = NA,
+         annRow = x.ann %>% 
+           select(subset,intensity,logFC,rna_t) %>% 
+           dplyr::rename("time of maximum expression (FPKM)"=rna_t)
          )
 ```
 
