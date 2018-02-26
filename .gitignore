@@ -27,4 +27,7 @@ s1.tex
 s3expo.tex
 *.knit.md
 *.utf8.md
-
+08-serotbl.Rmd
+09-manuscript.Rmd
+08-serotbl.*
+update_censo.*
