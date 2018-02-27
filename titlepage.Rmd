@@ -13,25 +13,31 @@ output: pdf_document
   \end{center}
 \end{figure}
 
-\Large %https://tex.stackexchange.com/questions/24599/what-point-pt-font-size-are-large-etc
+\LARGE %https://tex.stackexchange.com/questions/24599/what-point-pt-font-size-are-large-etc
 UNIVERSIDAD NACIONAL MAYOR DE SAN MARCOS
 
 \large
 (Universidad del Perú, DECANA DE AMÉRICA)
 
-\vspace{.3 cm}
+%\vspace{.3 cm}
 
 \Large
 FACULTAD DE CIENCIAS BIOLÓGICAS
 
-\vspace{.3 cm}
+%\vspace{.3 cm}
 
-\normalsize
-ESCUELA PROFESIONAL DE
+%\normalsize
+\large
+ESCUELA PROFESIONAL DE GENÉTICA Y BIOTECNOLOGÍA
 
-GENÉTICA Y BIOTECNOLOGÍA
+\vspace{.5 cm}
 
-\vspace{3 cm}
+\Large
+PROYECTO DE TESIS PARA OPTAR AL TÍTULO PROFESIONAL DE 
+
+BIÓLOGO GENETISTA BIOTECNÓLOGO
+
+\vspace{2.5 cm}
 
 \Large
 Comparación de la respuesta de anticuerpos ante %la %infección con 
@@ -43,47 +49,40 @@ mediante microarreglos de proteínas
 %mediante un enfoque inmunómico .
 %% con sintomatología severa y no complicada/ pre-inmunes/ semi-inmunes
 
-\vspace{3 cm}
+\vspace{2.5 cm}
 
 \large
-Proyecto de Tesis 
-
-para optar al Título Profesional de Biólogo Genetista y Biotecnólogo
-
-\vspace{.3 cm}
-
-\large
-Investigador
+TESISTA:
 
 Bach. Andree Adolfo Valle Campos
 
 \vspace{.3 cm}
 
-Asesores
+ASESORES:
 
-Interno: Dr. Juan Jiménez Chunga %Prof. Walter Cabrera-Febolá
+INTERNO: Dr. Juan Jiménez Chunga %Prof. Walter Cabrera-Febolá
 
-Externo: PhD. G. Christian Baldeviano
+EXTERNO: PhD. G. Christian Baldeviano
 
 \vspace{.3 cm}
 
-Institución
+Lugar de Ejecución:
 
 Centro de Enfermedades Tropicales de la Marina de los Estados Unidos 
 NAMRU-6
 
-%\vspace{.3 cm}
+\vspace{.3 cm}
 
-%Duración: 5 meses
+Duración: 1 año
 
-\vspace{1.7 cm}
+\vspace{1.5 cm}
 
 \Large
 Lima - Perú
 
 %\vspace{.5 cm}
 
-2017
+2018
 
 \end{centering}
 

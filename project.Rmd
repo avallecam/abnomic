@@ -20,7 +20,7 @@ header-includes:
 - \usepackage{array}
 - \usepackage{color,soul}
 bibliography: analysis/malaria.bib
-csl: analysis/american-medical-association.csl
+#csl: analysis/american-medical-association.csl
 #UNMSM: http://crai.ub.edu/es/pmf/iso-esp
 #ISO-690: numeric OR author-date? https://www.zotero.org/styles?q=iso690
 link-citations: yes
@@ -183,64 +183,7 @@ de la ciudad de Iquitos (Loreto-Perú)-->?
 con reactividad serológica diferenciada o predominante
 en pacientes con malaria por _P. vivax_?
 
-## Objetivos
-
-<!-- 
-Objetivos:
-  ¿Cuáles son los objetivos que piensas explorar en este estudio? 
-  Usualmente se definen después de tener clara la pregunta de investigación y de haber 
-  elaborado el marco teórico. Deben ser pocos y enfocarse sólo en el tema de interés.
-
-Hipótesis:
-  Describa la respuesta esperada a la pregunta de investigación.
--->
-  
-### General
-  
-- Identificar un subconjunto de antígenos con reactividad serológica 
-discriminante de condiciones clínicas relevantes ante la infección por _P. vivax_.
-
-<!-- 
-- Identificar antígenos de _P. vivax_ con reactividad serológica 
-diferenciada ante la infección con malaria vivax entre pacientes 
-según su severidad y episodios previos.
-
-un subconjunto de
-contra la malaria vivax severa 
--->
-  
-### Específicos
-<!--  
-- Identificar antígenos con reactividad diferenciada según la
-severidad y episodios previos de los pacientes con malaria vivax.
-- Identificar los antígenos con reactividad predominante en los pacientes 
-con malaria vivax.
-sintomática
--->
-- Identificar antígenos de _P. vivax_ con reactividad serológica 
-diferenciada ante la infección entre pacientes 
-severos y no-severos.
-
-- Identificar antígenos de _P. vivax_ con reactividad serológica 
-diferenciada ante la infección entre pacientes 
-con y sin episodios previos.
-
-- Describir las características proteicas de los antígenos con reactividad 
-diferenciada o predominante<!-- según parámetros disponibles en la base de datos 
-PlasmoDB-->.
-
-
-### Exploratorio
-
-- Comparar la amplitud e intensidad de respuesta de anticuerpos según 
-la<!-- severidad, episodios previos y--> edad de los pacientes con malaria por _P. vivax_.
-
-<!--
-- Comparar la amplitud e intensidad de respuesta de anticuerpos
-según la edad de los pacientes con malaria vivax.
-- Comparar la amplitud e intensidad de respuesta de anticuerpos según 
-la severidad y episodios previos por rangos de edad de los pacientes con malaria vivax.
--->
+# JUSTIFICACIÓN DE LA INVESTIGACIÓN
 
 ## Justificación {#justif}
 
@@ -425,7 +368,69 @@ Cabe agregar , condición que posibilita escalar su aplicación a tamaño muestr
 epidemiológico. 
  -->
 
-# FORMULACIÓN DE HIPÓTESIS Y VARIABLES
+
+# FORMULACIÓN DE OBJETIVOS
+
+## Objetivos
+
+<!-- 
+Objetivos:
+  ¿Cuáles son los objetivos que piensas explorar en este estudio? 
+  Usualmente se definen después de tener clara la pregunta de investigación y de haber 
+  elaborado el marco teórico. Deben ser pocos y enfocarse sólo en el tema de interés.
+
+Hipótesis:
+  Describa la respuesta esperada a la pregunta de investigación.
+-->
+  
+### General
+  
+- Identificar un subconjunto de antígenos con reactividad serológica 
+discriminante de condiciones clínicas relevantes ante la infección por _P. vivax_.
+
+<!-- 
+- Identificar antígenos de _P. vivax_ con reactividad serológica 
+diferenciada ante la infección con malaria vivax entre pacientes 
+según su severidad y episodios previos.
+
+un subconjunto de
+contra la malaria vivax severa 
+-->
+  
+### Específicos
+<!--  
+- Identificar antígenos con reactividad diferenciada según la
+severidad y episodios previos de los pacientes con malaria vivax.
+- Identificar los antígenos con reactividad predominante en los pacientes 
+con malaria vivax.
+sintomática
+-->
+- Identificar antígenos de _P. vivax_ con reactividad serológica 
+diferenciada ante la infección entre pacientes 
+severos y no-severos.
+
+- Identificar antígenos de _P. vivax_ con reactividad serológica 
+diferenciada ante la infección entre pacientes 
+con y sin episodios previos.
+
+- Describir las características proteicas de los antígenos con reactividad 
+diferenciada o predominante<!-- según parámetros disponibles en la base de datos 
+PlasmoDB-->.
+
+
+### Exploratorio
+
+- Comparar la amplitud e intensidad de respuesta de anticuerpos según 
+la<!-- severidad, episodios previos y--> edad de los pacientes con malaria por _P. vivax_.
+
+<!--
+- Comparar la amplitud e intensidad de respuesta de anticuerpos
+según la edad de los pacientes con malaria vivax.
+- Comparar la amplitud e intensidad de respuesta de anticuerpos según 
+la severidad y episodios previos por rangos de edad de los pacientes con malaria vivax.
+-->
+
+# HIPÓTESIS Y VARIABLES DE INVESTIGACIÓN
 
 ## Hipótesis
 
@@ -724,9 +729,9 @@ VARIABLE INTERVINIENTE con OBJETIVO EXPLORATORIO: EDAD (hipotesis sin poder esta
 \end{center}
 \end{table}
 
+# ANTECEDENTES
 
-
-# MARCO TEÓRICO
+<!--# MARCO TEÓRICO-->
 
 <!-- 
 teoría/conceptos
@@ -1750,108 +1755,10 @@ b. Términos
     <!--__Frecuencia del antígeno:__
         Número de individuos con antígeno reactivo por antígeno-IVTT. -->
         
-# METODOLOGÍA {#meto}
+        
+# MATERIAL Y MÉTODOS {#meto}
 
-<!-- 
-# ASPECTOS METODOLÓGICOS DE LA INVESTIGACIÓN
-
-Población, muestra y muestreo
-
-	Población
-
-Describir el contexto del estudio y los sujetos a estudiar
-Especificar el lugar/ámbito en que se hará el estudio.
-Características de la población de estudio
-
-Criterios de inclusión
-
-Especificar los criterios de inclusión  del estudio.
-
-Criterios de exclusión
-
-Especificar los criterios de exclusión del estudio. No deben repetir lo establecido en los 
-criterios de inclusión.
-
-Selección de participantes
-
-Describir cómo se hará la selección de los participantes para el estudio. Por ejemplo: Se 
-tomaran aleatoriamente a un grupo de alumnos que estén matriculados en el curso de 
-Patología.
-
-Variables del estudio
-
-Describir las variable principales del estudio (variable dependiente e independiente)
-Especificar lo siguiente para cada variable:
-Variable (indicar el nombre de la variable y si es la variable dependiente o independiente 
-del estudio)
-Definición operativa
-Medición (cómo se medirá y/o cómo se recolectará el dato)
-Valores posibles
-Fuente de la variable
-
-Luego de hacer una descripción detallada, es útil resumir las variables de estudio en una 
-tabla.
--->
-
-## Diseño
-
-El diseño del estudio es de tipo Caso-Control.
-Su aplicación consistirá en la selección de la población 
-objetivo por presencia (casos) o ausencia (controles) del evento en estudio.
-Además se fijará el número de eventos a estudiar, así como el número de sujetos 
-sin evento que se incluirán en la población de comparación.
-
-### Tipo de investigación
-
-__Por la finalidad: Analítico.__ A diferencia de un descriptivo, realizaremos comparaciones 
-entre grupos y evaluaremos una posible relación causal entre el factor y el efecto.
-
-__Por el control de la asignación: Observacional.__ A diferencia de un experimental, no 
-controlaremos la asignación de los factores (severidad y episodios previos). Es decir,
-procederemos a observar el fenómeno, ejecutar la medición y analizar los resultados.
-
-__Por el seguimiento: Transversal.__ A diferencia de uno longitudinal, no ejecutaremos un 
-seguimiento. Las variables se medirán una sola vez, en un mismo instante.
-
-__Por la relación cronológica: Prospectivo.__ A diferencia de un retrospectivo, 
-recolectaremos los datos después de planificado el estudio.
-
-<!--__Por la dirección temporal: Hacia atrás/adelante.__ La población será selecionada por 
-la variable Efecto/Exposición-->
-
-<!--__Por la unidad de análisis: Basado en individuo.__ A diferencia de uno ecológico, la 
-unidad de observación son individuos o pacientes.-->
-
-<!--
-**Por el tipo de conocimiento previo usado en la investigación:** Científica
-**Por la naturaleza del objeto de estudio:** Factual Natural
-**Por el tipo de pregunta planteada:** Teórica Descriptiva de Relaciones no causales
-El estudio analizará las diferencias en una misma población 
-con respecto a dos variables de interés.
-**Por el método de contrastación de la hipótesis:** No experimental
-Se describirá al evento bajo diferentes
-variables para la organización de la información, mas no para
-determinar una causalidad.
-**Por el método de estudio de las variables:** Cuantitativa
-Evidenciado en la medición de la
-intensidad de fluorescencia en la reacción antígeno-anticuerpo
-**Por el número de variables:** Univariada
-El estudio, a pesar de poseer varias variables, 
-no establecerá relación de efecto entre ellas.
-**Por el ambiente en que se realizan:** De laboratorio
-La data será generada en laboratorio. 
-El presente trabajo se centrará en el análisis de la data.
-**Por el enfoque utilitario predominante:** Teórica
-Cuyos resultados permitirán conocer nuevas alternativas para
-el uso de biomarcadores en vigilancia seroepidemiológica.
-**Por la profundidad:** Exploratorio
-Se validarán las hipótesis formuladas.
-**Por el tiempo de aplicación de la variable:** Transversal
-No se realizará una seguimiento de la población.
--->
-
-
-## Población y muestra
+## Material biológico (Población y muestra)
 
 ### Población
 
@@ -1908,24 +1815,8 @@ Los elementos del grupo caso provendrán de una selección arbitraria,
 mientras que el grupo control será seleccionado al azar, 
 i.e. con probabilidad de selección conocida.
 
-## Recolección de los datos e instrumento
-<!-- Muestreo -->
 
-### Técnica para la recolección de datos
-
-<!--de muestreo
-SOBRE CÓMO SE EXTRAJO LAS MUESTRAS DE LA MUESTRA
-
-POSTER+PAPER METHODS
--->
-
-Previo al tratamiento antimalárico del paciente, 
-se extrajeron las muestras de sangre
-tanto para el diagnóstico de malaria por _P. vivax_ con la técnica de frotis
-como para las pruebas bioquímicas.
-Al momento del diagnóstico positivo, 
-bajo consentimiento informado y de forma voluntaria, 
-el plasma sanguíneo fue colectado y conservado a -80°C hasta su uso.
+## Material de laboratorio
 
 ### Instrumento de medición 
 <!--y recolección de datos-->
@@ -2050,6 +1941,131 @@ por un sistema dentro de célula [@crompton2010].
 entre controles positivos agregados a las lecturas del primer y segundo día de sondeo de 
 las muestras.-->
 
+
+## Métodos:
+
+<!--# METODOLOGÍA {#meto} -->
+
+<!-- 
+# ASPECTOS METODOLÓGICOS DE LA INVESTIGACIÓN
+
+Población, muestra y muestreo
+
+	Población
+
+Describir el contexto del estudio y los sujetos a estudiar
+Especificar el lugar/ámbito en que se hará el estudio.
+Características de la población de estudio
+
+Criterios de inclusión
+
+Especificar los criterios de inclusión  del estudio.
+
+Criterios de exclusión
+
+Especificar los criterios de exclusión del estudio. No deben repetir lo establecido en los 
+criterios de inclusión.
+
+Selección de participantes
+
+Describir cómo se hará la selección de los participantes para el estudio. Por ejemplo: Se 
+tomaran aleatoriamente a un grupo de alumnos que estén matriculados en el curso de 
+Patología.
+
+Variables del estudio
+
+Describir las variable principales del estudio (variable dependiente e independiente)
+Especificar lo siguiente para cada variable:
+Variable (indicar el nombre de la variable y si es la variable dependiente o independiente 
+del estudio)
+Definición operativa
+Medición (cómo se medirá y/o cómo se recolectará el dato)
+Valores posibles
+Fuente de la variable
+
+Luego de hacer una descripción detallada, es útil resumir las variables de estudio en una 
+tabla.
+-->
+
+### Diseño
+
+El diseño del estudio es de tipo Caso-Control.
+Su aplicación consistirá en la selección de la población 
+objetivo por presencia (casos) o ausencia (controles) del evento en estudio.
+Además se fijará el número de eventos a estudiar, así como el número de sujetos 
+sin evento que se incluirán en la población de comparación.
+
+#### Tipo de investigación
+
+__Por la finalidad: Analítico.__ A diferencia de un descriptivo, realizaremos comparaciones 
+entre grupos y evaluaremos una posible relación causal entre el factor y el efecto.
+
+__Por el control de la asignación: Observacional.__ A diferencia de un experimental, no 
+controlaremos la asignación de los factores (severidad y episodios previos). Es decir,
+procederemos a observar el fenómeno, ejecutar la medición y analizar los resultados.
+
+__Por el seguimiento: Transversal.__ A diferencia de uno longitudinal, no ejecutaremos un 
+seguimiento. Las variables se medirán una sola vez, en un mismo instante.
+
+__Por la relación cronológica: Prospectivo.__ A diferencia de un retrospectivo, 
+recolectaremos los datos después de planificado el estudio.
+
+<!--__Por la dirección temporal: Hacia atrás/adelante.__ La población será selecionada por 
+la variable Efecto/Exposición-->
+
+<!--__Por la unidad de análisis: Basado en individuo.__ A diferencia de uno ecológico, la 
+unidad de observación son individuos o pacientes.-->
+
+<!--
+**Por el tipo de conocimiento previo usado en la investigación:** Científica
+**Por la naturaleza del objeto de estudio:** Factual Natural
+**Por el tipo de pregunta planteada:** Teórica Descriptiva de Relaciones no causales
+El estudio analizará las diferencias en una misma población 
+con respecto a dos variables de interés.
+**Por el método de contrastación de la hipótesis:** No experimental
+Se describirá al evento bajo diferentes
+variables para la organización de la información, mas no para
+determinar una causalidad.
+**Por el método de estudio de las variables:** Cuantitativa
+Evidenciado en la medición de la
+intensidad de fluorescencia en la reacción antígeno-anticuerpo
+**Por el número de variables:** Univariada
+El estudio, a pesar de poseer varias variables, 
+no establecerá relación de efecto entre ellas.
+**Por el ambiente en que se realizan:** De laboratorio
+La data será generada en laboratorio. 
+El presente trabajo se centrará en el análisis de la data.
+**Por el enfoque utilitario predominante:** Teórica
+Cuyos resultados permitirán conocer nuevas alternativas para
+el uso de biomarcadores en vigilancia seroepidemiológica.
+**Por la profundidad:** Exploratorio
+Se validarán las hipótesis formuladas.
+**Por el tiempo de aplicación de la variable:** Transversal
+No se realizará una seguimiento de la población.
+-->
+
+
+
+### Recolección de los datos e instrumento
+<!-- Muestreo -->
+
+#### Técnica para la recolección de datos
+
+<!--de muestreo
+SOBRE CÓMO SE EXTRAJO LAS MUESTRAS DE LA MUESTRA
+
+POSTER+PAPER METHODS
+-->
+
+Previo al tratamiento antimalárico del paciente, 
+se extrajeron las muestras de sangre
+tanto para el diagnóstico de malaria por _P. vivax_ con la técnica de frotis
+como para las pruebas bioquímicas.
+Al momento del diagnóstico positivo, 
+bajo consentimiento informado y de forma voluntaria, 
+el plasma sanguíneo fue colectado y conservado a -80°C hasta su uso.
+
+
 ### Codificación y creación del archivo de datos
 
 Cada paciente del estudio estará identificado con un código de estructura `LIM####`, 
@@ -2073,7 +2089,7 @@ epidemiológicas y
 por código de paciente.
 
 
-## Análisis de datos {#anadata}
+### Análisis de datos {#anadata}
 
 Se hará uso del software de computación estadística R [@R2016],
 complementado con funciones de distintos paquetes pertenecientes a
@@ -2093,7 +2109,7 @@ Para ello se hará empleo de los siguientes paquetes:
 `PerformanceAnalytics`, `beeswarm`, `Rmisc`, `htmlTable` y `biobroom`.
 -->
 
-### Control de calidad y pre procesamiento
+#### Control de calidad y pre procesamiento
 
 Preliminarmente, se describirá la distribución y proporción de las
 covariables epidemiológicas, clínicas y bioquímicas 
@@ -2134,7 +2150,7 @@ Lectura normalizada de cada antígeno-IVTT mayor o igual a
 dos veces la mediana de los control-IVTT por individuo.
 -->
 
-### Prueba de hipótesis
+#### Prueba de hipótesis
 <!-- Inferencia, Clasificación y Descripción -->
 
 Las dos hipótesis de diferencia entre grupos seguirán el siguiente protocolo.
@@ -2159,7 +2175,7 @@ por sinónimas para el subgrupo de interés,
 disponible en la base de datos PlasmoDB [@plasmodb].
 <!-- ¿EN QUÉ MOMENTO HABLAS DE PLASMODB EN EL PROYECTO? ¿QUÉ ES PLASMODB? -->
 
-### Reporte de resultados
+#### Reporte de resultados
 
 <!--De acuerdo a las guía SAMPL [@lang2013basic],-->
 Las correlaciones y pruebas de hipótesis serán reportadas con el valor del 
@@ -2174,9 +2190,9 @@ El informe final consistirá de un reporte en formato `R Notebook` con extensió
 que integrará texto, código y resultados [@knitr], siguiendo principios de 
 reproducibilidad [@CienciaReproducible2016].
 
-# ASPECTOS ADMINISTRATIVOS
+<!--# ASPECTOS ADMINISTRATIVOS-->
 
-## Cronograma de actividades
+# CRONOGRAMA DE TRABAJO
 
 El Proyecto de Tesis fue trabajado en el Departamento de Parasitología del 
 Centro de Enfermedades Tropicales de la Marina de los Estados Unidos NAMRU-6,
@@ -2254,9 +2270,9 @@ recolectar lo datos a través del instrumento de medición descrito.
   **Sustentación**                                                                      X
 -->
 
-## Presupuesto y financiamiento
+# PRESUPUESTO GLOBAL
 
-El presupuesto que se detalla en la \autoref{tab:presup}
+El presupuesto detallado en la \autoref{tab:presup}
 fue ejecutado con financiamiento interno de la institución.
 <!--y financiado por \textcolor{red}{\hl{a}}
 The Global Emerging Infectious Surveillance and Response System 
@@ -2306,7 +2322,7 @@ b <- format((a*100/sum(a)), digits = 1)
   y empastado 
 -->
 
-# BIBLIOGRAFÍA
+# REFERENCIAS BIOBLIOGRÁFICAS
 <!--
 1.  **Referida al tema**
     
