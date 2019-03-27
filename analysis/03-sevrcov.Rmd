@@ -1991,8 +1991,28 @@ sevdb_3 %>%
 __GRABAR BASE DE DATOS COMO `data/03-sevrcov.rds`__
 
 ```{r}
+subsev <- readr::read_csv("data-raw/samples.csv") %>% 
+  filter(Study=="Severe Malaria") %>% 
+  #mutate(sample= Sample.ID==Subject.ID) %>% dplyr::count(sample)
+  select(Sample.ID, Study) %>% 
+  mutate(Study="protein-microarray") %>% 
+  dplyr::rename(codigo= Sample.ID)
+subsev
+# generate
+#sevdb_3 <- dplyr::inner_join(sevdb_2,subsev, by="codigo") 
+
+#pre-dataset
+sevdb_2 %>% naniar::miss_var_summary()
+sevdb_2 %>% 
+  left_join(subsev) %>% 
+  mutate(Study=if_else(is.na(Study),"not",Study)) %>% 
+  readr::write_rds("data/03-sevrcov-228obs_21var.rds")
 # output
-sevdb_3 %>% saveRDS("data/03-sevrcov.rds")
+sevdb_3 %>% naniar::miss_var_summary()
+sevdb_3 %>% readr::write_rds("data/03-sevrcov.rds")
+
+#haven::read_dta("data-raw/malaria severa 28Nov2014_Ed.dta") %>% 
+#  select(codigo, parasitemia) %>% naniar::miss_var_summary()
 ```
 
 #### proportions per criteria {#abnomic-prop}
