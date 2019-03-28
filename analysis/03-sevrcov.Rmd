@@ -258,7 +258,8 @@ library("stringr")    # for strings
 library("knitr")      # To display nice tables
 library("Rmisc")      # multiplot ggplots
 library("viridis")    # color visualization
-
+library("compareGroups")
+library("naniar")
 ```
 
 ### Read datasets
@@ -387,7 +388,7 @@ sevdb_pos_1 <- sevdb_pos %>%
          -num_convulsion, -dias_uci, #-starts_with("glas_"),
          -hiperpirexia, -temperatura, -fcardiaca, frespiratoria,
          malaria_pasado_num, #malaria_pasado_num:tx_malaria,
-         presenta_comorb:enf_otra_esp, -ends_with("_esp"), -contains("otra")#,
+         presenta_comorb:enf_otra_esp,tx_par_intest, -ends_with("_esp"), -contains("otra")#,
          #parasitemia, 
          #glucosa:casecontrol
          ) %>% #glimpse()
@@ -1185,7 +1186,7 @@ sevdb_1 %>%
     hemoglobina,
     creatinina,
     bilitot, bilind, bildirect,
-    parasitemia
+    parasitemia,tx_par_intest
   ) #%>% glimpse()
 ```
 
@@ -1246,7 +1247,7 @@ sevdb_1oms <- sevdb_1c %>%
          renal_oms= if_else(creatinina>3,1,0),
          bilsum= rowSums(.[38:39],na.rm = T),
          hiperbil_oms= if_else(bilsum>2.5,1,0),
-         enf_sum= rowSums(.[27:31],na.rm = T),
+         enf_sum= rowSums(.[27:31],na.rm = T),#omite enf_otra
          enf_cronica= if_else(enf_sum>0,1,0),
          sangrado_sum= rowSums(.[21:23],na.rm = T),
          sangr_oms= if_else(sangrado_sum>0,1,0)
@@ -1458,7 +1459,7 @@ sevdb_2 <- sevdb_1oms %>%
          #coma, postracion,
          #trombocitopenia, #hiperparasitemia,
          presenta_comorb, enf_cronica, enf_sum, parasitemia, shock_oms_pa,
-         tiempo_local, malaria_pasado_num#,casecontrol
+         tiempo_local, malaria_pasado_num,tx_par_intest#,casecontrol
          ) %>% #glimpse()
   mutate(sev_WHO_num= rowSums(.[4:11],na.rm = T)#,sev_SNC_num= rowSums(.[11:13],na.rm = T)
          ) %>% #glimpse()
@@ -1478,6 +1479,7 @@ sevdb_2 <- sevdb_1oms %>%
   #relevel(sexo, ref = "female") %>% 
   mutate(sexo= fct_relevel(sexo, "masculino"),
          episodio_previo= fct_relevel(episodio_previo, "sin")) %>% # OJO: AQUI TRADUCCION!!!!
+  mutate(tx_par_intest= str_replace(tx_par_intest,"NaN|99|98",replacement = NA_character_) %>% as.double()) %>% 
   glimpse()
 ```
 
@@ -1930,7 +1932,7 @@ sevdb_3 %>%
 ```
 
 __POR DEFAULT: `NA`__
-```{r}
+```{r,eval=FALSE}
 sevdb_3 <- sevdb_3 %>% 
   #filter(is.na(episodio_previo)) %>% 
   #select(codigo, episodio_previo) %>% #glimpse()
@@ -1995,7 +1997,7 @@ subsev <- readr::read_csv("data-raw/samples.csv") %>%
   filter(Study=="Severe Malaria") %>% 
   #mutate(sample= Sample.ID==Subject.ID) %>% dplyr::count(sample)
   select(Sample.ID, Study) %>% 
-  mutate(Study="protein-microarray") %>% 
+  mutate(Study="in-microarray") %>% 
   dplyr::rename(codigo= Sample.ID)
 subsev
 # generate
@@ -2003,16 +2005,64 @@ subsev
 
 #pre-dataset
 sevdb_2 %>% naniar::miss_var_summary()
-sevdb_2 %>% 
+#whole-subset dataset
+sevdb_2ws <- sevdb_2 %>% 
   left_join(subsev) %>% 
-  mutate(Study=if_else(is.na(Study),"not",Study)) %>% 
-  readr::write_rds("data/03-sevrcov-228obs_21var.rds")
+  mutate(Study=if_else(is.na(Study),"whole-db",Study),# %>% as.factor(),
+         #Study=as.factor(Study),
+         #Study=forcats::fct_relevel(Study,"whole-db"),
+         sev_WHO_num=as.factor(sev_WHO_num),
+         shock_oms=as.factor(shock_oms),
+         pulmonar_oms=as.factor(pulmonar_oms),
+         glas_oms=as.factor(glas_oms),
+         hiperbil_oms=as.factor(hiperbil_oms),
+         anemia_oms=as.factor(anemia_oms),
+         renal_oms=as.factor(renal_oms),
+         hipoglic_oms=as.factor(hipoglic_oms),
+         convulsion=as.factor(convulsion),
+         tx_par_intest=as.factor(tx_par_intest),
+         presenta_comorb=as.factor(presenta_comorb),
+         enf_cronica=as.factor(enf_cronica)) %>% 
+  mutate(Study=forcats::fct_relevel(Study,"whole-db"))
+sevdb_2ws %>% dplyr::count(Study)
+sevdb_2ws %>% readr::write_rds("data/03-sevrcov-228obs_21var.rds")
 # output
 sevdb_3 %>% naniar::miss_var_summary()
-sevdb_3 %>% readr::write_rds("data/03-sevrcov.rds")
+sevdb_3 <- sevdb_3 %>% 
+  mutate(#Study=if_else(is.na(Study),"not",Study),
+         sev_WHO_num=as.factor(sev_WHO_num),
+         shock_oms=as.factor(shock_oms),
+         pulmonar_oms=as.factor(pulmonar_oms),
+         glas_oms=as.factor(glas_oms),
+         hiperbil_oms=as.factor(hiperbil_oms),
+         anemia_oms=as.factor(anemia_oms),
+         renal_oms=as.factor(renal_oms),
+         hipoglic_oms=as.factor(hipoglic_oms),
+         convulsion=as.factor(convulsion),     
+         tx_par_intest=as.factor(tx_par_intest),
+         presenta_comorb=as.factor(presenta_comorb),
+         enf_cronica=as.factor(enf_cronica)) %>% 
+  readr::write_rds("data/03-sevrcov.rds")
+```
 
-#haven::read_dta("data-raw/malaria severa 28Nov2014_Ed.dta") %>% 
-#  select(codigo, parasitemia) %>% naniar::miss_var_summary()
+```{r}
+#inspeccion de comorbilidades y diagnosticos!!!
+haven::read_dta("data-raw/malaria severa 28Nov2014_Ed.dta") %>% dplyr::count(presenta_comorb,sin_enf_cronica)
+haven::read_dta("data-raw/malaria severa 28Nov2014_Ed.dta") %>% 
+  select(starts_with("dx_"),presenta_comorb,sin_enf_cronica) %>% print(n=Inf)
+haven::read_dta("data-raw/malaria severa 28Nov2014_Ed.dta") %>% 
+  select(presenta_comorb:tx_par_intest) %>% print(n=Inf)
+haven::read_dta("data-raw/malaria severa 28Nov2014_Ed.dta") %>% 
+  select(codigo, parasitemia) %>% naniar::miss_var_summary()
+
+#D/C: diagnostico clinico -> recomienda acción de descartar por x condición (indicación sin ver laboratorio)
+haven::read_dta("data-raw/severe_malaria_vivax SEP2016.dta") %>% 
+  select(starts_with("dx_"),presenta_comorb) %>% print(n=Inf)
+#presenta_comorb == cronicas? rpta: sí!
+haven::read_dta("data-raw/severe_malaria_vivax SEP2016.dta") %>% 
+  select(presenta_comorb:tx_par_intest) %>% print(n=Inf)
+haven::read_dta("data-raw/severe_malaria_vivax SEP2016.dta") %>% dplyr::count(presenta_comorb) #,sin_enf_cronica
+haven::read_dta("data-raw/severe_malaria_vivax SEP2016.dta") %>% glimpse()
 ```
 
 #### proportions per criteria {#abnomic-prop}
@@ -2368,6 +2418,75 @@ latex(s1, caption='Epidemiological data',
 #par(mfrow=c(1,2))
 #plot(s1, which='continuous')
 #par(mfrow=c(1,1))
+```
+
+## PRESENTATION
+
+### table 1: whole-subset covariates
+
+```{r}
+#hist(sevdb_2ws$episodio_previo_num)
+#sevdb_2ws %>% dplyr::count(episodio_previo_num)
+tab_ws <- compareGroups(Study ~ 
+                          edad + sexo +
+                          en_zona_endemica +
+                          presenta_comorb + #enf_cronica + 
+                          #tx_par_intest + 
+                          parasitemia + 
+                          episodio_previo + #episodio_previo_num + 
+                          sev_WHO #+ #sev_WHO_num +
+                ,
+              data = sevdb_2ws, byrow=F, method=c(edad=2,en_zona_endemica=2,episodio_previo_num=2,parasitemia=2)
+              ) 
+tab_ws %>% createTable(show.all = T,show.n = T) #%>% export2xls("table/tab1.xls")
+tab_ws %>% createTable() #%>% export2xls("table/tab1.xls")
+```
+
+### table 2: whole-subset criterias
+
+```{r}
+#hist(sevdb_2ws$episodio_previo_num)
+#sevdb_2ws %>% dplyr::count(episodio_previo_num)
+tab_cr <- compareGroups(Study ~ 
+                          shock_oms + #clinicos
+                          pulmonar_oms +
+                          glas_oms +
+                          hiperbil_oms + #lab
+                          anemia_oms +
+                          renal_oms +
+                          hipoglic_oms +
+                          #postracion +#extra
+                          #coma +
+                          convulsion +
+                          #presenta_comorb+
+                          #enf_cronica
+                          #parasitemia + 
+                          sev_WHO_num
+                ,
+              data = sevdb_2ws#, byrow=T#, method=c(edad=2,en_zona_endemica=2,episodio_previo_num=2,parasitemia=2)
+              ) 
+tab_cr %>% createTable(show.all = T,show.n = T,hide.no = "0") #%>% export2xls("table/tab1.xls")
+#tab_cr %>% createTable() #%>% export2xls("table/tab1.xls")
+```
+
+### table 3: subset counfunders
+
+```{r}
+#hist(sevdb_2ws$episodio_previo_num)
+#sevdb_2ws %>% dplyr::count(episodio_previo_num)
+tab_sv <- compareGroups(sev_WHO ~ 
+                          edad + sexo +
+                          en_zona_endemica +
+                          presenta_comorb + #enf_cronica + 
+                          #tx_par_intest + 
+                          parasitemia +
+                          episodio_previo #+ #episodio_previo_num + 
+                          #sev_WHO #+ #sev_WHO_num +
+                ,
+              data = sevdb_3, byrow=T, method=c(edad=2,en_zona_endemica=2,episodio_previo_num=2,parasitemia=2)
+              ) 
+tab_sv %>% createTable(show.all = T,show.n = T) #%>% export2xls("table/tab1.xls")
+tab_sv %>% createTable() #%>% export2xls("table/tab1.xls")
 ```
 
 ## ANEXO
