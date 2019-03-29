@@ -25,6 +25,8 @@ knitr::opts_knit$set(root.dir = '../.')
 
 options(width = 110) # expand limits of CONSOLE output
 
+rm(list=ls())
+
 require(Hmisc)
 #mu <- markupSpecs$html   # markupSpecs is in Hmisc
 # hidden command (<code>r mu$widescreen()</code>) to use an entire wide screen. # mu$widescreen()
@@ -305,7 +307,7 @@ sevdb_pre_1 <- sevdb_pre %>%
          -numconvul, -dias_uci, #-starts_with("glas_"),
          -hiperpirexia, -temperatura, -fcardiaca, frespiratoria,
          malaria_pasado_num, #malaria_pasado_num:tx_malaria,
-         presenta_comorb:enf_otra_esp, -ends_with("_esp"), -contains("otra"),
+         presenta_comorb:enf_otra_esp, -ends_with("_esp"), -contains("otra"),enf_otra,
          parasitemia, 
          glucosa:casecontrol
          ) %>% 
@@ -388,7 +390,7 @@ sevdb_pos_1 <- sevdb_pos %>%
          -num_convulsion, -dias_uci, #-starts_with("glas_"),
          -hiperpirexia, -temperatura, -fcardiaca, frespiratoria,
          malaria_pasado_num, #malaria_pasado_num:tx_malaria,
-         presenta_comorb:enf_otra_esp,tx_par_intest, -ends_with("_esp"), -contains("otra")#,
+         presenta_comorb:enf_otra_esp,tx_par_intest, -ends_with("_esp"), -contains("otra"),enf_otra#,
          #parasitemia, 
          #glucosa:casecontrol
          ) %>% #glimpse()
@@ -1129,6 +1131,14 @@ sevdb_1 %>%
   mutate(enf_renal_c=str_replace(enf_renal_c,"NA", replacement = NA_character_)) %>%  #%>% count()
   mutate(enf_renal_c= as.numeric(enf_renal_c)) %>%
   
+  tidyr::unite(enf_otra_c, enf_otra_1, enf_otra_2) %>% #count()
+  mutate(enf_otra_c=str_replace(enf_otra_c,"(\\d+)_\\1", "\\1")) %>%
+  mutate(enf_otra_c=str_replace(enf_otra_c,"NA_(\\d+)", "\\1")) %>% 
+  mutate(enf_otra_c=str_replace(enf_otra_c,"(\\d+)_NA", "\\1")) %>% 
+  mutate(enf_otra_c=str_replace(enf_otra_c,"(\\d+)_(\\d+)", "\\2")) %>% #count() #preferencia a _2
+  mutate(enf_otra_c=str_replace(enf_otra_c,"NA", replacement = NA_character_)) %>%  #%>% count()
+  mutate(enf_otra_c= as.numeric(enf_otra_c)) %>%
+  
   tidyr::unite(tiempo_local_c, tiempo_local_1, tiempo_local_2, remove = F) %>% #count()
   mutate(tiempo_local_c=str_replace(tiempo_local_c,"(\\d+)_\\1", "\\1")) %>%
   mutate(tiempo_local_c=str_replace(tiempo_local_c,"NA_(\\d+)", "\\1")) %>% 
@@ -1179,6 +1189,7 @@ sevdb_1 %>%
     enf_cardiac_c,
     enf_pulm_c,
     enf_renal_c,
+    enf_otra_c,
     tiempo_local_c,
     malaria_pasado_num_c,
     
@@ -1231,6 +1242,7 @@ sevdb_1oms <- sevdb_1c %>%
     enf_cardiac= enf_cardiac_c,
     enf_pulm= enf_pulm_c,
     enf_renal= enf_renal_c,
+    enf_otra=enf_otra_c,
     tiempo_local=tiempo_local_c,
     malaria_pasado_num= malaria_pasado_num_c
   ) %>% #glimpse()
@@ -1239,23 +1251,23 @@ sevdb_1oms <- sevdb_1c %>%
          #snc_oms=  if_else(snc_sum>1,1,0),
          glas_11= if_else(glasgow<=11 & glasgow>0,1,0),
          glas_9= if_else(glasgow<=9 & glasgow>0,1,0),
-         pulmonar_sum= rowSums(.[c(17,18)],na.rm = T),
+         pulmonar_sum= select(.,edema_pulm,sdra) %>% rowSums(na.rm = T),
          pulmonar_oms=  if_else(pulmonar_sum>0,1,0),
          #sdra=  if_else(sdra!=1,0,1),
          hipoglic_oms= if_else(glucosa<40,1,0),
          anemia_oms= if_else(hemoglobina<7,1,0),
          renal_oms= if_else(creatinina>3,1,0),
-         bilsum= rowSums(.[38:39],na.rm = T),
+         bilsum= select(.,bilind,bildirect) %>% rowSums(na.rm = T),
          hiperbil_oms= if_else(bilsum>2.5,1,0),
-         enf_sum= rowSums(.[27:31],na.rm = T),#omite enf_otra
+         enf_sum= select(.,diabetes,enf_snc,enf_cardiac,enf_pulm,enf_renal,enf_otra) %>% rowSums(na.rm = T),#omite enf_otra
          enf_cronica= if_else(enf_sum>0,1,0),
-         sangrado_sum= rowSums(.[21:23],na.rm = T),
+         sangrado_sum= select(.,gingivorragia,epistaxis,sang_intest) %>% rowSums(na.rm = T),
          sangr_oms= if_else(sangrado_sum>0,1,0)
          #hiperbil_omsX= if_else(bilitot>2.5,1,0),
          #hiperbil_test= hiperbil_omsX==hiperbil_oms,
          ) %>% #glimpse() 
     mutate(
-      shock_oms= rowSums(.[c(4,41)],na.rm = T)
+      shock_oms= select(.,shock,shock_oms_pa) %>% rowSums(na.rm = T)
       ) #%>% glimpse()# OR shock==1
 ```
 
@@ -1461,7 +1473,7 @@ sevdb_2 <- sevdb_1oms %>%
          presenta_comorb, enf_cronica, enf_sum, parasitemia, shock_oms_pa,
          tiempo_local, malaria_pasado_num,tx_par_intest#,casecontrol
          ) %>% #glimpse()
-  mutate(sev_WHO_num= rowSums(.[4:11],na.rm = T)#,sev_SNC_num= rowSums(.[11:13],na.rm = T)
+  mutate(sev_WHO_num= select(.,shock_oms:convulsion) %>% rowSums(na.rm = T)#,sev_SNC_num= rowSums(.[11:13],na.rm = T)
          ) %>% #glimpse()
   dplyr::rename(episodio_previo_num=malaria_pasado_num,
                 en_zona_endemica=tiempo_local) %>% 
@@ -2023,14 +2035,14 @@ sevdb_2ws <- sevdb_2 %>%
          tx_par_intest=as.factor(tx_par_intest),
          presenta_comorb=as.factor(presenta_comorb),
          enf_cronica=as.factor(enf_cronica)) %>% 
-  mutate(Study=forcats::fct_relevel(Study,"whole-db"))
+  mutate(Study=forcats::fct_relevel(Study,"whole-db"),
+         parasitemia_mil=parasitemia/1000)
 sevdb_2ws %>% dplyr::count(Study)
 sevdb_2ws %>% readr::write_rds("data/03-sevrcov-228obs_21var.rds")
 # output
 sevdb_3 %>% naniar::miss_var_summary()
-sevdb_3 <- sevdb_3 %>% 
-  mutate(#Study=if_else(is.na(Study),"not",Study),
-         sev_WHO_num=as.factor(sev_WHO_num),
+sevdb_3sv <- sevdb_3 %>% 
+  mutate(sev_WHO_num=as.factor(sev_WHO_num),
          shock_oms=as.factor(shock_oms),
          pulmonar_oms=as.factor(pulmonar_oms),
          glas_oms=as.factor(glas_oms),
@@ -2041,7 +2053,8 @@ sevdb_3 <- sevdb_3 %>%
          convulsion=as.factor(convulsion),     
          tx_par_intest=as.factor(tx_par_intest),
          presenta_comorb=as.factor(presenta_comorb),
-         enf_cronica=as.factor(enf_cronica)) %>% 
+         enf_cronica=as.factor(enf_cronica),
+         parasitemia_mil=parasitemia/1000) %>% 
   readr::write_rds("data/03-sevrcov.rds")
 ```
 
@@ -2422,6 +2435,36 @@ latex(s1, caption='Epidemiological data',
 
 ## PRESENTATION
 
+```{r,fig.height=3,fig.width=4}
+data_s <- sevdb_2ws %>% 
+  mutate(edad_10=cut(edad,c(quantile(edad,probs = seq(0,1,0.1),na.rm = T)[1],
+                                       quantile(edad,probs = seq(0,1,0.1),na.rm = T)[2],
+                                       quantile(edad,probs = seq(0,1,0.1),na.rm = T)[3],
+                                       quantile(edad,probs = seq(0,1,0.1),na.rm = T)[4],
+                                       quantile(edad,probs = seq(0,1,0.1),na.rm = T)[5],
+                                       quantile(edad,probs = seq(0,1,0.1),na.rm = T)[6],
+                                       quantile(edad,probs = seq(0,1,0.1),na.rm = T)[7],
+                                       quantile(edad,probs = seq(0,1,0.1),na.rm = T)[8],
+                                       quantile(edad,probs = seq(0,1,0.1),na.rm = T)[9],
+                                       quantile(edad,probs = seq(0,1,0.1),na.rm = T)[10],
+                                       quantile(edad,probs = seq(0,1,0.1),na.rm = T)[11]),
+                           include.lowest = T),
+         edad_4=cut(edad,c(quantile(edad,probs = seq(0,1,0.25),na.rm = T)[1],
+                                       quantile(edad,probs = seq(0,1,0.25),na.rm = T)[2],
+                                       quantile(edad,probs = seq(0,1,0.25),na.rm = T)[3],
+                                       quantile(edad,probs = seq(0,1,0.25),na.rm = T)[4],
+                                       quantile(edad,probs = seq(0,1,0.25),na.rm = T)[5]),
+                           include.lowest = T)) 
+
+#data_s %>% dplyr::count(edad)
+data_s %>% dplyr::count(edad_4)
+
+data_s %>% filter(!is.na(edad)) %>% 
+  ggplot(aes(edad_4)) +
+  geom_bar(aes(fill=sev_WHO),position = position_fill()) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
 ### table 1: whole-subset covariates
 
 ```{r}
@@ -2430,16 +2473,16 @@ latex(s1, caption='Epidemiological data',
 tab_ws <- compareGroups(Study ~ 
                           edad + sexo +
                           en_zona_endemica +
-                          presenta_comorb + #enf_cronica + 
+                          enf_cronica + #presenta_comorb + 
                           #tx_par_intest + 
-                          parasitemia + 
+                          parasitemia_mil + 
                           episodio_previo + #episodio_previo_num + 
                           sev_WHO #+ #sev_WHO_num +
                 ,
-              data = sevdb_2ws, byrow=F, method=c(edad=2,en_zona_endemica=2,episodio_previo_num=2,parasitemia=2)
+              data = sevdb_2ws, byrow=F, method=c(edad=2,en_zona_endemica=2,episodio_previo_num=2,parasitemia_mil=2)
               ) 
-tab_ws %>% createTable(show.all = T,show.n = T) #%>% export2xls("table/tab1.xls")
-tab_ws %>% createTable() #%>% export2xls("table/tab1.xls")
+tab_ws %>% createTable(show.all = T,show.p.overall = F)
+tab_ws %>% createTable(show.all = T,show.p.overall = F) %>% export2xls("table/tab1-in_out.xls")
 ```
 
 ### table 2: whole-subset criterias
@@ -2465,9 +2508,32 @@ tab_cr <- compareGroups(Study ~
                 ,
               data = sevdb_2ws#, byrow=T#, method=c(edad=2,en_zona_endemica=2,episodio_previo_num=2,parasitemia=2)
               ) 
-tab_cr %>% createTable(show.all = T,show.n = T,hide.no = "0") #%>% export2xls("table/tab1.xls")
-#tab_cr %>% createTable() #%>% export2xls("table/tab1.xls")
+#tab_cr %>% createTable(show.all = T,show.n = T,hide.no = "0") #%>% export2xls("table/tab1.xls")
+tab_cr %>% createTable(show.all = T,show.n = F,show.p.overall = F,hide.no = "0") #%>% export2xls("table/tab1.xls")
+tab_cr %>% createTable(show.all = T,show.n = F,show.p.overall = F,hide.no = "0") %>% export2xls("table/tab2-in_out_oms.xls")
 ```
+
+### table 3: whole counfunders
+
+```{r}
+#hist(sevdb_2ws$episodio_previo_num)
+#sevdb_2ws %>% dplyr::count(episodio_previo_num)
+tab_sv <- compareGroups(sev_WHO ~ 
+                          edad + sexo +
+                          en_zona_endemica +
+                          enf_cronica + #presenta_comorb + 
+                          tx_par_intest + 
+                          parasitemia_mil +
+                          episodio_previo #+ #episodio_previo_num + 
+                          #sev_WHO #+ #sev_WHO_num +
+                ,
+              data = sevdb_2ws, byrow=T, method=c(edad=2,en_zona_endemica=2,episodio_previo_num=2,parasitemia_mil=2)
+              ) 
+tab_sv %>% createTable(show.all = T,show.n = F) #%>% export2xls("table/tab3-all-severe.xls")
+tab_sv %>% createTable(show.all = T,show.n = F) %>% export2xls("table/tab3-all-severe.xls")
+#tab_sv %>% createTable() #%>% export2xls("table/tab1.xls")
+```
+
 
 ### table 3: subset counfunders
 
@@ -2477,16 +2543,16 @@ tab_cr %>% createTable(show.all = T,show.n = T,hide.no = "0") #%>% export2xls("t
 tab_sv <- compareGroups(sev_WHO ~ 
                           edad + sexo +
                           en_zona_endemica +
-                          presenta_comorb + #enf_cronica + 
+                          enf_cronica + #presenta_comorb + 
                           #tx_par_intest + 
-                          parasitemia +
+                          parasitemia_mil +
                           episodio_previo #+ #episodio_previo_num + 
                           #sev_WHO #+ #sev_WHO_num +
                 ,
-              data = sevdb_3, byrow=T, method=c(edad=2,en_zona_endemica=2,episodio_previo_num=2,parasitemia=2)
+              data = sevdb_3sv, byrow=T, method=c(edad=2,en_zona_endemica=2,episodio_previo_num=2,parasitemia_mil=2)
               ) 
-tab_sv %>% createTable(show.all = T,show.n = T) #%>% export2xls("table/tab1.xls")
-tab_sv %>% createTable() #%>% export2xls("table/tab1.xls")
+tab_sv %>% createTable(show.all = T,show.n = F) #%>% export2xls("table/tab1.xls")
+tab_sv %>% createTable(show.all = T,show.n = F) %>% export2xls("table/tab3-in_severe.xls")
 ```
 
 ## ANEXO
