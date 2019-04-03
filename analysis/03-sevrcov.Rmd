@@ -1197,7 +1197,7 @@ sevdb_1 %>%
     hemoglobina,
     creatinina,
     bilitot, bilind, bildirect,
-    parasitemia,tx_par_intest
+    parasitemia,tx_par_intest,coag_normal,casecontrol
   ) #%>% glimpse()
 ```
 
@@ -1247,7 +1247,7 @@ sevdb_1oms <- sevdb_1c %>%
     malaria_pasado_num= malaria_pasado_num_c
   ) %>% #glimpse()
   mutate(shock_oms_pa= if_else(pa_sistolica<=80,1,0),# OR shock==1
-         #snc_sum= rowSums(.[c(10,12,13)],na.rm = T),# menos confusion
+         #snc_sum= rowSums(.[c(10,12,13)],na.rm = T),# retirados por sesgo
          #snc_oms=  if_else(snc_sum>1,1,0),
          glas_11= if_else(glasgow<=11 & glasgow>0,1,0),
          glas_9= if_else(glasgow<=9 & glasgow>0,1,0),
@@ -1268,7 +1268,9 @@ sevdb_1oms <- sevdb_1c %>%
          ) %>% #glimpse() 
     mutate(
       shock_oms= select(.,shock,shock_oms_pa) %>% rowSums(na.rm = T)
-      ) #%>% glimpse()# OR shock==1
+      ) %>% #%>% glimpse()# OR shock==1
+  mutate(trombo_sev= if_else(cont_plaquetas<50000,1,0),
+         trombo_new= if_else(cont_plaquetas<150000,1,0))
 ```
 
 ##### who criteria
@@ -1340,7 +1342,7 @@ sevdb_1oms %>% group_by(pulmonar_oms, sdra, edema_pulm) %>%  dplyr::count()
     + ~~gingivorragia_corr, epistaxis_corr, sang_intest_corr~~
     + ~~at least one criteria~~
     + ~~`sangrado` con asignación incorrecta~~
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 # BLEEDING -------------------------------------------------- REDEFINIR!!
 #  = at least one criteria of bleeding (gingivorragia_corr, epistaxis_corr, sang_intest_corr)
 sevdb_1oms %>% 
@@ -1352,22 +1354,17 @@ sevdb_1oms %>%
         - ~~severe trombocitopenia: menor de 50 000~~
         - ~~trombocitopenia: menor de 150 000~~
     + ~~`trombocitopenia` con asignacion incorrecta~~
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 #TROMBOCITOPENIA?? -------------------------------------------------- REDEFINIR!!
-sevdb_1 %>%
-  dplyr::select(trombocitopenia, cont_plaquetas, coag_normal) %>% #dplyr::count()
-  mutate(trombo_sev= if_else(cont_plaquetas<50000,1,0)) %>% 
-  mutate(trombo_sev= as.factor(trombo_sev)) %>% #glimpse()
-  ggplot(aes(x=cont_plaquetas, fill=trombo_sev)) + 
-  geom_histogram(alpha=.5, position = "identity") + 
-  labs(title="trombocitopenia")
-
-sevdb_1 %>% 
-  dplyr::select(trombocitopenia, cont_plaquetas, coag_normal) %>% #dplyr::count()
-  mutate(trombo_sev= if_else(cont_plaquetas<50000,1,0)) %>% 
-  mutate(trombo_sev= as.factor(trombo_sev)) %>% #glimpse()
-  group_by(trombo_sev, trombocitopenia, coag_normal) %>% 
-  dplyr::count()
+sevdb_1oms %>%
+  #dplyr::select(trombocitopenia, cont_plaquetas, coag_normal) %>% #dplyr::count()
+  dplyr::count(trombo_new,trombo_sev)
+sevdb_1oms %>%
+  group_by(trombo_new,trombo_sev) %>%  #glimpse()
+  summarise_at(.vars = c("cont_plaquetas"),.funs = c("min","max"))
+  #ggplot(aes(x=cont_plaquetas, fill=trombo_sev)) + 
+  #geom_histogram(alpha=.5, position = "identity") + 
+  #labs(title="trombocitopenia")
 ```
 
 - **HIPOGLICEMIA**
@@ -1438,7 +1435,7 @@ sevdb_1oms %>%
 ```{r, eval=FALSE}
 # COMORBIDITIES
 sevdb_1oms %>% 
-  group_by(presenta_comorb, enf_cronica, diabetes, enf_cardiac, enf_pulm, enf_renal, enf_snc) %>% 
+  group_by(presenta_comorb, enf_cronica, diabetes, enf_cardiac, enf_pulm, enf_renal, enf_snc, enf_otra) %>% 
   dplyr::count()
 ```
 
@@ -1465,25 +1462,41 @@ sevdb_2 <- sevdb_1oms %>%
                 glas_oms=glas_9
                 ) %>% #glimpse()
   dplyr::select(1:3,
-         shock_oms, glas_oms, pulmonar_oms, #sdra, #snc_sum, #snc_oms
-         anemia_oms, renal_oms, hiperbil_oms, hipoglic_oms, #sangr_oms,
+         anemia_oms,
+         hiperbil_oms, hipoglic_oms,
+         pulmonar_oms, #sdra, #snc_sum, #snc_oms
+         shock_oms, 
+         glas_oms, #a.k.a coma
+         renal_oms,
          convulsion,
-         #coma, postracion,
+         sangr_oms,trombo_sev,#trombo_new
          #trombocitopenia, #hiperparasitemia,
          presenta_comorb, enf_cronica, enf_sum, parasitemia, shock_oms_pa,
-         tiempo_local, malaria_pasado_num,tx_par_intest#,casecontrol
+         tiempo_local, malaria_pasado_num,tx_par_intest,casecontrol
          ) %>% #glimpse()
-  mutate(sev_WHO_num= select(.,shock_oms:convulsion) %>% rowSums(na.rm = T)#,sev_SNC_num= rowSums(.[11:13],na.rm = T)
+  mutate(sev_WHO_num= select(.,anemia_oms:convulsion) %>% rowSums(na.rm = T),#,sev_SNC_num= rowSums(.[11:13],na.rm = T)
+         sev_WHO_num_1= select(.,anemia_oms:sangr_oms) %>% rowSums(na.rm = T),
+         sev_WHO_num_2= select(.,anemia_oms:trombo_sev) %>% rowSums(na.rm = T),
+         sev_WHO_num_3= select(.,anemia_oms:convulsion,trombo_sev) %>% rowSums(na.rm = T),
+         sev_WHO_num_4= select(.,anemia_oms:trombo_sev,-convulsion) %>% rowSums(na.rm = T)#,
          ) %>% #glimpse()
   dplyr::rename(episodio_previo_num=malaria_pasado_num,
                 en_zona_endemica=tiempo_local) %>% 
   mutate(#sev_ALL_num= rowSums(.[c(18,19)],na.rm = T),
          sev_WHO= if_else(sev_WHO_num>0# | sev_ALL_num>1
                           ,"severo","no_severo"),# OJO: AQUI TRADUCCION!!!!
+         sev_WHO_1= if_else(sev_WHO_num_1>0,"severo","no_severo"),
+         sev_WHO_2= if_else(sev_WHO_num_2>0,"severo","no_severo"),
+         sev_WHO_3= if_else(sev_WHO_num_3>0,"severo","no_severo"),
+         sev_WHO_4= if_else(sev_WHO_num_4>0,"severo","no_severo"),
          episodio_previo=if_else(episodio_previo_num>0,"con","sin")# OJO: AQUI TRADUCCION!!!!
          ) %>% 
   mutate(sexo= as.factor(sexo),
          sev_WHO= as.factor(sev_WHO),
+         sev_WHO_1= as.factor(sev_WHO_1),
+         sev_WHO_2= as.factor(sev_WHO_2),
+         sev_WHO_3= as.factor(sev_WHO_3),
+         sev_WHO_4= as.factor(sev_WHO_4),
          episodio_previo= as.factor(episodio_previo)
          #,casecontrol= as.factor(casecontrol)
          ) %>% 
@@ -2023,7 +2036,12 @@ sevdb_2ws <- sevdb_2 %>%
   mutate(Study=if_else(is.na(Study),"whole-db",Study),# %>% as.factor(),
          #Study=as.factor(Study),
          #Study=forcats::fct_relevel(Study,"whole-db"),
+         casecontrol=as.factor(casecontrol),
          sev_WHO_num=as.factor(sev_WHO_num),
+         sev_WHO_num_1=as.factor(sev_WHO_num_1),
+         sev_WHO_num_2=as.factor(sev_WHO_num_2),
+         sev_WHO_num_3=as.factor(sev_WHO_num_3),
+         sev_WHO_num_4=as.factor(sev_WHO_num_4),
          shock_oms=as.factor(shock_oms),
          pulmonar_oms=as.factor(pulmonar_oms),
          glas_oms=as.factor(glas_oms),
@@ -2032,6 +2050,9 @@ sevdb_2ws <- sevdb_2 %>%
          renal_oms=as.factor(renal_oms),
          hipoglic_oms=as.factor(hipoglic_oms),
          convulsion=as.factor(convulsion),
+         sangr_oms=as.factor(sangr_oms),
+         #trombo_new=as.factor(trombo_new),
+         trombo_sev=as.factor(trombo_sev),
          tx_par_intest=as.factor(tx_par_intest),
          presenta_comorb=as.factor(presenta_comorb),
          enf_cronica=as.factor(enf_cronica)) %>% 
@@ -2042,7 +2063,12 @@ sevdb_2ws %>% readr::write_rds("data/03-sevrcov-228obs_21var.rds")
 # output
 sevdb_3 %>% naniar::miss_var_summary()
 sevdb_3sv <- sevdb_3 %>% 
-  mutate(sev_WHO_num=as.factor(sev_WHO_num),
+  mutate(casecontrol=as.factor(casecontrol),
+         sev_WHO_num=as.factor(sev_WHO_num),
+         sev_WHO_num_1=as.factor(sev_WHO_num_1),
+         sev_WHO_num_2=as.factor(sev_WHO_num_2),
+         sev_WHO_num_3=as.factor(sev_WHO_num_3),
+         sev_WHO_num_4=as.factor(sev_WHO_num_4),
          shock_oms=as.factor(shock_oms),
          pulmonar_oms=as.factor(pulmonar_oms),
          glas_oms=as.factor(glas_oms),
@@ -2050,7 +2076,10 @@ sevdb_3sv <- sevdb_3 %>%
          anemia_oms=as.factor(anemia_oms),
          renal_oms=as.factor(renal_oms),
          hipoglic_oms=as.factor(hipoglic_oms),
-         convulsion=as.factor(convulsion),     
+         convulsion=as.factor(convulsion),
+         sangr_oms=as.factor(sangr_oms),
+         #trombo_new=as.factor(trombo_new),
+         trombo_sev=as.factor(trombo_sev),
          tx_par_intest=as.factor(tx_par_intest),
          presenta_comorb=as.factor(presenta_comorb),
          enf_cronica=as.factor(enf_cronica),
@@ -2491,6 +2520,38 @@ tab_ws %>% createTable(show.all = T,show.p.overall = F) %>% export2xls("table/ta
 #hist(sevdb_2ws$episodio_previo_num)
 #sevdb_2ws %>% dplyr::count(episodio_previo_num)
 tab_cr <- compareGroups(Study ~ 
+                          sev_WHO_2 +
+                          anemia_oms +
+                          shock_oms + #clinicos
+                          pulmonar_oms +
+                          renal_oms +
+                          glas_oms +
+                          convulsion +
+                          hiperbil_oms + #lab
+                          hipoglic_oms +
+                          #postracion +#extra
+                          #coma +
+                          trombo_sev +
+                          sangr_oms + #trombo_new
+                          #presenta_comorb+
+                          #enf_cronica
+                          #parasitemia + 
+                          sev_WHO_num_2
+                ,
+              data = sevdb_2ws#, byrow=T#, method=c(edad=2,en_zona_endemica=2,episodio_previo_num=2,parasitemia=2)
+              ) 
+#tab_cr %>% createTable(show.all = T,show.n = T,hide.no = "0") #%>% export2xls("table/tab1.xls")
+tab_cr %>% createTable(show.all = T,show.n = F,show.p.overall = F,hide.no = "0") #%>% export2xls("table/tab1.xls")
+tab_cr %>% createTable(show.all = T,show.n = F,show.p.overall = F,hide.no = "0") %>% export2xls("table/tab2-in_out_oms.xls")
+```
+
+```{r}
+#hist(sevdb_2ws$episodio_previo_num)
+#sevdb_2ws %>% dplyr::count(episodio_previo_num)
+tab_cr <- compareGroups(casecontrol ~ #Study ~ 
+                          #casecontrol + 
+                          Study + 
+                          sev_WHO_2 + 
                           shock_oms + #clinicos
                           pulmonar_oms +
                           glas_oms +
@@ -2501,16 +2562,23 @@ tab_cr <- compareGroups(Study ~
                           #postracion +#extra
                           #coma +
                           convulsion +
+                          sangr_oms + trombo_sev + #trombo_new
                           #presenta_comorb+
                           #enf_cronica
                           #parasitemia + 
-                          sev_WHO_num
+                          sev_WHO_num_2 #+ sev_WHO_num_4
+                          #sev_WHO_num + sev_WHO_num_1 + sev_WHO_num_2 + sev_WHO_num_3 + sev_WHO_num_4
                 ,
-              data = sevdb_2ws#, byrow=T#, method=c(edad=2,en_zona_endemica=2,episodio_previo_num=2,parasitemia=2)
+              data = sevdb_2ws, byrow=T#, method=c(edad=2,en_zona_endemica=2,episodio_previo_num=2,parasitemia=2)
               ) 
 #tab_cr %>% createTable(show.all = T,show.n = T,hide.no = "0") #%>% export2xls("table/tab1.xls")
 tab_cr %>% createTable(show.all = T,show.n = F,show.p.overall = F,hide.no = "0") #%>% export2xls("table/tab1.xls")
-tab_cr %>% createTable(show.all = T,show.n = F,show.p.overall = F,hide.no = "0") %>% export2xls("table/tab2-in_out_oms.xls")
+```
+
+```{r}
+sevdb_2ws %>% 
+  filter(sev_WHO_num==1 & Study == "in-microarray") %>% 
+  select(anemia_oms:trombo_sev,sev_WHO,sev_WHO_2)
 ```
 
 ### table 3: whole counfunders
