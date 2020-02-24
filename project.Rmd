@@ -1948,6 +1948,11 @@ por un sistema dentro de célula [@crompton2010].
 entre controles positivos agregados a las lecturas del primer y segundo día de sondeo de 
 las muestras.-->
 
+#### Adquisición
+
+Todos los reactivos, incluidos los microarreglos, anticuerpos secundarios biotinilados 
+y fluoróforos conjugados con estreptavidina fueron adquiridos a la empresa 
+Antigen Discovery, INC [@adiinc].
 
 ## Métodos:
 
