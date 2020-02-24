@@ -3,6 +3,7 @@ output:
 #  word_document:
 #    reference_docx: Ecosistemas_template.docx
   pdf_document:
+    latex_engine: xelatex
     #keep_md: TRUE
     keep_tex: TRUE
     toc_depth: 4
@@ -19,6 +20,7 @@ header-includes:
 - \usepackage{capt-of}
 - \usepackage{array}
 - \usepackage{color,soul}
+- \usepackage{geometry}
 bibliography: analysis/malaria.bib
 #csl: analysis/american-medical-association.csl
 #UNMSM: http://crai.ub.edu/es/pmf/iso-esp
@@ -1483,27 +1485,31 @@ a. Componentes
             En estos, las estrategias de corrección posteriores a la comparación de múltiples
             hipótesis son sensibles a esta cantidad.
             En este sentido, este procedimiento retira de forma preliminar a los elementos 
-            con reducidas probabilidades de expresarse diferencialmente
+            con reducidas probabilidades de expresarse diferencialmente.
             <!-- sin la 
-            necesidad de realizar la prueba de hipótesis
-            -->.
-            
-    iii. __Inferencia__
+            necesidad de realizar la prueba de hipótesis.
+            -->
         
-        Su objetivo es poner a prueba hipótesis estadísticas relacionadas 
+    iii. __Inferencia__ 
+    
+            Su objetivo es poner a prueba hipótesis estadísticas relacionadas 
         a la expression o reactividad diferencial de elementos entre grupos.
-        <!--(i) poner a prueba la hipótesis nula de igualdad de medias en las expresión
-        de elementos por grupo y (ii) ordernar o ranquear a los elemento según la
-        evidencia contra la hipótesis nula, incluso luego de fallar en el rechazo
-        de dicha hipótesis [@smyth2004ebayes]. -->
         Sin embargo, a esta escala se posee dos principales problemas: (1)
         presencia de varianzas artificialmente altas o bajas producto del 
-        bajo número de réplicas entre arreglos o muestras [@baldi2001cybert]; y (2) un
+        bajo número de réplicas entre arreglos o muestras [@baldi2001cybert] y (2) un
         amplio número de hipótesis puestas a prueba en forma simultánea, donde los 
         test estadísticos tradicionales pueden generar un largo número de 
-        falsos positivos [@kayala2012cyber]. 
-        1. Test-t moderado: 
-        Un enfoque bayesiano empírico permite reducir (o moderar) las varianzas de 
+        falsos positivos [@kayala2012cyber].
+        
+            <!--
+        (i) poner a prueba la hipótesis nula de igualdad de medias en las expresión
+        de elementos por grupo y (ii) ordernar o ranquear a los elemento según la
+        evidencia contra la hipótesis nula, incluso luego de fallar en el rechazo
+        de dicha hipótesis [@smyth2004ebayes]. 
+        -->
+        
+            1. Test-t moderado: 
+            Un enfoque bayesiano empírico permite reducir (o moderar) las varianzas de 
             todas las lecturas. Bajo el supuesto que las diferencias entre grupos 
             generan cambios en la intensidad promedio del gen mas no en su varianza,
             se estima una varianza general como probabilidad previa para actualizar (corregir)
@@ -1525,7 +1531,7 @@ a. Componentes
             Con ello, <!--la ejecución de un test-t con varianzas moderadas 
             (o test-t moderado)-->es posible obtener inferencias más estables que el 
             test-t ordinario bajo un contexto limitado de réplicas [@kayala2012cyber].
-        2. Razón de falsos descubrimientos (FDR):
+            2. Razón de falsos descubrimientos (FDR):
             Los métodos de corrección o ajuste de valores P permiten que el 
             investigador pueda controlar la razón de falsos descubrimientos con 
             respecto al total de hipótesis positivas [@brazma2001].
@@ -1543,7 +1549,8 @@ a. Componentes
             la determinación de un valor crítico de valores P dependiente del total 
             de hipótesis puestas a prueba y el valor de FDR deseado [@benjamini1995fdr].
             -->
-    
+            
+        
     iv. __Clasificación__
             
         <!--Una aplicación importante de los microarreglos de proteínas está en la
@@ -2205,7 +2212,7 @@ a la redacción del Informe.-->
 \begin{table}[ht]
         \captionof{table}{Cronograma}
         \label{tab:crono}
-        \vspace{2mm}
+        \vspace{-1mm}
 \begin{center}
 %\hspace*{-1cm}
 \begin{tabular}{lcccccccccccc}
