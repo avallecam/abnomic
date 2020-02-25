@@ -1952,7 +1952,7 @@ las muestras.-->
 #### Adquisición
 
 Todos los reactivos, incluidos los microarreglos, anticuerpos secundarios biotinilados 
-y fluoróforos conjugados con estreptavidina fueron adquiridos a la empresa 
+y fluoróforos conjugados con estreptavidina serán adquiridos a la empresa 
 Antigen Discovery, INC [@adiinc].
 
 ## Métodos:
