@@ -4,34 +4,38 @@
 
 ## TO DO
 
-- Fix project format (check comments)
-- Make slides as final presentation
-- Contact Hugo, Review Chris, Send clearance!
+- (X) Fix project format (check comments) [I did not changed the aim]
+- ( ) Contact advisor -> ask for emails con reviewers
+- ( ) Re-send project
+- ( ) Make slides as final presentation
+- ( ) Make an abstract of results
+- ( ) Contact Hugo for review
+- ( ) Send clearance!
 
 ## Project
 
-- [DONE] Severe DB
-- [DONE] Magnitude and Frequency plots (lattice | ggplot2)
+- (X) [DONE] Severe DB
+- (X) [DONE] Magnitude and Frequency plots (lattice | ggplot2)
 
 ### extra?
-- [NOT] OddsRatio/B-statistic in plot?
-- [...] Cumulative distribution?
+- (X) [NOT] OddsRatio/B-statistic in plot?
+- (X) [...] Cumulative distribution?
 
 ### ADi request
 
-- [MUST] Reproducibility array
-- [MUST] Peptides list
+- ( ) [MUST] Reproducibility array
+- ( ) [MUST] Peptides list
 
 ---
 
 ## Thesis
 
-- Make your own .docx template!!! (follow Yihui links)
-- Use UNMSM format file!! (WORD TEMPLATE!!!!!)
-- Upload to github a UNMSM thesis template (.tex->.pdf & .md->.docx)
+- ( ) Make your own .docx template!!! (follow Yihui links)
+- ( ) Use UNMSM format file!! (WORD TEMPLATE!!!!! NOT) -> PDF
+- ( ) Upload to github as UNMSM thesis template (.tex->.pdf & .md->.docx)
 
 # NOT INCLUDED IN THIS PROJECT
 
-- 08serotbl
-- update_censo
-- zungaro-maps
+- ( ) 08serotbl
+- ( ) update_censo
+- ( ) zungaro-maps
