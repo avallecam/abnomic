@@ -12,10 +12,12 @@ figure/*
 R/previous/*
 notrack/*
 report/*
+table/*
 *.docx
 *.pdf
 *.odp
 *.pptx
+*.ppt
 *.html
 table.Rmd
 s3.tex

@@ -4,6 +4,7 @@ output:
 #    reference_docx: Ecosistemas_template.docx
   pdf_document:
     latex_engine: xelatex
+    #latex_engine: lualatex
     #keep_md: TRUE
     keep_tex: TRUE
     toc_depth: 4
@@ -11,7 +12,7 @@ output:
     fig_caption: yes
     include:
       after_body: tabconsis.tex
-documentclass: article
+#documentclass: article #this modifies everything to 220 mm × 280 mm Letter size
 classoption: a4paper
 header-includes:
 - \usepackage{multirow}
@@ -1817,7 +1818,7 @@ una selección arbitraria de 30 pacientes representativos de malaria severa
 con uno o más criterios de la clasificación OMS para el grupo de casos y 
 una selección aleatoria simple de 30 no-severos para el grupo control.
 
-__Tipo de muestra: No probabilística y Probabilística.__ 
+- Tipo de muestra: No probabilística para los casos y probabilística para los controles.__ 
 Los elementos del grupo caso provendrán de una selección arbitraria,
 mientras que el grupo control será seleccionado al azar, 
 i.e. con probabilidad de selección conocida.
@@ -2009,17 +2010,17 @@ sin evento que se incluirán en la población de comparación.
 
 #### Tipo de investigación
 
-__Por la finalidad: Analítico.__ A diferencia de un descriptivo, realizaremos comparaciones 
+- Por la finalidad: Analítico. A diferencia de un descriptivo, realizaremos comparaciones 
 entre grupos y evaluaremos una posible relación causal entre el factor y el efecto.
 
-__Por el control de la asignación: Observacional.__ A diferencia de un experimental, no 
+- Por el control de la asignación: Observacional. A diferencia de un experimental, no 
 controlaremos la asignación de los factores (severidad y episodios previos). Es decir,
 procederemos a observar el fenómeno, ejecutar la medición y analizar los resultados.
 
-__Por el seguimiento: Transversal.__ A diferencia de uno longitudinal, no ejecutaremos un 
+- Por el seguimiento: Transversal. A diferencia de uno longitudinal, no ejecutaremos un 
 seguimiento. Las variables se medirán una sola vez, en un mismo instante.
 
-__Por la relación cronológica: Prospectivo.__ A diferencia de un retrospectivo, 
+- Por la relación cronológica: Prospectivo. A diferencia de un retrospectivo, 
 recolectaremos los datos después de planificado el estudio.
 
 <!--__Por la dirección temporal: Hacia atrás/adelante.__ La población será selecionada por 
@@ -2203,6 +2204,8 @@ que integrará texto, código y resultados [@knitr], siguiendo principios de
 reproducibilidad [@CienciaReproducible2016].
 
 <!--# ASPECTOS ADMINISTRATIVOS-->
+
+<!-- \newpage -->
 
 # CRONOGRAMA DE TRABAJO
 
