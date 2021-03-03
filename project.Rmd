@@ -1,6 +1,6 @@
 ---
 output: 
-#  word_document:
+#  word_document: #
 #    reference_docx: Ecosistemas_template.docx
   pdf_document:
     latex_engine: xelatex
