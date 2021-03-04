@@ -5,12 +5,13 @@
 ## TO DO
 
 - (X) Fix project format (check comments) [I did not changed the aim]
+- ( ) Update citations and numeric references!
 - ( ) Contact advisor -> ask for emails con reviewers
 - ( ) Re-send project
 - ( ) Make slides as final presentation
 - ( ) Make an abstract of results
 - ( ) Contact Hugo for review
-- ( ) Send clearance!
+- ( ) Send clearance!!
 
 ## Project
 
