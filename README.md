@@ -8,6 +8,7 @@
 - ( ) Update citations and numeric references!
 - ( ) Contact advisor -> ask for emails con reviewers
 - ( ) Re-send project
+- ( ) Re-order proyect: original data / extrafiles / disposable output (including PDF)
 - ( ) Make slides as final presentation
 - ( ) Make an abstract of results
 - ( ) Contact Hugo for review
