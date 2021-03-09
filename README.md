@@ -5,7 +5,9 @@
 ## TO DO
 
 - (X) Fix project format (check comments) [I did not changed the aim]
+- (X) Re-run 04-abnomic.Rmd!
 - ( ) Update citations and numeric references!
+- ( ) agregar descubridores de especies!
 - ( ) Contact advisor -> ask for emails con reviewers
 - ( ) Re-send project
 - ( ) Re-order proyect: original data / extrafiles / disposable output (including PDF)
