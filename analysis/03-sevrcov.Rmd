@@ -1698,7 +1698,7 @@ sevdb_2 %>%
                mutate(codigo= str_replace(codigo,"LIM0","LIM")),
              by="codigo") %>% 
   filter(casecontrol=="0" & sev_WHO=="severo") %>% 
-  dplyr::select(4:11) %>% summarise_all(sum,na.rm=T)
+  dplyr::select(anemia_oms:convulsion) %>% summarise_all(sum,na.rm=T)
 
 sevdb_2 %>% 
   dplyr::select(codigo, sev_WHO, shock_oms) %>% 
@@ -2057,7 +2057,11 @@ sevdb_2ws <- sevdb_2 %>%
          presenta_comorb=as.factor(presenta_comorb),
          enf_cronica=as.factor(enf_cronica)) %>% 
   mutate(Study=forcats::fct_relevel(Study,"whole-db"),
-         parasitemia_mil=parasitemia/1000)
+         parasitemia_mil=parasitemia/1000) %>% 
+  mutate(en_zona_endemica_4 = cut(en_zona_endemica,c(0,6,15,26,72)) %>% as.factor(),
+         edad_4 = cut(edad,c(4,22,32,52,88)) %>% as.factor(),
+         parasitemia_mil_4 = cut(parasitemia_mil,c(0,1.330,3.338,6.038,42.683)) %>% as.factor()
+         )
 sevdb_2ws %>% dplyr::count(Study)
 sevdb_2ws %>% readr::write_rds("data/03-sevrcov-228obs_21var.rds")
 # output
@@ -2083,7 +2087,10 @@ sevdb_3sv <- sevdb_3 %>%
          tx_par_intest=as.factor(tx_par_intest),
          presenta_comorb=as.factor(presenta_comorb),
          enf_cronica=as.factor(enf_cronica),
-         parasitemia_mil=parasitemia/1000) %>% 
+         parasitemia_mil=parasitemia/1000,
+         en_zona_endemica_4 = cut(en_zona_endemica,c(0,6,15,26,72)) %>% as.factor(),
+         edad_4 = cut(edad,c(4,22,32,52,88)) %>% as.factor(),
+         parasitemia_mil_4 = cut(parasitemia_mil,c(0,1.330,3.338,6.038,42.683)) %>% as.factor()) %>% 
   readr::write_rds("data/03-sevrcov.rds")
 ```
 
@@ -2506,9 +2513,9 @@ tab_ws <- compareGroups(Study ~
                           #tx_par_intest + 
                           parasitemia_mil + 
                           episodio_previo + #episodio_previo_num + 
-                          sev_WHO #+ #sev_WHO_num +
+                          sev_WHO_2 #+ #sev_WHO_num +
                 ,
-              data = sevdb_2ws, byrow=F, method=c(edad=2,en_zona_endemica=2,episodio_previo_num=2,parasitemia_mil=2)
+              data = sevdb_2ws, byrow=F, method=c(edad=2,en_zona_endemica=2,parasitemia_mil=2)
               ) 
 tab_ws %>% createTable(show.all = T,show.p.overall = F)
 tab_ws %>% createTable(show.all = T,show.p.overall = F) %>% export2xls("table/tab1-in_out.xls")
@@ -2545,40 +2552,19 @@ tab_cr %>% createTable(show.all = T,show.n = F,show.p.overall = F,hide.no = "0")
 tab_cr %>% createTable(show.all = T,show.n = F,show.p.overall = F,hide.no = "0") %>% export2xls("table/tab2-in_out_oms.xls")
 ```
 
-```{r}
-#hist(sevdb_2ws$episodio_previo_num)
-#sevdb_2ws %>% dplyr::count(episodio_previo_num)
-tab_cr <- compareGroups(casecontrol ~ #Study ~ 
-                          #casecontrol + 
-                          Study + 
-                          sev_WHO_2 + 
-                          shock_oms + #clinicos
-                          pulmonar_oms +
-                          glas_oms +
-                          hiperbil_oms + #lab
-                          anemia_oms +
-                          renal_oms +
-                          hipoglic_oms +
-                          #postracion +#extra
-                          #coma +
-                          convulsion +
-                          sangr_oms + trombo_sev + #trombo_new
-                          #presenta_comorb+
-                          #enf_cronica
-                          #parasitemia + 
-                          sev_WHO_num_2 #+ sev_WHO_num_4
-                          #sev_WHO_num + sev_WHO_num_1 + sev_WHO_num_2 + sev_WHO_num_3 + sev_WHO_num_4
-                ,
-              data = sevdb_2ws, byrow=T#, method=c(edad=2,en_zona_endemica=2,episodio_previo_num=2,parasitemia=2)
-              ) 
-#tab_cr %>% createTable(show.all = T,show.n = T,hide.no = "0") #%>% export2xls("table/tab1.xls")
-tab_cr %>% createTable(show.all = T,show.n = F,show.p.overall = F,hide.no = "0") #%>% export2xls("table/tab1.xls")
-```
-
-```{r}
+```{r,eval=FALSE}
 sevdb_2ws %>% 
   filter(sev_WHO_num==1 & Study == "in-microarray") %>% 
   select(anemia_oms:trombo_sev,sev_WHO,sev_WHO_2)
+
+hist(sevdb_2ws$en_zona_endemica)
+summary(sevdb_2ws$en_zona_endemica)
+hist(sevdb_2ws$edad)
+summary(sevdb_2ws$edad)
+hist(sevdb_2ws$parasitemia_mil)
+summary(sevdb_2ws$parasitemia_mil)
+hist(sevdb_2ws$parasitemia)
+summary(sevdb_2ws$parasitemia)
 ```
 
 ### table 3: whole counfunders
@@ -2586,12 +2572,13 @@ sevdb_2ws %>%
 ```{r}
 #hist(sevdb_2ws$episodio_previo_num)
 #sevdb_2ws %>% dplyr::count(episodio_previo_num)
-tab_sv <- compareGroups(sev_WHO ~ 
-                          edad + sexo +
-                          en_zona_endemica +
+tab_sv <- compareGroups(sev_WHO_2 ~ 
+                          edad + #edad_4 + 
+                          sexo +
+                          en_zona_endemica + #en_zona_endemica_4 +
                           enf_cronica + #presenta_comorb + 
                           tx_par_intest + 
-                          parasitemia_mil +
+                          parasitemia_mil + #parasitemia_mil_4 +
                           episodio_previo #+ #episodio_previo_num + 
                           #sev_WHO #+ #sev_WHO_num +
                 ,
@@ -2608,12 +2595,13 @@ tab_sv %>% createTable(show.all = T,show.n = F) %>% export2xls("table/tab3-all-s
 ```{r}
 #hist(sevdb_2ws$episodio_previo_num)
 #sevdb_2ws %>% dplyr::count(episodio_previo_num)
-tab_sv <- compareGroups(sev_WHO ~ 
-                          edad + sexo +
-                          en_zona_endemica +
+tab_sv <- compareGroups(sev_WHO_2 ~ 
+                          edad + #edad_4 + 
+                          sexo +
+                          en_zona_endemica + #en_zona_endemica_4 +
                           enf_cronica + #presenta_comorb + 
-                          #tx_par_intest + 
-                          parasitemia_mil +
+                          tx_par_intest + 
+                          parasitemia_mil + #parasitemia_mil_4 +
                           episodio_previo #+ #episodio_previo_num + 
                           #sev_WHO #+ #sev_WHO_num +
                 ,
