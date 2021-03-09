@@ -1,22 +1,24 @@
-\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
 \PassOptionsToPackage{dvipsnames,svgnames*,x11names*}{xcolor}
 %
 \documentclass[
   a4paper]{article}
 \usepackage{lmodern}
-\usepackage{amssymb,amsmath}
+\usepackage{amsmath}
 \usepackage{ifxetex,ifluatex}
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provides euro and other symbols
-\else % if luatex or xelatex
+  \usepackage{textcomp} % provide euro and other symbols
+  \usepackage{amssymb}
+\else % if luatex or xetex
   \usepackage{unicode-math}
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
-% use upquote if available, for straight quotes in verbatim environments
+% Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \IfFileExists{microtype.sty}{% use microtype if available
   \usepackage[]{microtype}
@@ -41,14 +43,20 @@
   filecolor=Maroon,
   citecolor=Blue,
   urlcolor=Blue,
-  breaklinks=true}
-\urlstyle{same}  % don't use monospace font for urls
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
 \usepackage{longtable,booktabs}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
 % Allow footnotes in longtable head/foot
 \IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
 \makesavenoteenv{longtable}
-\usepackage{graphicx,grffile}
+\usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
@@ -57,25 +65,14 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
-\setlength{\emergencystretch}{3em}  % prevent overfull lines
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{5}
-% Redefines (sub)paragraphs to behave more like sections
-\ifx\paragraph\undefined\else
-  \let\oldparagraph\paragraph
-  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
-\fi
-\ifx\subparagraph\undefined\else
-  \let\oldsubparagraph\subparagraph
-  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
-\fi
-
-% set default figure placement to htbp
+% Set default figure placement to htbp
 \makeatletter
 \def\fps@figure{htbp}
 \makeatother
-
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
 \usepackage{multirow}
 \usepackage{pdflscape}
 \usepackage{afterpage}
@@ -83,6 +80,29 @@
 \usepackage{array}
 \usepackage{color,soul}
 \usepackage{geometry}
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
+  % set entry spacing
+  \ifnum #2 > 0
+  \setlength{\parskip}{#2\baselineskip}
+  \fi
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 \author{}
 \date{\vspace{-2.5em}}
@@ -217,38 +237,40 @@ malaria por \emph{P. vivax} en la región.
 \hypertarget{intro}{%
 \subsection{Formulación del problema}\label{intro}}
 
-Malaria es una enfermedad parasitaria de importancia mundial, causada
-por protozoarios del género \emph{Plasmodium} y transmitida por
-mosquitos del género \emph{Anopheles}. En el 2015, se estimaron 212
-millones de casos y 429,000 muertes atribuidas a esta infección (WHO
-\protect\hyperlink{ref-WHO2016world}{2016}). Aunque \emph{P. falciparum}
-representó el 96 y 99\% de estas cifras, fuera de África se estimó que
-\emph{P. vivax} fue responsable del 41 y 86\%, respectivamente. Más aún,
-la región de las Américas tuvo la mayor proporción de estos casos (69\%)
-donde Perú fue el tercer país con más reportes (n=63,153), detrás de
-Brasil y Venezuela, atribuidos en un 80\% a dicha especie (Rosas-Aguirre
-et al. \protect\hyperlink{ref-rosas2016peru}{2016}).
+Malaria es una enfermedad parasitaria causada por protozoarios del
+género \emph{Plasmodium} y transmitida por mosquitos del género
+\emph{Anopheles}. En el 2019, se estimaron 229 millones de casos en en
+87 paises endémicos y 409,000 muertes atribuidas a esta infección
+(\protect\hyperlink{ref-world2020world}{WHO 2020}). Aunque \emph{P.
+falciparum} representó el 96 y 99\% de estas cifras, fuera de África se
+estimó que \emph{P. vivax} fue responsable del 41 y 86\%,
+respectivamente. Más aún, la región de las Américas tuvo la mayor
+proporción de estos casos (69\%) donde Perú fue el tercer país con más
+reportes (n=63,153), detrás de Brasil y Venezuela, atribuidos en un 80\%
+a dicha especie (\protect\hyperlink{ref-rosas2016peru}{Rosas-Aguirre et
+al. 2016}).
 
 Reportes recientes de malaria severa y fatal causados por \emph{P.
 vivax} han desafiado su tradicional condición de enfermedad benigna
-(Baird \protect\hyperlink{ref-baird2009}{2009}; Quispe et al.
-\protect\hyperlink{ref-quispe2014}{2014}). El incremento de estos casos
-puede ser consecuencia de un retraso en la adquisición de inmunidad en
-la población por una reducción en la intensidad de transmisión (Reyburn
-et al. \protect\hyperlink{ref-reyburn2015}{2005}). Por ello, tanto su
-actual subestimación (MINSA \protect\hyperlink{ref-norma2001}{2007})
-como la ausencia de marcadores serológicos de protección contra la
-severidad en las actuales estrategias de eliminación (Quispe et al.
-\protect\hyperlink{ref-accelerate2016}{2016}) podría incrementar su
-prevalencia a largo plazo. En contraste con dicha hipótesis, pacientes
-de la Amazonía Peruana con malaria por \emph{P. vivax} severa y no
-complicada mostraron un grado similar de exposición previa, basado en la
-respuesta humoral contra un marcador tradicional (Baldeviano et al.
-\protect\hyperlink{ref-baldevi2013}{2013}). Sin embargo, recientes
-estudios a larga escala han desafiado su validez como indicador de
-inmunidad o exposición (Crompton et al.
-\protect\hyperlink{ref-crompton2010}{2010}; Helb et al.
-\protect\hyperlink{ref-Helb2015exposure}{2015}).
+(\protect\hyperlink{ref-baird2009}{Baird 2009};
+\protect\hyperlink{ref-quispe2014}{Antonio M. Quispe et al. 2014}). El
+incremento de estos casos puede ser consecuencia de un retraso en la
+adquisición de inmunidad en la población por una reducción en la
+intensidad de transmisión (\protect\hyperlink{ref-reyburn2015}{Reyburn
+et al. 2005}). Por ello, tanto su actual subestimación
+(\protect\hyperlink{ref-norma2001}{MINSA 2007}) como la ausencia de
+marcadores serológicos de protección contra la severidad en las actuales
+estrategias de eliminación
+(\protect\hyperlink{ref-accelerate2016}{Antonio M. Quispe et al. 2016})
+podría incrementar su prevalencia a largo plazo. En contraste con dicha
+hipótesis, pacientes de la Amazonía Peruana con malaria por \emph{P.
+vivax} severa y no complicada mostraron un grado similar de exposición
+previa, basado en la respuesta humoral contra un marcador tradicional
+(\protect\hyperlink{ref-baldevi2013}{Baldeviano et al. 2013}). Sin
+embargo, recientes estudios a larga escala han desafiado su validez como
+indicador de inmunidad o exposición
+(\protect\hyperlink{ref-crompton2010}{Crompton et al. 2010};
+\protect\hyperlink{ref-Helb2015exposure}{Helb et al. 2015}).
 
 Por esta razón, el presente estudio tiene como objetivo comparar la
 respuesta de anticuerpos ante la infección con \emph{P. vivax} contra
@@ -291,21 +313,22 @@ INVESTIGACIÓN}\label{justificaciuxf3n-de-la-investigaciuxf3n}}
 \subsection{Justificación}\label{justif}}
 
 Ante la reemergencia repetitiva de la malaria en la Amazonía Peruana
-(Griffing, Gamboa, and Udhayakumar
-\protect\hyperlink{ref-griffing2013history}{2013}; Rosas-Aguirre et al.
-\protect\hyperlink{ref-rosas2016peru}{2016}), la implementación de
-vigilancias serológicas programáticas en nuestro país es una prioridad
-(Rosas-Aguirre et al. \protect\hyperlink{ref-hotspots2015}{2015}). En
+(\protect\hyperlink{ref-griffing2013history}{Griffing, Gamboa, and
+Udhayakumar 2013}; \protect\hyperlink{ref-rosas2016peru}{Rosas-Aguirre
+et al. 2016}), la implementación de vigilancias serológicas
+programáticas en nuestro país es una prioridad
+(\protect\hyperlink{ref-hotspots2015}{Rosas-Aguirre et al. 2015}). En
 zonas con baja transmisión, estos ensayos poseen una mayor sensibilidad
 y representan un menor gasto económico en comparación a las estrategias
-convencionales de monitoreo y control (Elliott et al.
-\protect\hyperlink{ref-elliott2014}{2014}). Por esta razón, el presente
-estudio se justifica en el descubrimiento de antígenos potencialmente
-discriminantes de condiciones clínicas como severidad o exposición.
-Estos permitirán optimizar y acelerar la ejecución de vigilancias
-serológicas en los programas de salud pública contra la malaria en el
-Perú, en miras a su control y posterior eliminación (Quispe et al.
-\protect\hyperlink{ref-accelerate2016}{2016}).
+convencionales de monitoreo y control
+(\protect\hyperlink{ref-elliott2014}{Elliott et al. 2014}). Por esta
+razón, el presente estudio se justifica en el descubrimiento de
+antígenos potencialmente discriminantes de condiciones clínicas como
+severidad o exposición. Estos permitirán optimizar y acelerar la
+ejecución de vigilancias serológicas en los programas de salud pública
+contra la malaria en el Perú, en miras a su control y posterior
+eliminación (\protect\hyperlink{ref-accelerate2016}{Antonio M. Quispe et
+al. 2016}).
 
 \hypertarget{limit}{%
 \subsection{Limitaciones}\label{limit}}
@@ -317,8 +340,8 @@ no sincronizadas. El muestreo se ejecutó en la fase sintomática, momento
 en el que acuden al Hospital, con un desconocimiento del inicio de la
 infección por paciente. Sin embargo, infecciones experimentales han
 estimado que dicha fase ocurre normalmente entre los 11 y 13 días de
-infección (Arévalo-Herrera et al.
-\protect\hyperlink{ref-arevalo2014}{2014}).
+infección (\protect\hyperlink{ref-arevalo2014}{Arévalo-Herrera et al.
+2014}).
 
 Segundo, el estudio posee debilidades propias del diseño experimental a
 emplear. El diseño de tipo Caso Control es susceptible a errores
@@ -329,18 +352,18 @@ seguimiento activo impide el registro de covariables relevantes para la
 caracterización de la enfermedad.
 
 Tercero, los microarreglos de proteínas poseen limitantes propias a su
-fabricación (Vigil, Davies, and Felgner
-\protect\hyperlink{ref-vigil2010}{2010}). Cada paso (amplificación,
-clonamiento, expresión de genes a larga escala e impresión del arreglo)
-posee una eficiencia límite que afectará la calidad final de las
-proteínas. Además, el plegamiento proteico no será posible de verificar
-a dicha escala. Por último, la identificación de antígenos con
-modificaciones postranscriptacionales, particularmente relevantes en
-\emph{Plasmodium} (Chung et al.
-\protect\hyperlink{ref-leroch2009postmod}{2009}), no serán posibles de
-reproducir en su integridad en el sistema de expresión procarionte. A
-pesar de ello, se evaluará la validez del ensayo con controles internos
-a detallar en la \protect\hyperlink{validez}{sección 4.3.2.2}.
+fabricación (\protect\hyperlink{ref-vigil2010}{Vigil, Davies, and
+Felgner 2010}). Cada paso (amplificación, clonamiento, expresión de
+genes a larga escala e impresión del arreglo) posee una eficiencia
+límite que afectará la calidad final de las proteínas. Además, el
+plegamiento proteico no será posible de verificar a dicha escala. Por
+último, la identificación de antígenos con modificaciones
+postranscriptacionales, particularmente relevantes en \emph{Plasmodium}
+(\protect\hyperlink{ref-leroch2009postmod}{Chung et al. 2009}), no serán
+posibles de reproducir en su integridad en el sistema de expresión
+procarionte. A pesar de ello, se evaluará la validez del ensayo con
+controles internos a detallar en la \protect\hyperlink{validez}{sección
+4.3.2.2}.
 
 \hypertarget{viabilidad}{%
 \subsection{Viabilidad}\label{viabilidad}}
@@ -353,8 +376,8 @@ Primero, su ejecución es factible por la disponibilidad inmediata de
 muestras provenientes de un estudio prospectivo ya realizado, su
 adecuado tamaño muestral (n=60), la objetividad de la pregunta planteada
 y la experiencia técnica del investigador en la herramienta de análisis
-R (R Core Team \protect\hyperlink{ref-R2016}{2016})/Bioconductor
-(Gentleman et al. \protect\hyperlink{ref-bioconductor2004}{2004}).
+R (\protect\hyperlink{ref-R2016}{R Core Team 2016})/Bioconductor
+(\protect\hyperlink{ref-bioconductor2004}{Gentleman et al. 2004}).
 Segundo, el problema es de interés para la comunidad por la posibilidad
 de que sus resultados generen un cambio en la práctica médica. Tercero,
 la novedad de su enfoque a larga escala permitirá corroborar, refutar o
@@ -465,8 +488,8 @@ Segundo, los pacientes severos se definirán por la presencia de
 manifestaciones clínicas severas o complicaciones sistémicas. Esta
 variable será asignada por la presencia de uno o más criterios clínicos
 y de laboratorio para la malaria severa, según la clasificación
-recomendada por la Organización Mundial de la Salud (OMS) (WHO
-\protect\hyperlink{ref-WHO2014severe}{2014}).
+recomendada por la Organización Mundial de la Salud (OMS)
+(\protect\hyperlink{ref-WHO2014severe}{WHO 2014}).
 
 Tercero, la clasificación por episodios previos reportados representará
 la presencia de infecciones previas con malaria y, consecuentemente, la
@@ -662,22 +685,21 @@ investigación}\label{antecedentes-de-la-investigaciuxf3n}}
 
   Un hito en la aplicación de microarreglos de proteínas para el estudio
   de la respuesta humoral a escala epidemiológica fue la publicación de
-  Crompton et al.~2010 (Crompton et al.
-  \protect\hyperlink{ref-crompton2010}{2010}). Este estudio comparó la
-  respuesta de anticuerpos contra el 23\% del proteoma de \emph{P.
-  falciparum} antes y después de la temporada de malaria en 220
-  individuos de Mali, en dos grupos poblacionales: 2-10 y 18-25 años.
-  Dentro del grupo de niños entre 8 y 10 años se identificaron 49
-  proteínas con mayor reactividad serológica en el grupo de infectados
-  asintomáticos, en comparación a los sintomáticos. Cinco de los
-  principales candidatos a vacuna (CSP, LSA-3, MSP1, MSP2, AMA1) no
-  lograron discriminar ambos grupos. Sin embargo, cuatro candidatos
-  secundarios (STARP, LSA-1, RESA, antígeno 332), con expresión en
-  diferentes estadios del ciclo biológico, sí lograron tal
-  discriminación.
+  Crompton et al.~2010 (\protect\hyperlink{ref-crompton2010}{Crompton et
+  al. 2010}). Este estudio comparó la respuesta de anticuerpos contra el
+  23\% del proteoma de \emph{P. falciparum} antes y después de la
+  temporada de malaria en 220 individuos de Mali, en dos grupos
+  poblacionales: 2-10 y 18-25 años. Dentro del grupo de niños entre 8 y
+  10 años se identificaron 49 proteínas con mayor reactividad serológica
+  en el grupo de infectados asintomáticos, en comparación a los
+  sintomáticos. Cinco de los principales candidatos a vacuna (CSP,
+  LSA-3, MSP1, MSP2, AMA1) no lograron discriminar ambos grupos. Sin
+  embargo, cuatro candidatos secundarios (STARP, LSA-1, RESA, antígeno
+  332), con expresión en diferentes estadios del ciclo biológico, sí
+  lograron tal discriminación.
 
   Un segundo hito de interés representa el trabajo de Helb et al.~2015
-  (Helb et al. \protect\hyperlink{ref-Helb2015exposure}{2015}). Ellos
+  (\protect\hyperlink{ref-Helb2015exposure}{Helb et al. 2015}). Ellos
   reportaron una estrategia para identificar combinaciones de respuestas
   de anticuerpos contra más de un antígeno que maximicen la información
   de la exposición reciente al nivel de individuos. Para ello emplearon
@@ -686,17 +708,17 @@ investigación}\label{antecedentes-de-la-investigaciuxf3n}}
   falciparum} en 186 niños (3-6 años) de Uganda en base al registro
   activo y pasivo de sus historias clínicas a los largo de un año. En
   contraste a los marcadores tradicionalmente empleados para evaluar
-  exposición a nivel poblacional (CSP, MSP1, MSP2, AMA1) (Elliott et al.
-  \protect\hyperlink{ref-elliott2014}{2014}), se identificaron
-  marcadores más informativos como hyp2, GEXP18, EMP1, ETRAMP4, HSP40-II
-  y PF70. La validación de este método permitirá optimizar la selección
-  tradicional de marcadores. 
+  exposición a nivel poblacional (CSP, MSP1, MSP2, AMA1)
+  (\protect\hyperlink{ref-elliott2014}{Elliott et al. 2014}), se
+  identificaron marcadores más informativos como hyp2, GEXP18, EMP1,
+  ETRAMP4, HSP40-II y PF70. La validación de este método permitirá
+  optimizar la selección tradicional de marcadores.
 \item
   En Perú
 
-  El primer estudio en publicarse fue de Torres et al.~2014 (Torres et
-  al. \protect\hyperlink{ref-Torres2014asymptomatic}{2014}) donde
-  reportaron marcadores de inmunidad clínica -no esterilizante- de
+  El primer estudio en publicarse fue de Torres et al.~2014
+  (\protect\hyperlink{ref-Torres2014asymptomatic}{Torres et al. 2014})
+  donde reportaron marcadores de inmunidad clínica -no esterilizante- de
   adquisición natural a la malaria por \emph{P. falciparum}. Además de
   ello, el resultado con mayor implicancias fue que estos marcadores
   presentaron un enriquecimiento de polimorfismos no-sinónimos,
@@ -709,19 +731,19 @@ investigación}\label{antecedentes-de-la-investigaciuxf3n}}
   proteínas) de \emph{P. falciparum}.
 
   El segundo y último estudio en ser publicado ha sido el de Chuquiyauri
-  et al.~2015 (Chuquiyauri et al.
-  \protect\hyperlink{ref-chuquiyauri2015vivax}{2015}). Ellos compararon
-  la respuesta contra \emph{P. vivax} de pacientes con relapsos y
-  reinfección, sin encontrar diferencia alguna entre ambos grupos. Sin
-  embargo, al igual que el anterior estudio, identificaron un
-  enriquecimiento de proteínas con polimorfismos no-sinónimos en el
-  grupo de antígenos reactivos. Además, dentro del grupo con mayor
-  reactividad en toda la muestra, resaltaron a PvMSP-10 como potencial
-  candidato a vacuna al presentar la expresión más consistente y validar
-  lo reportado por dos estudios previos con enfoque tradicional donde
-  emplean ambos sistemas de expresión: eucariota y procariota. El
-  estudio empleó un arreglo con 2233 fragmentos (1936 proteínas) en 106
-  individuos de la ciudad de Maynas, Loreto - Perú.
+  et al.~2015 (\protect\hyperlink{ref-chuquiyauri2015vivax}{Chuquiyauri
+  et al. 2015}). Ellos compararon la respuesta contra \emph{P. vivax} de
+  pacientes con relapsos y reinfección, sin encontrar diferencia alguna
+  entre ambos grupos. Sin embargo, al igual que el anterior estudio,
+  identificaron un enriquecimiento de proteínas con polimorfismos
+  no-sinónimos en el grupo de antígenos reactivos. Además, dentro del
+  grupo con mayor reactividad en toda la muestra, resaltaron a PvMSP-10
+  como potencial candidato a vacuna al presentar la expresión más
+  consistente y validar lo reportado por dos estudios previos con
+  enfoque tradicional donde emplean ambos sistemas de expresión:
+  eucariota y procariota. El estudio empleó un arreglo con 2233
+  fragmentos (1936 proteínas) en 106 individuos de la ciudad de Maynas,
+  Loreto - Perú.
 \end{enumerate}
 
 \hypertarget{bases-teuxf3ricas}{%
@@ -744,38 +766,37 @@ vivax}}{Malaria por Plasmodium vivax}}\label{malaria-por-plasmodium-vivax}}
     \emph{P. vivax} y \emph{P. falciparum} son los principales
     responsables de los casos de malaria en humanos. Ambas especies
     exponen aproximadamente a 2.5 mil millones de personas en riesgo de
-    infección (Howes et al.
-    \protect\hyperlink{ref-howes2016global}{2016}). Sin embargo,
-    \emph{P. vivax} es el parásito dominante en las regiones fuera del
-    África subsahariana, en su mayoría densamente pobladas y
-    empobrecidas. Entre ellas, Etiopía, India, Indonesia y Pakistán
-    acumularon el 78\% de casos de \emph{P. vivax} a nivel mundial. A su
-    vez, la región de las Américas tuvo la mayor proporción de estos,
-    con un 69\% (WHO \protect\hyperlink{ref-WHO2016world}{2016}). A
-    pesar de ello, hasta el momento la mayoría de la investigación y
-    financiamiento está destinado a la prevención, tratamiento y control
-    de \emph{P. falciparum} (PATH
-    \protect\hyperlink{ref-path2011}{2011}).
+    infección (\protect\hyperlink{ref-howes2016global}{Howes et al.
+    2016}). Sin embargo, \emph{P. vivax} es el parásito dominante en las
+    regiones fuera del África subsahariana, en su mayoría densamente
+    pobladas y empobrecidas. Entre ellas, Etiopía, India, Indonesia y
+    Pakistán acumularon el 78\% de casos de \emph{P. vivax} a nivel
+    mundial. A su vez, la región de las Américas tuvo la mayor
+    proporción de estos, con un 69\%
+    (\protect\hyperlink{ref-WHO2016world}{WHO 2016}). A pesar de ello,
+    hasta el momento la mayoría de la investigación y financiamiento
+    está destinado a la prevención, tratamiento y control de \emph{P.
+    falciparum} (\protect\hyperlink{ref-path2011}{PATH 2011}).
   \item
     \textbf{En el Perú}
 
     En el 2015, Perú fue el tercer país con más casos reportados en
     Latinoamérica (19\%), detrás de Brasil (24\%) y Venezuela (30\%)
-    (WHO \protect\hyperlink{ref-WHO2016world}{2016}). El 80\% fueron
+    (\protect\hyperlink{ref-WHO2016world}{WHO 2016}). El 80\% fueron
     causados por \emph{P. vivax} (63,153 en total), en regiones con
-    endemismo y transmisión heterogénea (Rosas-Aguirre et al.
-    \protect\hyperlink{ref-rosas2016peru}{2016}). El 95\% pertenecieron
-    al Noreste amazónico (con una razón Pv/Pf de 4/1) y el resto al
-    Norte costero y la región minera del Suroeste. Notablemente,
-    comunidades en Madre de Dios no han registrado caso por \emph{P.
-    falciparum} en una década (2001-2012) (Rosas-Aguirre et al.
-    \protect\hyperlink{ref-rosas2016peru}{2016}). Con respecto a
-    factores ambientales, en el año 1998 durante el fenómeno El
-    Niño-Oscilación Sur (ENSO) se produjo el mayor pico de casos anuales
-    en la historia (200,000 casos), donde la región del Norte costero
-    representó el 48\% de los casos a nivel nacional (Gagnon,
-    Smoyer-Tomic, and Bush
-    \protect\hyperlink{ref-gagnon2002enso}{2002}). 
+    endemismo y transmisión heterogénea
+    (\protect\hyperlink{ref-rosas2016peru}{Rosas-Aguirre et al. 2016}).
+    El 95\% pertenecieron al Noreste amazónico (con una razón Pv/Pf de
+    4/1) y el resto al Norte costero y la región minera del Suroeste.
+    Notablemente, comunidades en Madre de Dios no han registrado caso
+    por \emph{P. falciparum} en una década (2001-2012)
+    (\protect\hyperlink{ref-rosas2016peru}{Rosas-Aguirre et al. 2016}).
+    Con respecto a factores ambientales, en el año 1998 durante el
+    fenómeno El Niño-Oscilación Sur (ENSO) se produjo el mayor pico de
+    casos anuales en la historia (200,000 casos), donde la región del
+    Norte costero representó el 48\% de los casos a nivel nacional
+    (\protect\hyperlink{ref-gagnon2002enso}{Gagnon, Smoyer-Tomic, and
+    Bush 2002}).
   \end{enumerate}
 \item
   Biología
@@ -821,9 +842,9 @@ vivax}}{Malaria por Plasmodium vivax}}\label{malaria-por-plasmodium-vivax}}
     \textbf{Particularidades}
 
     \emph{P. vivax} posee importantes variantes biológicas que
-    caracterizan su epidemiología y dinámica de infección (Howes et al.
-    \protect\hyperlink{ref-howes2016global}{2016}). Tres de las más
-    importantes son:
+    caracterizan su epidemiología y dinámica de infección
+    (\protect\hyperlink{ref-howes2016global}{Howes et al. 2016}). Tres
+    de las más importantes son:
 
     \begin{enumerate}
     \def\labelenumiii{\arabic{enumiii}.}
@@ -841,7 +862,7 @@ vivax}}{Malaria por Plasmodium vivax}}\label{malaria-por-plasmodium-vivax}}
     \item
       Dependencia del antígeno \emph{Duffy} para la invasión de RBC,
       cuya ausencia en individuos con ancestría africana ha sido
-      considerada como un factor de resistencia a \emph{P. vivax}. 
+      considerada como un factor de resistencia a \emph{P. vivax}.
     \end{enumerate}
   \end{enumerate}
 \end{enumerate}
@@ -856,9 +877,9 @@ vivax}}{Malaria por Plasmodium vivax}}\label{malaria-por-plasmodium-vivax}}
 
   Ante la ausencia de una descripción especie-específica, la malaria
   severa por \emph{P. vivax} está definida por los criterios para
-  \emph{P. falciparum} otorgados por la OMS en el 2014 (WHO
-  \protect\hyperlink{ref-WHO2014severe}{2014}), el cual incluye una o
-  más de las siguientes (todas registradas en mono-infecciones por
+  \emph{P. falciparum} otorgados por la OMS en el 2014
+  (\protect\hyperlink{ref-WHO2014severe}{WHO 2014}), el cual incluye una
+  o más de las siguientes (todas registradas en mono-infecciones por
   \emph{P. vivax}):
 
   \begin{enumerate}
@@ -884,13 +905,14 @@ vivax}}{Malaria por Plasmodium vivax}}\label{malaria-por-plasmodium-vivax}}
     \textbf{A nivel mundial}
 
     Entre el 2005 y 2015, 1-3\% de casos no-complicados fueron asumidos
-    como malaria severa. Esta causó la muerte de 429,000 personas (WHO
-    \protect\hyperlink{ref-WHO2016world}{2016}), en su mayoría (90\%)
-    niños menores de 5 años en África (Wassmer et al.
-    \protect\hyperlink{ref-wassmer2015}{2015}). La vulnerabilidad a esta
-    manifestación ha sido asociada con la intensidad de transmisión y el
-    desarrollo de la inmunidad dependiente a la edad (Reyburn et al.
-    \protect\hyperlink{ref-reyburn2015}{2005}).
+    como malaria severa. Esta causó la muerte de 429,000 personas
+    (\protect\hyperlink{ref-WHO2016world}{WHO 2016}), en su mayoría
+    (90\%) niños menores de 5 años en África
+    (\protect\hyperlink{ref-wassmer2015}{Wassmer et al. 2015}). La
+    vulnerabilidad a esta manifestación ha sido asociada con la
+    intensidad de transmisión y el desarrollo de la inmunidad
+    dependiente a la edad (\protect\hyperlink{ref-reyburn2015}{Reyburn
+    et al. 2005}).
 
     \begin{enumerate}
     \def\labelenumiii{\arabic{enumiii}.}
@@ -899,47 +921,47 @@ vivax}}{Malaria por Plasmodium vivax}}\label{malaria-por-plasmodium-vivax}}
       En zonas de \emph{alta transmisión} como en el África
       subsahariana, las poblaciones más vulnerables son: niños menores
       de 5 años con un desarrollo incompleto de inmunidad parcial contra
-      la malaria (Stanisic et al.
-      \protect\hyperlink{ref-Stanisic2015}{2015}), mujeres embarazadas
-      en parte a la adhesión placentaria de glóbulos rojos infectados
-      (iRBC) (Rogerson et al.
-      \protect\hyperlink{ref-rogerson2007preg}{2007}), y viajeros o
-      migrantes sin inmunidad provenientes de áreas con baja o ninguna
-      transmisión de malaria.
+      la malaria (\protect\hyperlink{ref-Stanisic2015}{Stanisic et al.
+      2015}), mujeres embarazadas en parte a la adhesión placentaria de
+      glóbulos rojos infectados (iRBC)
+      (\protect\hyperlink{ref-rogerson2007preg}{Rogerson et al. 2007}),
+      y viajeros o migrantes sin inmunidad provenientes de áreas con
+      baja o ninguna transmisión de malaria.
     \item
       En zonas de \emph{baja transmisión} como en Asia y América Latina,
       al haber una menor exposición a la infección, la mayoría de la
       población llega a la adultez sin haber desarrollado una inmunidad
       protectiva. Como consecuencia, la población adolescente y adulta
       joven es la más susceptible a desarrollar esta patología
-      (Llanos-Chea et al. \protect\hyperlink{ref-llanoschea2015}{2015}),
+      (\protect\hyperlink{ref-llanoschea2015}{Llanos-Chea et al. 2015}),
       comúnmente al iniciar trabajos a campo abierto, e.g.~actividades
       madereras o mineras, en zonas de alto riesgo de contacto con
-      mosquitos infectados (MINSA
-      \protect\hyperlink{ref-factores2001}{2001}).
+      mosquitos infectados (\protect\hyperlink{ref-factores2001}{MINSA
+      2001}).
     \end{enumerate}
   \item
     \textbf{En el Perú}
 
-    En el Norte costero, Quispe et al.~2014 (Quispe et al.
-    \protect\hyperlink{ref-quispe2014}{2014}) mediante un estudio
-    retrospectivo (2008-2009) identificaron 81/6502 casos de malaria
-    severa por \emph{P. vivax} con anemia severa (57\%), shock
-    circulatorio (25\%), hiperbilirrubina (25\%), daño pulmonar (21\%),
-    daño renal agudo (14\%) y Glasgow \(\le\) 9/14 (11\%). Comparados
-    con los pacientes no complicados, los severos fueron mayores (38 vs
-    26 años, P\textless{}0.001).
+    En el Norte costero, Quispe et al.~2014
+    (\protect\hyperlink{ref-quispe2014}{Antonio M. Quispe et al. 2014})
+    mediante un estudio retrospectivo (2008-2009) identificaron 81/6502
+    casos de malaria severa por \emph{P. vivax} con anemia severa
+    (57\%), shock circulatorio (25\%), hiperbilirrubina (25\%), daño
+    pulmonar (21\%), daño renal agudo (14\%) y Glasgow \(\le\) 9/14
+    (11\%). Comparados con los pacientes no complicados, los severos
+    fueron mayores (38 vs 26 años, P\textless0.001).
 
     En el Noreste amazónico, un reciente estudio prospectivo dirigido
     por El Centro de Enfermedades Tropicales de la Marina de los Estados
-    Unidos NAMRU-6 (2012-2013) (Smith-Nuñez et al.
-    \protect\hyperlink{ref-smith2013}{2013}) identificó 55/164 casos de
-    malaria severa por \emph{P. vivax} con shock circulatorio (27.6\%),
-    daño pulmonar (24.5\%) hiperbilirubina (18.1\%), daño renal agudo
-    (2\%), Glasgow \(\le\) 9/14 (2\%) y anemia severa (1.7\%). No se
-    encontraron diferencias con respecto a la edad entre no-severos y
-    severos (33 vs 29 años, P=0.497). Sin embargo, sí se identificó una
-    mayor proporción de malaria severa en mujeres (52 vs 35\%, P=0.039).
+    Unidos NAMRU-6 (2012-2013)
+    (\protect\hyperlink{ref-smith2013}{Smith-Nuñez et al. 2013})
+    identificó 55/164 casos de malaria severa por \emph{P. vivax} con
+    shock circulatorio (27.6\%), daño pulmonar (24.5\%) hiperbilirubina
+    (18.1\%), daño renal agudo (2\%), Glasgow \(\le\) 9/14 (2\%) y
+    anemia severa (1.7\%). No se encontraron diferencias con respecto a
+    la edad entre no-severos y severos (33 vs 29 años, P=0.497). Sin
+    embargo, sí se identificó una mayor proporción de malaria severa en
+    mujeres (52 vs 35\%, P=0.039).
   \end{enumerate}
 \end{enumerate}
 
@@ -976,13 +998,13 @@ vivax}}{Malaria por Plasmodium vivax}}\label{malaria-por-plasmodium-vivax}}
     identificación de genes homólogos a \emph{Pf var} (\emph{Pv vir}) y
     evindencias \emph{post mortem} de iRBC en capilares pulmonares han
     sugerido la posibilidad de secuestramiento tisular por \emph{P.
-    vivax} (Wassmer et al. \protect\hyperlink{ref-wassmer2015}{2015}).
+    vivax} (\protect\hyperlink{ref-wassmer2015}{Wassmer et al. 2015}).
     En línea con esta evidencia, recientemente se ha demostrado que en
     los casos severos por \emph{P. vivax} la parasitemia periférica
     subestima la biomasa parasitaria total, siendo la fracción oculta la
     mayor contribuyente de citoquinas proinflamatorias, semejante a los
-    casos por \emph{P. falciparum} (Barber et al.
-    \protect\hyperlink{ref-barber2015}{2015}). 
+    casos por \emph{P. falciparum}
+    (\protect\hyperlink{ref-barber2015}{Barber et al. 2015}).
   \end{enumerate}
 \end{enumerate}
 
@@ -991,17 +1013,17 @@ vivax}}{Malaria por Plasmodium vivax}}\label{malaria-por-plasmodium-vivax}}
 anticuerpos}\label{respuesta-de-anticuerpos}}
 
 La concentración de anticuerpos contra antígenos de \emph{Plasmodium} es
-un biomarcador sensible a la exposición de malaria (Elliott et al.
-\protect\hyperlink{ref-elliott2014}{2014}). Sin embargo, las evidencias
-a favor de dianas para \emph{P. vivax} continúan estando limitadas por
-la ausencia de cultivos \emph{in vitro} y modelos animales de infección.
-Este problema se ve reflejado en su escaso número de candidatos a vacuna
-(PvDBP y PvCSP) en comparación a los 23 de \emph{P. falciparum} (WHO,
-\protect\hyperlink{ref-rainbow2016}{n.d.}). Por ello, la principal
-fuente de evidencia a favor de biomarcadores para \emph{P. vivax} está
-en la identificación de antígenos con respuestas de anticuerpos
-asociadas a la adquisición natural de inmunidad en poblaciones
-endémicas.
+un biomarcador sensible a la exposición de malaria
+(\protect\hyperlink{ref-elliott2014}{Elliott et al. 2014}). Sin embargo,
+las evidencias a favor de dianas para \emph{P. vivax} continúan estando
+limitadas por la ausencia de cultivos \emph{in vitro} y modelos animales
+de infección. Este problema se ve reflejado en su escaso número de
+candidatos a vacuna (PvDBP y PvCSP) en comparación a los 23 de \emph{P.
+falciparum} (\protect\hyperlink{ref-rainbow2016}{WHO, n.d.}). Por ello,
+la principal fuente de evidencia a favor de biomarcadores para \emph{P.
+vivax} está en la identificación de antígenos con respuestas de
+anticuerpos asociadas a la adquisición natural de inmunidad en
+poblaciones endémicas.
 
 \begin{enumerate}
 \def\labelenumi{\alph{enumi}.}
@@ -1016,14 +1038,14 @@ endémicas.
     Estudios longitudinales han sugerido que, en un inicio, la
     intensidad de la respuesta de anticuerpos actúa como marcador de
     exposición la cual, luego de una constante exposición, incrementa
-    hasta superar un umbral de protección (Stanisic et al.
-    \protect\hyperlink{ref-Stanisic2015}{2015}). En este sentido,
-    estudios seroepidemiológicos en \emph{P. vivax} han logrado asociar
-    marcadores con exposición (PvCSP, PvMSP-1\textsubscript{19},
-    PvMSP-9\textsubscript{RIRII} y PvAMA-1) e inmunidad
-    (PvMSP-1\textsubscript{19}, PvMSP-1\textsubscript{NT},
-    PvMSP-3\(\alpha\) y PvMSP-9\textsubscript{NT}) (Cutts et al.
-    \protect\hyperlink{ref-cutts2014meta}{2014}). 
+    hasta superar un umbral de protección
+    (\protect\hyperlink{ref-Stanisic2015}{Stanisic et al. 2015}). En
+    este sentido, estudios seroepidemiológicos en \emph{P. vivax} han
+    logrado asociar marcadores con exposición (PvCSP,
+    PvMSP-1\textsubscript{19}, PvMSP-9\textsubscript{RIRII} y PvAMA-1) e
+    inmunidad (PvMSP-1\textsubscript{19}, PvMSP-1\textsubscript{NT},
+    PvMSP-3\(\alpha\) y PvMSP-9\textsubscript{NT})
+    (\protect\hyperlink{ref-cutts2014meta}{Cutts et al. 2014}).
   \item
     \textbf{de inmunidad}
 
@@ -1034,11 +1056,11 @@ endémicas.
     estado resistente a la \emph{malaria sintomática}. A pesar de ello,
     no se ha demostrado que esta adquisición natural de inmunidad por la
     exposición acumulada a malaria otorgue una \emph{protección
-    esterilizante} o de resistencia a la infección (Crompton et al.
-    \protect\hyperlink{ref-crompton2014rev}{2014}). Los detalles de los
-    procesos involucrados en cada una de estas tres fases no están
-    completamente entendidos, pero se tiene detalles de algunos
-    componentes:
+    esterilizante} o de resistencia a la infección
+    (\protect\hyperlink{ref-crompton2014rev}{Crompton et al. 2014}). Los
+    detalles de los procesos involucrados en cada una de estas tres
+    fases no están completamente entendidos, pero se tiene detalles de
+    algunos componentes:
 
     \begin{enumerate}
     \def\labelenumiii{\arabic{enumiii}.}
@@ -1047,31 +1069,29 @@ endémicas.
 
       La adquisición de anticuerpos que bloqueen la adhesión de iRBC o
       invasión parasitaria son candidatos a otorgar una protección a
-      este nivel (Wassmer et al.
-      \protect\hyperlink{ref-wassmer2015}{2015}). Antígenos
-      referenciales son (i) las proteínas VIR en \emph{P. vivax},
-      homólogas a VAR en \emph{P. falciparum}, posiblemente secretadas
-      en iRBC y causantes de adhesividad a endotelio o RBC no
-      infectados, condición que desencadena el rosetamiento y posterior
-      obstrucción microvascular (Portillo et al.
-      \protect\hyperlink{ref-portillo2001vir}{2001}), y (ii) las
-      proteínas de la familia PvDBP y PvRBP (\emph{Duffy-} y
+      este nivel (\protect\hyperlink{ref-wassmer2015}{Wassmer et al.
+      2015}). Antígenos referenciales son (i) las proteínas VIR en
+      \emph{P. vivax}, homólogas a VAR en \emph{P. falciparum},
+      posiblemente secretadas en iRBC y causantes de adhesividad a
+      endotelio o RBC no infectados, condición que desencadena el
+      rosetamiento y posterior obstrucción microvascular
+      (\protect\hyperlink{ref-portillo2001vir}{Portillo et al. 2001}), y
+      (ii) las proteínas de la familia PvDBP y PvRBP (\emph{Duffy-} y
       \emph{Reticulocyte- binding proteins}), responsables de la
       invasión a reticulocitos por la ruta tradicional y alternativa,
-      respectivamente (Galinski et al.
-      \protect\hyperlink{ref-galinski1992rbp}{1992}).
+      respectivamente (\protect\hyperlink{ref-galinski1992rbp}{Galinski
+      et al. 1992}).
     \item
       \textbf{contra la enfermedad}
 
       En el caso de \emph{P. vivax}, su adquisición ocurre con una mayor
       rapidez, posiblemente facilitada por sus particularidades
-      biológicas (Mueller et al.
-      \protect\hyperlink{ref-mueller2013}{2013}). Los antígenos
-      propuestos hasta el momento para esta especie son proteínas del
-      micronema de merozoitos como DBP y AMA1, y proteínas de superficie
-      como MSP1, MSP1-P (región C-terminal), MSP3 (PvMSP-3\(\alpha\),
-      PvMSP-3\(\beta\)) y MSP9 (López et al.
-      \protect\hyperlink{ref-lopez2017}{2017}). 
+      biológicas (\protect\hyperlink{ref-mueller2013}{Mueller et al.
+      2013}). Los antígenos propuestos hasta el momento para esta
+      especie son proteínas del micronema de merozoitos como DBP y AMA1,
+      y proteínas de superficie como MSP1, MSP1-P (región C-terminal),
+      MSP3 (PvMSP-3\(\alpha\), PvMSP-3\(\beta\)) y MSP9
+      (\protect\hyperlink{ref-lopez2017}{López et al. 2017}).
     \item
       \textbf{contra la parasitemia}
 
@@ -1083,8 +1103,9 @@ endémicas.
       inmunizaciones a lo largo de 56 semanas y una reexposición con
       esporozoitos infecciosos, 5/12 voluntarios obtuvieron dicha
       protección y la respuesta de anticuerpos IgG1 anti-PvCSP estuvo
-      asociada a ella (Arévalo-Herrera et al.
-      \protect\hyperlink{ref-arevalo2016spz}{2016}). 
+      asociada a ella
+      (\protect\hyperlink{ref-arevalo2016spz}{Arévalo-Herrera et al.
+      2016}).
     \end{enumerate}
   \end{enumerate}
 \item
@@ -1093,12 +1114,12 @@ endémicas.
   El parásito de la malaria, al tener un ciclo de vida complejo con
   múltiples estadios de desarrollo en el humano, posee también un
   transcriptoma, proteoma y, por lo tanto, un \emph{inmunoma}
-  estadio-específico que deriva de un total de \textasciitilde{}5300
+  estadio-específico que deriva de un total de \textasciitilde5300
   proteínas putativas. Por este motivo, tanto los esfuerzos de vacunas
   por subunidades como por organismos completos atenuados han fracasado,
   en contraste a su eficacia en otras infecciones como hepatitis B
-  (HBsAg) y tuberculosis (BCG), respectivamente (De Sousa and Doolan
-  \protect\hyperlink{ref-immunomics2016}{2016}).
+  (HBsAg) y tuberculosis (BCG), respectivamente
+  (\protect\hyperlink{ref-immunomics2016}{De Sousa and Doolan 2016}).
 
   \begin{enumerate}
   \def\labelenumii{\roman{enumii}.}
@@ -1122,8 +1143,8 @@ endémicas.
     mayor información sobre aspectos clave como el porcentaje del
     proteoma reconocido por el hospedero, la capacidad predictiva de
     anticuerpos sobre el estado de la enfermedad o de las secuencias de
-    aminoácidos sobre su inmunogenicidad (Davies et al.
-    \protect\hyperlink{ref-Davies2015Large}{2015}). 
+    aminoácidos sobre su inmunogenicidad
+    (\protect\hyperlink{ref-Davies2015Large}{Davies et al. 2015}).
   \end{enumerate}
 \end{enumerate}
 
@@ -1134,14 +1155,14 @@ proteínas}\label{microarreglos-de-proteuxednas}}
 Esta es una técnica empleada en la medición a larga escala de las
 interacciones o actividades de proteínas capaz de reconstruir redes
 biológicas entre diferentes clases de moléculas y estados celulares
-(Uzoma and Zhu \protect\hyperlink{ref-uzoma2013interactome}{2013}). Su
+(\protect\hyperlink{ref-uzoma2013interactome}{Uzoma and Zhu 2013}). Su
 empleo en el contexto \emph{inmunómico}, con la cuantificación de las
 interacciones antígeno-anticuerpo, posee características analíticas
-similares a los microarreglos de ADN (Sundaresh et al.
-\protect\hyperlink{ref-sundaresh2006}{2006}), lo que ha facilitado la
-adaptación de los componentes estandarizados para el diseño de
-experimentos en esta tecnología (Allison et al.
-\protect\hyperlink{ref-allison2006}{2006}).
+similares a los microarreglos de ADN
+(\protect\hyperlink{ref-sundaresh2006}{Sundaresh et al. 2006}), lo que
+ha facilitado la adaptación de los componentes estandarizados para el
+diseño de experimentos en esta tecnología
+(\protect\hyperlink{ref-allison2006}{Allison et al. 2006}).
 
 \begin{enumerate}
 \def\labelenumi{\alph{enumi}.}
@@ -1156,20 +1177,20 @@ experimentos en esta tecnología (Allison et al.
     El desarrollo de un plan de experimentación tiene el objetivo de
     maximizar la calidad y cantidad de la información obtenida. Una de
     las secciones clave dentro del MIAME o ``información mínima sobre
-    experimentos basados en microarreglos'' (Brazma et al.
-    \protect\hyperlink{ref-brazma2001}{2001}) es el detalle de la
-    información de los elementos a incluir (e.g., secuencias de
-    moléculas correspondiente a genes específicos). El primer diseño de
-    microarreglos para \emph{P. vivax} y \emph{P. falciparum} fue
-    estandarizado por Finney et al.~2014 (Finney et al.
-    \protect\hyperlink{ref-Finney2014}{2014}) en base a la evidencia
-    transcriptómica, proteómica y características inmunogénicas de
-    proteínas predichas en ambos genomas. Posteriormente, en el 2015 el
-    Centro Internacional de Excelencia para la Investigación de la
-    Malaria (ICEMR) realizó una subselección empírica de este
-    microarreglo con 142 muestras de 10 paises con malaria endémica,
-    entre ellos Perú (King et al.
-    \protect\hyperlink{ref-King2015FOC}{2015}).
+    experimentos basados en microarreglos''
+    (\protect\hyperlink{ref-brazma2001}{Brazma et al. 2001}) es el
+    detalle de la información de los elementos a incluir (e.g.,
+    secuencias de moléculas correspondiente a genes específicos). El
+    primer diseño de microarreglos para \emph{P. vivax} y \emph{P.
+    falciparum} fue estandarizado por Finney et al.~2014
+    (\protect\hyperlink{ref-Finney2014}{Finney et al. 2014}) en base a
+    la evidencia transcriptómica, proteómica y características
+    inmunogénicas de proteínas predichas en ambos genomas.
+    Posteriormente, en el 2015 el Centro Internacional de Excelencia
+    para la Investigación de la Malaria (ICEMR) realizó una subselección
+    empírica de este microarreglo con 142 muestras de 10 paises con
+    malaria endémica, entre ellos Perú
+    (\protect\hyperlink{ref-King2015FOC}{King et al. 2015}).
   \item
     \textbf{Pre procesamiento}
 
@@ -1186,29 +1207,29 @@ experimentos en esta tecnología (Allison et al.
       muestras. Este procedimiento es ejecutado tradicionalmente a
       través de la sustracción de controles o \emph{fold over control}
       (FOC), obteniendo el cociente de las lecturas objetivo con
-      respecto a la mediana de los controles negativos por muestra (King
-      et al. \protect\hyperlink{ref-King2015FOC}{2015}); 
+      respecto a la mediana de los controles negativos por muestra
+      (\protect\hyperlink{ref-King2015FOC}{King et al. 2015});
     \item
       Transformación: Reduce la heterocedasticidad o heterogeneidad de
       varianzas entre las observaciones por errores aleatorios en el
-      proceso de hibridación (Kreil and Russell
-      \protect\hyperlink{ref-kreil2005bullet}{2005}). Este fenómeno se
-      evidencia en el incremento de la varianza directamente
-      proporcional al incremento de su intensidad (Brown, Goodwin, and
-      Sorger \protect\hyperlink{ref-brown2001image}{2001}). Dependiendo
-      de la dispersión de los datos, se asumen modelos de error
-      multiplicativo o aditivo, donde la transformación logarítmica o
-      arcoseno hiperbólico es ejecutada sobre los valores normalizados. 
+      proceso de hibridación
+      (\protect\hyperlink{ref-kreil2005bullet}{Kreil and Russell 2005}).
+      Este fenómeno se evidencia en el incremento de la varianza
+      directamente proporcional al incremento de su intensidad
+      (\protect\hyperlink{ref-brown2001image}{Brown, Goodwin, and Sorger
+      2001}). Dependiendo de la dispersión de los datos, se asumen
+      modelos de error multiplicativo o aditivo, donde la transformación
+      logarítmica o arcoseno hiperbólico es ejecutada sobre los valores
+      normalizados.
     \item
       Filtrado: En experimentos a larga escala permite incrementar el
       poder de detección de elementos con expresión diferenciada
-      (Bourgon, Gentleman, and Huber
-      \protect\hyperlink{ref-bourgon2010filter}{2010}). En estos, las
-      estrategias de corrección posteriores a la comparación de
-      múltiples hipótesis son sensibles a esta cantidad. En este
-      sentido, este procedimiento retira de forma preliminar a los
-      elementos con reducidas probabilidades de expresarse
-      diferencialmente. 
+      (\protect\hyperlink{ref-bourgon2010filter}{Bourgon, Gentleman, and
+      Huber 2010}). En estos, las estrategias de corrección posteriores
+      a la comparación de múltiples hipótesis son sensibles a esta
+      cantidad. En este sentido, este procedimiento retira de forma
+      preliminar a los elementos con reducidas probabilidades de
+      expresarse diferencialmente.
     \end{enumerate}
   \item
     \textbf{Inferencia}
@@ -1217,12 +1238,12 @@ experimentos en esta tecnología (Allison et al.
     la expression o reactividad diferencial de elementos entre grupos.
     Sin embargo, a esta escala se posee dos principales problemas: (1)
     presencia de varianzas artificialmente altas o bajas producto del
-    bajo número de réplicas entre arreglos o muestras (Baldi and Long
-    \protect\hyperlink{ref-baldi2001cybert}{2001}) y (2) un amplio
-    número de hipótesis puestas a prueba en forma simultánea, donde los
-    test estadísticos tradicionales pueden generar un largo número de
-    falsos positivos (Kayala and Baldi
-    \protect\hyperlink{ref-kayala2012cyber}{2012}).
+    bajo número de réplicas entre arreglos o muestras
+    (\protect\hyperlink{ref-baldi2001cybert}{Baldi and Long 2001}) y (2)
+    un amplio número de hipótesis puestas a prueba en forma simultánea,
+    donde los test estadísticos tradicionales pueden generar un largo
+    número de falsos positivos
+    (\protect\hyperlink{ref-kayala2012cyber}{Kayala and Baldi 2012}).
 
     \begin{enumerate}
     \def\labelenumiii{\arabic{enumiii}.}
@@ -1233,21 +1254,21 @@ experimentos en esta tecnología (Allison et al.
       las diferencias entre grupos generan cambios en la intensidad
       promedio del gen mas no en su varianza, se estima una varianza
       general como probabilidad previa para actualizar (corregir) todas
-      las varianzas observadas en el experimento (Smyth and others
-      \protect\hyperlink{ref-smyth2004ebayes}{2004}) Con ello, es
-      posible obtener inferencias más estables que el test-t ordinario
-      bajo un contexto limitado de réplicas (Kayala and Baldi
-      \protect\hyperlink{ref-kayala2012cyber}{2012}).
+      las varianzas observadas en el experimento
+      (\protect\hyperlink{ref-smyth2004ebayes}{Smyth and others 2004})
+      Con ello, es posible obtener inferencias más estables que el
+      test-t ordinario bajo un contexto limitado de réplicas
+      (\protect\hyperlink{ref-kayala2012cyber}{Kayala and Baldi 2012}).
     \item
       Razón de falsos descubrimientos (FDR): Los métodos de corrección o
       ajuste de valores P permiten que el investigador pueda controlar
       la razón de falsos descubrimientos con respecto al total de
-      hipótesis positivas (Brazma et al.
-      \protect\hyperlink{ref-brazma2001}{2001}). El método
-      Benjamini-Hochberg determina un valor crítico dependiente del
-      total de hipótesis puestas a prueba y el FDR que se desee tolerar,
-      comúnmente del 5\% (Benjamini and Hochberg
-      \protect\hyperlink{ref-benjamini1995fdr}{1995}). 
+      hipótesis positivas (\protect\hyperlink{ref-brazma2001}{Brazma et
+      al. 2001}). El método Benjamini-Hochberg determina un valor
+      crítico dependiente del total de hipótesis puestas a prueba y el
+      FDR que se desee tolerar, comúnmente del 5\%
+      (\protect\hyperlink{ref-benjamini1995fdr}{Benjamini and Hochberg
+      1995}).
     \end{enumerate}
   \item
     \textbf{Clasificación}
@@ -1256,7 +1277,7 @@ experimentos en esta tecnología (Allison et al.
     categorías pre-existentes (clasificación supervisada), o el
     desarrollo progresivo de un conjunto de categorías por
     características de los objetos. (clasificación no supervisada)
-    (Allison et al. \protect\hyperlink{ref-allison2006}{2006}). Ejemplos
+    (\protect\hyperlink{ref-allison2006}{Allison et al. 2006}). Ejemplos
     de esta técnica son \emph{support vector machines} (SVM) con
     validación por \emph{leave-one-out cross-validation} (LOOCV) y el
     agrupamiento jerárquico o \emph{hierarchical clustering} de acuerdo
@@ -1266,16 +1287,16 @@ experimentos en esta tecnología (Allison et al.
 
     Además de la reactividad serológica, dos parámetros han demostrado
     ser de vital importancia para la caracterización de la respuesta
-    humoral: la amplitud e intensidad de respuesta (Crompton et al.
-    \protect\hyperlink{ref-crompton2010}{2010}; Helb et al.
-    \protect\hyperlink{ref-Helb2015exposure}{2015}; King et al.
-    \protect\hyperlink{ref-King2015FOC}{2015}). El primero se obtiene
-    calculando el número de antígenos reactivos por individuo y el
-    segundo por el promedio de sus intensidades. Particularmente, la
-    amplitud ha demostrado ser tan relevante como la reactividad de
+    humoral: la amplitud e intensidad de respuesta
+    (\protect\hyperlink{ref-crompton2010}{Crompton et al. 2010};
+    \protect\hyperlink{ref-Helb2015exposure}{Helb et al. 2015};
+    \protect\hyperlink{ref-King2015FOC}{King et al. 2015}). El primero
+    se obtiene calculando el número de antígenos reactivos por individuo
+    y el segundo por el promedio de sus intensidades. Particularmente,
+    la amplitud ha demostrado ser tan relevante como la reactividad de
     antígenos individuales en el desarrollo de inmunidad contra la
-    malaria (Crompton et al.
-    \protect\hyperlink{ref-crompton2010}{2010}). 
+    malaria (\protect\hyperlink{ref-crompton2010}{Crompton et al.
+    2010}).
   \end{enumerate}
 \end{enumerate}
 
@@ -1312,7 +1333,7 @@ experimentos en esta tecnología (Allison et al.
 
   \textbf{Intensidad de antígeno:} Lectura normalizada de cada
   antígeno-IVTT entre individuos. También llamada ``reactividad
-  serológica''.
+  serológica.''
 
   \textbf{Antígeno reactivo:} Lectura transformada de cada antígeno-IVTT
   mayor o igual a dos veces la mediana de los control-IVTT por
@@ -1346,9 +1367,9 @@ exclusión}\label{criterios-de-inclusiuxf3n-y-exclusiuxf3n}}
   En el estudio prospectivo mencionado, 164 pacientes con malaria por
   \emph{P. vivax} fueron enrolados mediante vigilancia pasiva. Según la
   presencia de uno o más criterios clínicos y de laboratorio de la
-  clasificación OMS para la Malaria Severa (WHO
-  \protect\hyperlink{ref-WHO2014severe}{2014}), los pacientes fueron
-  estratificados como severos o no-severos.
+  clasificación OMS para la Malaria Severa
+  (\protect\hyperlink{ref-WHO2014severe}{WHO 2014}), los pacientes
+  fueron estratificados como severos o no-severos.
 
   Los criterios clínicos de la clasificación OMS son: Shock circulatorio
   (presión sanguínea sistólica \textless{} 80 mmHg), Deterioro del nivel
@@ -1359,7 +1380,7 @@ exclusión}\label{criterios-de-inclusiuxf3n-y-exclusiuxf3n}}
   Los criterios de laboratorio de la clasificación OMS son: Hipoglicemia
   (glucosa \textless{} 40 mg/dL), Anemia severa (hemoglobina \textless{}
   7mg/dL), Daño renal (creatinina \textgreater{} 3mg/dl), e
-  Hiperbilirrubina (bilirrubina sérica \textgreater{} 2.5 mg/dL). 
+  Hiperbilirrubina (bilirrubina sérica \textgreater{} 2.5 mg/dL).
 \item
   Criterios de exclusión
 
@@ -1367,7 +1388,7 @@ exclusión}\label{criterios-de-inclusiuxf3n-y-exclusiuxf3n}}
   coinfecciones con especies de \emph{Plasmodium} distintas a \emph{P.
   vivax} determinadas por PCR, y (ii) presencia de coinfecciones como
   leptospirosis, dengue u otra arbovirosis determinada por técnicas de
-  aislamiento viral e inmunofluorescencia. 
+  aislamiento viral e inmunofluorescencia.
 \end{enumerate}
 
 \hypertarget{selecciuxf3n-de-participantes}{%
@@ -1399,40 +1420,41 @@ El presente estudio hará uso de microarreglos diseñados con 1014
 fragmentos proteicos recombinantes (498 de \emph{P. falciparum} y 516 de
 \emph{P. vivax}, expresado como Pf498/Pv516 o PfPv500) representando 873
 proteínas predichas (427 de \emph{P. falciparum} y 446 de \emph{P.
-vivax}, \textasciitilde{}8\% del total predicho para el genoma de
-\emph{P. vivax} Sal1) seleccionadas luego de una extensiva evaluación
-serológica con uno de mayor escala (Pf2208/Pv2233) (Finney et al.
-\protect\hyperlink{ref-Finney2014}{2014}). Este diseño ha sido validado
-mediante el sondeo con plasma colectado de pacientes con malaria y
-controles sanos alrededor del mundo (King et al.
-\protect\hyperlink{ref-King2015FOC}{2015}) y depositado en la base de
-datos GEO
+vivax}, \textasciitilde8\% del total predicho para el genoma de \emph{P.
+vivax} Sal1) seleccionadas luego de una extensiva evaluación serológica
+con uno de mayor escala (Pf2208/Pv2233)
+(\protect\hyperlink{ref-Finney2014}{Finney et al. 2014}). Este diseño ha
+sido validado mediante el sondeo con plasma colectado de pacientes con
+malaria y controles sanos alrededor del mundo
+(\protect\hyperlink{ref-King2015FOC}{King et al. 2015}) y depositado en
+la base de datos GEO
 (\href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL18316}{GPL18316}).
 
 \hypertarget{aplicaciuxf3n}{%
 \paragraph{Aplicación}\label{aplicaciuxf3n}}
 
 La aplicación del instrumento consiste en tres pasos: sondeo, escaneo y
-análisis, tal como ha sido publicado previamente (Driguez et al.
-\protect\hyperlink{ref-Driguez2015}{2015}). Primero, previo al sondeo
-los microarreglos se hidratan con buffer de bloqueo dentro de cámaras de
-incubación. Paralelamente, el plasma de los pacientes se diluye con
-aquel buffer en 1:100 y se pre-absorbe con lisado de \emph{E. coli} en
-10\%(w/v), con el objetivo de reducir ruido de fondo en las mediciones
-tanto por uniones inespecíficas con el sustrato como por antígenos
-bacterianos del sistema de expresión RTS. Segundo, aspirado el buffer de
-bloqueo del microarreglo, se procede con el sondeo al agregar el plasma
-pre-absorbido e incubar \emph{overnight} en cámara húmeda a 4°C con leve
-agitación. Tercero, con lavados y aspirados repetitivos antes y después
-de cada paso, se agrega la solución con anticuerpos secundarios
-biotinilados y posteriormente la solución con fluoróforos conjugados con
-estreptavidina. Cuarto, luego de centrifugar las láminas, se procede al
-escaneo de las fluorescencias con lectores de microarreglos de láser
-confocal (e.g., Genepix 4300A). Las medidas crudas se obtienen al
-aplicar una normalización local mediante la sustracción de la intensidad
-de fondo presente alrededor de cada \emph{spot}, ejecutada en el
-software del lector (Genepix Pro 7). Finalmente, se procede al análisis
-de datos detallado en la \protect\hyperlink{anadata}{sección 4.4}.
+análisis, tal como ha sido publicado previamente
+(\protect\hyperlink{ref-Driguez2015}{Driguez et al. 2015}). Primero,
+previo al sondeo los microarreglos se hidratan con buffer de bloqueo
+dentro de cámaras de incubación. Paralelamente, el plasma de los
+pacientes se diluye con aquel buffer en 1:100 y se pre-absorbe con
+lisado de \emph{E. coli} en 10\%(w/v), con el objetivo de reducir ruido
+de fondo en las mediciones tanto por uniones inespecíficas con el
+sustrato como por antígenos bacterianos del sistema de expresión RTS.
+Segundo, aspirado el buffer de bloqueo del microarreglo, se procede con
+el sondeo al agregar el plasma pre-absorbido e incubar \emph{overnight}
+en cámara húmeda a 4°C con leve agitación. Tercero, con lavados y
+aspirados repetitivos antes y después de cada paso, se agrega la
+solución con anticuerpos secundarios biotinilados y posteriormente la
+solución con fluoróforos conjugados con estreptavidina. Cuarto, luego de
+centrifugar las láminas, se procede al escaneo de las fluorescencias con
+lectores de microarreglos de láser confocal (e.g., Genepix 4300A). Las
+medidas crudas se obtienen al aplicar una normalización local mediante
+la sustracción de la intensidad de fondo presente alrededor de cada
+\emph{spot}, ejecutada en el software del lector (Genepix Pro 7).
+Finalmente, se procede al análisis de datos detallado en la
+\protect\hyperlink{anadata}{sección 4.4}.
 
 \hypertarget{validez}{%
 \paragraph{Validez}\label{validez}}
@@ -1441,15 +1463,15 @@ La validez o exactitud del experimento será evaluada mediante la
 correlación lineal entre las lecturas de los antígenos-IVTT y sus
 correspondientes proteínas purificadas por muestra, compuestas por
 proteínas de inmunogenicidad conocida y expresadas por un sistema dentro
-de célula (Crompton et al. \protect\hyperlink{ref-crompton2010}{2010}).
+de célula (\protect\hyperlink{ref-crompton2010}{Crompton et al. 2010}).
 
 \hypertarget{adquisiciuxf3n}{%
 \paragraph{Adquisición}\label{adquisiciuxf3n}}
 
 Todos los reactivos, incluidos los microarreglos, anticuerpos
 secundarios biotinilados y fluoróforos conjugados con estreptavidina
-serán adquiridos a la empresa Antigen Discovery, INC (Liang et al.
-\protect\hyperlink{ref-adiinc}{2004}).
+serán adquiridos a la empresa Antigen Discovery, INC
+(\protect\hyperlink{ref-adiinc}{Liang et al. 2004}).
 
 \hypertarget{muxe9todos}{%
 \subsection{Métodos:}\label{muxe9todos}}
@@ -1526,12 +1548,13 @@ las proteínas y sus lecturas crudas en MFI por código de paciente.
 \hypertarget{anadata}{%
 \subsubsection{Análisis de datos}\label{anadata}}
 
-Se hará uso del software de computación estadística R (R Core Team
-\protect\hyperlink{ref-R2016}{2016}), complementado con funciones de
-distintos paquetes pertenecientes a dos principales ambientes de
-análisis: Bioconductor (Gentleman et al.
-\protect\hyperlink{ref-bioconductor2004}{2004}) y Tidyverse (Wickham and
-Grolemund \protect\hyperlink{ref-wickham2016r4ds}{2016}).
+Se hará uso del software de computación estadística R
+(\protect\hyperlink{ref-R2016}{R Core Team 2016}), complementado con
+funciones de distintos paquetes pertenecientes a dos principales
+ambientes de análisis: Bioconductor
+(\protect\hyperlink{ref-bioconductor2004}{Gentleman et al. 2004}) y
+Tidyverse (\protect\hyperlink{ref-wickham2016r4ds}{Wickham and Grolemund
+2016}).
 
 \hypertarget{control-de-calidad-y-pre-procesamiento}{%
 \paragraph{Control de calidad y pre
@@ -1551,7 +1574,7 @@ Para ello, un antígeno reactivo será definido operacionalmente como el
 antígeno-IVTT con intensidad normalizada mayor o igual a 1. Por último,
 se asociarán ambas matrices de datos en un \texttt{ExpressionSet}, a
 través de los códigos de pacientes, empleando el paquete
-\texttt{Biobase} (Huber et al. \protect\hyperlink{ref-Biobase}{2015}).
+\texttt{Biobase} (\protect\hyperlink{ref-Biobase}{Huber et al. 2015}).
 
 \hypertarget{prueba-de-hipuxf3tesis}{%
 \paragraph{Prueba de hipótesis}\label{prueba-de-hipuxf3tesis}}
@@ -1562,21 +1585,21 @@ con un test de diferencias entre variables continuas y no pareadas de
 dos grupos usando t-Student o Mann-Whitney, dependiendo de la
 distribución, con un 5\% de error asumido. Segundo, se realizará un test
 de reactividad diferenciada de anticuerpos entre dos grupos, usando el
-test-t moderado (Smyth and others
-\protect\hyperlink{ref-smyth2004ebayes}{2004}) con corrección por
-comparación múltiple de la razón de falsos descubrimientos (FDR) por el
-método de Benjamini-Hochberg, disponible en el paquete \texttt{limma}
-(Ritchie et al. \protect\hyperlink{ref-limma}{2015}), con un 5\% de
+test-t moderado (\protect\hyperlink{ref-smyth2004ebayes}{Smyth and
+others 2004}) con corrección por comparación múltiple de la razón de
+falsos descubrimientos (FDR) por el método de Benjamini-Hochberg,
+disponible en el paquete \texttt{limma}
+(\protect\hyperlink{ref-limma}{Ritchie et al. 2015}), con un 5\% de
 error asumido. Tercero, se realizará un agrupamiento jerárquico o
 \emph{hierarchical clustering} de los antígenos identificados en base a
-su distancia euclidiana, disponible en el paquete \texttt{NMF} (Gaujoux
-and Seoighe \protect\hyperlink{ref-Gaujoux2010NMF}{2010}). Finalmente,
-se describirá la presencia de dominios transmembrana, péptido señal,
-número de ortólogos en \emph{Plasmodium}, ontología génica, número de
-polimorfismos de nucleótido simple y la razón de mutaciones no-sinónimas
-por sinónimas para el subgrupo de interés, disponible en la base de
-datos PlasmoDB (Aurrecoechea et al.
-\protect\hyperlink{ref-plasmodb}{2009}).
+su distancia euclidiana, disponible en el paquete \texttt{NMF}
+(\protect\hyperlink{ref-Gaujoux2010NMF}{Gaujoux and Seoighe 2010}).
+Finalmente, se describirá la presencia de dominios transmembrana,
+péptido señal, número de ortólogos en \emph{Plasmodium}, ontología
+génica, número de polimorfismos de nucleótido simple y la razón de
+mutaciones no-sinónimas por sinónimas para el subgrupo de interés,
+disponible en la base de datos PlasmoDB
+(\protect\hyperlink{ref-plasmodb}{Aurrecoechea et al. 2009}).
 
 \hypertarget{reporte-de-resultados}{%
 \paragraph{Reporte de resultados}\label{reporte-de-resultados}}
@@ -1592,10 +1615,11 @@ del efecto o diferencia de reactividad entre grupos en escala
 logarítmica contra sus respectivos valores P y un mapa de calor o
 \emph{heat map} segmentado por racimos o \emph{clusters}. El informe
 final consistirá de un reporte en formato \texttt{R\ Notebook} con
-extensión \texttt{.Rmd} que integrará texto, código y resultados (Xie
-\protect\hyperlink{ref-knitr}{2013}), siguiendo principios de
-reproducibilidad (Rodrı́guez-Sanchez et al.
-\protect\hyperlink{ref-CienciaReproducible2016}{2016}).
+extensión \texttt{.Rmd} que integrará texto, código y resultados
+(\protect\hyperlink{ref-knitr}{Xie 2013}), siguiendo principios de
+reproducibilidad
+(\protect\hyperlink{ref-CienciaReproducible2016}{Rodrı́guez-Sanchez et
+al. 2016}).
 
 \hypertarget{cronograma-de-trabajo}{%
 \section{CRONOGRAMA DE TRABAJO}\label{cronograma-de-trabajo}}
@@ -1665,72 +1689,90 @@ financiamiento interno de la institución.
 \begin{longtable}[]{@{}lcc@{}}
 \caption{Presupuesto \label{tab:presup}}\tabularnewline
 \toprule
-\begin{minipage}[b]{0.44\columnwidth}\raggedright
+\begin{minipage}[b]{(\columnwidth - 2\tabcolsep) * \real{0.48}}\raggedright
 \textbf{DESCRIPCIÓN}\strut
-\end{minipage} & \begin{minipage}[b]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[b]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 \textbf{MONTO (S/)}\strut
-\end{minipage} & \begin{minipage}[b]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[b]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 \textbf{PORCENTAJE (\%)}\strut
 \end{minipage}\tabularnewline
 \midrule
 \endfirsthead
 \toprule
-\begin{minipage}[b]{0.44\columnwidth}\raggedright
+\begin{minipage}[b]{(\columnwidth - 2\tabcolsep) * \real{0.48}}\raggedright
 \textbf{DESCRIPCIÓN}\strut
-\end{minipage} & \begin{minipage}[b]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[b]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 \textbf{MONTO (S/)}\strut
-\end{minipage} & \begin{minipage}[b]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[b]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 \textbf{PORCENTAJE (\%)}\strut
 \end{minipage}\tabularnewline
 \midrule
 \endhead
-\begin{minipage}[t]{0.44\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.48}}\raggedright
 \textbf{Bienes}\strut
-\end{minipage} & \begin{minipage}[t]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 \strut
-\end{minipage} & \begin{minipage}[t]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 \strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.44\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.48}}\raggedright
 Papelería, útiles y material de oficina\strut
-\end{minipage} & \begin{minipage}[t]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 50\strut
-\end{minipage} & \begin{minipage}[t]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 0.2\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.44\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.48}}\raggedright
 Insumos e instrumental de laboratorio\strut
-\end{minipage} & \begin{minipage}[t]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 200\strut
-\end{minipage} & \begin{minipage}[t]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 0.6\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.44\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.48}}\raggedright
 \textbf{Servicios}\strut
-\end{minipage} & \begin{minipage}[t]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 \strut
-\end{minipage} & \begin{minipage}[t]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 \strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.44\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.48}}\raggedright
 Compra, sondeo y lectura de microarreglos\strut
-\end{minipage} & \begin{minipage}[t]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 29610\strut
-\end{minipage} & \begin{minipage}[t]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 92.9\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.44\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.48}}\raggedright
 Gastos en el transporte de muestras\strut
-\end{minipage} & \begin{minipage}[t]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 2000\strut
-\end{minipage} & \begin{minipage}[t]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 6.3\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.44\columnwidth}\raggedright
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.48}}\raggedright
 \textbf{TOTAL}\strut
-\end{minipage} & \begin{minipage}[t]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 31910\strut
-\end{minipage} & \begin{minipage}[t]{0.23\columnwidth}\centering
+\end{minipage} &
+\begin{minipage}[t]{(\columnwidth - 2\tabcolsep) * \real{0.25}}\centering
 100\strut
 \end{minipage}\tabularnewline
 \bottomrule
@@ -1741,286 +1783,289 @@ Gastos en el transporte de muestras\strut
 BIOBLIOGRÁFICAS}\label{referencias-biobliogruxe1ficas}}
 
 \hypertarget{refs}{}
+\begin{CSLReferences}{1}{0}
 \leavevmode\hypertarget{ref-allison2006}{}%
 Allison, David B, Xiangqin Cui, Grier P Page, and Mahyar Sabripour.
-2006. ``Microarray Data Analysis: From Disarray to Consolidation and
-Consensus.'' \emph{Nature Reviews Genetics} 7 (1): 55--65.
+2006. {``Microarray Data Analysis: From Disarray to Consolidation and
+Consensus.''} \emph{Nature Reviews Genetics} 7 (1): 55--65.
 \url{https://doi.org/10.1038/nrg1749}.
 
 \leavevmode\hypertarget{ref-arevalo2014}{}%
 Arévalo-Herrera, Myriam, David A Forero-Peña, Kelly Rubiano, José
 Gómez-Hincapie, Nora L Martı́nez, Mary Lopez-Perez, Angélica Castellanos,
-et al. 2014. ``Plasmodium Vivax Sporozoite Challenge in Malaria-Naive
-and Semi-Immune Colombian Volunteers.'' \emph{PLoS One} 9 (6): 1--12.
+et al. 2014. {``Plasmodium Vivax Sporozoite Challenge in Malaria-Naive
+and Semi-Immune Colombian Volunteers.''} \emph{PLoS One} 9 (6): 1--12.
 \url{https://doi.org/10.1371/journal.pone.0099754}.
 
 \leavevmode\hypertarget{ref-arevalo2016spz}{}%
 Arévalo-Herrera, Myriam, Juan M Vásquez-Jiménez, Mary Lopez-Perez,
 Andrés F Vallejo, Andrés B Amado-Garavito, Nora Céspedes, Angélica
-Castellanos, et al. 2016. ``Protective Efficacy of Plasmodium Vivax
+Castellanos, et al. 2016. {``Protective Efficacy of Plasmodium Vivax
 Radiation-Attenuated Sporozoites in Colombian Volunteers: A Randomized
-Controlled Trial.'' \emph{PLoS Negl Trop Dis} 10 (10).
+Controlled Trial.''} \emph{PLoS Negl Trop Dis} 10 (10).
 \url{https://doi.org/10.1371/journal.pntd.0005070}.
 
 \leavevmode\hypertarget{ref-plasmodb}{}%
 Aurrecoechea, Cristina, John Brestelli, Brian P Brunk, Jennifer Dommer,
-Steve Fischer, Bindu Gajria, Xin Gao, et al. 2009. ``PlasmoDB: A
-Functional Genomic Database for Malaria Parasites.'' \emph{Nucleic Acids
-Research} 37 (suppl 1): D539--D543.
+Steve Fischer, Bindu Gajria, Xin Gao, et al. 2009. {``PlasmoDB: A
+Functional Genomic Database for Malaria Parasites.''} \emph{Nucleic
+Acids Research} 37 (suppl 1): D539--43.
 \url{https://doi.org/10.1093/nar/gkn814}.
 
 \leavevmode\hypertarget{ref-baird2009}{}%
-Baird, J Kevin. 2009. ``Severe and Fatal Vivax Malaria Challenges
-'Benign Tertian Malaria' Dogma.'' \emph{Annals of Tropical Paediatrics}
+Baird, J Kevin. 2009. {``Severe and Fatal Vivax Malaria Challenges
+'Benign Tertian Malaria' Dogma.''} \emph{Annals of Tropical Paediatrics}
 29 (4): 251--52. \url{https://doi.org/10.1179/027249309X12547917868808}.
 
 \leavevmode\hypertarget{ref-baldevi2013}{}%
 Baldeviano, G. Christian, Karina P. Leiva, Antonio M. Quispe, Julio
 Ventocilla, L. Lorena Tapia, Salomon Durand, Meddly L. Santolalla, et
-al. 2013. ``Serum Markers of Severe Clinical Complications During
-Plasmodium Vivax Malaria Monoinfections in the Peruvian Amazon Basin.''
-In \emph{Abstract Book of the Astmh 62nd Annual Meeting, Nov. 13--17,
-Washington D.C., United States}, 340. 1120.
+al. 2013. {``Serum Markers of Severe Clinical Complications During
+Plasmodium Vivax Malaria Monoinfections in the {Peruvian Amazon}
+Basin.''} In \emph{Abstract Book of the ASTMH 62nd Annual Meeting, Nov.
+13--17, Washington {D.C.}, United States}, 340. 1120.
 \url{http://www.astmh.org/ASTMH/media/Documents/AbstractBook2013Final.pdf}.
 
 \leavevmode\hypertarget{ref-baldi2001cybert}{}%
-Baldi, Pierre, and Anthony D Long. 2001. ``A Bayesian Framework for the
-Analysis of Microarray Expression Data: Regularized T-Test and
-Statistical Inferences of Gene Changes.'' \emph{Bioinformatics} 17 (6):
+Baldi, Pierre, and Anthony D Long. 2001. {``A Bayesian Framework for the
+Analysis of Microarray Expression Data: Regularized t-Test and
+Statistical Inferences of Gene Changes.''} \emph{Bioinformatics} 17 (6):
 509--19. \url{https://doi.org/10.1093/bioinformatics/17.6.509}.
 
 \leavevmode\hypertarget{ref-barber2015}{}%
 Barber, Bridget E, Timothy William, Matthew J Grigg, Uma Parameswaran,
 Kim A Piera, Ric N Price, Tsin W Yeo, and Nicholas M Anstey. 2015.
-``Parasite Biomass-Related Inflammation, Endothelial Activation,
-Microvascular Dysfunction and Disease Severity in Vivax Malaria.''
+{``Parasite Biomass-Related Inflammation, Endothelial Activation,
+Microvascular Dysfunction and Disease Severity in Vivax Malaria.''}
 \emph{PLoS Pathog} 11 (1): 1--13.
 \url{https://doi.org/10.1371/journal.ppat.1004558}.
 
 \leavevmode\hypertarget{ref-benjamini1995fdr}{}%
-Benjamini, Yoav, and Yosef Hochberg. 1995. ``Controlling the False
-Discovery Rate: A Practical and Powerful Approach to Multiple Testing.''
-\emph{Journal of the Royal Statistical Society. Series B
+Benjamini, Yoav, and Yosef Hochberg. 1995. {``Controlling the False
+Discovery Rate: A Practical and Powerful Approach to Multiple
+Testing.''} \emph{Journal of the Royal Statistical Society. Series B
 (Methodological)}, 289--300. \url{https://doi.org/10.2307/2346101}.
 
 \leavevmode\hypertarget{ref-bourgon2010filter}{}%
 Bourgon, Richard, Robert Gentleman, and Wolfgang Huber. 2010.
-``Independent Filtering Increases Detection Power for High-Throughput
-Experiments.'' \emph{Proceedings of the National Academy of Sciences}
+{``Independent Filtering Increases Detection Power for High-Throughput
+Experiments.''} \emph{Proceedings of the National Academy of Sciences}
 107 (21): 9546--51. \url{https://doi.org/10.1073/pnas.0914005107}.
 
 \leavevmode\hypertarget{ref-brazma2001}{}%
 Brazma, Alvis, Pascal Hingamp, John Quackenbush, Gavin Sherlock, Paul
-Spellman, Chris Stoeckert, John Aach, et al. 2001. ``Minimum Information
-About a Microarray Experiment (MIAME)---Toward Standards for Microarray
-Data.'' \emph{Nature Genetics} 29 (4): 365--71.
+Spellman, Chris Stoeckert, John Aach, et al. 2001. {``Minimum
+Information about a Microarray Experiment ({MIAME})---Toward Standards
+for Microarray Data.''} \emph{Nature Genetics} 29 (4): 365--71.
 \url{https://doi.org/10.1038/ng1201-365}.
 
 \leavevmode\hypertarget{ref-brown2001image}{}%
-Brown, Carl S, Paul C Goodwin, and Peter K Sorger. 2001. ``Image Metrics
-in the Statistical Analysis of Dna Microarray Data.'' \emph{Proceedings
-of the National Academy of Sciences} 98 (16): 8944--9.
-\url{https://doi.org/10.1073/pnas.161242998}.
+Brown, Carl S, Paul C Goodwin, and Peter K Sorger. 2001. {``Image
+Metrics in the Statistical Analysis of DNA Microarray Data.''}
+\emph{Proceedings of the National Academy of Sciences} 98 (16):
+8944--49. \url{https://doi.org/10.1073/pnas.161242998}.
 
 \leavevmode\hypertarget{ref-leroch2009postmod}{}%
 Chung, Duk-Won Doug, Nadia Ponts, Serena Cervantes, and Karine G Le
-Roch. 2009. ``Post-Translational Modifications in Plasmodium: More Than
-You Think!'' \emph{Molecular and Biochemical Parasitology} 168 (2):
+Roch. 2009. {``Post-Translational Modifications in Plasmodium: More Than
+You Think!''} \emph{Molecular and Biochemical Parasitology} 168 (2):
 123--34. \url{https://doi.org/10.1016/j.molbiopara.2009.08.001}.
 
 \leavevmode\hypertarget{ref-chuquiyauri2015vivax}{}%
 Chuquiyauri, Raul, Douglas M Molina, Eli L Moss, Ruobing Wang, Malcolm J
-Gardner, Kimberly C Brouwer, Sonia Torres, et al. 2015. ``Genome-Scale
+Gardner, Kimberly C Brouwer, Sonia Torres, et al. 2015. {``Genome-Scale
 Protein Microarray Comparison of Human Antibody Responses in Plasmodium
-Vivax Relapse and Reinfection.'' \emph{The American Journal of Tropical
+Vivax Relapse and Reinfection.''} \emph{The American Journal of Tropical
 Medicine and Hygiene} 93 (4): 801--9.
 \url{https://doi.org/10.4269/ajtmh.15-0232}.
 
 \leavevmode\hypertarget{ref-crompton2010}{}%
 Crompton, Peter D, Matthew A Kayala, Boubacar Traore, Kassoum Kayentao,
-Aissata Ongoiba, Greta E Weiss, Douglas M Molina, et al. 2010. ``A
+Aissata Ongoiba, Greta E Weiss, Douglas M Molina, et al. 2010. {``A
 Prospective Analysis of the Ab Response to Plasmodium Falciparum Before
-and After a Malaria Season by Protein Microarray.'' \emph{Proceedings of
-the National Academy of Sciences} 107 (15): 6958--63.
+and After a Malaria Season by Protein Microarray.''} \emph{Proceedings
+of the National Academy of Sciences} 107 (15): 6958--63.
 \url{https://doi.org/10.1073/pnas.1001323107}.
 
 \leavevmode\hypertarget{ref-crompton2014rev}{}%
 Crompton, Peter D, Jacqueline Moebius, Silvia Portugal, Michael
 Waisberg, Geoffrey Hart, Lindsey S Garver, Louis H Miller, Carolina
-Barillas-Mury, and Susan K Pierce. 2014. ``Malaria Immunity in Man and
+Barillas-Mury, and Susan K Pierce. 2014. {``Malaria Immunity in Man and
 Mosquito: Insights into Unsolved Mysteries of a Deadly Infectious
-Disease.'' \emph{Annual Review of Immunology} 32: 157--87.
+Disease.''} \emph{Annual Review of Immunology} 32: 157--87.
 \url{https://doi.org/10.1146/annurev-iy-32-060414-200001}.
 
 \leavevmode\hypertarget{ref-cutts2014meta}{}%
 Cutts, Julia C, Rosanna Powell, Paul A Agius, James G Beeson, Julie A
-Simpson, and Freya JI Fowkes. 2014. ``Immunological Markers of
+Simpson, and Freya JI Fowkes. 2014. {``Immunological Markers of
 Plasmodium Vivax Exposure and Immunity: A Systematic Review and
-Meta-Analysis.'' \emph{BMC Medicine} 12 (1): 150.
+Meta-Analysis.''} \emph{BMC Medicine} 12 (1): 150.
 \url{https://doi.org/10.1186/s12916-014-0150-1}.
 
 \leavevmode\hypertarget{ref-Davies2015Large}{}%
 Davies, D. Huw, Patrick Duffy, Jean-Luc Bodmer, Philip L. Felgner, and
-Denise L. Doolan. 2015. ``Large Screen Approaches to Identify Novel
-Malaria Vaccine Candidates.'' \emph{Vaccine} 33 (52): 7496--7505.
+Denise L. Doolan. 2015. {``Large Screen Approaches to Identify Novel
+Malaria Vaccine Candidates.''} \emph{Vaccine} 33 (52): 7496--7505.
 \url{https://doi.org/10.1016/j.vaccine.2015.09.059}.
 
 \leavevmode\hypertarget{ref-immunomics2016}{}%
-De Sousa, Karina P, and Denise L Doolan. 2016. ``Immunomics: A 21st
-Century Approach to Vaccine Development for Complex Pathogens.''
+De Sousa, Karina P, and Denise L Doolan. 2016. {``Immunomics: A 21st
+Century Approach to Vaccine Development for Complex Pathogens.''}
 \emph{Parasitology} 143 (02): 236--44.
 \url{https://doi.org/10.1017/S0031182015001079}.
 
 \leavevmode\hypertarget{ref-Driguez2015}{}%
 Driguez, Patrick, Denise L Doolan, Douglas M Molina, Alex Loukas, Angela
-Trieu, Phil L Felgner, and Donald P McManus. 2015. ``Protein Microarrays
-for Parasite Antigen Discovery.'' \emph{Parasite Genomics Protocols},
-221--33. \url{https://doi.org/10.1007/978-1-4939-1438-8_13}.
+Trieu, Phil L Felgner, and Donald P McManus. 2015. {``Protein
+Microarrays for Parasite Antigen Discovery.''} \emph{Parasite Genomics
+Protocols}, 221--33. \url{https://doi.org/10.1007/978-1-4939-1438-8_13}.
 
 \leavevmode\hypertarget{ref-elliott2014}{}%
 Elliott, Salenna R, FJ Fowkes, Jack S Richards, Linda Reiling, Damien R
-Drew, and James G Beeson. 2014. ``Research Priorities for the
+Drew, and James G Beeson. 2014. {``Research Priorities for the
 Development and Implementation of Serological Tools for Malaria
-Surveillance.'' \emph{F1000Prime Rep} 6: 100.
+Surveillance.''} \emph{F1000Prime Rep} 6: 100.
 \url{https://doi.org/10.12703/P6-100}.
 
 \leavevmode\hypertarget{ref-Finney2014}{}%
 Finney, Olivia C., Samuel A. Danziger, Douglas M. Molina, Marissa
 Vignali, Aki Takagi, Ming Ji, Danielle I. Stanisic, et al. 2014.
-``Predicting Antidisease Immunity Using Proteome Arrays and Sera from
-Children Naturally Exposed to Malaria.'' \emph{Molecular \& Cellular
+{``Predicting Antidisease Immunity Using Proteome Arrays and Sera from
+Children Naturally Exposed to Malaria.''} \emph{Molecular \& Cellular
 Proteomics} 13 (10): 2646--60.
 \url{https://doi.org/10.1074/mcp.M113.036632}.
 
 \leavevmode\hypertarget{ref-gagnon2002enso}{}%
 Gagnon, Alexandre S, Karen E Smoyer-Tomic, and Andrew B Bush. 2002.
-``The El Niño Southern Oscillation and Malaria Epidemics in South
-America.'' \emph{International Journal of Biometeorology} 46 (2):
+{``The {El Ni{ñ}o} Southern Oscillation and Malaria Epidemics in {South
+America}.''} \emph{International Journal of Biometeorology} 46 (2):
 81--89. \url{https://doi.org/10.1007/s00484-001-0119-6}.
 
 \leavevmode\hypertarget{ref-galinski1992rbp}{}%
 Galinski, Mary R, Claudia Corredor Medina, Paul Ingravallo, and John W
-Barnwell. 1992. ``A Reticulocyte-Binding Protein Complex of Plasmodium
-Vivax Merozoites.'' \emph{Cell} 69 (7): 1213--26.
+Barnwell. 1992. {``A Reticulocyte-Binding Protein Complex of Plasmodium
+Vivax Merozoites.''} \emph{Cell} 69 (7): 1213--26.
 \url{https://doi.org/10.1016/0092-8674(92)90642-P}.
 
 \leavevmode\hypertarget{ref-Gaujoux2010NMF}{}%
-Gaujoux, Renaud, and Cathal Seoighe. 2010. ``A Flexible R Package for
-Nonnegative Matrix Factorization.'' \emph{BMC Bioinformatics} 11 (1):
+Gaujoux, Renaud, and Cathal Seoighe. 2010. {``A Flexible {R} Package for
+Nonnegative Matrix Factorization.''} \emph{{BMC} Bioinformatics} 11 (1):
 367. \url{https://doi.org/10.1186/1471-2105-11-367}.
 
 \leavevmode\hypertarget{ref-bioconductor2004}{}%
 Gentleman, Robert C, Vincent J Carey, Douglas M Bates, Ben Bolstad,
 Marcel Dettling, Sandrine Dudoit, Byron Ellis, et al. 2004.
-``Bioconductor: Open Software Development for Computational Biology and
-Bioinformatics.'' \emph{Genome Biology} 5 (10): R80.
+{``Bioconductor: Open Software Development for Computational Biology and
+Bioinformatics.''} \emph{Genome Biology} 5 (10): R80.
 \url{https://doi.org/10.1186/gb-2004-5-10-r80}.
 
 \leavevmode\hypertarget{ref-griffing2013history}{}%
 Griffing, Sean M, Dionicia Gamboa, and Venkatachalam Udhayakumar. 2013.
-``The History of 20 Th Century Malaria Control in Peru.'' \emph{Malaria
-Journal} 12 (1): 303. \url{https://doi.org/10.1186/1475-2875-12-303}.
+{``The History of 20 Th Century Malaria Control in {Peru}.''}
+\emph{Malaria Journal} 12 (1): 303.
+\url{https://doi.org/10.1186/1475-2875-12-303}.
 
 \leavevmode\hypertarget{ref-Helb2015exposure}{}%
 Helb, Danica A., Kevin K. A. Tetteh, Philip L. Felgner, Jeff Skinner,
 Alan Hubbard, Emmanuel Arinaitwe, Harriet Mayanja-Kizza, et al. 2015.
-``Novel Serologic Biomarkers Provide Accurate Estimates of Recent
-Plasmodium Falciparum Exposure for Individuals and Communities.''
+{``Novel Serologic Biomarkers Provide Accurate Estimates of Recent
+Plasmodium Falciparum Exposure for Individuals and Communities.''}
 \emph{Proceedings of the National Academy of Sciences} 112 (32):
-E4438--E4447. \url{https://doi.org/10.1073/pnas.1501705112}.
+E4438--47. \url{https://doi.org/10.1073/pnas.1501705112}.
 
 \leavevmode\hypertarget{ref-howes2016global}{}%
 Howes, Rosalind E, Katherine E Battle, Kamini N Mendis, David L Smith,
-Richard E Cibulskis, J Kevin Baird, and Simon I Hay. 2016. ``Global
-Epidemiology of Plasmodium Vivax.'' \emph{The American Journal of
+Richard E Cibulskis, J Kevin Baird, and Simon I Hay. 2016. {``Global
+Epidemiology of Plasmodium Vivax.''} \emph{The American Journal of
 Tropical Medicine and Hygiene} 95 (6 Suppl): 15--34.
 \url{https://doi.org/10.4269/ajtmh.16-0141}.
 
 \leavevmode\hypertarget{ref-Biobase}{}%
 Huber, W., Carey, V. J., Gentleman, R., Anders, et al. 2015.
-``Orchestrating High-Throughput Genomic Analysis with Bioconductor.''
-\emph{Nature Methods} 12 (2): 115--21.
+{``{O}rchestrating High-Throughput Genomic Analysis with
+{B}ioconductor.''} \emph{Nature Methods} 12 (2): 115--21.
 \url{https://doi.org/10.1038/nmeth.3252}.
 
 \leavevmode\hypertarget{ref-kayala2012cyber}{}%
-Kayala, Matthew A, and Pierre Baldi. 2012. ``Cyber-T Web Server:
-Differential Analysis of High-Throughput Data.'' \emph{Nucleic Acids
-Research} 40 (W1): W553--W559. \url{https://doi.org/10.1093/nar/gks420}.
+Kayala, Matthew A, and Pierre Baldi. 2012. {``Cyber-t Web Server:
+Differential Analysis of High-Throughput Data.''} \emph{Nucleic Acids
+Research} 40 (W1): W553--59. \url{https://doi.org/10.1093/nar/gks420}.
 
 \leavevmode\hypertarget{ref-King2015FOC}{}%
 King, C. L., D. H. Davies, P. Felgner, E. Baum, A. Jain, A. Randall, K.
-Tetteh, C. J. Drakeley, and B. Greenhouse. 2015. ``Biosignatures of
-Exposure/Transmission and Immunity.'' \emph{American Journal of Tropical
-Medicine and Hygiene} 93 (3 Suppl): 16--27.
+Tetteh, C. J. Drakeley, and B. Greenhouse. 2015. {``Biosignatures of
+Exposure/Transmission and Immunity.''} \emph{American Journal of
+Tropical Medicine and Hygiene} 93 (3 Suppl): 16--27.
 \url{https://doi.org/10.4269/ajtmh.15-0037}.
 
 \leavevmode\hypertarget{ref-kreil2005bullet}{}%
-Kreil, David P, and Roslin R Russell. 2005. ``Tutorial Section: There Is
-No Silver Bullet---a Guide to Low-Level Data Transforms and
-Normalisation Methods for Microarray Data.'' \emph{Briefings in
+Kreil, David P, and Roslin R Russell. 2005. {``Tutorial Section: There
+Is No Silver Bullet---a Guide to Low-Level Data Transforms and
+Normalisation Methods for Microarray Data.''} \emph{Briefings in
 Bioinformatics} 6 (1): 86--97. \url{https://doi.org/10.1093/bib/6.1.86}.
 
 \leavevmode\hypertarget{ref-adiinc}{}%
 Liang, Xiaowu, Angela Yee, Joe Campo, Gary Hermanson, Arlo Randall, and
-Philip L. Felgner. 2004. \emph{Antigen Discovery Incorporated}.
-\url{www.antigendiscovery.com}.
+Philip L. Felgner. 2004. \emph{{Antigen Discovery Incorporated}}.
+\href{https://www.antigendiscovery.com}{www.antigendiscovery.com}.
 
 \leavevmode\hypertarget{ref-llanoschea2015}{}%
 Llanos-Chea, Fiorella, Dalila Martínez, Angel Rosas, Frine Samalvides,
-Joseph M. Vinetz, and Alejandro Llanos-Cuentas. 2015. ``Characteristics
+Joseph M. Vinetz, and Alejandro Llanos-Cuentas. 2015. {``Characteristics
 of Travel-Related Severe Plasmodium Vivax and Plasmodium Falciparum
 Malaria in Individuals Hospitalized at a Tertiary Referral Center in
-Lima, Peru.'' \emph{The American Journal of Tropical Medicine and
+Lima, {Peru}.''} \emph{The American Journal of Tropical Medicine and
 Hygiene} 93 (6): 1249--53. \url{https://doi.org/10.4269/ajtmh.14-0652}.
 
 \leavevmode\hypertarget{ref-lopez2017}{}%
 López, Carolina, Yoelis Yepes-Pérez, Natalia Hincapié-Escobar, Diana
-Dı́az-Arévalo, and Manuel A Patarroyo. 2017. ``What Is Known About the
+Dı́az-Arévalo, and Manuel A Patarroyo. 2017. {``What Is Known about the
 Immune Response Induced by Plasmodium Vivax Malaria Vaccine
-Candidates?'' \emph{Frontiers in Immunology} 8.
+Candidates?''} \emph{Frontiers in Immunology} 8.
 \url{https://doi.org/10.3389/fimmu.2017.00126}.
 
 \leavevmode\hypertarget{ref-factores2001}{}%
-MINSA. 2001. \emph{Factores de Riesgo de La Malaria Grave En El Perú}.
-Ministerio de Salud: Proyecto Vigía (MINSA-USAID).
+MINSA. 2001. \emph{Factores de Riesgo de La Malaria Grave En El Per{ú}}.
+{Ministerio de Salud}: Proyecto Vig{í}a (MINSA-USAID).
 \url{http://bvs.minsa.gob.pe/local/minsa/1772.pdf}.
 
 \leavevmode\hypertarget{ref-norma2001}{}%
----------. 2007. \emph{Norma Técnica de Salud Para La Atención de La
-Malaria Y Malaria Grave En El Perú}. Ministerio de Salud.
+---------. 2007. \emph{Norma técnica de Salud Para La Atención de La
+Malaria y Malaria Grave En El Per{ú}}. {Ministerio de Salud}.
 \url{http://www.minsa.gob.pe/portada/esnemo_normatividad.asp}.
 
 \leavevmode\hypertarget{ref-mueller2013}{}%
 Mueller, Ivo, Mary R Galinski, Takafumi Tsuboi, Myriam Arévalo-Herrera,
-William E Collins, and Christopher L King. 2013. ``Natural Acquisition
+William E Collins, and Christopher L King. 2013. {``Natural Acquisition
 of Immunity to Plasmodium Vivax: Epidemiological Observations and
-Potential Targets.'' \emph{Adv Parasitol} 81: 77--131.
+Potential Targets.''} \emph{Adv Parasitol} 81: 77--131.
 \url{https://doi.org/10.1016/B978-0-12-407826-0.00003-5}.
 
 \leavevmode\hypertarget{ref-path2011}{}%
 PATH. 2011. \emph{Staying the Course? Malaria Research and Development
 in a Time of Economic Uncertainty}. Seattle, WA: PATH.
-\url{www.malariavaccine.org/files/RD-report-June2011.pdf}.
+\href{https://www.malariavaccine.org/files/RD-report-June2011.pdf}{www.malariavaccine.org/files/RD-report-June2011.pdf}.
 
 \leavevmode\hypertarget{ref-portillo2001vir}{}%
 Portillo, Hernando A del, Carmen Fernandez-Becerra, Sharen Bowman, Karen
 Oliver, Martin Preuss, Cecilia P Sanchez, Nick K Schneider, et al. 2001.
-``A Superfamily of Variant Genes Encoded in the Subtelomeric Region of
-Plasmodium Vivax.'' \emph{Nature} 410 (6830): 839--42.
+{``A Superfamily of Variant Genes Encoded in the Subtelomeric Region of
+Plasmodium Vivax.''} \emph{Nature} 410 (6830): 839--42.
 \url{https://doi.org/10.1038/35071118}.
 
 \leavevmode\hypertarget{ref-accelerate2016}{}%
 Quispe, Antonio M., Alejandro Llanos-Cuentas, Hugo Rodriguez, Martin
 Clendenes, Cesar Cabezas, Luis M. Leon, Raul Chuquiyauri, et al. 2016.
-``Accelerating to Zero: Strategies to Eliminate Malaria in the Peruvian
-Amazon.'' \emph{The American Journal of Tropical Medicine and Hygiene}
-94 (6): 1200--1207. \url{https://doi.org/10.4269/ajtmh.15-0369}.
+{``Accelerating to Zero: Strategies to Eliminate Malaria in the
+{Peruvian Amazon}.''} \emph{The American Journal of Tropical Medicine
+and Hygiene} 94 (6): 1200--1207.
+\url{https://doi.org/10.4269/ajtmh.15-0369}.
 
 \leavevmode\hypertarget{ref-quispe2014}{}%
 Quispe, Antonio M, Edwar Pozo, Edith Guerrero, Salomón Durand, G
 Christian Baldeviano, Kimberly A Edgel, Paul CF Graf, and Andres G
-Lescano. 2014. ``Plasmodium Vivax Hospitalizations in a Monoendemic
-Malaria Region: Severe Vivax Malaria?'' \emph{The American Journal of
+Lescano. 2014. {``Plasmodium Vivax Hospitalizations in a Monoendemic
+Malaria Region: Severe Vivax Malaria?''} \emph{The American Journal of
 Tropical Medicine and Hygiene} 91 (1): 11--17.
 \url{https://doi.org/10.4269/ajtmh.12-0610}.
 
@@ -2031,104 +2076,104 @@ Computing}. Vienna, Austria: R Foundation for Statistical Computing.
 
 \leavevmode\hypertarget{ref-reyburn2015}{}%
 Reyburn, Hugh, Redempta Mbatia, Chris Drakeley, Jane Bruce, Ilona
-Carneiro, Raimos Olomi, Jonathan Cox, et al. 2005. ``Association of
+Carneiro, Raimos Olomi, Jonathan Cox, et al. 2005. {``Association of
 Transmission Intensity and Age with Clinical Manifestations and Case
-Fatality of Severe Plasmodium Falciparum Malaria.'' \emph{JAMA} 293
+Fatality of Severe Plasmodium Falciparum Malaria.''} \emph{JAMA} 293
 (12): 1461--70. \url{https://doi.org/10.1001/jama.293.12.1461}.
 
 \leavevmode\hypertarget{ref-limma}{}%
 Ritchie, Matthew E, Belinda Phipson, Di Wu, Yifang Hu, Charity W Law,
-Wei Shi, and Gordon K Smyth. 2015. ``limma Powers Differential
-Expression Analyses for RNA-Sequencing and Microarray Studies.''
+Wei Shi, and Gordon K Smyth. 2015. {``{limma} Powers Differential
+Expression Analyses for {RNA}-Sequencing and Microarray Studies.''}
 \emph{Nucleic Acids Research} 43 (7): e47.
 \url{https://doi.org/10.1093/nar/gkv007}.
 
 \leavevmode\hypertarget{ref-CienciaReproducible2016}{}%
 Rodrı́guez-Sanchez, Francisco, Antonio Jesús Pérez-Luque, Ignasi
-Bartomeus, and Sara Varela. 2016. ``Ciencia Reproducible: Qué, Por Qué,
-cómo?'' \emph{ECOS} 25 (2): 83--92.
+Bartomeus, and Sara Varela. 2016. {``Ciencia Reproducible: {{}}Qu{é},
+Por Qu{é}, c{ó}mo?''} \emph{{ECOS}} 25 (2): 83--92.
 \url{https://doi.org/10.7818/ecos.2016.25-2.11}.
 
 \leavevmode\hypertarget{ref-rogerson2007preg}{}%
 Rogerson, Stephen J, Lars Hviid, Patrick E Duffy, Rose FG Leke, and
-Diane W Taylor. 2007. ``Malaria in Pregnancy: Pathogenesis and
-Immunity.'' \emph{The Lancet Infectious Diseases} 7 (2): 105--17.
+Diane W Taylor. 2007. {``Malaria in Pregnancy: Pathogenesis and
+Immunity.''} \emph{The Lancet Infectious Diseases} 7 (2): 105--17.
 \url{https://doi.org/10.1016/S1473-3099(07)70022-1}.
 
 \leavevmode\hypertarget{ref-rosas2016peru}{}%
 Rosas-Aguirre, Angel, Dionicia Gamboa, Paulo Manrique, Jan E Conn, Marta
-Moreno, Andres G Lescano, Juan F Sanchez, et al. 2016. ``Epidemiology of
-Plasmodium Vivax Malaria in Peru.'' \emph{The American Journal of
+Moreno, Andres G Lescano, Juan F Sanchez, et al. 2016. {``Epidemiology
+of Plasmodium Vivax Malaria in {Peru}.''} \emph{The American Journal of
 Tropical Medicine and Hygiene} 95 (6 Suppl): 133--44.
 \url{https://doi.org/10.4269/ajtmh.16-0268}.
 
 \leavevmode\hypertarget{ref-hotspots2015}{}%
 Rosas-Aguirre, Angel, Niko Speybroeck, Alejandro Llanos-Cuentas, Anna
 Rosanas-Urgell, Gabriel Carrasco-Escobar, Hugo Rodriguez, Dionicia
-Gamboa, et al. 2015. ``Hotspots of Malaria Transmission in the Peruvian
-Amazon: Rapid Assessment Through a Parasitological and Serological
-Survey.'' \emph{PLOS ONE} 10 (9): 1--21.
+Gamboa, et al. 2015. {``Hotspots of Malaria Transmission in the
+{Peruvian Amazon}: Rapid Assessment Through a Parasitological and
+Serological Survey.''} \emph{PLOS ONE} 10 (9): 1--21.
 \url{https://doi.org/10.1371/journal.pone.0137458}.
 
 \leavevmode\hypertarget{ref-smith2013}{}%
 Smith-Nuñez, Edward S., Salomon Durand, G. Christian Baldeviano, Antonio
 M. Quispe, Frederique Jacquerioz, Moises Sihuincha, Juan C. Celis, et
-al. 2013. ``WHO Criteria for Severe Malaria in Identifying Severe Vivax
-Malaria: Preliminary Data from a Study in Iquitos, Peru.'' In
-\emph{Abstract Book of the Astmh 62nd Annual Meeting, Nov. 13--17,
-Washington D.C., United States}, 398.
+al. 2013. {``WHO Criteria for Severe Malaria in Identifying Severe Vivax
+Malaria: Preliminary Data from a Study in {Iquitos}, {Peru}.''} In
+\emph{Abstract Book of the ASTMH 62nd Annual Meeting, Nov. 13--17,
+Washington {D.C.}, United States}, 398.
 \url{http://www.astmh.org/ASTMH/media/Documents/AbstractBook2013Final.pdf}.
 
 \leavevmode\hypertarget{ref-smyth2004ebayes}{}%
-Smyth, Gordon K, and others. 2004. ``Linear Models and Empirical Bayes
+Smyth, Gordon K, and others. 2004. {``Linear Models and Empirical Bayes
 Methods for Assessing Differential Expression in Microarray
-Experiments.'' \emph{Statistical Applications in Genetics and Molecular
+Experiments.''} \emph{Statistical Applications in Genetics and Molecular
 Biology} 3 (1): 3. \url{https://doi.org/10.2202/1544-6115.1027}.
 
 \leavevmode\hypertarget{ref-Stanisic2015}{}%
 Stanisic, Danielle I., Freya J. I. Fowkes, Melanie Koinari, Sarah
 Javati, Enmoore Lin, Benson Kiniboro, Jack S. Richards, et al. 2015.
-``Acquisition of Antibodies Against Plasmodium Falciparum Merozoites and
-Malaria Immunity in Young Children and the Influence of Age, Force of
-Infection, and Magnitude of Response.'' \emph{Infection and Immunity} 83
-(2): 646--60. \url{https://doi.org/10.1128/IAI.02398-14}.
+{``Acquisition of Antibodies Against Plasmodium Falciparum Merozoites
+and Malaria Immunity in Young Children and the Influence of Age, Force
+of Infection, and Magnitude of Response.''} \emph{Infection and
+Immunity} 83 (2): 646--60. \url{https://doi.org/10.1128/IAI.02398-14}.
 
 \leavevmode\hypertarget{ref-sundaresh2006}{}%
 Sundaresh, Suman, Denise L Doolan, Siddiqua Hirst, Yunxiang Mu, Berkay
 Unal, D Huw Davies, Philip L Felgner, and Pierre Baldi. 2006.
-``Identification of Humoral Immune Responses in Protein Microarrays
-Using Dna Microarray Data Analysis Techniques.'' \emph{Bioinformatics}
-22 (14): 1760--6. \url{https://doi.org/10.1093/bioinformatics/btl162}.
+{``Identification of Humoral Immune Responses in Protein Microarrays
+Using DNA Microarray Data Analysis Techniques.''} \emph{Bioinformatics}
+22 (14): 1760--66. \url{https://doi.org/10.1093/bioinformatics/btl162}.
 
 \leavevmode\hypertarget{ref-Torres2014asymptomatic}{}%
 Torres, K. J., C. E. Castrillon, E. L. Moss, M. Saito, R. Tenorio, D. M.
-Molina, H. Davies, et al. 2014. ``Genome-Level Determination of
+Molina, H. Davies, et al. 2014. {``Genome-Level Determination of
 Plasmodium Falciparum Blood-Stage Targets of Malarial Clinical Immunity
-in the Peruvian Amazon.'' \emph{Journal of Infectious Diseases},
+in the {Peruvian Amazon}.''} \emph{Journal of Infectious Diseases},
 November. \url{https://doi.org/10.1093/infdis/jiu614}.
 
 \leavevmode\hypertarget{ref-uzoma2013interactome}{}%
-Uzoma, Ijeoma, and Heng Zhu. 2013. ``Interactome Mapping: Using Protein
-Microarray Technology to Reconstruct Diverse Protein Networks.''
+Uzoma, Ijeoma, and Heng Zhu. 2013. {``Interactome Mapping: Using Protein
+Microarray Technology to Reconstruct Diverse Protein Networks.''}
 \emph{Genomics, Proteomics \& Bioinformatics} 11 (1): 18--28.
 \url{https://doi.org/10.1016/j.gpb.2012.12.005}.
 
 \leavevmode\hypertarget{ref-vigil2010}{}%
-Vigil, Adam, D Huw Davies, and Philip L Felgner. 2010. ``Defining the
+Vigil, Adam, D Huw Davies, and Philip L Felgner. 2010. {``Defining the
 Humoral Immune Response to Infectious Agents Using High-Density Protein
-Microarrays.'' \emph{Future Microbiology} 5 (2): 241--51.
+Microarrays.''} \emph{Future Microbiology} 5 (2): 241--51.
 \url{https://doi.org/10.2217/fmb.09.127}.
 
 \leavevmode\hypertarget{ref-wassmer2015}{}%
 Wassmer, Samuel C, Terrie E Taylor, Pradipsinh K Rathod, Saroj K Mishra,
 Sanjib Mohanty, Myriam Arevalo-Herrera, Manoj T Duraisingh, and Joseph D
-Smith. 2015. ``Investigating the Pathogenesis of Severe Malaria: A
-Multidisciplinary and Cross-Geographical Approach.'' \emph{The American
+Smith. 2015. {``Investigating the Pathogenesis of Severe Malaria: A
+Multidisciplinary and Cross-Geographical Approach.''} \emph{The American
 Journal of Tropical Medicine and Hygiene} 93 (3 Suppl): 42--56.
 \url{https://doi.org/10.4269/ajtmh.14-0841}.
 
 \leavevmode\hypertarget{ref-WHO2014severe}{}%
-WHO. 2014. ``Severe Malaria.'' \emph{Trop Med Int Health} 19
+WHO. 2014. {``Severe Malaria.''} \emph{Trop Med Int Health} 19
 (September): 7--131. \url{https://doi.org/10.1111/tmi.12313_2}.
 
 \leavevmode\hypertarget{ref-WHO2016world}{}%
@@ -2136,8 +2181,12 @@ WHO. 2014. ``Severe Malaria.'' \emph{Trop Med Int Health} 19
 World Health Organization.
 \url{http://www.who.int/malaria/publications/world-malaria-report-2016/report/en/}.
 
+\leavevmode\hypertarget{ref-world2020world}{}%
+---------. 2020. {``World Malaria Report 2020: 20 Years of Global
+Progress and Challenges.''}
+
 \leavevmode\hypertarget{ref-rainbow2016}{}%
----------. n.d. ``Malaria Vaccine Rainbow Tables.'' In. World Health
+---------. n.d. {``Malaria Vaccine Rainbow Tables.''} In. World Health
 Organization. Accessed: 15-june-2017.
 \url{http://www.who.int/vaccine_research/links/Rainbow/en/index.html}.
 
@@ -2146,9 +2195,11 @@ Wickham, Hadley, and Garrett Grolemund. 2016. \emph{R for Data Science}.
 Sebastopol, CA: O'Reilly. \url{http://r4ds.had.co.nz/}.
 
 \leavevmode\hypertarget{ref-knitr}{}%
-Xie, Yihui. 2013. ``Knitr: A General-Purpose Tool for Dynamic Report
-Generation in R.'' \emph{R Package Version} 1 (1).
+Xie, Yihui. 2013. {``Knitr: A General-Purpose Tool for Dynamic Report
+Generation in r.''} \emph{R Package Version} 1 (1).
 \url{http://yihui.name/knitr/}.
+
+\end{CSLReferences}
 
 \section{ANEXOS}\label{anexos}
 
@@ -2337,5 +2388,6 @@ Ver \autoref{tab:consis} al final del documento.
     \restoregeometry
     \clearpage
 }
+
 
 \end{document}
