@@ -14,15 +14,17 @@ output:
     code_folding: "hide"
     #fig_caption: TRUE
     #number_sections: TRUE
-bibliography: malaria.bib
+bibliography: analysis/malaria.bib
 link-citations: yes
 #csl: american-medical-association.csl
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, #fig.path = "01-",
                       warning = FALSE)
-knitr::opts_knit$set(root.dir = '../.')
+# knitr::opts_knit$set(root.dir = '../.')
 options(width = 90) # expand limits of CONSOLE output
 ```
 
@@ -192,7 +194,8 @@ sevdb_3 <- readRDS("data/03-sevrcov.rds") %>% #dplyr::count(episodio_previo)
 ```
 
 ```{r, message=FALSE}
-pridb <- readr::read_csv("analysis/more/ADi-NAMRU6_Data/samples.csv") %>% ## BUSCAR ORIGINAL!!!
+pridb <- #readr::read_csv("analysis/more/ADi-NAMRU6_Data/samples.csv") %>% ## BUSCAR ORIGINAL!!!
+  readr::read_csv("data-raw/ADi-NAMRU6_Data-samples.csv") %>% ## ENCONTRÉ ORIGINAL
   filter(Study=="Primaquine") %>% 
   select(Sample.ID,Cat.Age.WHO:Anemia.HTO)
 ```
@@ -205,8 +208,17 @@ pheno <- readr::read_csv("data-raw/samples.csv") %>% #dplyr::count(Sample.Type)
   full_join(sevdb_3,by = "Sample.ID") %>% 
   full_join(pridb,by = "Sample.ID") %>% 
   dplyr::arrange(Sample.ID) %>% 
+  # # manual imputation of one observation # warning! (post-hoc decision)
+  # # filter(!is.na(sev_WHO) & is.na(episodio_previo)) %>% glimpse()
+  # mutate(episodio_previo=as.character(episodio_previo)) %>% 
+  # mutate(episodio_previo=case_when(
+  #   Sample.ID=="LIM2017"~"sin",
+  #   TRUE~episodio_previo)) %>% 
+  # mutate(episodio_previo=as.factor(episodio_previo)) %>% 
+  # # filter(Sample.ID=="LIM2017") %>% glimpse()
   as.data.frame() %>% 
   column_to_rownames(var="Sample.ID")
+  
 
 pheno_d <- new("AnnotatedDataFrame", data=pheno)
 
@@ -1223,13 +1235,15 @@ eset <- eset[c(x,s),y]
 
 aheatmap(exprs(eset), 
          Rowv = NA, Colv = NA, 
-         annCol = pData(eset), 
-         layout = "_")
+         annCol = pData(eset)#, 
+         #layout = "_"
+         )
 
 aheatmap(exprs(eset), 
          Rowv = TRUE, Colv = NA, 
-         annCol = pData(eset), 
-         layout = "_")
+         annCol = pData(eset)#, 
+         #layout = "_"
+         )
 ```
 
 ###### boxplot
@@ -1306,6 +1320,8 @@ table(eset$episodio_previo) # debe ser: control (fct referencia) vs caso
 ###### Matrix + Linear model + eBayes
 
 ```{r}
+# related with manual imputation in 'pheno' object
+eset <- eset[,(rowSums(is.na(pData(eset)["episodio_previo"]))==0)] # new
 design <- model.matrix(~ eset$episodio_previo)
 fit <- lmFit(eset, design)
 eb <- eBayes(fit)
@@ -1577,13 +1593,15 @@ eset <- eset[c(x,s),y]
 
 aheatmap(exprs(eset), 
          Rowv = NA, Colv = NA, 
-         annCol = pData(eset), 
-         layout = "_")
+         annCol = pData(eset)#, 
+         #layout = "_"
+         )
 
 aheatmap(exprs(eset), 
          Rowv = TRUE, Colv = NA, 
-         annCol = pData(eset), 
-         layout = "_")
+         annCol = pData(eset)#, 
+         #layout = "_"
+         )
 ```
 
 ###### boxplot
@@ -1629,6 +1647,7 @@ exp_bp <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
 #                                 to = exp_bp$id.name)
 
 exp_bp  %>% 
+  filter(!is.na(episodio_previo)) %>% 
   #ggplot(aes(reorder(id.name,con),value,fill=episodio_previo))+
   ggplot(aes(reorder(id.name,con),value,fill=episodio_previo))+
   geom_boxplot()+
@@ -1782,6 +1801,7 @@ k <- fin %>%
 
 ```{r, fig.height=6, fig.width=3}
 r <- fin %>% 
+  filter(!is.na(episodio_previo)) %>% 
   ggplot(aes(episodio_previo,sample_freq)) +
   geom_boxplot(#position=position_dodge(0.8)
                ) +
@@ -1800,6 +1820,7 @@ r <- fin %>%
        ) + theme_bw()
 
 s <- fin %>% 
+  filter(!is.na(episodio_previo)) %>% 
   ggplot(aes(episodio_previo,sample_mean)) +
   geom_boxplot(#position=position_dodge(0.8)
                ) +
@@ -1913,6 +1934,7 @@ s <- fin %>%
   labs(title="Intensity of Ab response", subtitle="per Age and Severity")  + theme_bw()
 
 t <- fin %>% 
+  filter(!is.na(episodio_previo)) %>% 
   ggplot(aes(edad_CAT,sample_freq, fill=episodio_previo)) +
   geom_boxplot(position=position_dodge(0.8)) +
   geom_dotplot(aes(fill=episodio_previo), 
@@ -1925,6 +1947,7 @@ t <- fin %>%
   labs(title="Breadth of Ab response", subtitle="per Age and Previous Episode")  + theme_bw()
 
 u <- fin %>% 
+  filter(!is.na(episodio_previo)) %>% 
   ggplot(aes(edad_CAT,sample_mean, fill=episodio_previo)) +
   geom_boxplot(position=position_dodge(0.8)) +
   geom_dotplot(aes(fill=episodio_previo), 
