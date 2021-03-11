@@ -43,6 +43,9 @@ gert::git_log() %>%
   geom_col() +
   # NULL
   scale_x_date(date_breaks = "1 month",date_labels = "%Y-%m") +
+  labs(title = "How active the project has been over time?",
+       y="number of\ngit commits",
+       x="epiweek (year-month)") +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
   # facet_grid(~year)
   NULL
@@ -54,6 +57,7 @@ gert::git_log() %>%
   mutate(hour=lubridate::hour(time),
          year=lubridate::year(time)) %>% 
   count(year,hour) %>% 
+  mutate(year=as.factor(year)) %>% 
   mutate(n=as.integer(n)) %>% 
   ggplot(aes(x = hour,y = year,fill = n)) +
   # geom_histogram() +
@@ -61,6 +65,8 @@ gert::git_log() %>%
   scale_x_continuous(breaks = 0:23,labels = 0:23) +
   # NULL
   colorspace::scale_fill_continuous_sequential() +
+  labs(title = "How active the project has been over time?",
+       fill="number of\ngit commits") +
   # scale_fill_continuous()
   # colorspace::scale_fill_binned_sequential()+
   theme_bw()
