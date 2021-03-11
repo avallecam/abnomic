@@ -9,8 +9,8 @@
 - ( ) Update citations and numeric references!
 - ( ) agregar descubridores de especies!
 - ( ) Contact advisor -> ask for emails con reviewers
-- ( ) Re-send project
-- ( ) Re-order proyect: original data / extrafiles / disposable output (including PDF)
+- ( ) Re-send project -> to advisor + escuela
+- (X) Re-order proyect: original data / extrafiles / disposable output (including PDF)
 - ( ) Make slides as final presentation
 - ( ) Make an abstract of results
 - ( ) Contact Hugo for review
