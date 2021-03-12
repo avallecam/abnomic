@@ -3059,4 +3059,9 @@ sevdb_pos %>% glimpse()
 devtools::session_info()
 ```
 
+```{r}
+file.remove("s1.tex")
+```
+
+
 ## References
