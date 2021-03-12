@@ -6,15 +6,29 @@
 
 - (X) Fix project format (check comments) [I did not changed the aim]
 - (X) Re-run 04-abnomic.Rmd!
-- ( ) Update citations and numeric references!
-- ( ) agregar descubridores de especies!
-- ( ) Contact advisor -> ask for emails con reviewers
-- ( ) Re-send project -> to advisor + escuela
-- (X) Re-order proyect: original data / extrafiles / disposable output (including PDF)
-- ( ) Make slides as final presentation
-- ( ) Make an abstract of results
-- ( ) Contact Hugo for review
-- ( ) Send clearance!!
+- (X) 10/03 - Re-order proyect: original data / extrafiles / disposable output
+- (X) 10/03 - Re-run 03-sevrcov.Rmd!
+
+- ( ) 11/03 - Update citations and numeric references!
+- ( ) 12/03 - agregar descubridores de especies!
+
+- ( ) 12/03 - Contact escuela!
+- ( ) 15/03 - Contact advisor -> ask for emails con reviewers
+- ( ) 15/03 - Re-send project -> to advisor + escuela (wait until approval!)
+
+- ( ) 19/03 - Make slides as final presentation (html -> drive)
+- ( ) 19/03 - Contact Hugo for review of slides
+
+- ( ) 26/03 - Write (short) paper manuscript english (drive)
+- ( ) 02/04 - Contact Hugo for review of paper manuscript english
+
+- ( ) 09/04 - Write (long) thesis report espanhol (html -> drive)
+- ( ) 16/04 - Contact Hugo for review of thesis report
+
+- ( ) 00/00 - Confirm project approval
+- ( ) 00/00 - Send slides english + espanhol clearance!!
+
+
 
 ## Project
 
