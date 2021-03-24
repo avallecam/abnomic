@@ -119,13 +119,14 @@ se estimaron 229 millones de casos
 en en 87 paises endémicos y 
 409,000 muertes 
 atribuidas a esta infección<!-- a nivel mundial--> [@who2020world]. 
-Aunque <!--Si bien--> _P. falciparum_ representó el 96 y 99% de estas cifras,
-fuera de África se estimó que _P. vivax_ fue responsable 
-del 41 y 86%, respectivamente.
+Aunque <!--Si bien--> _P. falciparum_ representó el 97 y 99% de estas cifras,
+se estimó que _P. vivax_ fue responsable 
+del 41 y 86% en los continentes fuera de África, respectivamente.
 Más aún, la región de las Américas tuvo la mayor proporción 
-de estos casos (69%)
-donde Perú fue el tercer país con más reportes <!--de malaria--> (n=63,153<!--19%-->), 
-detrás de Brasil y Venezuela, 
+de estos casos (72%)
+donde Perú fue el cuarto país con más reportes <!--de malaria--> 
+(n=63,153<!--19%-->), 
+detrás de Venezuela, Brasil y Colombia, 
 atribuidos en un 80% a dicha especie [@rosas2016peru].
 
 Reportes recientes de malaria severa y fatal causados por _P. vivax_ han desafiado 

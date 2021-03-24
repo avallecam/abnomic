@@ -17,7 +17,7 @@
 - ( ) 15/03 - Re-send project -> to advisor + escuela (wait until approval!)
 
 - ( ) 19/03 - Make slides as final presentation (html -> drive)
-- ( ) 19/03 - Contact Hugo for review of slides
+- ( ) 19/03 - Contact Hugo for review of slides [decide short vs long]
 
 - ( ) 26/03 - Write (short) paper manuscript english (drive)
 - ( ) 02/04 - Contact Hugo for review of paper manuscript english
