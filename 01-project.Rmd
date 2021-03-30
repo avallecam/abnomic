@@ -80,14 +80,18 @@ RESUMEN: CORRIGELO AL FINAL
 > _Plasmodium vivax_ es responsable del 80% de la malaria en el Perú.
 Casos de enfermedad severa por mono-infecciones de _P. vivax_ han sido reportados 
 tanto en el Noreste amazónico como en Norte costero. Sin embargo, dicha condición aún está
-subestimada en la Norma Técnica a nivel nacional, incrementando el riesgo 
-de posibles diagnósticos tardíos o inapropiados por el personal de salud.
-Con el fin de identificar biomarcadores de relevancia clínica contra la malaria 
+<!-- subestimada en la Norma Técnica a nivel nacional, incrementando el riesgo -->
+<!-- de posibles diagnósticos tardíos o inapropiados por el personal de salud. -->
+ausente en el actual Plan de Control y Eliminación, incrementando el riesgo 
+de afectar la morbilidad y mortalidad por malaria en zonas endémicas.
+Con el fin de 
+describir la respuesta inmune e 
+identificar biomarcadores de relevancia clínica contra la malaria 
 <!--vivax-->severa por _P. vivax_, el presente proyecto de tesis propone
 comparar la respuesta de anticuerpos ante la infección 
 en pacientes severos y no-severos provenientes de un estudio prospectivo caso-control
 ejecutado en la ciudad de Iquitos, Loreto - Perú, empleando microarreglos de proteínas.
-Los resultados permitirán proponer marcadores serológicos discriminantes 
+Los resultados permitirán proponer marcadores serológicos <!--discriminantes--> 
 de severidad<!-- o episodios previos--> 
 con el potencial de implementarse en programas de 
 serovigilancia en miras al control y eliminación de la malaria por _P. vivax_ en la región.
@@ -123,24 +127,28 @@ en en 87 paises endémicos y
 atribuidas a esta infección a nivel mundial [@who2020world]. 
 <!-- Aunque  -->
 <!--Si bien--> 
-La especie _P. falciparum_ representó el 
+La especie _P. falciparum_ representa el 
 97% de los casos y 
 99% de las muertes,
 pero
 <!-- se estimó que  -->
 en los continentes fuera de África
-_P. vivax_ fue responsable 
-del 41% y 86%, respectivamente.
-Más aún, la región de las Américas tuvo la mayor proporción 
+_P. vivax_ es responsable 
+del 41% y 86%, respectivamente [@WHO2016world].
+Más aún, la región de las Américas tiene la mayor proporción 
 de casos por _P. vivax_ (72%)
-donde Perú fue el cuarto país con más reportes <!--de malaria--> 
-(n=45,729<!--19%-->), 
+donde Perú es el cuarto país con más 
+casos estimados
+<!-- reportes -->
+<!--de malaria--> 
+(n=45,729), 
 <!-- [33,000-64,000] -->
-detrás de Venezuela, Brasil y Colombia, 
-atribuidos en un 80% a dicha especie [@rosas2016peru; @dgemalaria2020].
+<!--19%-->
+detrás de Venezuela, Brasil y Colombia [@who2020world], 
+causados en un 80% por _P. vivax_ [@rosas2016peru; @dgemalaria2020].
 
 Reportes 
-<!-- recientes  -->
+recientes
 de malaria severa y fatal causados por _P. vivax_ han desafiado 
 su tradicional condición de enfermedad benigna [@baird2009; @quispe2014; @TovarAcero2021].
 <!--Se ha propuesto que, en parte,-->
@@ -156,24 +164,32 @@ una reducción en la intensidad de transmisión [@reyburn2015].
 <!-- Con respecto a dicha hipótesis, -->
 Sin embargo, se dispone de limitados estudios
 que describan la respuesta inmune en esta población.
-Por ejemplo, 
-pacientes de la Amazonía Peruana 
-con malaria por _P. vivax_ severa 
-y no complicada mostraron un grado similar de exposición previa,
-basado en la respuesta humoral contra PvMSP1\textsubscript{19},
-un marcador serológico tradicional [@baldevi2013].
-No obstante, recientes estudios han desafiado su validez como indicador de 
+<!-- Por ejemplo,  -->
+Un estudio en
+<!-- pacientes de  -->
+la Amazonía Peruana
+comparó la respuesta humoral contra PvMSP1\textsubscript{19},
+un marcador serológico tradicional,
+en pacientes con malaria por _P. vivax_ severa 
+y no complicada mostrando un grado similar de exposición previa
+en ambos grupos [@baldevi2013].
+No obstante, 
+<!-- recientes  -->
+estudios serológicos con múltiples antígenos
+han desafiado la validez 
+de MSP1\textsubscript{19} como indicador de 
 inmunidad o exposición [@crompton2010; @Helb2015exposure].
-Adicionalmente, la malaria grave o severa por _P. vivax_ está definida clínicamente en la 
+Adicionalmente, la malaria severa por _P. vivax_ está definida clínicamente en la 
 actual norma técnica [@norma2015]
 <!-- [@norma2007]  -->
-pero ausente
+pero está ausente
 <!-- Por ello, su  -->
 <!-- ausencia -->
 <!-- actual  -->
 <!-- subestimación  -->
 en el plan de control y eliminación [@cero2017].
-El desconocimiento de la respuesta inmune de la malaria severa,
+El desconocimiento de la respuesta inmune de la 
+malaria severa por _P. vivax_,
 <!-- la falta de  -->
 marcadores 
 serológicos para su vigilancia
@@ -186,7 +202,7 @@ y su ausencia en planes de control
 podrían 
 <!-- implicar el -->
 <!-- serio problema de Salud Pública  -->
-incrementar la morbilidad por malaria
+afectar la morbilidad y mortalidad por malaria 
 en zonas endémicas
 al largo plazo.
 
@@ -209,7 +225,7 @@ Luego,
 <!-- con episodios previos de esta infección. -->
 se realizará la misma comparación entre pacientes 
 con y sin episodios previos de esta infección
-e identificar posibles antígenos de respuesta secundaria.
+para identificar posibles antígenos de respuesta secundaria.
 Finalmente, se describirán sus características proteicas junto 
 a los antígenos con mayor reactividad en toda la muestra 
 con el propósito de proponerlos como candidatos a vigilancia seroepidemiológica.
