@@ -1,6 +1,7 @@
 .Rhistory
 .Rproj.user
 .RData
+analysis/*
 analysis/*.csl
 analysis/*.tex
 analysis/*.html
