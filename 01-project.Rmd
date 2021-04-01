@@ -22,7 +22,7 @@ header-includes:
 - \usepackage{array}
 - \usepackage{color,soul}
 - \usepackage{geometry}
-bibliography: analysis/malaria.bib
+bibliography: malaria.bib
 #csl: analysis/american-medical-association.csl
 #UNMSM: http://crai.ub.edu/es/pmf/iso-esp
 #ISO-690: numeric OR author-date? https://www.zotero.org/styles?q=iso690

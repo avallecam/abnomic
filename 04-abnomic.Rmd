@@ -14,7 +14,7 @@ output:
     code_folding: "hide"
     #fig_caption: TRUE
     #number_sections: TRUE
-bibliography: analysis/malaria.bib
+bibliography: malaria.bib
 link-citations: yes
 #csl: american-medical-association.csl
 editor_options: 

@@ -12,7 +12,7 @@ output:
       collapsed: yes
     code_folding: "hide"
     #df_print: paged
-bibliography: analysis/malaria.bib
+bibliography: malaria.bib
 biblio-style: apalike
 link-citations: yes
 #csl: american-medical-association.csl
