@@ -22,6 +22,7 @@ header-includes:
 - \usepackage{array}
 - \usepackage{color,soul}
 - \usepackage{geometry}
+- \usepackage[none]{hyphenat}
 bibliography: malaria.bib
 #csl: analysis/american-medical-association.csl
 #UNMSM: http://crai.ub.edu/es/pmf/iso-esp
@@ -122,7 +123,7 @@ En el
 <!-- año  -->
 2019 
 se estimaron 229 millones de casos 
-en en 87 paises endémicos y 
+en 87 países endémicos y 
 409 mil muertes 
 atribuidas a esta infección a nivel mundial [@who2020world]. 
 <!-- Aunque  -->
@@ -1871,7 +1872,7 @@ a. Criterios de inclusión
     
     Los criterios de laboratorio de la clasificación OMS son:
     Hipoglicemia (glucosa < 40 mg/dL), 
-    Anemia severa (hemoglobina < 7mg/dL), 
+    Anemia severa (hemoglobina < 7g/dL), 
     Daño renal (creatinina > 3mg/dl), e
     Hiperbilirrubina (bilirrubina sérica > 2.5 mg/dL).
     <!-- exluidos de Malaria Severa 2014: sangrado, acidosis, hiperparasitemia -->
@@ -2410,7 +2411,7 @@ b <- format((a*100/sum(a)), digits = 1)
   y empastado 
 -->
 
-# REFERENCIAS BIOBLIOGRÁFICAS
+# REFERENCIAS BIBLIOGRÁFICAS
 <!--
 1.  **Referida al tema**
     
