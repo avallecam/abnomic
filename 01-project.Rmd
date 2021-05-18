@@ -10,8 +10,8 @@ output:
     toc_depth: 4
     number_sections: TRUE
     fig_caption: yes
-    include:
-      after_body: tabconsis.tex
+    # include:
+    #   after_body: tabconsis.tex
 #documentclass: article #this modifies everything to 220 mm × 280 mm Letter size
 classoption: a4paper
 header-includes:
