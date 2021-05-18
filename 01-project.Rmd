@@ -24,7 +24,7 @@ header-includes:
 - \usepackage{geometry}
 - \usepackage[none]{hyphenat}
 bibliography: malaria.bib
-#csl: analysis/american-medical-association.csl
+csl: iso690-author-date-es.csl
 #UNMSM: http://crai.ub.edu/es/pmf/iso-esp
 #ISO-690: numeric OR author-date? https://www.zotero.org/styles?q=iso690
 link-citations: yes
@@ -913,14 +913,16 @@ El segundo y último estudio
     de Perú
     en ser publicado ha sido el de
     @chuquiyauri2015vivax. 
-    Ellos compararon la respuesta contra _P. vivax_ de pacientes
+    Aquí compararon la respuesta contra _P. vivax_ de pacientes
     con relapsos y reinfección, sin encontrar diferencia alguna entre ambos grupos. Sin 
     embargo, al igual que el anterior estudio, identificaron un enriquecimiento de 
     proteínas con polimorfismos no-sinónimos en el grupo de antígenos reactivos. Además,
     dentro del grupo con mayor reactividad en toda la muestra, resaltaron a 
     PvMSP-10 como potencial candidato a vacuna al presentar la expresión más consistente 
     y validar lo reportado por dos estudios previos con enfoque tradicional 
-    donde emplean ambos sistemas de expresión: eucariota y procariota. El estudio empleó
+    donde emplean ambos sistemas de expresión: eucariota y procariota. 
+    <!-- El estudio empleó -->
+    Aquí emplearon
     un arreglo con 2233 fragmentos (1936 proteínas) en 106 individuos de la ciudad de 
     Maynas, Loreto - Perú.
 
