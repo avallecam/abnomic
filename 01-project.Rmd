@@ -359,7 +359,11 @@ epidemiológicos.
 <!-- Resumimos tres limitaciones del estudio. -->
 
 Primero, las muestras a evaluar provienen de pacientes con infecciones no sincronizadas. 
-El muestreo se ejecutó en la fase sintomática, momento en el que acuden al Hospital, con 
+<!-- El muestreo se ejecutó  -->
+Las muestras fueron colectadas
+en la fase sintomática, momento en el que 
+los pacientes
+acuden al Hospital, con 
 un desconocimiento del inicio de la infección por paciente; sin embargo, infecciones 
 experimentales han estimado que dicha fase ocurre normalmente entre los 11 y 13 días de 
 infección [@arevalo2014].
@@ -505,8 +509,10 @@ PlasmoDB-->.
 
 <!-- ### Exploratorio -->
 
-- Comparar la amplitud e intensidad de respuesta de anticuerpos según 
-la<!-- severidad, episodios previos y--> edad de los pacientes con malaria por _P. vivax_.
+<!-- - Comparar la amplitud e intensidad de respuesta de anticuerpos según  -->
+<!-- la -->
+<!-- severidad, episodios previos y--> 
+<!-- edad de los pacientes con malaria por _P. vivax_. -->
 
 <!--
 - Comparar la amplitud e intensidad de respuesta de anticuerpos
@@ -873,9 +879,13 @@ En África
     
 Un segundo hito de interés 
     en África 
-    representa el trabajo de 
-    @Helb2015exposure. 
-    Ellos reportaron una estrategia para 
+    <!-- representa  -->
+    se describe en
+    el trabajo de 
+    @Helb2015exposure 
+    <!-- Ellos  -->
+    donde
+    reportaron una estrategia para 
     identificar combinaciones de respuestas de anticuerpos
     contra más de un antígeno que maximicen la información de la exposición reciente
     al nivel de individuos. 
@@ -910,7 +920,8 @@ En Perú
     contra 824 fragmentos (699 proteínas) de _P. falciparum_.
     
 El segundo y último estudio 
-    de Perú
+    sobre malaria y microarreglo de proteínas 
+    en Perú
     en ser publicado ha sido el de
     @chuquiyauri2015vivax. 
     Aquí compararon la respuesta contra _P. vivax_ de pacientes
@@ -2449,22 +2460,22 @@ b <- format((a*100/sum(a)), digits = 1)
 ```
 
   ---------------------------------------------------------------
-  **DESCRIPCIÓN**                            **MONTO (S/)**      
+  **DESCRIPCIÓN**                                  **MONTO (S/)**
   ----------------------------------------- ---------------------
   **Bienes**                             
   
-  Papelería, útiles y material de oficina            50          
+  Papelería, útiles y material de oficina                   50,00
   
-  Insumos e instrumental de laboratorio              200         
+  Insumos e instrumental de laboratorio                    200,00
   
   **Servicios**
 
-  Compra, sondeo y lectura                           29610       
+  Compra, sondeo y lectura                              29 610,00
   de microarreglos
   
-  Gastos en el transporte de muestras                2000        
+  Gastos en el transporte de muestras                    2 000,00
   
-  **TOTAL**                                          31910       
+  **TOTAL**                                             31 860,00
   ---------------------------------------------------------------
 
   Table: Presupuesto \label{tab:presup}
