@@ -2464,18 +2464,18 @@ b <- format((a*100/sum(a)), digits = 1)
   ----------------------------------------- ---------------------
   **Bienes**                             
   
-  Papelería, útiles y material de oficina                   50,00
+  Papelería, útiles y material de oficina                   50.00
   
-  Insumos e instrumental de laboratorio                    200,00
+  Insumos e instrumental de laboratorio                    200.00
   
   **Servicios**
 
-  Compra, sondeo y lectura                              29 610,00
+  Compra, sondeo y lectura                              29,610.00
   de microarreglos
   
-  Gastos en el transporte de muestras                    2 000,00
+  Gastos en el transporte de muestras                    2,000.00
   
-  **TOTAL**                                             31 860,00
+  **TOTAL**                                             31,860.00
   ---------------------------------------------------------------
 
   Table: Presupuesto \label{tab:presup}
