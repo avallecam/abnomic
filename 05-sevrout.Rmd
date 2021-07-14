@@ -30,17 +30,13 @@ options(width = 90) # expand limits of CONSOLE output
 
 ## To-do
 
-- (x) remover glimpse
-- (x) retirar parasitemia sin mil
-- (x) minimalizar formato
-- ( ) save input to xls
+- ...
 
 ## Packages
 
 ```{r}
 library(tidyverse)
 library(compareGroups)
-library(magrittr)
 ```
 
 ## Data input
@@ -73,14 +69,20 @@ sevdb_2ws_clean <- sevdb_2ws %>%
          tx_par_intest,
          parasitemia_mil,parasitemia_mil_4,
          en_zona_endemica,en_zona_endemica_4,
+         episodio_previo_num,
          episodio_previo,
          everything()) %>% 
-  select(-parasitemia)
+  select(-parasitemia) %>% 
+  select(glas_oms,convulsion,
+         shock_oms,pulmonar_oms,
+         renal_oms,hipoglic_oms,
+         anemia_oms,hiperbil_oms,
+         everything())
 
 sevdb_2ws_clean %>% glimpse()
 ```
 
-## Table 1 - all
+## Table 1 - all covariates
 
 ```{r}
 tab01all <- sevdb_2ws_clean %>% 
@@ -108,7 +110,7 @@ tab01oms <- sevdb_2ws_clean %>%
   # extract edad quartiles
   select(-edad_4) %>% 
   # extract variables
-  select(anemia_oms:convulsion,
+  select(glas_oms:hiperbil_oms,
          sev_who_num,
          study) %>% 
   compareGroups(study~.,data = .#,
@@ -127,11 +129,78 @@ tab01oms %>% export2xls("table/05-tab01-oms_covariates.xls")
 ```
 
 
-## Table 2
+## Table 2 - all observations
 
 ```{r}
+tab02all <- sevdb_2ws_clean %>% 
+  # extract edad quartiles
+  select(-edad_4) %>% 
+  # extract variables
+  select(-(glas_oms:hiperbil_oms),
+         -(sangr_oms:trombo_sev),
+         -enf_sum,
+         -sev_who_num,
+         -study,
+         -casecontrol) %>% 
+  compareGroups(sev_who~.,data = .,
+                byrow = T,
+                method = c(edad=2,
+                           en_zona_endemica=2,
+                           episodio_previo_num=2,
+                           parasitemia_mil=2)) %>% 
+  createTable(digits = 1,
+              sd.type = 2,
+              show.n = T,
+              show.all = T)
 
+tab02all %>% export2md() 
+tab02all %>% export2xls("table/05-tab02-all_observations.xls")
+  
 ```
+
+## Table 2 - microarray study
+
+```{r}
+tab02abn <- sevdb_2ws_clean %>% 
+  # filter observations
+  filter(study=="in-microarray") %>% 
+  # extract edad quartiles
+  select(-edad_4) %>% 
+  # extract variables
+  select(-(glas_oms:hiperbil_oms),
+         -(sangr_oms:trombo_sev),
+         -enf_sum,
+         -sev_who_num,
+         -study,
+         -casecontrol) %>% 
+  compareGroups(sev_who~.,data = .,
+                byrow = T,
+                method = c(edad=2,
+                           en_zona_endemica=2,
+                           episodio_previo_num=2,
+                           parasitemia_mil=2)) %>% 
+  createTable(digits = 1,
+              sd.type = 2,
+              show.n = T,
+              show.all = T)
+
+tab02abn %>% export2md() 
+tab02abn %>% export2xls("table/05-tab02-abn_observations.xls")
+  
+```
+
+
+<!-- ```{r} -->
+<!-- sevdb_2ws_clean %>%  -->
+<!--   # extract edad quartiles -->
+<!--   select(study,sev_who) %>%  -->
+<!--   compareGroups(study~.,data = ., -->
+<!--                 byrow = T) %>%  -->
+<!--   createTable(digits = 1, -->
+<!--               sd.type = 2, -->
+<!--               show.n = T, -->
+<!--               show.all = T) -->
+<!-- ``` -->
 
 
 ## Figures
