@@ -30,7 +30,8 @@ options(width = 90) # expand limits of CONSOLE output
 
 ## To-do
 
-- ...
+- add translation of labels to spanish
+- copy to google sheets
 
 ## Packages
 
@@ -57,7 +58,7 @@ sevdb_3sv <- read_rds("data/03-sevrcov.rds") %>% janitor::clean_names()
 sevdb_2ws_clean <- sevdb_2ws %>% 
   mutate(edad_4=Hmisc::cut2(edad,g = 4),
          enf_sum=as.factor(enf_sum)) %>% 
-  cdcper::cdc_edades_peru() %>% 
+  cdcper::cdc_edades_peru(variable_edad = edad) %>% 
   #start select
   select(-(edad_grupo_x:edad_inei_grupos_labels),
          -edad_etapas_de_vida_t,
@@ -77,7 +78,43 @@ sevdb_2ws_clean <- sevdb_2ws %>%
          shock_oms,pulmonar_oms,
          renal_oms,hipoglic_oms,
          anemia_oms,hiperbil_oms,
-         everything())
+         everything()) %>% 
+  select(-tx_par_intest) %>% 
+  mutate(edad_etapas_de_vida_c=fct_recode(edad_etapas_de_vida_c,
+                                          "0-11"="0_11a",
+                                          "12-17"="12_17a",
+                                          "18-29"="18_29a",
+                                          "30-59"="30_59a",
+                                          "60+"="60a_mas")) %>% 
+  # per language
+  # add labels
+  labelled::set_variable_labels(
+    edad="Age (years)",
+    edad_etapas_de_vida_c="Age groups",
+    sexo="Sex",
+    shock_oms="Shock (systolic blood pressure < 80mmHg)",
+    glas_oms="Coma (Glasgow score < 9/14)",
+    pulmonar_oms="Lung injury (ARDS or pulmonary edema)",
+    anemia_oms="Severe anemia (hemoglobin < 7g/dL)",
+    renal_oms="Acute renal failure (creatinin > 3mg/dL)",
+    hiperbil_oms="Hyperbilirubinemia (bilirubin > 2.5mg/dL)", #Jaundice
+    hipoglic_oms="Hypoglicemia (glucose < 40mg/dL)",
+    convulsion="Convulsion",
+    presenta_comorb="Comorbidity",
+    enf_cronica="Chronic disease",
+    parasitemia_mil="Parasite density (x 1000 par/uL)",
+    en_zona_endemica="Time in endemic area (years)",
+    episodio_previo_num="Previous episodes (number)",
+    sev_who_num="Cumulative WHO criteria",
+    sev_who="WHO criteria",
+    episodio_previo="Previous episodes") %>% 
+  # replace levels
+  mutate(across(.cols = c(glas_oms:hiperbil_oms,
+                          presenta_comorb,enf_cronica),
+                .fns = ~fct_recode(.,"No"="0","Yes"="1"))) %>% 
+  mutate(episodio_previo=fct_recode(episodio_previo,
+                                    "Without"="sin",
+                                    "With"="con"))
 
 sevdb_2ws_clean %>% glimpse()
 ```
@@ -88,6 +125,8 @@ sevdb_2ws_clean %>% glimpse()
 tab01all <- sevdb_2ws_clean %>% 
   # extract edad quartiles
   select(-edad_4) %>% 
+  select(-parasitemia_mil_4,
+         -en_zona_endemica_4) %>% 
   compareGroups(study~.,data = .,
                 method = c(edad=2,
                            en_zona_endemica=2,
@@ -109,6 +148,8 @@ tab01all %>% export2xls("table/05-tab01-all_covariates.xls")
 tab01oms <- sevdb_2ws_clean %>% 
   # extract edad quartiles
   select(-edad_4) %>% 
+  select(-parasitemia_mil_4,
+         -en_zona_endemica_4) %>% 
   # extract variables
   select(glas_oms:hiperbil_oms,
          sev_who_num,
@@ -135,6 +176,8 @@ tab01oms %>% export2xls("table/05-tab01-oms_covariates.xls")
 tab02all <- sevdb_2ws_clean %>% 
   # extract edad quartiles
   select(-edad_4) %>% 
+  select(-parasitemia_mil_4,
+         -en_zona_endemica_4) %>% 
   # extract variables
   select(-(glas_oms:hiperbil_oms),
          -(sangr_oms:trombo_sev),
@@ -166,6 +209,8 @@ tab02abn <- sevdb_2ws_clean %>%
   filter(study=="in-microarray") %>% 
   # extract edad quartiles
   select(-edad_4) %>% 
+  select(-parasitemia_mil_4,
+         -en_zona_endemica_4) %>% 
   # extract variables
   select(-(glas_oms:hiperbil_oms),
          -(sangr_oms:trombo_sev),
