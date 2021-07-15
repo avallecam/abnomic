@@ -19,6 +19,8 @@ link-citations: yes
 #csl: american-medical-association.csl
 editor_options: 
   chunk_output_type: console
+params:
+  spanish: true
 ---
 
 ```{r setup, include=FALSE}
@@ -30,8 +32,8 @@ options(width = 90) # expand limits of CONSOLE output
 
 ## To-do
 
-- add translation of labels to spanish
-- copy to google sheets
+- (x) tabla 1 - copy to google sheets
+- (o) tabla 2 - copy to google sheets
 
 ## Packages
 
@@ -55,7 +57,7 @@ sevdb_3sv <- read_rds("data/03-sevrcov.rds") %>% janitor::clean_names()
 ## Select variables
 
 ```{r,warning=FALSE,message=FALSE}
-sevdb_2ws_clean <- sevdb_2ws %>% 
+sevdb_2ws_notranslation <- sevdb_2ws %>% 
   mutate(edad_4=Hmisc::cut2(edad,g = 4),
          enf_sum=as.factor(enf_sum)) %>% 
   cdcper::cdc_edades_peru(variable_edad = edad) %>% 
@@ -74,50 +76,121 @@ sevdb_2ws_clean <- sevdb_2ws %>%
          episodio_previo,
          everything()) %>% 
   select(-parasitemia) %>% 
-  select(glas_oms,convulsion,
+  select(starts_with("edad"),sexo,
+         glas_oms,convulsion,
          shock_oms,pulmonar_oms,
          renal_oms,hipoglic_oms,
          anemia_oms,hiperbil_oms,
          everything()) %>% 
   select(-tx_par_intest) %>% 
+  select(-sangr_oms,-trombo_sev,-presenta_comorb,-casecontrol) %>% 
   mutate(edad_etapas_de_vida_c=fct_recode(edad_etapas_de_vida_c,
                                           "0-11"="0_11a",
                                           "12-17"="12_17a",
                                           "18-29"="18_29a",
                                           "30-59"="30_59a",
-                                          "60+"="60a_mas")) %>% 
+                                          "60+"="60a_mas"))
+```
+
+```{r}
+sevdb_2ws_clean <- sevdb_2ws_notranslation %>% 
   # per language
-  # add labels
+  # add variable labels
   labelled::set_variable_labels(
     edad="Age (years)",
     edad_etapas_de_vida_c="Age groups",
     sexo="Sex",
-    shock_oms="Shock (systolic blood pressure < 80mmHg)",
-    glas_oms="Coma (Glasgow score < 9/14)",
+    shock_oms="Shock (systolic blood pressure < 80 mmHg)",
+    glas_oms="Coma (Glasgow score <= 9/14)",
     pulmonar_oms="Lung injury (ARDS or pulmonary edema)",
-    anemia_oms="Severe anemia (hemoglobin < 7g/dL)",
-    renal_oms="Acute renal failure (creatinin > 3mg/dL)",
-    hiperbil_oms="Hyperbilirubinemia (bilirubin > 2.5mg/dL)", #Jaundice
-    hipoglic_oms="Hypoglicemia (glucose < 40mg/dL)",
+    anemia_oms="Severe anemia (hemoglobin < 7 g/dL)",
+    renal_oms="Acute renal failure (creatinine > 3 mg/dL)",
+    hiperbil_oms="Hyperbilirubinemia (bilirubin > 2.5 mg/dL)", #Jaundice
+    hipoglic_oms="Hypoglycemia (glucose < 40 mg/dL)",
     convulsion="Convulsion",
-    presenta_comorb="Comorbidity",
+    # presenta_comorb="Comorbidity",
     enf_cronica="Chronic disease",
+    enf_sum = "Multiple chronic diseases",
     parasitemia_mil="Parasite density (x 1000 par/uL)",
     en_zona_endemica="Time in endemic area (years)",
     episodio_previo_num="Previous episodes (number)",
-    sev_who_num="Cumulative WHO criteria",
-    sev_who="WHO criteria",
+    sev_who_num="Severe malaria criteria (number)",
+    sev_who="Severe malaria",
+    study="Protein microarray study",
     episodio_previo="Previous episodes") %>% 
-  # replace levels
+  # # add value levels
+  # # problem: do not work on factor variables
+  # # additionally: only variable labels work, not variable values
+  # labelled::set_value_labels(
+  #   study = c("No"="whole-db","Yes"="in-microarray")
+  # ) %>% 
   mutate(across(.cols = c(glas_oms:hiperbil_oms,
-                          presenta_comorb,enf_cronica),
+                          # presenta_comorb,
+                          enf_cronica),
                 .fns = ~fct_recode(.,"No"="0","Yes"="1"))) %>% 
   mutate(episodio_previo=fct_recode(episodio_previo,
                                     "Without"="sin",
-                                    "With"="con"))
+                                    "With"="con")) %>% 
+  mutate(sexo=fct_recode(sexo,
+                         "Male"="masculino",
+                         "Female"="femenino")) %>% 
+  mutate(sev_who=fct_recode(sev_who,
+                         "No"="no_severo",
+                         "Yes"="severo")) #%>% 
+  # mutate(study=fct_recode(study,
+  #                        "No"="whole-db",
+  #                        "Yes"="in-microarray"))
+```
 
+```{r,eval=params$spanish}
+sevdb_2ws_clean <- sevdb_2ws_notranslation %>% 
+  # per language
+  # add labels
+  labelled::set_variable_labels(
+    edad="Edad (años)",
+    edad_etapas_de_vida_c="Edad (grupos)",
+    sexo="Sexo",
+    shock_oms="Shock (presión arterial sistólica < 80 mmHg)",
+    glas_oms="Coma (puntaje Glasgow <= 9/14)",
+    pulmonar_oms="Lesión pulmonar (SDRA o edema pulmonar)",
+    anemia_oms="Anemia grave (hemoglobina < 7 g/dL)",
+    renal_oms="Insuficiencia renal aguda (creatinina > 3 mg/dL)",
+    hiperbil_oms="Hiperbilirrubinemia (bilirrubina > 2,5 mg/dL)", #Jaundice
+    hipoglic_oms="Hipoglicemia (glucosa < 40mg/dL)",
+    convulsion="Convulsión",
+    #presenta_comorb="Comorbilidad",
+    enf_cronica="Enfermedad crónica",
+    enf_sum="Múltiples enfermedades crónicas",
+    parasitemia_mil="Densidad de parásitos (x 1000 par/uL)",
+    en_zona_endemica="Tiempo en zona endémica (años)",
+    episodio_previo_num="Episodios anteriores (número)",
+    sev_who_num="Criterios de Malaria severa (número)",
+    sev_who="Malaria severa",
+    study="Estudio con microarreglos de proteinas",
+    episodio_previo="Episodios anteriores") %>% 
+  # replace levels
+  mutate(across(.cols = c(glas_oms:hiperbil_oms,
+                          # presenta_comorb,
+                          enf_cronica),
+                .fns = ~fct_recode(.,"No"="0","Sí"="1"))) %>% 
+  mutate(episodio_previo=fct_recode(episodio_previo,
+                                    "Sin"="sin",
+                                    "Con"="con")) %>% 
+  mutate(sexo=fct_recode(sexo,
+                         "Masculino"="masculino",
+                         "Femenino"="femenino")) %>% 
+  mutate(sev_who=fct_recode(sev_who,
+                         "No"="no_severo",
+                         "Sí"="severo")) #%>% 
+  # mutate(study=fct_recode(study,
+  #                        "No"="whole-db",
+  #                        "Sí"="in-microarray"))
+```
+
+```{r}
 sevdb_2ws_clean %>% glimpse()
 ```
+
 
 ## Table 1 - all covariates
 
@@ -154,7 +227,8 @@ tab01oms <- sevdb_2ws_clean %>%
   select(glas_oms:hiperbil_oms,
          sev_who_num,
          study) %>% 
-  compareGroups(study~.,data = .#,
+  compareGroups(study~.,data = .,
+                chisq.test.perm = TRUE,
                 # method = c(edad=2,
                 #            en_zona_endemica=2,
                 #            episodio_previo_num=2,
@@ -180,13 +254,13 @@ tab02all <- sevdb_2ws_clean %>%
          -en_zona_endemica_4) %>% 
   # extract variables
   select(-(glas_oms:hiperbil_oms),
-         -(sangr_oms:trombo_sev),
+         # -(sangr_oms:trombo_sev),
          -enf_sum,
          -sev_who_num,
-         -study,
-         -casecontrol) %>% 
+         # -casecontrol,
+         -study) %>% 
   compareGroups(sev_who~.,data = .,
-                byrow = T,
+                byrow = F,
                 method = c(edad=2,
                            en_zona_endemica=2,
                            episodio_previo_num=2,
@@ -213,13 +287,13 @@ tab02abn <- sevdb_2ws_clean %>%
          -en_zona_endemica_4) %>% 
   # extract variables
   select(-(glas_oms:hiperbil_oms),
-         -(sangr_oms:trombo_sev),
+         # -(sangr_oms:trombo_sev),
          -enf_sum,
          -sev_who_num,
-         -study,
-         -casecontrol) %>% 
+         # -casecontrol,
+         -study) %>% 
   compareGroups(sev_who~.,data = .,
-                byrow = T,
+                byrow = F,
                 method = c(edad=2,
                            en_zona_endemica=2,
                            episodio_previo_num=2,
@@ -294,8 +368,10 @@ sevdb_2ws_clean %>%
   filter(!is.na(edad)) %>%
   count(edad_4,sev_who) %>% 
   pivot_wider(names_from = sev_who,values_from = n) %>% 
-  mutate(denominator=no_severo+severo) %>% 
-  mutate(raw=pmap(.l = select(.,x=severo,n=denominator),
+  rowwise() %>% 
+  mutate(denominator=sum(c_across(cols = -edad_4))) %>% 
+  ungroup() %>% 
+  mutate(raw=pmap(.l = select(.,x=3,n=denominator), #cuidado
                     .f = binom.test),
            raw=map(.x = raw,.f = broom::tidy)) %>%
     unnest(raw) %>% 
