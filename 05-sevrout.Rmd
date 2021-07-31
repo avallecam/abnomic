@@ -20,7 +20,7 @@ link-citations: yes
 editor_options: 
   chunk_output_type: console
 params:
-  spanish: true
+  spanish: false
 ---
 
 ```{r setup, include=FALSE}
@@ -49,7 +49,7 @@ sevdb_2ws <- read_rds("data/03-sevrcov-228obs_21var.rds") %>% janitor::clean_nam
 # sevdb_2ws %>% glimpse()
 ```
 
-```{r}
+```{r,eval=FALSE}
 sevdb_3sv <- read_rds("data/03-sevrcov.rds") %>% janitor::clean_names()
 # sevdb_3sv %>% glimpse()
 ```
@@ -61,6 +61,7 @@ sevdb_2ws_notranslation <- sevdb_2ws %>%
   mutate(edad_4=Hmisc::cut2(edad,g = 4),
          enf_sum=as.factor(enf_sum)) %>% 
   cdcper::cdc_edades_peru(variable_edad = edad) %>% 
+  mutate(episodio_previo_cat = Hmisc::cut2(episodio_previo_num,g = 4)) %>% 
   #start select
   select(-(edad_grupo_x:edad_inei_grupos_labels),
          -edad_etapas_de_vida_t,
@@ -73,6 +74,7 @@ sevdb_2ws_notranslation <- sevdb_2ws %>%
          parasitemia_mil,parasitemia_mil_4,
          en_zona_endemica,en_zona_endemica_4,
          episodio_previo_num,
+         episodio_previo_cat,
          episodio_previo,
          everything()) %>% 
   select(-parasitemia) %>% 
@@ -114,6 +116,7 @@ sevdb_2ws_clean <- sevdb_2ws_notranslation %>%
     parasitemia_mil="Parasite density (x 1000 par/uL)",
     en_zona_endemica="Time in endemic area (years)",
     episodio_previo_num="Previous episodes (number)",
+    episodio_previo_cat="Previous episodes (range)",
     sev_who_num="Severe malaria criteria (number)",
     sev_who="Severe malaria",
     study="Protein microarray study",
@@ -164,6 +167,7 @@ sevdb_2ws_clean <- sevdb_2ws_notranslation %>%
     parasitemia_mil="Densidad de parásitos (x 1000 par/uL)",
     en_zona_endemica="Tiempo en zona endémica (años)",
     episodio_previo_num="Episodios anteriores (número)",
+    episodio_previo_cat="Episodios anteriores (rangos)",
     sev_who_num="Criterios de Malaria severa (número)",
     sev_who="Malaria severa",
     study="Estudio con microarreglos de proteinas",
@@ -381,3 +385,28 @@ sevdb_2ws_clean %>%
   geom_errorbar(aes(max=conf.high, min = conf.low)) +
   ylim(0,1)
 ```
+
+## Additional 
+
+```{r}
+read.csv("data-raw/RawData.csv") %>% 
+  as_tibble() %>% 
+  pivot_longer(cols = -(Index:Description),names_to = "samples",values_to = "array_read") %>% 
+  select(samples) %>% 
+  distinct() %>% 
+  mutate(precode=str_replace(samples,"(...).+","\\1")) %>% 
+  dplyr::count(precode)
+```
+
+```{r}
+readr::read_csv("data-raw/ADi-NAMRU6_Data-samples.csv") %>% 
+  # glimpse()
+  dplyr::count(Study,Sample.Type)
+
+readr::read_csv("data-raw/ADi-NAMRU6_Data-samples.csv") %>% 
+  filter(Study=="Controls")
+
+readr::read_csv("data-raw/samples.csv") %>% 
+  dplyr::count(Sample.Type)
+```
+
