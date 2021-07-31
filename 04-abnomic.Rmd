@@ -778,6 +778,38 @@ rbind(full_go,all_go) %>%
                                     ))
 ```
 
+```{r}
+# rbind(full_go,all_go) %>% 
+#   inner_join(go_ord,by = "GO.Components") %>% 
+#   dplyr::arrange(desc(micro))
+
+# go_ord %>% 
+#   avallecam::print_inf()
+
+# rbind(full_go,all_go) %>% #class()
+#   group_by(GO.Components,summary.db) %>% 
+#   dplyr::summarise(count=n()) %>% ungroup() %>% 
+#   dplyr::arrange(desc(count))
+
+library(compareGroups)
+microarray_proteins <- rbind(full_go,all_go) %>% 
+  inner_join(go_ord %>% 
+               filter(micro>3),by = "GO.Components") %>% 
+  dplyr::arrange(desc(micro)) %>% 
+  janitor::clean_names() %>% 
+  dplyr::mutate(go_components=fct_infreq(go_components)) %>% 
+  dplyr::select(protype, summary_db, go_components) %>% 
+  # dplyr::count(go_components) %>% 
+  compareGroups(summary_db~., data=.,
+                max.xlev = 30,
+                chisq.test.perm = TRUE) %>% 
+  createTable(digits = 1)
+
+microarray_proteins %>% export2md()
+microarray_proteins %>% export2xls("table/04-tab01-microarray_proteins.xls")
+```
+
+
 #### Microarray data
 
 ##### Heteroskedasticity 
