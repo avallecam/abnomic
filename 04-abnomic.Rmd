@@ -70,6 +70,36 @@ raw<-read.csv("data-raw/RawData.csv")
 ```{r, eval=FALSE}
 raw %>% View()
 raw %>% dplyr::count(Spot.Type)
+raw %>% dim()
+raw %>% glimpse()
+raw %>% 
+  as_tibble() %>% 
+  select(-(Index:Description)) %>% 
+  colnames() %>% enframe() %>% 
+  mutate(start=
+           case_when(
+             str_starts(value,"L")~str_replace(value,"(...).+", "\\1"),
+             str_starts(value,"P")~str_replace(value,"(....).+", "\\1"), 
+             TRUE ~ "non")) %>% 
+  dplyr::count(start)
+# samples si tiene ubicacion de los 8 controles
+# las lecturas de Ab no estan en el archivo de valores crudos
+# pero si estan en los archivo excel
+readr::read_csv("data-raw/samples.csv") %>% 
+  filter(Study=="Controls") %>% 
+  select(-Study)
+readr::read_csv("data-raw/samples.csv") %>% 
+  # rownames_to_column() %>% 
+  # as_tibble() %>% 
+  # dplyr::count(Study)
+  # dplyr::count(Study,Group)
+  select(value=Sample.ID) %>% 
+  mutate(start=
+           case_when(
+             str_starts(value,"L")~str_replace(value,"(...).+", "\\1"),
+             str_starts(value,"PQ")~str_replace(value,"(....).+", "\\1"), 
+             TRUE ~ "non")) %>% 
+  dplyr::count(start)
 ```
 
 ### 1. Tidy up
