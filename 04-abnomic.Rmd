@@ -1108,6 +1108,63 @@ v <- rbind(w,x,z)#; max(v$rho); min(v$rho)
 v
 ```
 
+```{r}
+# f
+# g
+# h
+# list_validation <- c("0731500", "0206800", "0304600", "EBA", "MSP2", "CSP")
+d <- dplyr::bind_cols(EBA175,
+                      MSP1s1,MSP1s2,
+                      PvAMA1,
+                      MSP2,CSP) %>% 
+  as_tibble() %>% 
+  janitor::clean_names()
+
+# one
+# d %>% 
+#   as.matrix() %>% 
+#   Hmisc::rcorr() %>% 
+#   broom::tidy()
+
+#two
+correlate_combo <- function(matrix_to_correlate) {
+  d <- matrix_to_correlate
+  
+  var_pairs <- t(combn(names(d), 2)) %>%
+  as_tibble() %>% 
+  setNames(c("x", "y"))
+
+var_pairs %>% 
+  dplyr::mutate(r.test = purrr::map2(x, y, ~ stats::cor.test(d[[.x]], d[[.y]],
+                                                             method = "spearman")),
+                r.test = purrr::map(r.test, broom::tidy)) %>%
+  tidyr::unnest(r.test) #%>% 
+  # filter(str_detect(x,paste0(str_to_lower(list_validation),collapse = "|"))) %>% 
+  # distinct(x,.keep_all = T) %>% 
+  # arrange(desc(estimate)) %>% 
+  # view()
+}
+
+rho_pvalue <- correlate_combo(matrix_to_correlate = EBA175) %>% slice(-3) %>% 
+  bind_rows(correlate_combo(matrix_to_correlate = CSP) %>% slice(-3)) %>% 
+  bind_rows(correlate_combo(matrix_to_correlate = MSP2) %>% slice(-3)) #%>% view()
+
+rho_pvalue
+rho_pvalue %>% writexl::write_xlsx("table/04-tab02-validation_correlation.xlsx")
+
+correlate_combo(matrix_to_correlate = PvAMA1) #%>% view()
+
+#three
+library(corrr)
+d %>%
+  correlate() %>%
+  rplot() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  # focus(mpg:drat, mirror = TRUE) %>%
+  # network_plot()
+```
+
+
 __RANGO__ de valores `rho`: __`r format(min(v$rho),digits=2)` - `r max(v$rho) %>% format(digits=2)`__
 
 ### 5. Group comparison
