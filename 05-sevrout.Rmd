@@ -112,7 +112,7 @@ sevdb_2ws_clean <- sevdb_2ws_notranslation %>%
     convulsion="Convulsion",
     # presenta_comorb="Comorbidity",
     enf_cronica="Chronic disease",
-    enf_sum = "Multiple chronic diseases",
+    enf_sum = "Chronic diseases (number)",
     parasitemia_mil="Parasite density (x 1000 par/uL)",
     en_zona_endemica="Time in endemic area (years)",
     episodio_previo_num="Previous episodes (number)",
@@ -163,7 +163,7 @@ sevdb_2ws_clean <- sevdb_2ws_notranslation %>%
     convulsion="Convulsión",
     #presenta_comorb="Comorbilidad",
     enf_cronica="Enfermedad crónica",
-    enf_sum="Múltiples enfermedades crónicas",
+    enf_sum="Enfermedades crónicas (número)",
     parasitemia_mil="Densidad de parásitos (x 1000 par/uL)",
     en_zona_endemica="Tiempo en zona endémica (años)",
     episodio_previo_num="Episodios anteriores (número)",
@@ -259,7 +259,7 @@ tab02all <- sevdb_2ws_clean %>%
   # extract variables
   select(-(glas_oms:hiperbil_oms),
          # -(sangr_oms:trombo_sev),
-         -enf_sum,
+         # -enf_sum,
          -sev_who_num,
          # -casecontrol,
          -study) %>% 
@@ -292,7 +292,7 @@ tab02abn <- sevdb_2ws_clean %>%
   # extract variables
   select(-(glas_oms:hiperbil_oms),
          # -(sangr_oms:trombo_sev),
-         -enf_sum,
+         # -enf_sum,
          -sev_who_num,
          # -casecontrol,
          -study) %>% 
