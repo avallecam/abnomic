@@ -15,8 +15,9 @@ proteínas”.
 ## To-Do
 
 -   ( ) create a `renv` environment
--   ( ) \[MUST\] Reproducibility array - request to ADi
--   ( ) \[MUST\] Peptides list - request to ADi
+
+<!-- - ( ) [MUST] Reproducibility array - request to ADi -->
+<!-- - ( ) [MUST] Peptides list - request to ADi -->
 
 ## Reproducibility
 
@@ -37,11 +38,8 @@ Dataset required:
     -   `data/00-protn6c.xlsx`
     -   `data/00-protn6c.xlsx`
 
-## Related projects
-
--   paper: epidemiological analysis of original case-control study
--   paper: severe pv malaria ab response, only pv \| combined pv + pf
-    analysis
--   ~~paper: previous exposure ab response (self-report with lot of
-    biases)~~
--   paper: drug treatment related ab response
+<!-- ## Related projects -->
+<!-- - paper: epidemiological analysis of original case-control study -->
+<!-- - paper: severe pv malaria ab response, only pv | combined pv + pf analysis -->
+<!-- - ~~paper: previous exposure ab response (self-report with lot of biases)~~ -->
+<!-- - paper: drug treatment related ab response -->
