@@ -840,7 +840,7 @@ rbind(m,n) %>%
                                           "FOC Normalized data")) %>% 
   ggplot(aes(mean,sd)) +
   geom_point() + theme_bw() + 
-  #geom_smooth() +
+  geom_smooth(linetype=0) +
   facet_wrap(~labl,nrow = 1,ncol = 2,scales = "free") +
   labs(title="Mean-variance dependence") +
   theme(strip.background = element_rect(colour = "black"#, fill = "white"
