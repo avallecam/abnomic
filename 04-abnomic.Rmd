@@ -1218,6 +1218,13 @@ td <- topTable(eb, coef = 2,               # default: slope
              by="ID")
 ```
 
+```{r}
+td %>% filter(P.Value<0.05)
+td %>% filter(P.Value<0.05) %>% 
+  writexl::write_xlsx("table/04-tab03-severe_compare-pvalue_results.xlsx")
+  # write("table/04-table03-severe_compare-protein_features.xlsx")
+```
+
 ##### Plots
 
 ###### p-value histogram
@@ -1275,6 +1282,58 @@ td %>%
   geom_vline(aes(xintercept=-1), lty=3) +
   coord_cartesian(xlim = c(-2, 2), ylim = c(0,15))
 ```
+
+```{r}
+td %>% 
+  ggplot(aes(logFC,-log10(P.Value))) +
+  geom_point(aes(colour=adj.P.Val)) + 
+  # geom_point(aes(colour=significance)) + 
+  # scale_color_viridis_c() +
+  scale_color_binned(type = "viridis",show.limits = TRUE) +
+  # guides(color = guide_bins(show.limits = TRUE))
+  # scale_color_manual(values=c(#"red",
+  #                             "black")) +
+  #geom_point(aes(colour=con)) + viridis::scale_color_viridis() +
+  ggrepel::geom_text_repel(data = td %>% 
+                             filter((adj.P.Val<0.30 #& abs(logFC)>0.6
+                                     )# | 
+                             # filter((adj.P.Val<0.05 & logFC>1 & con>1)# | 
+                                      #(adj.P.Val<0.001 & #logFC>0.9 & 
+                                      #   con>2.7) 
+                                    ) %>% 
+                             inner_join(all, by="Gene.ID") %>% 
+                             inner_join(lg %>% dplyr::rename(seg.num=n), 
+                                        by="Gene.ID")  %>% 
+                             mutate(newname=case_when(
+                               is.na(Gene.Name) ~ Gene.ID,
+                               TRUE ~ Gene.Name
+                             )) #%>% 
+                             #arrange(desc(con)) %>% 
+                             #top_n(10,con)
+                           ,
+                           aes(label=newname), force = 15,
+                           direction = "x",
+                           box.padding = unit(4, "lines"),
+                           point.padding = unit(.5, "lines")
+                           ) + theme_bw() +
+  #theme(legend.position="bottom") +
+  # theme(#legend.position=c(.18, .44),
+  #       legend.position=c(.17, .92),
+  #       legend.margin = margin(2,2,2,2)) +
+    labs(title="Non-severe vs Severe",
+       #title="No-severo vs Severo",
+       subtitle="Effect size against statistical significance"#,
+       #subtitle="Tamaño del efecto y significancia estadística",
+       #caption="annotated features filtered by\nP.Value<0.01"
+       )+
+  # or (adj.P.Val<0.001 & con>AveExpr(top1))
+  geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
+  geom_vline(aes(xintercept=-1), lty=3) +
+  geom_vline(aes(xintercept=1), lty=3) #+
+  #geom_vline(aes(xintercept=-1), lty=3) +
+  # coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
+```
+
 
 ##### diff reactive
 
@@ -1869,7 +1928,7 @@ r <- fin %>%
                         ", df=",j$parameter %>% format(digits=2),
                         ", P",ifelse(j$p.value<0.001,"<0.001",
                                                paste0("=",j$p.value %>% 
-                                                        format(digits=2))))#,
+                                                        format(digits=3))))#,
        #caption=paste0("method:",j$method)
        ) + theme_bw()
 
@@ -1888,7 +1947,7 @@ s <- fin %>%
                         ", df=",k$parameter %>% format(digits=2),
                         ", P",ifelse(k$p.value<0.001,"<0.001",
                                                paste0("=",k$p.value %>% 
-                                                        format(digits=2))))#,
+                                                        format(digits=3))))#,
        #caption=paste0("method:",k$method)
        ) + theme_bw()
 
