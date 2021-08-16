@@ -806,7 +806,8 @@ microarray_proteins <- rbind(full_go,all_go) %>%
   createTable(digits = 1)
 
 microarray_proteins %>% export2md()
-microarray_proteins %>% export2xls("table/04-tab01-microarray_proteins.xls")
+microarray_proteins %>% 
+  export2xls("table/04-tab01-microarray_proteins.xls")
 ```
 
 
@@ -1150,7 +1151,8 @@ rho_pvalue <- correlate_combo(matrix_to_correlate = EBA175) %>% slice(-3) %>%
   bind_rows(correlate_combo(matrix_to_correlate = MSP2) %>% slice(-3)) #%>% view()
 
 rho_pvalue
-rho_pvalue %>% writexl::write_xlsx("table/04-tab02-validation_correlation.xlsx")
+rho_pvalue %>% 
+  writexl::write_xlsx("table/04-tab02-validation_correlation.xlsx")
 
 correlate_combo(matrix_to_correlate = PvAMA1) #%>% view()
 
@@ -1219,8 +1221,22 @@ td <- topTable(eb, coef = 2,               # default: slope
 ```
 
 ```{r}
-td %>% filter(P.Value<0.05)
-td %>% filter(P.Value<0.05) %>% 
+td %>% 
+  filter(P.Value<0.05)
+td %>% 
+  filter(P.Value<0.05) %>% 
+  serosurvey::unite_dotwhiskers(variable_dot = logFC,
+                                variable_low = CI.L,
+                                variable_upp = CI.R,
+                                digits_dot = 2,
+                                digits_low = 1,
+                                digits_upp = 1,
+                                decimal_to_percent = F) %>% 
+  select(ID,Gene.ID,Description,
+         AveExpr,no_severo,severo,
+         logFCunite1_,P.Value,adj.P.Val,
+         everything()) %>% 
+  # view()
   writexl::write_xlsx("table/04-tab03-severe_compare-pvalue_results.xlsx")
   # write("table/04-table03-severe_compare-protein_features.xlsx")
 ```
