@@ -1345,15 +1345,18 @@ severe_plot02_b <- td %>%
   # theme(#legend.position=c(.18, .44),
   #       legend.position=c(.17, .92),
   #       legend.margin = margin(2,2,2,2)) +
-    labs(#title="Non-severe vs Severe",
-         x = "log fold change",
-         y = "-log10(p)", 
-         color = "BH\nadjusted"
-       #title="No-severo vs Severo",
-       # subtitle="Effect size against statistical significance"#,
-       #subtitle="Tamaño del efecto y significancia estadística",
-       #caption="annotated features filtered by\nP.Value<0.01"
-       )+
+  # ylab( expression(log[2]~transformed~normalized~MFI) ) +  
+  labs(#title="Non-severe vs Severe",
+    # x = "log fold change",
+    x = expression(log[2]~fold~change),
+    # y = "-log10(p)", 
+    y = expression(-log[10](p)), 
+    color = "BH\nadjusted"
+    #title="No-severo vs Severo",
+    # subtitle="Effect size against statistical significance"#,
+    #subtitle="Tamaño del efecto y significancia estadística",
+    #caption="annotated features filtered by\nP.Value<0.01"
+  )+
   # or (adj.P.Val<0.001 & con>AveExpr(top1))
   geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
   geom_vline(aes(xintercept=-1), lty=3) +
@@ -1528,8 +1531,9 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   #       #legend.text = element_text(size = 8),
   #       #legend.title = element_text(size = 8)
   #       ) +
-  ylab("log2-transformed normalized MFI") +
-  xlab("Antigens") +
+  ylab( expression(log[2]~transformed~normalized~MFI) ) +
+  # ylab("log2-transformed normalized MFI") +
+  xlab("") +
   # labs(#title="Highly and Differentially reactive antigens",
   #      # subtitle="All sorted w.r.t. Case mean reactivity",
   #      # caption="* unadjust p<0.05"
