@@ -1303,6 +1303,8 @@ td %>%
   coord_cartesian(xlim = c(-2, 2), ylim = c(0,15))
 ```
 
+###### figure output 2
+
 ```{r}
 severe_plot02_b <- td %>% 
   ggplot(aes(logFC,-log10(P.Value))) +
