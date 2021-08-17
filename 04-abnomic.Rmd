@@ -1305,7 +1305,7 @@ td %>%
 
 ###### figure output 2
 
-```{r}
+```{r, fig.height=6, fig.width=3}
 severe_plot02_b <- td %>% 
   ggplot(aes(logFC,-log10(P.Value))) +
   geom_point(aes(colour=adj.P.Val)) + 
