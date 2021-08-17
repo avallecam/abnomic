@@ -1480,7 +1480,7 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
               dplyr::mutate(ID=as.character(ID)),
             by="ID") %>% 
   full_join(s %>% as.data.frame() %>% 
-              dplyr::mutate(group="Differentially*") %>% 
+              dplyr::mutate(group="p < 0.05") %>% 
               #dplyr::rename(gene="ID") %>% 
               dplyr::mutate(ID=as.character(ID)),
             by="ID") %>% 
@@ -1493,29 +1493,56 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") %>% 
   #unite(id.name, Product.Description,Gene.Name, sep = " / ", remove = FALSE) %>% 
   unite(id.name, Gene.Name, Gene.ID, sep = " / ", remove = FALSE) %>% 
+  mutate(id.name=str_replace(id.name,"NA / ","")) %>% 
+  mutate(id.name=str_replace(id.name,"/","-")) %>% 
+  mutate(sev_WHO=fct_rev(sev_WHO)) %>% 
+  # glimpse()
+  # select(id.name,no_severo,value,sev_WHO) #%>%
+  # dplyr::count(sev_WHO)
+  # ggplot(aes(reorder(id.name,-p.order),value,fill=sev_WHO))+
+  
+  # All sorted w.r.t. Case mean reactivity
   ggplot(aes(reorder(id.name,no_severo),value,fill=sev_WHO))+
   geom_boxplot()+
   #geom_point() +
   facet_grid(group~.,scales = "free", space = "free") +
-  scale_fill_discrete(name="WHO\ncriteria",
-                      #breaks=c("with", "without"),
-                      labels=c("non-severe", "severe")) + theme_bw() +
-  guides(fill = guide_legend(title.position = "left")) +
-  theme(legend.position=c(-.25, -.13),#"bottom"
-        legend.margin = margin(0,0,0,0)#,
-        #legend.text = element_text(size = 8),
-        #legend.title = element_text(size = 8)
-        ) +
-  ylab("log2-transformed normalized MFI")+
-  xlab("antigens")+
-  labs(title="Highly and Differentially reactive antigens",
-       subtitle="All sorted w.r.t. Case mean reactivity",
-       caption="*filtered by unadjust P.Value<0.05")+
-  coord_flip() +
-  theme(strip.background = element_rect(colour = "black"#, fill = "white"
-                                        ),
-        strip.text.y = element_text(colour = "black",size = 10#, face = "bold"
-                                    ))
+  colorspace::scale_fill_discrete_qualitative(
+    name="P. vivax\nmalaria",
+    #breaks=c("with", "without"),
+    limits=c("no_severo","severo"),
+    labels=c("Non-severe", "Severe"),
+    rev=TRUE
+  ) +
+  # scale_fill_discrete(name="WHO\ncriteria",
+  #                     #breaks=c("with", "without"),
+  #                     limits=c("no_severo","severo"),
+  #                     labels=c("non-severe", "severe")
+  #                     ) +
+  theme_bw() +
+  # guides(fill = guide_legend(title.position = "left")) +
+  # theme(legend.position="bottom",
+  #       legend.justification = "left",
+  #       legend.direction = "vertical"
+  #       # legend.position=c(-.25, -.13),#"bottom"
+  #       # legend.margin = margin(0,0,0,0)#,
+  #       #legend.text = element_text(size = 8),
+  #       #legend.title = element_text(size = 8)
+  #       ) +
+  ylab("log2-transformed normalized MFI") +
+  xlab("Antigens") +
+  # labs(#title="Highly and Differentially reactive antigens",
+  #      # subtitle="All sorted w.r.t. Case mean reactivity",
+  #      # caption="* unadjust p<0.05"
+  #      )+
+  coord_flip() #+
+  # theme(strip.background = element_rect(colour = "black"
+  #                                       #, fill = "white"
+  #                                       ),
+  #       strip.text.y = element_text(colour = "black",
+  #                                   size = 10#, face = "bold"
+  #                                   ))
+ggsave("figure/04-fig08-severe_compare-boxplot_highrve.png",
+       height = 3,width = 6,dpi = "retina")
 ```
 
 #### 5.2 previous episode
