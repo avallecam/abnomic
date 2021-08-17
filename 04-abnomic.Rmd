@@ -1335,7 +1335,7 @@ severe_plot02_b <- td %>%
                              #top_n(10,con)
                            ,
                            aes(label=newname), 
-                           size = 2.5,
+                           size = 3,
                            # force = 15,
                            # direction = "x",
                            # box.padding = unit(4, "lines"),
@@ -1511,6 +1511,7 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   facet_grid(group~.,scales = "free", space = "free") +
   colorspace::scale_fill_discrete_qualitative(
     name="P. vivax\nmalaria",
+    palette="Set 3",
     #breaks=c("with", "without"),
     limits=c("no_severo","severo"),
     labels=c("Non-severe", "Severe"),
