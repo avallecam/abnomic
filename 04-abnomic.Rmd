@@ -1986,45 +1986,82 @@ k <- fin %>%
 ```
 
 ```{r, fig.height=6, fig.width=3}
+
+# sources:
+# https://gist.github.com/benmarwick/5cfeda1d20ff9ab3231a5de8fac36213
+# https://stackoverflow.com/a/60153154
+# https://stackoverflow.com/a/5294214
+
+r_df <- j$parameter %>% format(digits=2)
+r_tstat <- j$statistic %>% format(digits=3)
+r_pvalue <- if_else(condition = j$p.value<0.001,
+                    true = "<0.001",
+                    false = paste0("=",j$p.value %>% 
+                                     format(digits=3)))
+r_one <- bquote(expression(t[.(r_df)]==.(r_tstat)* ", p" * .(r_pvalue) ) )
+
+
 r <- fin %>% 
   ggplot(aes(sev_WHO,sample_freq)) +
-  geom_boxplot(#position=position_dodge(0.8)
-               ) +
-  geom_dotplot(#aes(fill=sev_WHO), 
-               binaxis='y', stackdir='center', 
-               dotsize=1#, position=position_dodge(0.8)
-               ) +
-  scale_x_discrete(labels = c("non-severe","severe")) +
-  xlab("WHO criteria") + ylab("Number Reactive") +
-  labs(title="Breadth of Ab response", 
-       subtitle= paste0("t=",j$statistic %>% format(digits=2),
-                        ", df=",j$parameter %>% format(digits=2),
-                        ", P",ifelse(j$p.value<0.001,"<0.001",
-                                               paste0("=",j$p.value %>% 
-                                                        format(digits=3))))#,
-       #caption=paste0("method:",j$method)
-       ) + theme_bw()
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.5,0.75)) +
+  ggbeeswarm::geom_quasirandom(method = "tukeyDense") +
+  # geom_boxplot(#position=position_dodge(0.8)
+  #              ) +
+  # geom_dotplot(#aes(fill=sev_WHO), 
+  #              binaxis='y', stackdir='center', 
+  #              dotsize=1#, position=position_dodge(0.8)
+  #              ) +
+  scale_x_discrete(labels = c("Non-severe","Severe")) +
+  # xlab("WHO criteria") + 
+  xlab("P. vivax malaria") + 
+  ylab("Reactive Antigens") +
+  labs(#title="Breadth of Ab response", 
+    title= eval(r_one)
+    # subtitle= paste0("t=",j$statistic %>% format(digits=2),
+    #                  ", df=",j$parameter %>% format(digits=2),
+    #                  ", p",ifelse(j$p.value<0.001,"<0.001",
+    #                               paste0("=",j$p.value %>% 
+    #                                        format(digits=3))))#,
+    # #caption=paste0("method:",j$method)
+  ) + theme_bw()
+
+s_df <- k$parameter %>% format(digits=2)
+s_tstat <- k$statistic %>% format(digits=2)
+s_pvalue <- if_else(condition = k$p.value<0.001,
+                    true = "<0.001",
+                    false = paste0("=",k$p.value %>% 
+                                     format(digits=3)))
+s_one <- bquote(expression(t[.(s_df)]==.(s_tstat)* ", p" * .(s_pvalue) ) )
 
 s <- fin %>% 
   ggplot(aes(sev_WHO,sample_mean)) +
-  geom_boxplot(#position=position_dodge(0.8)
-               ) +
-  geom_dotplot(#aes(fill=sev_WHO), 
-               binaxis='y', stackdir='center', 
-               dotsize=1#, position=position_dodge(0.8)
-               ) +
-  scale_x_discrete(labels = c("non-severe","severe")) +
-  xlab("WHO criteria") + ylab("Mean Intensity") +
-  labs(title="Intensity of Ab response", 
-       subtitle= paste0("t=",k$statistic %>% format(digits=2),
-                        ", df=",k$parameter %>% format(digits=2),
-                        ", P",ifelse(k$p.value<0.001,"<0.001",
-                                               paste0("=",k$p.value %>% 
-                                                        format(digits=3))))#,
-       #caption=paste0("method:",k$method)
-       ) + theme_bw()
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.5,0.75)) +
+  ggbeeswarm::geom_quasirandom(method = "tukeyDense") +
+  # geom_boxplot(#position=position_dodge(0.8)
+  #              ) +
+  # geom_dotplot(#aes(fill=sev_WHO), 
+  #              binaxis='y', stackdir='center', 
+  #              dotsize=1#, position=position_dodge(0.8)
+  #              ) +
+  scale_x_discrete(labels = c("Non-severe","Severe")) +
+  xlab("P. vivax malaria") + 
+  ylab("Mean Intensity") +
+  labs(#title="Intensity of Ab response", 
+    title= eval(s_one)
+    # "t=",k$statistic %>% format(digits=2),
+    # ", df=",k$parameter %>% format(digits=2),
+    # ", p",ifelse(k$p.value<0.001,"<0.001",
+    #              paste0("=",k$p.value %>% 
+    #                       format(digits=3))))#,
+    #caption=paste0("method:",k$method)
+  ) + theme_bw()
 
-Rmisc::multiplot(r,s,cols = 1)
+# s
+# Rmisc::multiplot(r,s,cols = 1)
+r + s +
+  patchwork::plot_annotation(tag_levels = "A")
+ggsave("figure/04-fig06-severe_compare-subject_response.png",
+       height = 3,width = 6,dpi = "retina")
 ```
 
 #### 6.2 previous episode
