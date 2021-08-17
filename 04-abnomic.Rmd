@@ -1949,7 +1949,9 @@ eset <- eset.VIVAX.SEV.FILTER
 
 fin <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
   group_by(sample) %>% 
-  dplyr::summarise(sample_mean=mean(value, na.rm=TRUE),
+  # dplyr::summarise(sample_mean=mean(value, na.rm=TRUE), 
+  # cambio por exploracion de distribuciones!
+  dplyr::summarise(sample_mean=median(value, na.rm=TRUE),
                    sample_freq=(sum(value>1, na.rm=TRUE)#*100/n()
                                 )) %>% 
   full_join(pData(eset) %>% 
@@ -1964,6 +1966,44 @@ fin <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>%
 #filter(sample=="LIM2071") %>% select(value) %>% filter(value > 1)
 ```
 
+evaluate distribution per subject
+
+```{r,fig.height=8,fig.width=8}
+# explorar distribuciones individuales
+biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  ggplot(aes(x = value)) +
+  geom_histogram() +
+  facet_wrap(~sample)
+```
+
+```{r,fig.width=3,fig.height=3}
+biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  select(value) %>% 
+  # group_by(sample) %>% 
+  skimr::skim()
+
+biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  select(sev_WHO,value) %>% 
+  group_by(sev_WHO) %>%
+  skimr::skim()
+
+biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  select(episodio_previo,value) %>% 
+  filter(!is.na(episodio_previo)) %>% 
+  group_by(episodio_previo) %>%
+  skimr::skim()
+
+biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  select(sample,value) %>% 
+  group_by(sample) %>% 
+  skimr::skim() %>% 
+  as_tibble() %>% 
+  mutate(diff_median_mean=numeric.p50-numeric.mean) %>% 
+  ggplot(aes(x = diff_median_mean)) +
+  geom_histogram()
+```
+
+
 #### 6.1 severe
 
 ```{r}
@@ -1974,7 +2014,9 @@ fin <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>%
 ## Segundo, Prueba de Hipótesis para comparar medias:
 j <- fin %>% 
   t.test(sample_freq ~ sev_WHO, data = ., var.equal=TRUE) %>% 
-  broom::tidy() #%>% format(digits=2)
+  broom::tidy() %>% #%>% format(digits=2)
+  mutate(test="breadth") %>% 
+  select(test,everything())
 
 ## Primero, Prueba de Hipótesis para comparar varianzas
 #fin %>% var.test(sample_mean ~ sev_WHO, data = .) %>% broom::tidy()
@@ -1983,8 +2025,23 @@ j <- fin %>%
 ## Segundo, Prueba de Hipótesis para comparar medias:
 k <- fin %>% 
   t.test(sample_mean ~ sev_WHO, data = ., var.equal=TRUE) %>% 
-  broom::tidy() #%>% format(digits=2)
+  broom::tidy() %>% #%>% format(digits=2)
+  mutate(test="intensity") %>% 
+  select(test,everything()) #%>% format(digits=2)
 ```
+
+```{r}
+
+fin %>% 
+  compareGroups(formula = sev_WHO ~ sample_freq + sample_mean,data = .) %>% 
+  createTable(sd.type = 2,digits = 2) %>% 
+  export2xls("table/04-tab05-severe_compare-subject_response.xls")
+
+j %>% 
+  union_all(k) %>% 
+  writexl::write_xlsx("table/04-tab04-severe_compare-subject_response.xlsx")
+```
+
 
 ```{r, fig.height=6, fig.width=3}
 
@@ -1994,12 +2051,13 @@ k <- fin %>%
 # https://stackoverflow.com/a/5294214
 
 r_df <- j$parameter %>% format(digits=2)
-r_tstat <- j$statistic %>% format(digits=3)
+r_tstat <- j$statistic %>% format(digits=2)
 r_pvalue <- if_else(condition = j$p.value<0.001,
                     true = "<0.001",
                     false = paste0("=",j$p.value %>% 
                                      format(digits=3)))
-r_one <- bquote(expression(t[.(r_df)]==.(r_tstat)* ", p" * .(r_pvalue) ) )
+# r_one <- bquote(expression(t[.(r_df)]==.(r_tstat)* ", p" * .(r_pvalue) ) )
+r_one <- paste0("p",r_pvalue)
 
 
 r <- fin %>% 
@@ -2017,7 +2075,8 @@ r <- fin %>%
   xlab("P. vivax malaria") + 
   ylab("Reactive Antigens") +
   labs(#title="Breadth of Ab response", 
-    title= eval(r_one)
+    # title= eval(r_one)
+    title = r_one
     # subtitle= paste0("t=",j$statistic %>% format(digits=2),
     #                  ", df=",j$parameter %>% format(digits=2),
     #                  ", p",ifelse(j$p.value<0.001,"<0.001",
@@ -2027,12 +2086,13 @@ r <- fin %>%
   ) + theme_bw()
 
 s_df <- k$parameter %>% format(digits=2)
-s_tstat <- k$statistic %>% format(digits=2)
+s_tstat <- k$statistic %>% format(digits=3)
 s_pvalue <- if_else(condition = k$p.value<0.001,
                     true = "<0.001",
                     false = paste0("=",k$p.value %>% 
                                      format(digits=3)))
-s_one <- bquote(expression(t[.(s_df)]==.(s_tstat)* ", p" * .(s_pvalue) ) )
+# s_one <- bquote(expression(t[.(s_df)]==.(s_tstat)* ", p" * .(s_pvalue) ) )
+s_one <- paste0("p",s_pvalue)
 
 s <- fin %>% 
   ggplot(aes(sev_WHO,sample_mean)) +
@@ -2048,7 +2108,8 @@ s <- fin %>%
   xlab("P. vivax malaria") + 
   ylab("Mean Intensity") +
   labs(#title="Intensity of Ab response", 
-    title= eval(s_one)
+    # title= eval(s_one)
+    title = s_one
     # "t=",k$statistic %>% format(digits=2),
     # ", df=",k$parameter %>% format(digits=2),
     # ", p",ifelse(k$p.value<0.001,"<0.001",
