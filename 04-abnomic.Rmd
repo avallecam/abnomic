@@ -1194,6 +1194,36 @@ eset$sev_WHO <- relevel(eset$sev_WHO, ref = "severo")
 table(eset$sev_WHO) # debe ser: control (fct referencia) vs caso
 ```
 
+###### Intervention [IMPORTANT]
+
+An critical evaluation the p value histogram 
+generated for the severe comparison
+using moderated t-test 
+showed that its distribution was irregular
+(https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6164648/)
+one suggested alternative was to use a wilcoxon rank sum test
+instead od a t test
+following lindeloev (https://lindeloev.github.io/tests-as-linear/#51_independent_t-test_and_mann-whitney_u)
+we transformed the raw values of the matrix to rank values
+to apply a linear model to data and remake a non-parametric test
+
+chunk in eval = FALSE by default
+
+```{r,eval=FALSE}
+rank_to_eset <- function(eset) {
+  
+  esApply(X = eset,MARGIN = 1,FUN = rank) %>% t()
+  
+}
+
+eset <- ExpressionSet(assayData = rank_to_eset(eset = eset), 
+                      phenoData = eset@phenoData,
+                      featureData = eset@featureData)
+
+eset@assayData$exprs %>% head()
+```
+
+
 ###### Matrix + Linear model + eBayes
 
 ```{r}
@@ -1273,8 +1303,10 @@ td %>%
   mutate(unadj_significance=if_else(P.Value<0.05,
                               "P.Value<0.05","not sig.")) %>% #dplyr::count(significance)
   ggplot(aes(logFC,-log10(P.Value))) +
-  geom_point(aes(colour=unadj_significance)) + scale_color_manual(name="unadjust\nsignificance",
-                                                                  values=c("black","red")) + theme_bw() +
+  geom_point(aes(colour=unadj_significance)) + 
+  scale_color_manual(name="unadjust\nsignificance",
+                     values=c("black","red")) + 
+  theme_bw() +
   #geom_point(aes(colour=no_severo)) + viridis::scale_color_viridis() +
   #ggrepel::geom_text_repel(data = td %>% 
   #                           top_n(-10,P.Value) %>% 
@@ -1306,6 +1338,15 @@ td %>%
 ###### figure output 2
 
 ```{r, fig.height=6, fig.width=3}
+
+adj_pval_limit <- td %>% 
+  dplyr::count(adj.P.Val) %>% 
+  arrange(adj.P.Val) %>% 
+  top_n(n = -2,wt = adj.P.Val) %>% 
+  pull(adj.P.Val) %>% 
+  pluck(2) %>% 
+  round(digits = 2)
+
 severe_plot02_b <- td %>% 
   ggplot(aes(logFC,-log10(P.Value))) +
   geom_point(aes(colour=adj.P.Val)) + 
@@ -1317,7 +1358,8 @@ severe_plot02_b <- td %>%
   #                             "black")) +
   #geom_point(aes(colour=con)) + viridis::scale_color_viridis() +
   ggrepel::geom_text_repel(data = td %>% 
-                             filter((adj.P.Val<0.30 #& abs(logFC)>0.6
+                             # filter((adj.P.Val<0.30 #& abs(logFC)>0.6
+                             filter((adj.P.Val<=adj_pval_limit #& abs(logFC)>0.6
                                      )# | 
                              # filter((adj.P.Val<0.05 & logFC>1 & con>1)# | 
                                       #(adj.P.Val<0.001 & #logFC>0.9 & 
@@ -1340,7 +1382,8 @@ severe_plot02_b <- td %>%
                            # direction = "x",
                            # box.padding = unit(4, "lines"),
                            # point.padding = unit(.5, "lines")
-                           ) + theme_bw() +
+                           ) + 
+  theme_bw() +
   #theme(legend.position="bottom") +
   # theme(#legend.position=c(.18, .44),
   #       legend.position=c(.17, .92),
@@ -1356,7 +1399,7 @@ severe_plot02_b <- td %>%
     # subtitle="Effect size against statistical significance"#,
     #subtitle="Tamaño del efecto y significancia estadística",
     #caption="annotated features filtered by\nP.Value<0.01"
-  )+
+  ) +
   # or (adj.P.Val<0.001 & con>AveExpr(top1))
   geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
   geom_vline(aes(xintercept=-1), lty=3) +
