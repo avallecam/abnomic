@@ -1966,7 +1966,7 @@ fin <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>%
 #filter(sample=="LIM2071") %>% select(value) %>% filter(value > 1)
 ```
 
-evaluate distribution per subject
+__evaluate distribution per subject__
 
 ```{r,fig.height=8,fig.width=8}
 # explorar distribuciones individuales
@@ -2106,7 +2106,7 @@ s <- fin %>%
   #              ) +
   scale_x_discrete(labels = c("Non-severe","Severe")) +
   xlab("P. vivax malaria") + 
-  ylab("Mean Intensity") +
+  ylab("Median Intensity") +
   labs(#title="Intensity of Ab response", 
     # title= eval(s_one)
     title = s_one
