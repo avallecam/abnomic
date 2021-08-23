@@ -1404,6 +1404,7 @@ severe_plot02_b <- td %>%
   geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
   geom_vline(aes(xintercept=-1), lty=3) +
   geom_vline(aes(xintercept=1), lty=3) #+
+  # xlim(-15,15)
   #geom_vline(aes(xintercept=-1), lty=3) +
   # coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
 # severe_plot02_b
