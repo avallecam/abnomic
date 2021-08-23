@@ -19,6 +19,8 @@ link-citations: yes
 #csl: american-medical-association.csl
 editor_options: 
   chunk_output_type: console
+# params:
+#   non_parametric: true
 ---
 
 ```{r setup, include=FALSE}
@@ -1265,34 +1267,34 @@ eset$sev_WHO <- relevel(eset$sev_WHO, ref = "severo")
 table(eset$sev_WHO) # debe ser: control (fct referencia) vs caso
 ```
 
-###### Intervention [IMPORTANT]
+<!-- ###### Intervention [IMPORTANT] -->
 
-An critical evaluation the p value histogram 
-generated for the severe comparison
-using moderated t-test 
-showed that its distribution was irregular
-(https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6164648/)
-one suggested alternative was to use a wilcoxon rank sum test
-instead od a t test
-following lindeloev (https://lindeloev.github.io/tests-as-linear/#51_independent_t-test_and_mann-whitney_u)
-we transformed the raw values of the matrix to rank values
-to apply a linear model to data and remake a non-parametric test
+<!-- An critical evaluation the p value histogram  -->
+<!-- generated for the severe comparison -->
+<!-- using moderated t-test  -->
+<!-- showed that its distribution was irregular -->
+<!-- (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6164648/) -->
+<!-- one suggested alternative was to use a wilcoxon rank sum test -->
+<!-- instead od a t test -->
+<!-- following lindeloev (https://lindeloev.github.io/tests-as-linear/#51_independent_t-test_and_mann-whitney_u) -->
+<!-- we transformed the raw values of the matrix to rank values -->
+<!-- to apply a linear model to data and remake a non-parametric test -->
 
-chunk in eval = FALSE by default
+<!-- chunk in eval = FALSE by default -->
 
-```{r,eval=FALSE}
-rank_to_eset <- function(eset) {
-  
-  esApply(X = eset,MARGIN = 1,FUN = rank) %>% t()
-  
-}
+<!-- ```{r,eval=FALSE} -->
+<!-- rank_to_eset <- function(eset) { -->
 
-eset <- ExpressionSet(assayData = rank_to_eset(eset = eset), 
-                      phenoData = eset@phenoData,
-                      featureData = eset@featureData)
+<!--   esApply(X = eset,MARGIN = 1,FUN = rank) %>% t() -->
 
-eset@assayData$exprs %>% head()
-```
+<!-- } -->
+
+<!-- eset <- ExpressionSet(assayData = rank_to_eset(eset = eset),  -->
+<!--                       phenoData = eset@phenoData, -->
+<!--                       featureData = eset@featureData) -->
+
+<!-- eset@assayData$exprs %>% head() -->
+<!-- ``` -->
 
 
 ###### Matrix + Linear model + eBayes
@@ -1325,10 +1327,71 @@ td <- topTable(eb, coef = 2,               # default: slope
              by="ID")
 ```
 
+###### Intervention [IMPORTANT]
+
+An critical evaluation the p value histogram 
+generated for the severe comparison
+using moderated t-test 
+showed that its distribution was irregular
+(https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6164648/)
+one suggested alternative was to use a wilcoxon rank sum test
+instead od a t test
+following lindeloev (https://lindeloev.github.io/tests-as-linear/#51_independent_t-test_and_mann-whitney_u)
+we transformed the raw values of the matrix to rank values
+to apply a linear model to data and remake a non-parametric test
+
+chunk in eval = FALSE by default
+
+```{r}
+set_non_parametric <- TRUE
+```
+
+```{r,eval=TRUE}
+rank_to_eset <- function(eset) {
+  
+  esApply(X = eset,MARGIN = 1,FUN = rank) %>% t()
+  
+}
+
+np_eset <- ExpressionSet(assayData = rank_to_eset(eset = eset), 
+                         phenoData = eset@phenoData,
+                         featureData = eset@featureData)
+
+np_eset@assayData$exprs %>% head()
+
+np_design <- model.matrix(~ np_eset$sev_WHO)
+np_fit <- lmFit(np_eset, np_design)
+np_eb <- eBayes(np_fit)
+topTable(np_eb) %>% rownames_to_column()
+
+td_nonparam <- topTable(np_eb, coef = 2,               # default: slope
+         sort.by =NULL, resort.by =NULL, 
+         #genelist = NULL,                 # no fit$gene
+         number = Inf,                     # show all the hipothesis
+         confint=0.95) %>% rownames_to_column() %>% as.tbl() %>% 
+  dplyr::rename(ID=rowname) %>% 
+  arrange(P.Value) %>% 
+  rename_with(.fn = ~str_replace(string = .,
+                                 pattern = "(.+)",
+                                 replacement = "np_\\1")) %>% 
+  select(np_ID,np_P.Value,np_adj.P.Val)
+
+# unir y reemplazar valores parametricos por no parametricos 
+td <- td %>% 
+  left_join(td_nonparam,by = c("ID" = "np_ID")) %>% 
+  dplyr::rename(pp_P.Value=P.Value,
+                P.Value=np_P.Value) %>% 
+  dplyr::rename(pp_adj.P.Val=adj.P.Val,
+                adj.P.Val=np_adj.P.Val)
+```
+
 ```{r}
 td %>% 
+  arrange(P.Value) %>% 
   filter(P.Value<0.05)
+
 td %>% 
+  arrange(P.Value) %>% 
   filter(P.Value<0.05) %>% 
   serosurvey::unite_dotwhiskers(variable_dot = logFC,
                                 variable_low = CI.L,
@@ -1342,9 +1405,12 @@ td %>%
          logFCunite1_,P.Value,adj.P.Val,
          everything()) %>% 
   # view()
-  writexl::write_xlsx("table/04-tab03-severe_compare-pvalue_results.xlsx")
+  writexl::write_xlsx(paste0("table/04-tab03-severe_compare-pvalue_results-np_",
+                             set_non_parametric,".xlsx"))
+  # writexl::write_xlsx("table/04-tab03-severe_compare-pvalue_results.xlsx")
   # write("table/04-table03-severe_compare-protein_features.xlsx")
 ```
+
 
 ##### Plots
 
@@ -1491,7 +1557,10 @@ td %>%
                              tag_levels = "A")
 
 
-ggsave("figure/04-fig07-severe_compare-pvalue_histogram.png",
+ggsave(
+  paste0("figure/04-fig07-severe_compare-pvalue_histogram-np_",
+                             set_non_parametric,".png"),
+  # "figure/04-fig07-severe_compare-pvalue_histogram.png",
        height = 3,width = 6,dpi = "retina")
 ```
 
