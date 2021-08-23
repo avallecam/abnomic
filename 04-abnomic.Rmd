@@ -1543,13 +1543,31 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   mutate(id.name=str_replace(id.name,"NA / ","")) %>% 
   mutate(id.name=str_replace(id.name,"/","-")) %>% 
   mutate(sev_WHO=fct_rev(sev_WHO)) %>% 
+  # test zone
+  # mutate(id.name=fct_reorder(.f = id.name,
+  #                            .x = value,
+  #                            .fun = mean)) %>%
+  # #                            .fun = median)) %>%
+  # mutate(id.name=fct_reorder2(.f = id.name,
+  #                             .x = value,
+  #                             .y = no_severo,
+  #                             .fun = median)) %>%
+  # mutate(id.name = tidytext::reorder_within(x = id.name,
+  #                                           by = value,
+  #                                           within = group,
+  #                                           fun = median)) %>%
+  # filter(group=="Top 10") %>% 
+  # arrange(id.name) %>% 
   # glimpse()
   # select(id.name,no_severo,value,sev_WHO) #%>%
   # dplyr::count(sev_WHO)
   # ggplot(aes(reorder(id.name,-p.order),value,fill=sev_WHO))+
   
   # All sorted w.r.t. Case mean reactivity
-  ggplot(aes(reorder(id.name,no_severo),value,fill=sev_WHO))+
+  # ggplot(aes(x = id.name,
+  ggplot(aes(x = reorder(id.name,no_severo),
+             y = value,
+             fill = sev_WHO))+
   geom_boxplot()+
   #geom_point() +
   facet_grid(group~.,scales = "free", space = "free") +
