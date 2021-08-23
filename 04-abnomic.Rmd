@@ -1548,12 +1548,19 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   #                            .x = value,
   #                            .fun = mean)) %>%
   # #                            .fun = median)) %>%
+  mutate(id.name=fct_reorder(.f = id.name,
+                             .x = no_severo,
+                             .fun = mean)) %>%
+  # mutate(id.name=fct_reorder2(.f = id.name,
+  #                             .x = no_severo,
+  #                             .y = value,
+  #                             .fun = median)) %>%
   # mutate(id.name=fct_reorder2(.f = id.name,
   #                             .x = value,
   #                             .y = no_severo,
   #                             .fun = median)) %>%
   # mutate(id.name = tidytext::reorder_within(x = id.name,
-  #                                           by = value,
+  #                                           by = no_severo,
   #                                           within = group,
   #                                           fun = median)) %>%
   # filter(group=="Top 10") %>% 
@@ -1564,8 +1571,8 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   # ggplot(aes(reorder(id.name,-p.order),value,fill=sev_WHO))+
   
   # All sorted w.r.t. Case mean reactivity
-  # ggplot(aes(x = id.name,
-  ggplot(aes(x = reorder(id.name,no_severo),
+  ggplot(aes(x = id.name,
+  # ggplot(aes(x = reorder(id.name,no_severo),
              y = value,
              fill = sev_WHO))+
   geom_boxplot()+
