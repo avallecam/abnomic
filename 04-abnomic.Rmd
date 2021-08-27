@@ -1422,14 +1422,16 @@ ax <- td %>% ggplot(aes(P.Value)) +
   scale_x_continuous(breaks=seq(0, 1, by = .5)) +
   geom_vline(aes(xintercept=0.05), lty=3, col="red") +
   labs(title="P-value histogram",
-       subtitle="Without multiple testing correction") + xlab("p.value") + theme_bw()
+       subtitle="Without multiple testing correction") + 
+  xlab("p.value") + theme_bw()
 bx <-  td %>% ggplot(aes(adj.P.Val)) +
   geom_histogram(breaks=seq(0, 1, by = .05)) +
   scale_x_continuous(breaks=seq(0, 1, by = .5)) +
   geom_vline(aes(xintercept=0.05), lty=3, col="red") +
   coord_cartesian(xlim = c(0,1)) +
   labs(title="P-value histogram",
-       subtitle="After multiple testing correction") + xlab("adjust p.value") + theme_bw()
+       subtitle="After multiple testing correction") + 
+  xlab("adjust p.value") + theme_bw()
 Rmisc::multiplot(ax,bx,cols = 2)
 ```
 
@@ -1541,7 +1543,7 @@ severe_plot02_b <- td %>%
   geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
   geom_vline(aes(xintercept=-1), lty=3) +
   geom_vline(aes(xintercept=1), lty=3) #+
-  # xlim(-15,15)
+  # ylim(0,3) # used for the final image
   #geom_vline(aes(xintercept=-1), lty=3) +
   # coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
 # severe_plot02_b
@@ -1598,6 +1600,12 @@ sev_t <- td %>%
 
 sev_t
 ```
+
+```{r}
+sev_t %>% 
+  writexl::write_xlsx("table/04-tab06-severe_compare-top_reactives.xlsx")
+```
+
 
 ##### both
 
