@@ -1404,6 +1404,24 @@ td %>%
          AveExpr,no_severo,severo,
          logFCunite1_,P.Value,adj.P.Val,
          everything()) %>% 
+  # add plasmo db annotation to 
+  # update description names and
+  # add protein characteristics in one table
+  left_join(all) %>% 
+  # select(Gene.ID,#Description,
+  #        Product.Description,Gene.Name) %>%
+  # mutate(Gene.Name=replace_na(Gene.Name,"")) %>% 
+  mutate(product_description = case_when(
+    is.na(Gene.Name) ~ Product.Description,
+    !is.na(Gene.Name) ~ str_c(Product.Description," (",Gene.Name,")")
+  )) %>% 
+  # replace Description (original from AD chips) with PlasmoDB annotations
+  select(-Description) %>% 
+  select(ID,Gene.ID,product_description,everything()) %>% 
+  # unnecesary columns
+  select(-Species,-logFC,-CI.L,-CI.R,-t,
+         -B,-significance,-logFCunite2_,
+         -Product.Description,-Gene.Name) %>% 
   # view()
   writexl::write_xlsx(paste0("table/04-tab03-severe_compare-pvalue_results-np_",
                              set_non_parametric,".xlsx"))
@@ -1603,6 +1621,14 @@ sev_t
 
 ```{r}
 sev_t %>% 
+  select(-p.order,-Species,-seg.num) %>% 
+  mutate(product_description = case_when(
+    is.na(Gene.Name) ~ Product.Description,
+    !is.na(Gene.Name) ~ str_c(Product.Description," (",Gene.Name,")")
+  )) %>% 
+  # replace Description (original from AD chips) with PlasmoDB annotations
+  select(-Description,-Product.Description,-Gene.Name) %>% 
+  select(ID,Gene.ID,product_description,everything()) %>% 
   writexl::write_xlsx("table/04-tab06-severe_compare-top_reactives.xlsx")
 ```
 
