@@ -1327,6 +1327,90 @@ td <- topTable(eb, coef = 2,               # default: slope
              by="ID")
 ```
 
+feature correlation
+
+```{r}
+tidyeset <- 
+  biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  select(gene,sample,sev_WHO,episodio_previo,value) %>% 
+  pivot_wider(id_cols = gene:episodio_previo,names_from = gene,
+              values_from = value) %>% 
+  janitor::clean_names() 
+
+tidyeset_all <- tidyeset %>% 
+  select(-(sample:episodio_previo)) %>%
+  corrr::correlate(method = "spearman") %>%
+  corrr::stretch() %>%
+  arrange(desc(r)) %>% 
+  mutate(r_cut = Hmisc::cut2(x = r,cuts = seq(0,1,0.2))) %>% 
+  dplyr::count(r_cut)
+  # ggplot(aes(x = r)) +
+  # geom_histogram(binwidth = 0.1)
+
+tidyeset_sev <- tidyeset %>% 
+  group_by(sev_who) %>%
+  # filter(!is.na(episodio_previo)) %>% 
+  # group_by(episodio_previo) %>% 
+  nest() %>% 
+  mutate(select_data = map(.x = data,
+                           .f = select, 
+                           -(sample:episodio_previo)
+                           # -c(sample,sev_who)
+                           )) %>% 
+  mutate(corrr_data = map(.x = select_data,
+                          .f = corrr::correlate,
+                          method = "spearman")) %>% 
+  mutate(corrr_data = map(.x = corrr_data,
+                          .f = corrr::stretch)) %>% 
+  unnest(cols = corrr_data) %>% 
+  select(-(data:select_data)) %>% 
+  mutate(r_cut = Hmisc::cut2(x = r,cuts = seq(0,1,0.2))) %>% 
+  dplyr::count(sev_who,r_cut) %>% 
+  pivot_wider(id_cols = -n,
+              names_from = sev_who,
+              values_from = n)
+  # # select(-(sample:episodio_previo)) %>% 
+  # # corrr::correlate(method = "spearman") %>%
+  # # corrr::stretch() %>% 
+  # # arrange(desc(r)) %>% 
+  # ggplot(aes(x = r)) +
+  # geom_histogram(binwidth = 0.1) +
+  # geom_vline(aes(xintercept = 0)) +
+  # facet_wrap(~sev_who)
+  # # facet_wrap(~episodio_previo)
+
+tidyeset_epi <- tidyeset %>% 
+  # group_by(sev_who) %>%
+  filter(!is.na(episodio_previo)) %>%
+  group_by(episodio_previo) %>%
+  nest() %>% 
+  mutate(select_data = map(.x = data,
+                           .f = select, 
+                           # -(sample:episodio_previo)
+                           -c(sample,sev_who)
+                           )) %>% 
+  mutate(corrr_data = map(.x = select_data,
+                          .f = corrr::correlate,
+                          method = "spearman")) %>% 
+  mutate(corrr_data = map(.x = corrr_data,
+                          .f = corrr::stretch)) %>% 
+  unnest(cols = corrr_data) %>% 
+  select(-(data:select_data)) %>% 
+  mutate(r_cut = Hmisc::cut2(x = r,cuts = seq(0,1,0.2))) %>% 
+  dplyr::count(episodio_previo,r_cut) %>% 
+  pivot_wider(id_cols = -n,
+              names_from = episodio_previo,
+              values_from = n)
+
+feature_correlation <- 
+  left_join(tidyeset_all,tidyeset_epi) %>% 
+  left_join(tidyeset_sev)
+
+feature_correlation %>% 
+  writexl::write_xlsx("table/04-tab07-feature_correlation.xlsx")
+```
+
+
 ###### Intervention [IMPORTANT]
 
 An critical evaluation the p value histogram 
@@ -1659,13 +1743,15 @@ x <- td %>%
   select(ID) %>% as.matrix() 
 
 pData(eset) <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
-  group_by(sample) %>% dplyr::summarise(sample_mean=mean(value, na.rm=TRUE)) %>% 
+  group_by(sample) %>% 
+  dplyr::summarise(sample_median=median(value, na.rm=TRUE)) %>% 
   full_join(pData(eset) %>% 
               rownames_to_column() %>% 
               dplyr::rename(sample=rowname),
             by="sample") %>% 
-  select(-Study,-Group,-episodio_previo,-edad_CAT, -expo_CAT, -episodio_previo_num) %>% 
-  arrange(sev_WHO,sample_mean) %>% #dplyr::count(sample)
+  select(-Study,-Group,-episodio_previo,-edad_CAT, 
+         -expo_CAT, -episodio_previo_num) %>% 
+  arrange(sev_WHO,sample_median) %>% #dplyr::count(sample)
   as.data.frame() %>% #class()
   column_to_rownames(var="sample")
 
@@ -1676,13 +1762,45 @@ eset <- eset[c(x,s),y]
 
 aheatmap(exprs(eset), 
          Rowv = NA, Colv = NA, 
-         annCol = pData(eset)#, 
+         annCol = pData(eset) %>% 
+           # mutate(parasitemia_mil=log(parasitemia_mil)) %>% 
+           # 20210827 - remove excessive characteristics
+           select(-(sev_WHO_1:sev_WHO_4),
+                  -sev_WHO_num,
+                  -parasitemia_mil_4,
+                  -parasitemia_mil,
+                  -en_zona_endemica_4,-edad_4) %>% 
+           mutate(sev_WHO=case_when(
+             sev_WHO=="no_severo"~"Non-severe",
+             sev_WHO=="severo"~"Severe")) %>% 
+           dplyr::rename("Median intensity"=sample_median,
+                  "P.vivax malaria"=sev_WHO),
+         filename = "figure/04-fig09-severe_compare-heatmap-nocluster.png",
+         fontsize = 6,
+         width = 6,
+         height = 3
          #layout = "_"
-         )
+)
 
 aheatmap(exprs(eset), 
          Rowv = TRUE, Colv = NA, 
-         annCol = pData(eset)#, 
+         annCol = pData(eset) %>% 
+           # mutate(parasitemia_mil=log(parasitemia_mil)) %>% 
+           # 20210827 - remove excessive characteristics
+           select(-(sev_WHO_1:sev_WHO_4),
+                  -sev_WHO_num,
+                  -parasitemia_mil_4,
+                  -parasitemia_mil,
+                  -en_zona_endemica_4,-edad_4) %>% 
+           mutate(sev_WHO=case_when(
+             sev_WHO=="no_severo"~"Non-severe",
+             sev_WHO=="severo"~"Severe")) %>% 
+           dplyr::rename("Median intensity"=sample_median,
+                  "P.vivax malaria"=sev_WHO),
+         filename = "figure/04-fig09-severe_compare-heatmap-wtcluster.png",
+         fontsize = 6,
+         width = 6,
+         height = 3
          #layout = "_"
          )
 ```
@@ -1775,8 +1893,8 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   #       #legend.text = element_text(size = 8),
   #       #legend.title = element_text(size = 8)
   #       ) +
-  ylab( expression(log[2]~transformed~normalized~MFI) ) +
-  # ylab("log2-transformed normalized MFI") +
+  # ylab( expression(log[2]~transformed~normalized~MFI) ) +
+  ylab("Antigen reactivity") +
   xlab("") +
   # labs(#title="Highly and Differentially reactive antigens",
   #      # subtitle="All sorted w.r.t. Case mean reactivity",
@@ -2707,6 +2825,47 @@ rbind(a,b,c,d) %>%
                                     ))
 ```
 
+severe paper plot
+
+```{r}
+rbind(a,b#,c,d
+      ) %>% 
+  replace_na(list(value = "absent")) %>% 
+  ggplot(aes(x=summary.db, fill=value)) +
+  geom_bar(position = "fill") +
+  geom_text(data = rbind(a,b#,c,d
+                         ) %>% replace_na(list(value = "absent")) %>% 
+              group_by(summary.db,key,value) %>% 
+              dplyr::count() %>% ungroup() %>% 
+              group_by(summary.db,key) %>% 
+              dplyr::arrange(summary.db, key, desc(value)) %>% 
+              dplyr::mutate(prop=(n/sum(n)),lab=cumsum(prop),lab= ifelse(lab==1,(2-prop)/2,lab/2)
+                            ), 
+            aes(x = summary.db, y= lab, label = n), size=3) +
+  facet_grid(.~key,scales = "free", space = "free") +
+  scale_fill_discrete(name="Value") + theme_bw() +
+  #guides(fill = guide_legend(title.position = "left")) +
+  theme(legend.position=c(-.33, .18),#"bottom"
+        legend.margin = margin(0,0,0,0),
+        axis.title.y=element_blank()
+        #legend.text = element_text(size = 8),
+        #legend.title = element_text(size = 8)
+        ) +  
+  ylab("proportion")+
+  #xlab(label = "")+
+  labs(title="Protein targeting and localization") +
+  #labs(title="Proportion of Secretory or Membrane proteins per subset") +
+  #     subtitle="") +
+  #     caption="*filtered by adj.P.Val<0.05 & logFC>1")+
+  # and \n (logFC>1 & con>1) | (logFC>0.9 & con>2)
+  coord_flip() +
+  theme(strip.background = element_rect(colour = "black"#, fill = "white"
+                                        ),
+        strip.text.x = element_text(colour = "black",size = 10#, face = "bold"
+                                    ))
+```
+
+
 ```{r, fig.height=3, fig.width=6, eval=FALSE}
 ##### TMD proportion
 a <- exp_t %>% #dplyr::count(TM.Domains)
@@ -3180,6 +3339,83 @@ rbind(a,b) %>%
                                     ))
 ```
 
+only top10 for severe paper
+
+```{r}
+antigen_plot_a <- rbind(a#,b
+) %>% 
+  ggplot(aes(log2(NonSyn_Syn.SNP.Ratio.All.Strains),
+             Total.SNPs.All.Strains/Transcript.Length)) +
+  geom_point(aes(colour=Transcript.Length, size=Ortholog.count)) + 
+  #scale_colour_gradientn(colours = rainbow(10),
+  #                       name="Transcript\nlength") +
+  colorspace::scale_color_continuous_sequential(
+    name="Transcript\nlength(nt)",
+    trans="log10",
+    breaks = c(1000,2000,3000,4000,5000,10000),
+    palette = "Blues 3"
+  ) +
+  # viridis::scale_color_viridis(name="Transcript\nlength(nt)",
+  #                              trans="log10",
+  #                              breaks = c(1000,2000,3000,4000,5000,10000)
+  #                              #,option="plasma"#,discrete = TRUE
+  # ) +
+  scale_size(name="Ortholog\ncount"#,
+             #trans="log10"#, breaks = c(1000,2000,3000,5000,10000)
+  ) +
+  #scale_colour_gradient(trans="log10") +
+  ggrepel::geom_text_repel(data = rbind(a#,b
+  ) %>% 
+    replace_na(list(Gene.Name="na")) %>% 
+    dplyr::mutate(
+      Gene.Name=ifelse(Gene.Name=="na",Gene.ID,Gene.Name),
+      # Gene.Name=ifelse(ID=="PVX_099980_1o1_S2.504","MSP1_S2",Gene.Name),
+      # Gene.Name=ifelse(ID=="PVX_099980_1o1_S1.793","MSP1_S1",Gene.Name)
+      )
+  #mutate(Gene.Name=ifelse(NonSyn_Syn.SNP.Ratio.All.Strains < 1 | 
+  #NonSyn_Syn.SNP.Ratio.All.Strains > 2.5 | 
+  #                         Total.SNPs.All.Strains > 300 & 
+  #                         Total.SNPs.All.Strains < 400 | 
+  #                         Total.SNPs.All.Strains > 100 & 
+  #                         Total.SNPs.All.Strains < 200 |
+  #                         Total.SNPs.All.Strains < 10,
+  #                       Gene.ID,Gene.Name))
+  ,aes(label=Gene.Name,size=intensity*5
+  ),
+  #size=2.8,
+  box.padding = unit(.65, "lines"),segment.size =.2,
+  direction = "x",#nudge_x = 45,
+  point.padding = unit(.5, "lines")#,
+  #segment.color = "red"
+  ) +
+  facet_grid(.~summary.db#, 
+             #scales = "free", 
+             #space = "free"
+  ) + theme_bw() +
+  theme(#legend.position=c(-.25, -.025),#"bottom"
+    legend.margin = margin(0,0,0,0)#,
+    #legend.text = element_text(size = 8),
+    #legend.title = element_text(size = 8)
+  ) +  
+  coord_trans(y = "log10") +
+  #geom_vline(aes(xintercept=0), lty=3, col="red") #+ 
+  ylab("Total SNPs (length-normalized)")+
+  xlab("NonSyn/Syn SNP ratio (log2-transformed)")+
+  labs(title="Genetic variability of antigens",#SNP space
+       #subtitle="Among all strains",
+       caption="\nLabel sizes proportional to mean antigen reactivity")+
+  # and \n (logFC>1 & con>1) | (logFC>0.9 & con>2)
+  #coord_flip() # ORDENAR eje de proteínas!!!!
+  theme(strip.background = element_rect(colour = "black"#, fill = "white"
+  ),
+  strip.text.x = element_text(colour = "black",size = 12#, face = "bold"
+  ))
+
+# ggsave("figure/04-fig10-severe_compare-variability.png",
+#        height = 5,width = 6,dpi = "retina")
+```
+
+
 - PVX_097730, a pesar de no poseer un nivel de expresión tan alto como MSP1_S1, 
 tiene una reactividad serológica mayor que MSP1_S1 y un tamaño de efecto igual a 0.9.
 Además, es exclusivo de P. vivax.
@@ -3310,9 +3546,11 @@ rna_dt <- rbind(
   unite(id.name, Gene.Name, Gene.ID, sep = " / ", remove = FALSE) %>%
   #unite(id.name, id.name, p.order, sep = " / ", remove = FALSE)  %>% 
   #dplyr::mutate(id.name= ifelse(ID == "PVX_003775_2o2.150", "MSP4. / PVX_003775", id.name))
-  dplyr::mutate(subset= forcats::fct_recode(subset, 
-                                            "w/ Previous Episode (FDR<0.05 & logFC>1)"="diff", 
-                                            "Top 10"="atop"))
+  dplyr::mutate(
+    subset= forcats::fct_recode(
+      subset, 
+      "w/ Previous Episode (FDR<0.05 & logFC>1)"="diff", 
+      "Top 10"="atop"))
 
 rna_dt %>% 
   ggplot(aes(rna_t,fpkm,colour=id.name)) +
@@ -3340,6 +3578,81 @@ rna_dt %>%
         strip.text.x = element_text(colour = "black",size = 12#, face = "bold"
                                     ))
 ```
+
+severe paper, onlu top10
+
+```{r}
+# rna_dt_last <- rna_dt %>% 
+#   # dplyr::count(subset)
+#   filter(subset == "Top 10") %>% 
+#   group_by(id.name) %>% 
+#   dplyr::summarise(last = dplyr::last(fpkm)) %>% 
+#   mutate(id.name=str_replace(id.name,"NA / ","")) %>% 
+#   mutate(id.name=str_replace(id.name,"(.+) / (.+)","\\2 - \\1"))
+
+rna_dt_subset <- rna_dt %>% 
+  filter(subset == "Top 10") %>% 
+  mutate(id.name=str_replace(id.name,"NA / ","")) %>%
+  mutate(id.name=str_replace(id.name,"(.+) / (.+)","\\1 - \\2"))
+
+antigen_plot_b <- rna_dt_subset %>% 
+  ggplot(aes(x = rna_t,
+             y = fpkm,
+             group=id.name,
+             colour=intensity)) +
+  #geom_point() + 
+  geom_point() + theme_bw() +
+  geom_smooth(#method = "lm", 
+    se = FALSE) +
+  # scale_y_continuous(sec.axis = dup_axis(
+  #   breaks = rna_dt_last$last,
+  #   labels = rna_dt_last$id.name,
+  #   name = NULL,
+  #   guide = guide_axis(n.dodge=2))) +
+  # guides(color="none") #+
+  colorspace::scale_color_continuous_sequential(
+    name="Mean\nantigen\nreactivity",
+    palette = "Greens 3") +
+  # viridis::scale_color_viridis(#discrete = T,
+  #                              option = "inferno") +
+  coord_cartesian(xlim = c(min(rna_dt$rna_t), max(rna_dt$rna_t) + 15)) +
+  facet_grid(.~subset) +
+  ggrepel::geom_text_repel(
+    data=subset(rna_dt_subset,
+                rna_t == max(rna_t)),
+    aes(label=id.name),
+    color = "black",
+    size = 3,
+    # fontface = 'bold',
+    nudge_x = 45,
+    direction = "y",
+    # box.padding = unit(.08, "lines"),
+    # segment.color = NA
+  ) +
+  scale_x_continuous(breaks=seq(6, 48, by = 6)) +
+  # theme(legend.position = "none") +
+  xlab("Time (hours)") +
+  ylab("log2 FPKM") +
+  labs(title="Transcription profile of antigens during intraerythrocytic cycle",
+       caption = "\n Data from Zhu et al. 2016") +
+  #coord_trans(y = "log10")
+  theme(strip.background = element_rect(
+    colour = "black"#, fill = "white"
+  ),
+  strip.text.x = element_text(
+    colour = "black",size = 12#, face = "bold"
+  ))
+
+# ggsave("figure/04-fig11-severe_compare-transcription.png",
+#        height = 5,width = 6,dpi = "retina")
+
+antigen_plot_a +
+  antigen_plot_b +
+  patchwork::plot_annotation(tag_levels = "A")
+ggsave("figure/04-fig12-severe_compare-antigen_mixtureplot.png",
+       height = 5,width = 12,dpi = "retina")
+```
+
 
 ```{r}
 rna_dtm.ann <- rna_dt %>% 
