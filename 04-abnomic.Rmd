@@ -1805,12 +1805,14 @@ aheatmap(exprs(eset),
          )
 ```
 
+
 ###### boxplot
 
 ```{r, fig.width=5.1,fig.height=4, echo=TRUE}
 eset <- eset.VIVAX.SEV.FILTER
 
-biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
+eset_clean_diff_top <- 
+  biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   dplyr::rename(ID="gene") %>% 
   full_join(td, by = "ID") %>%
   full_join(x %>% as.data.frame() %>% 
@@ -1842,7 +1844,9 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   # #                            .fun = median)) %>%
   mutate(id.name=fct_reorder(.f = id.name,
                              .x = no_severo,
-                             .fun = mean)) %>%
+                             .fun = mean))
+
+eset_clean_diff_top %>%
   # mutate(id.name=fct_reorder2(.f = id.name,
   #                             .x = no_severo,
   #                             .y = value,
@@ -1908,6 +1912,58 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   #                                   size = 10#, face = "bold"
   #                                   ))
 ggsave("figure/04-fig08-severe_compare-boxplot_highrve.png",
+       height = 3,width = 6,dpi = "retina")
+```
+
+```{r}
+eset_clean_diff_top_sub <- eset_clean_diff_top %>% 
+  select(id.name,sample,value,sev_WHO,group)
+
+eset_clean_diff_top_sub_arrange <- eset_clean_diff_top_sub %>%
+  select(id.name,value,sample) %>% 
+  group_by(sample) %>% 
+  dplyr::summarise(sum_value = median(value,na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  arrange(sum_value)
+
+eset_clean_diff_top_sub_antigen <- eset_clean_diff_top_sub %>% 
+  select(id.name,value) %>% 
+  group_by(id.name) %>% 
+  dplyr::summarise(sum_antigen = median(value,na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  arrange(sum_antigen)
+
+eset_clean_diff_top_sub %>% 
+  left_join(eset_clean_diff_top_sub_arrange) %>%
+  left_join(eset_clean_diff_top_sub_antigen) %>% 
+  mutate(sample = fct_reorder(.f = sample,
+                               .x = sum_value,
+                               .fun = mean),
+         id.name = fct_reorder(.f = id.name,
+                               .x = sum_antigen,
+                               .fun = mean)) %>% 
+  mutate(sev_WHO = fct_rev(sev_WHO)) %>% 
+  mutate(sev_WHO = fct_recode(sev_WHO, 
+                              "Severe" = "severo", 
+                              "Non-severe" = "no_severo")) %>% 
+  ggplot(aes(x = sample,y = id.name, fill = value)) +
+  geom_tile() +
+  facet_grid(group~sev_WHO,
+             scale = 'free', space = 'free') +
+  colorspace::scale_fill_continuous_diverging(
+    name="Antigen\nreactivity",
+    mid = 2,
+    palette = "Blue-Red 3",
+    # begin = 0.2
+    ) +
+  labs(y = NULL, x=NULL) + 
+  theme(axis.text.x = element_text(angle = 90, 
+                                   vjust = 0.5, 
+                                   hjust=1,
+                                   size=5),
+        axis.text.y = element_text(size=7))
+
+ggsave("figure/04-fig09-severe_compare-heatmap-nocluster-ggplot.png",
        height = 3,width = 6,dpi = "retina")
 ```
 
