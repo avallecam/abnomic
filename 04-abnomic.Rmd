@@ -3342,75 +3342,57 @@ rbind(a,b) %>%
 only top10 for severe paper
 
 ```{r}
-antigen_plot_a <- rbind(a#,b
-) %>% 
-  ggplot(aes(log2(NonSyn_Syn.SNP.Ratio.All.Strains),
-             Total.SNPs.All.Strains/Transcript.Length)) +
-  geom_point(aes(colour=Transcript.Length, size=Ortholog.count)) + 
-  #scale_colour_gradientn(colours = rainbow(10),
-  #                       name="Transcript\nlength") +
-  colorspace::scale_color_continuous_sequential(
-    name="Transcript\nlength(nt)",
-    trans="log10",
-    breaks = c(1000,2000,3000,4000,5000,10000),
-    palette = "Blues 3"
-  ) +
-  # viridis::scale_color_viridis(name="Transcript\nlength(nt)",
-  #                              trans="log10",
-  #                              breaks = c(1000,2000,3000,4000,5000,10000)
-  #                              #,option="plasma"#,discrete = TRUE
-  # ) +
-  scale_size(name="Ortholog\ncount"#,
-             #trans="log10"#, breaks = c(1000,2000,3000,5000,10000)
-  ) +
-  #scale_colour_gradient(trans="log10") +
-  ggrepel::geom_text_repel(data = rbind(a#,b
+antigen_plot_a <- 
+  rbind(a#,b
   ) %>% 
-    replace_na(list(Gene.Name="na")) %>% 
-    dplyr::mutate(
-      Gene.Name=ifelse(Gene.Name=="na",Gene.ID,Gene.Name),
-      # Gene.Name=ifelse(ID=="PVX_099980_1o1_S2.504","MSP1_S2",Gene.Name),
-      # Gene.Name=ifelse(ID=="PVX_099980_1o1_S1.793","MSP1_S1",Gene.Name)
-      )
-  #mutate(Gene.Name=ifelse(NonSyn_Syn.SNP.Ratio.All.Strains < 1 | 
-  #NonSyn_Syn.SNP.Ratio.All.Strains > 2.5 | 
-  #                         Total.SNPs.All.Strains > 300 & 
-  #                         Total.SNPs.All.Strains < 400 | 
-  #                         Total.SNPs.All.Strains > 100 & 
-  #                         Total.SNPs.All.Strains < 200 |
-  #                         Total.SNPs.All.Strains < 10,
-  #                       Gene.ID,Gene.Name))
-  ,aes(label=Gene.Name,size=intensity*5
-  ),
-  #size=2.8,
-  box.padding = unit(.65, "lines"),segment.size =.2,
-  direction = "x",#nudge_x = 45,
-  point.padding = unit(.5, "lines")#,
-  #segment.color = "red"
-  ) +
-  facet_grid(.~summary.db#, 
-             #scales = "free", 
-             #space = "free"
-  ) + theme_bw() +
-  theme(#legend.position=c(-.25, -.025),#"bottom"
-    legend.margin = margin(0,0,0,0)#,
-    #legend.text = element_text(size = 8),
-    #legend.title = element_text(size = 8)
-  ) +  
+  ggplot(aes(x = log2(NonSyn_Syn.SNP.Ratio.All.Strains),
+             y = Total.SNPs.All.Strains/Transcript.Length)) +
+  geom_point(aes(size=intensity,
+                 colour=intensity)) + 
+  colorspace::scale_color_continuous_sequential(
+    name="Mean\nantigen\nreactivity",
+    palette = "Reds",
+    begin = 0.2) +
+  scale_size_binned(name=NULL) +
+  ggrepel::geom_text_repel(
+    data = rbind(a#,b
+    ) %>% 
+      replace_na(list(Gene.Name="na")) %>% 
+      dplyr::mutate(
+        Gene.Name=ifelse(Gene.Name=="na",Gene.ID,Gene.Name),
+        # Gene.Name=ifelse(
+        #   ID=="PVX_099980_1o1_S2.504","MSP1_S2",Gene.Name),
+        # Gene.Name=ifelse(
+        #   ID=="PVX_099980_1o1_S1.793","MSP1_S1",Gene.Name)
+        )
+    , 
+    aes(label=Gene.Name)) +
+  facet_grid(.~summary.db) + 
   coord_trans(y = "log10") +
   #geom_vline(aes(xintercept=0), lty=3, col="red") #+ 
-  ylab("Total SNPs (length-normalized)")+
-  xlab("NonSyn/Syn SNP ratio (log2-transformed)")+
-  labs(title="Genetic variability of antigens",#SNP space
+  # ylab("Total SNPs (length-normalized)")+
+  # xlab("NonSyn/Syn SNP ratio (log2-transformed)")+
+  # ylab("SNPs per Transcript length ratio")+
+  ylab( expression(log[10]~SNPs~per~Transcript~length~ratio) ) +
+  # xlab("log2 NonSyn/Syn SNP ratio")+
+  xlab( expression(log[2]~NonSyn/Syn~SNP~ratio) ) +
+  labs(title="Genetic variability",#SNP space
        #subtitle="Among all strains",
-       caption="\nLabel sizes proportional to mean antigen reactivity")+
+       # caption="\nLabel sizes proportional to mean antigen reactivity"
+       )+
   # and \n (logFC>1 & con>1) | (logFC>0.9 & con>2)
   #coord_flip() # ORDENAR eje de proteínas!!!!
-  theme(strip.background = element_rect(colour = "black"#, fill = "white"
-  ),
-  strip.text.x = element_text(colour = "black",size = 12#, face = "bold"
-  ))
+  theme(
+    strip.background = element_rect(
+      colour = "black"#, fill = "white"
+    ),
+    strip.text.x = element_text(
+      colour = "black",size = 12#, face = "bold"
+    )) +
+  guides(size = guide_legend(reverse=T),
+         color = guide_colorbar(order = 1))
 
+# antigen_plot_a
 # ggsave("figure/04-fig10-severe_compare-variability.png",
 #        height = 5,width = 6,dpi = "retina")
 ```
@@ -3593,7 +3575,13 @@ severe paper, onlu top10
 rna_dt_subset <- rna_dt %>% 
   filter(subset == "Top 10") %>% 
   mutate(id.name=str_replace(id.name,"NA / ","")) %>%
-  mutate(id.name=str_replace(id.name,"(.+) / (.+)","\\1 - \\2"))
+  mutate(id.name=str_replace(id.name,"(.+) / (.+)","\\1 - \\2")) #%>% 
+  # dplyr::mutate(
+  #   # Gene.Name=ifelse(Gene.Name=="na",Gene.ID,Gene.Name),
+  #   id.name=case_when(
+  #     ID=="PVX_099980_1o1_S2.504" ~ "MSP1_S2 - PVX_099980",
+  #     ID=="PVX_099980_1o1_S1.793" ~ "MSP1_S1 - PVX_099980",
+  #     TRUE ~ id.name))
 
 antigen_plot_b <- rna_dt_subset %>% 
   ggplot(aes(x = rna_t,
@@ -3612,10 +3600,13 @@ antigen_plot_b <- rna_dt_subset %>%
   # guides(color="none") #+
   colorspace::scale_color_continuous_sequential(
     name="Mean\nantigen\nreactivity",
-    palette = "Greens 3") +
+    palette = "Reds",
+    begin = 0.2) +
   # viridis::scale_color_viridis(#discrete = T,
   #                              option = "inferno") +
-  coord_cartesian(xlim = c(min(rna_dt$rna_t), max(rna_dt$rna_t) + 15)) +
+  coord_cartesian(
+    xlim = c(min(rna_dt$rna_t), 
+             max(rna_dt$rna_t) + 15)) +
   facet_grid(.~subset) +
   ggrepel::geom_text_repel(
     data=subset(rna_dt_subset,
@@ -3632,9 +3623,10 @@ antigen_plot_b <- rna_dt_subset %>%
   scale_x_continuous(breaks=seq(6, 48, by = 6)) +
   # theme(legend.position = "none") +
   xlab("Time (hours)") +
-  ylab("log2 FPKM") +
-  labs(title="Transcription profile of antigens during intraerythrocytic cycle",
-       caption = "\n Data from Zhu et al. 2016") +
+  ylab("FPKM") +
+  labs(
+    title="Transcription profile of antigens during intraerythrocytic cycle",
+    caption = "Data from Zhu et al. 2016") +
   #coord_trans(y = "log10")
   theme(strip.background = element_rect(
     colour = "black"#, fill = "white"
@@ -3645,20 +3637,62 @@ antigen_plot_b <- rna_dt_subset %>%
 
 # ggsave("figure/04-fig11-severe_compare-transcription.png",
 #        height = 5,width = 6,dpi = "retina")
+```
+
+```{r}
+rna_dt_subset_arrange <- rna_dt_subset %>% 
+  select(id.name,fpkm,rna_t) %>% 
+  group_by(id.name) %>% 
+  filter(fpkm == max(fpkm)) %>% 
+  ungroup() %>% 
+  arrange(rna_t,fpkm) %>% 
+  dplyr::rename(rna_t_max=rna_t) %>% 
+  select(-fpkm)
+
+antigen_plot_c <- rna_dt_subset %>% 
+  left_join(rna_dt_subset_arrange) %>% 
+  mutate(rna_t = as.factor(rna_t),
+         id.name = fct_reorder(.f = id.name,
+                               .x = -rna_t_max,
+                               .fun = mean)) %>%
+  ggplot(aes(x = rna_t,y = id.name, fill = fpkm)) +
+  geom_tile() +
+  facet_grid(.~subset) +
+  colorspace::scale_fill_continuous_diverging(
+    name="FPKM",
+    mid = 4,
+    palette = "Blue-Red 3",
+    # begin = 0.2
+    ) +
+  labs(x="Time", y=NULL,
+       title="Intraerythrocytic cycle Transcription profile",
+       # subtitle = "Data from Zhu et al. 2016",
+       caption = "FPKM = Fragments Per Kilobase Million") +
+  theme(strip.background = element_rect(
+    colour = "black"#, fill = "white"
+  ),
+  strip.text.x = element_text(
+    colour = "black",size = 12#, face = "bold"
+  ))
 
 antigen_plot_a +
-  antigen_plot_b +
-  patchwork::plot_annotation(tag_levels = "A")
+  # antigen_plot_b +
+  antigen_plot_c +
+  plot_annotation(tag_levels = "A") #+
+  # plot_layout(guides = 'collect')
 ggsave("figure/04-fig12-severe_compare-antigen_mixtureplot.png",
-       height = 5,width = 12,dpi = "retina")
+       height = 5,width = 11,dpi = "retina")
 ```
 
 
 ```{r}
 rna_dtm.ann <- rna_dt %>% 
-  dplyr::mutate(id.name= ifelse(ID == "PVX_003775_2o2.150", "MSP4. / PVX_003775", id.name),
-                id.name=ifelse(ID=="PVX_099980_1o1_S2.504","MSP1_S2 / PVX_099980",id.name),
-                id.name=ifelse(ID=="PVX_099980_1o1_S1.793","MSP1_S1 / PVX_099980",id.name)) %>% 
+  dplyr::mutate(id.name= ifelse(ID == "PVX_003775_2o2.150", 
+                                "MSP4. / PVX_003775", id.name),
+                id.name=ifelse(ID=="PVX_099980_1o1_S2.504",
+                               "MSP1_S2 / PVX_099980",id.name),
+                id.name=ifelse(ID=="PVX_099980_1o1_S1.793",
+                               "MSP1_S1 / PVX_099980",id.name)) %>% 
   separate(id.name,c("gene.name","gene.id"),sep = " / ") %>% 
   unite(id.name,gene.id,gene.name,sep = " / ") %>% 
   #mutate_at(vars(id.name), funs(trimws)) %>% 
