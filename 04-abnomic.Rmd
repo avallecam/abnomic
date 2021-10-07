@@ -1053,24 +1053,25 @@ rbind(a,b,c) %>%
   geom_point() + theme_bw() + #geom_smooth(method = "lm") +
   facet_grid(.~antigen#,scales = "free", space = "free"
              ) +
-  geom_text(aes(x,y,label=lab),
-            data = data_frame(x=0,y=50700,
-                              lab=c(
-                                paste0(#"S=",f$statistic,", rho="
-                                  "rho=",f$estimate %>% format(digits=2),
-                                  ", P",ifelse(f$p.value<0.001,"<0.001",
-                                               paste0("=",f$p.value))),
-                                paste0(#"S=",g$statistic,", rho="
-                                  "rho=",g$estimate %>% format(digits=2),
-                                  ", P",ifelse(g$p.value<0.001,"<0.001",
-                                                paste0("=",g$p.value))),
-                                paste0(#"S=",h$statistic,", rho="
-                                  "rho=",h$estimate %>% format(digits=2),
-                                  ", P",ifelse(h$p.value<0.001,"<0.001",
-                                                paste0("=",h$p.value)))
-                                                ),
-                              antigen=c("Pf EBA175","Pf MSP2","Pf CSP")),
-            vjust=.5,hjust=0.05,size=3.5) +
+  geom_text(
+    aes(x,y,label=lab),
+    data = data_frame(x=0,y=50700,
+                      lab=c(
+                        paste0(#"S=",f$statistic,", rho="
+                          "rho=",f$estimate %>% format(digits=2),
+                          "\nP",ifelse(f$p.value<0.001,"<0.001",
+                                       paste0("=",f$p.value))),
+                        paste0(#"S=",g$statistic,", rho="
+                          "rho=",g$estimate %>% format(digits=2),
+                          "\nP",ifelse(g$p.value<0.001,"<0.001",
+                                       paste0("=",g$p.value))),
+                        paste0(#"S=",h$statistic,", rho="
+                          "rho=",h$estimate %>% format(digits=2),
+                          "\nP",ifelse(h$p.value<0.001,"<0.001",
+                                       paste0("=",h$p.value)))
+                      ),
+                      antigen=c("Pf EBA175","Pf MSP2","Pf CSP")),
+    vjust=.5,hjust=0.05,size=3.5) +
   xlab("Ab reactivity to Purified Antigen") + ylab("Ab reactivity to IVTT Antigen") +
   labs(title="Validity of the protein microarray assay") +
   #     subtitle= paste0(#"S=",g$statistic,", rho="
@@ -1078,9 +1079,9 @@ rbind(a,b,c) %>%
   #     #caption=paste0("method: ",g$method)
   #    ) + 
   theme(strip.background = element_rect(colour = "black"#, fill = "white"
-                                        ),
-        strip.text.x = element_text(colour = "black",size = 11#, face = "bold"
-                                    ))
+  ),
+  strip.text.x = element_text(colour = "black",size = 11#, face = "bold"
+  ))
 
 ### TRY TO ADD MATHEMATICAL NOTATION
 # https://blog.snap.uaf.edu/2013/03/25/mathematical-notation-in-r-plots/
@@ -1154,9 +1155,10 @@ ebaxx %>%
                                              "\\1")) %>% 
               mutate(x = 50700, y=0),
             aes(x = x, y = y, label=ag_ivtt), 
-            vjust=0,hjust=1, size = 3) +
-  ylab("Ab reactivity to Purified Antigen") + 
-  xlab("Ab reactivity to IVTT Antigen")
+            vjust=0,hjust=1, size = 2) +
+  ylab("Purified Antigen MFI") + 
+  xlab("IVTT Antigen MFI") + 
+  labs(caption = "MFI = Mean Fluorescence Intensity")
 
 ggsave("figure/04-fig03-validation_correlation.png",
        height = 4,width = 8,dpi = "retina")
@@ -1212,20 +1214,26 @@ correlate_combo <- function(matrix_to_correlate) {
   as_tibble() %>% 
   setNames(c("x", "y"))
 
-var_pairs %>% 
-  dplyr::mutate(r.test = purrr::map2(x, y, ~ stats::cor.test(d[[.x]], d[[.y]],
-                                                             method = "spearman")),
-                r.test = purrr::map(r.test, broom::tidy)) %>%
-  tidyr::unnest(r.test) #%>% 
+  var_pairs %>% 
+    dplyr::mutate(
+      r.test = purrr::map2(x, y, 
+                           ~ stats::cor.test(d[[.x]], 
+                                             d[[.y]],
+                                             method = "spearman")),
+      r.test = purrr::map(r.test, broom::tidy)) %>%
+    tidyr::unnest(r.test) #%>% 
   # filter(str_detect(x,paste0(str_to_lower(list_validation),collapse = "|"))) %>% 
   # distinct(x,.keep_all = T) %>% 
   # arrange(desc(estimate)) %>% 
   # view()
 }
 
-rho_pvalue <- correlate_combo(matrix_to_correlate = EBA175) %>% slice(-3) %>% 
-  bind_rows(correlate_combo(matrix_to_correlate = CSP) %>% slice(-3)) %>% 
-  bind_rows(correlate_combo(matrix_to_correlate = MSP2) %>% slice(-3)) #%>% view()
+rho_pvalue <- correlate_combo(matrix_to_correlate = EBA175) %>% 
+  slice(-3) %>% 
+  bind_rows(correlate_combo(matrix_to_correlate = CSP) %>% 
+              slice(-3)) %>% 
+  bind_rows(correlate_combo(matrix_to_correlate = MSP2) %>% 
+              slice(-3)) #%>% view()
 
 rho_pvalue
 rho_pvalue %>% 
@@ -1241,6 +1249,47 @@ d %>%
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
   # focus(mpg:drat, mirror = TRUE) %>%
   # network_plot()
+```
+
+```{r}
+ebaxx %>%
+  union_all(mspxx) %>% 
+  union_all(cspxx) %>% 
+  ggplot(aes(x = ag_ivtt_values, y = ag_purified_values)) +
+  geom_point(alpha = 0.5) +
+  coord_fixed(ratio = 1) +
+  facet_grid(ag_purified_fct~antigen) +
+  geom_text(data = ebaxx %>%
+              union_all(mspxx) %>%
+              union_all(cspxx) %>%
+              group_by(antigen,ag_purified_fct) %>%
+              filter(ag_purified_values==max(ag_purified_values)) %>%
+              left_join(
+                rho_pvalue %>% 
+                  select(x:p.value) %>% 
+                  dplyr::rename("ag_ivtt" = x,
+                                "ag_purified" = y)
+              ) %>% 
+              # filter(ag_purified_fct == "0.3") %>% 
+              mutate(ag_ivtt=str_replace(ag_ivtt,
+                                             "(.+)\\.(.+)",
+                                             "\\1")) %>%
+              mutate(x = 50700, y=0),
+            aes(x = x, y = y, label=paste0("rho=",
+                                           format(x = estimate,digits=2),
+                                           "\np=",
+                                           ifelse(p.value<0.001,
+                                                  "<0.001",
+                                                  paste0("=",p.value))
+                                       )),
+            # parse = T,
+            vjust=0,hjust=1, size = 3) +
+  ylab("Purified Antigen MFI") + 
+  xlab("IVTT Antigen MFI") + 
+  labs(caption = "MFI = Mean Fluorescence Intensity")
+
+ggsave("figure/04-fig03-validation_correlation-inset.png",
+       height = 4,width = 8,dpi = "retina")
 ```
 
 
@@ -3721,7 +3770,7 @@ antigen_plot_c <- rna_dt_subset %>%
     # begin = 0.2
     ) +
   labs(x="Time", y=NULL,
-       title="Intraerythrocytic cycle Transcription profile",
+       title="Transcription profile during intraerythrocytic cycle",
        # subtitle = "Data from Zhu et al. 2016",
        caption = "FPKM = Fragments Per Kilobase Million") +
   theme(strip.background = element_rect(
