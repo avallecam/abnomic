@@ -1881,6 +1881,8 @@ eset_clean_diff_top <-
                              .fun = mean))
 ```
 
+###### new boxplot + heatmap 
+
 ```{r}
 eset_clean_diff_top_sub <- eset_clean_diff_top %>% 
   select(id.name,sample,value,sev_WHO,group)
@@ -1918,7 +1920,7 @@ eset_clean_diff_top_sub %>%
              scale = 'free', space = 'free') +
   colorspace::scale_fill_continuous_diverging(
     name="Antigen\nreactivity",
-    mid = 2,
+    mid = 1,
     palette = "Blue-Red 3",
     # begin = 0.2
     ) +
@@ -1941,7 +1943,6 @@ eset_clean_diff_top %>%
                                .fun = mean)) %>% 
   # All sorted w.r.t. Case mean reactivity
   ggplot(aes(x = id.name,
-  # ggplot(aes(x = reorder(id.name,no_severo),
              y = value,
              fill = sev_WHO))+
   geom_boxplot()+
@@ -1950,40 +1951,14 @@ eset_clean_diff_top %>%
   colorspace::scale_fill_discrete_qualitative(
     name="P. vivax\nmalaria",
     palette="Set 3",
-    #breaks=c("with", "without"),
     limits=c("no_severo","severo"),
     labels=c("Non-severe", "Severe"),
     rev=TRUE
   ) +
-  # scale_fill_discrete(name="WHO\ncriteria",
-  #                     #breaks=c("with", "without"),
-  #                     limits=c("no_severo","severo"),
-  #                     labels=c("non-severe", "severe")
-  #                     ) +
   theme_bw() +
-  # guides(fill = guide_legend(title.position = "left")) +
-  # theme(legend.position="bottom",
-  #       legend.justification = "left",
-  #       legend.direction = "vertical"
-  #       # legend.position=c(-.25, -.13),#"bottom"
-  #       # legend.margin = margin(0,0,0,0)#,
-  #       #legend.text = element_text(size = 8),
-  #       #legend.title = element_text(size = 8)
-  #       ) +
-  # ylab( expression(log[2]~transformed~normalized~MFI) ) +
   ylab("Antigen reactivity") +
   xlab("") +
-  # labs(#title="Highly and Differentially reactive antigens",
-  #      # subtitle="All sorted w.r.t. Case mean reactivity",
-  #      # caption="* unadjust p<0.05"
-  #      )+
-  coord_flip() #+
-  # theme(strip.background = element_rect(colour = "black"
-  #                                       #, fill = "white"
-  #                                       ),
-  #       strip.text.y = element_text(colour = "black",
-  #                                   size = 10#, face = "bold"
-  #                                   ))
+  coord_flip()
 ggsave("figure/04-fig08-severe_compare-boxplot_highrve.png",
        height = 3,width = 6,dpi = "retina")
 ```
@@ -2440,6 +2415,103 @@ exp_bp  %>%
         strip.text.y = element_text(colour = "black",size = 10#, face = "bold"
                                     ))
 ```
+
+###### new boxplot + heatmap 
+
+```{r}
+# exp_bp
+eset_clean_diff_top <- exp_bp %>% 
+  mutate(id.name=str_replace(id.name,"NA / ","")) %>% 
+  mutate(id.name=str_replace(id.name,"/","-")) %>% 
+  mutate(group = 
+           fct_recode(group,
+                      "Differentially reactive*"="Differentially*"))
+```
+
+
+```{r}
+eset_clean_diff_top_sub <- eset_clean_diff_top %>% 
+  filter(!is.na(episodio_previo)) %>% 
+  # dplyr::count(episodio_previo)
+  select(id.name,sample,value,sev_WHO=episodio_previo,group)
+
+eset_clean_diff_top_sub_arrange <- eset_clean_diff_top_sub %>%
+  select(id.name,value,sample) %>% 
+  group_by(sample) %>% 
+  dplyr::summarise(sum_value = median(value,na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  arrange(sum_value)
+
+eset_clean_diff_top_sub_antigen <- eset_clean_diff_top_sub %>% 
+  select(id.name,value) %>% 
+  group_by(id.name) %>% 
+  dplyr::summarise(sum_antigen = median(value,na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  arrange(sum_antigen)
+
+eset_clean_diff_top_sub %>% 
+  left_join(eset_clean_diff_top_sub_arrange) %>%
+  left_join(eset_clean_diff_top_sub_antigen) %>% 
+  mutate(sample = fct_reorder(.f = sample,
+                               .x = sum_value,
+                               .fun = mean),
+         id.name = fct_reorder(.f = id.name,
+                               .x = sum_antigen,
+                               .fun = mean)) %>% 
+  mutate(sev_WHO = fct_rev(sev_WHO)) %>% 
+  mutate(sev_WHO = fct_recode(sev_WHO, 
+                              "Without" = "sin", 
+                              "With" = "con")) %>% 
+  ggplot(aes(x = sample,y = id.name, fill = value)) +
+  geom_tile() +
+  facet_grid(group~sev_WHO,
+             scale = 'free', space = 'free') +
+  colorspace::scale_fill_continuous_diverging(
+    name="Antigen\nreactivity",
+    mid = 1,
+    palette = "Blue-Red 3",
+    # begin = 0.2
+    ) +
+  labs(y = NULL, x=NULL,
+       caption="*adjusted p-value <0.05 and log2 fold-change >1") + 
+  theme(axis.text.x = element_text(angle = 90, 
+                                   vjust = 0.5, 
+                                   hjust=1,
+                                   size=5),
+        axis.text.y = element_text(size=7))
+
+ggsave("figure/04-fig23-exposure_compare-heatmap-nocluster-ggplot.png",
+       height = 3,width = 6,dpi = "retina")
+```
+
+```{r}
+eset_clean_diff_top %>%
+  left_join(eset_clean_diff_top_sub_antigen) %>% 
+  mutate(id.name = fct_reorder(.f = id.name,
+                               .x = sum_antigen,
+                               .fun = mean)) %>% 
+  # All sorted w.r.t. Case mean reactivity
+  ggplot(aes(x = id.name,
+             y = value,
+             fill = sev_WHO))+
+  geom_boxplot()+
+  #geom_point() +
+  facet_grid(group~.,scales = "free", space = "free") +
+  colorspace::scale_fill_discrete_qualitative(
+    name="P. vivax\nmalaria",
+    palette="Set 3",
+    limits=c("no_severo","severo"),
+    labels=c("Non-severe", "Severe"),
+    rev=TRUE
+  ) +
+  theme_bw() +
+  ylab("Antigen reactivity") +
+  xlab("") +
+  coord_flip()
+ggsave("figure/04-fig23-exposure_compare-boxplot_highrve.png",
+       height = 3,width = 6,dpi = "retina")
+```
+
 
 ### 6. Breath and Intensity of response
 
