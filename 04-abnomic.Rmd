@@ -3767,7 +3767,7 @@ antigen_plot_c <- rna_dt_subset %>%
                                .fun = mean)) %>%
   ggplot(aes(x = rna_t,y = id.name, fill = fpkm)) +
   geom_tile() +
-  facet_grid(.~subset) +
+  facet_grid(.~subset,scales = "free",space = "free") +
   colorspace::scale_fill_continuous_diverging(
     name="FPKM",
     mid = 4,
@@ -3778,15 +3778,18 @@ antigen_plot_c <- rna_dt_subset %>%
        title="Transcription profile during intraerythrocytic cycle",
        # subtitle = "Data from Zhu et al. 2016",
        caption = "FPKM = Fragments Per Kilobase Million") +
-  theme(strip.background = element_rect(
-    colour = "black"#, fill = "white"
-  ),
-  strip.text.x = element_text(
-    colour = "black",size = 12#, face = "bold"
-  ))
+  theme(
+    axis.text.y = element_text(size=11),
+    axis.text.x = element_text(size=12),
+    strip.background = element_rect(
+      colour = "black"#, fill = "white"
+    ),
+    strip.text.x = element_text(
+      colour = "black",size = 12#, face = "bold"
+    ))
 
 antigen_plot_c
-ggsave("figure/04-fig11-severe_compare-transcription.png",
+ggsave("figure/04-fig11-severe_compare-transcription-heatmap.png",
        height = 5,width = 6,dpi = "retina")
 
 antigen_plot_a +
