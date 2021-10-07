@@ -18,6 +18,10 @@ knitr::opts_chunk$set(
 
 The goal of `abnomic` is to provide a reproducible workflow for the undergraduate thesis project: "Comparación de la respuesta de anticuerpos ante _Plasmodium vivax_ en pacientes de la Amazonía Peruana según su severidad y episodios previos mediante microarreglos de proteínas".
 
+## Outputs
+
+- take a look at the approved [project](https://github.com/avallecam/abnomic/blob/main/01-project.pdf)
+
 ## To-Do
 
 - ( ) create a `renv` environment

@@ -12,6 +12,11 @@ anticuerpos ante *Plasmodium vivax* en pacientes de la Amazonía Peruana
 según su severidad y episodios previos mediante microarreglos de
 proteínas”.
 
+## Outputs
+
+-   take a look at the approved
+    [project](https://github.com/avallecam/abnomic/blob/main/01-project.pdf)
+
 ## To-Do
 
 -   ( ) create a `renv` environment

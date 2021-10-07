@@ -3549,9 +3549,12 @@ Rmisc::multiplot(a,#b,
     + __NS/S SNP ratio__ lower than 2.5
 
 ```{r}
-exp_df %>% filter(Total.SNPs.All.Strains<100,NonSyn_Syn.SNP.Ratio.All.Strains<2.5) %>% 
+exp_df %>% 
+  filter(Total.SNPs.All.Strains<100,
+         NonSyn_Syn.SNP.Ratio.All.Strains<2.5) %>% 
   dplyr::arrange(NonSyn_Syn.SNP.Ratio.All.Strains) %>% 
-  select(NonSyn_Syn.SNP.Ratio.All.Strains,Total.SNPs.All.Strains,everything())
+  select(NonSyn_Syn.SNP.Ratio.All.Strains,
+         Total.SNPs.All.Strains,everything())
 ```
 
 ```{r, eval=FALSE, echo=FALSE}
