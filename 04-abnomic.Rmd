@@ -1655,63 +1655,33 @@ adj_pval_limit <- td %>%
 severe_plot02_b <- td %>% 
   ggplot(aes(logFC,-log10(P.Value))) +
   geom_point(aes(colour=adj.P.Val)) + 
-  # geom_point(aes(colour=significance)) + 
-  # scale_color_viridis_c() +
   scale_color_binned(type = "viridis",show.limits = TRUE) +
-  # guides(color = guide_bins(show.limits = TRUE))
-  # scale_color_manual(values=c(#"red",
-  #                             "black")) +
-  #geom_point(aes(colour=con)) + viridis::scale_color_viridis() +
-  ggrepel::geom_text_repel(data = td %>% 
-                             # filter((adj.P.Val<0.30 #& abs(logFC)>0.6
-                             filter((adj.P.Val<=adj_pval_limit #& abs(logFC)>0.6
-                                     )# | 
-                             # filter((adj.P.Val<0.05 & logFC>1 & con>1)# | 
-                                      #(adj.P.Val<0.001 & #logFC>0.9 & 
-                                      #   con>2.7) 
-                                    ) %>% 
-                             inner_join(all, by="Gene.ID") %>% 
-                             inner_join(lg %>% 
-                                          dplyr::rename(seg.num=n), 
-                                        by="Gene.ID")  %>% 
-                             mutate(newname=case_when(
-                               is.na(Gene.Name) ~ Gene.ID,
-                               TRUE ~ Gene.Name
-                             )) #%>% 
-                             #arrange(desc(con)) %>% 
-                             #top_n(10,con)
-                           ,
-                           aes(label=newname), 
-                           size = 3,
-                           # force = 15,
-                           # direction = "x",
-                           # box.padding = unit(4, "lines"),
-                           # point.padding = unit(.5, "lines")
-                           ) + 
+  ggrepel::geom_text_repel(
+    data = td %>% 
+      filter((adj.P.Val<=adj_pval_limit)) %>% 
+      inner_join(all, by="Gene.ID") %>% 
+      inner_join(lg %>% 
+                   dplyr::rename(seg.num=n), 
+                 by="Gene.ID")  %>% 
+      mutate(newname=case_when(
+        is.na(Gene.Name) ~ Gene.ID,
+        TRUE ~ Gene.Name
+      )),
+    aes(label=newname), 
+    size = 3,
+    # force = 15,
+    # direction = "x",
+    # box.padding = unit(4, "lines"),
+    # point.padding = unit(.5, "lines")
+  ) + 
   theme_bw() +
-  #theme(legend.position="bottom") +
-  # theme(#legend.position=c(.18, .44),
-  #       legend.position=c(.17, .92),
-  #       legend.margin = margin(2,2,2,2)) +
-  # ylab( expression(log[2]~transformed~normalized~MFI) ) +  
-  labs(#title="Non-severe vs Severe",
-    # x = "log fold change",
-    x = expression(log[2]~fold~change),
-    # y = "-log10(p)", 
-    y = expression(-log[10](p~value)), 
-    color = "BH\nadjusted\np value"
-    #title="No-severo vs Severo",
-    # subtitle="Effect size against statistical significance"#,
-    #subtitle="Tamaño del efecto y significancia estadística",
-    #caption="annotated features filtered by\nP.Value<0.01"
-  ) +
-  # or (adj.P.Val<0.001 & con>AveExpr(top1))
+  labs(x = expression(log[2]~fold~change),
+       y = expression(-log[10](p~value)), 
+       color = "BH\nadjusted\np value") +
   geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
   geom_vline(aes(xintercept=-1), lty=3) +
-  geom_vline(aes(xintercept=1), lty=3) #+
-  # ylim(0,3) # used for the final image
-  #geom_vline(aes(xintercept=-1), lty=3) +
-  # coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
+  geom_vline(aes(xintercept=1), lty=3)
+
 # severe_plot02_b
 
 td %>% 
@@ -2098,31 +2068,32 @@ td %>%
   ggplot(aes(logFC,-log10(P.Value))) +
   geom_point(aes(colour=significance)) + scale_color_manual(values=c("red","black")) +
   #geom_point(aes(colour=con)) + viridis::scale_color_viridis() +
-  ggrepel::geom_text_repel(data = td %>% 
-                             filter((adj.P.Val<0.05 & logFC>1 & con>1)# | 
-                                      #(adj.P.Val<0.001 & #logFC>0.9 & 
-                                      #   con>2.7) 
-                                    ) %>% 
-                             inner_join(all, by="Gene.ID") %>% 
-                             inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") #%>% 
-                             #arrange(desc(con)) %>% 
-                             #top_n(10,con)
-                           ,
-                           aes(label=Gene.Name), #force = 15,
-                           direction = "x",
-                           box.padding = unit(4, "lines"),
-                           point.padding = unit(.5, "lines")
-                           ) + theme_bw() +
+  ggrepel::geom_text_repel(
+    data = td %>% 
+      filter((adj.P.Val<0.05 & logFC>1 & con>1)# | 
+             #(adj.P.Val<0.001 & #logFC>0.9 & 
+             #   con>2.7) 
+      ) %>% 
+      inner_join(all, by="Gene.ID") %>% 
+      inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") #%>% 
+    #arrange(desc(con)) %>% 
+    #top_n(10,con)
+    ,
+    aes(label=Gene.Name), #force = 15,
+    direction = "x",
+    box.padding = unit(4, "lines"),
+    point.padding = unit(.5, "lines")
+  ) + theme_bw() +
   #theme(legend.position="bottom") +
   theme(#legend.position=c(.18, .44),
-        legend.position=c(.17, .92),
-        legend.margin = margin(2,2,2,2)) +
-    labs(title="With vs Without previous episode",
+    legend.position=c(.17, .92),
+    legend.margin = margin(2,2,2,2)) +
+  labs(title="With vs Without previous episode",
        #title="Con vs Sin episodio previo",
        subtitle="Effect size against statistical significance"#,
        #subtitle="Tamaño del efecto y significancia estadística",
        #caption="annotated features filtered by\n(adj.P.Val<0.05 & con>1 & logFC>1.5)"
-       )+
+  )+
   # or (adj.P.Val<0.001 & con>AveExpr(top1))
   geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
   geom_vline(aes(xintercept=1), lty=3) +
@@ -2166,6 +2137,79 @@ td %>%
   geom_vline(aes(xintercept=1), lty=3) +
   coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
 ```
+
+
+###### figure output 2
+
+```{r, fig.height=6, fig.width=3}
+
+# adj_pval_limit <- td %>% 
+#   dplyr::count(adj.P.Val) %>% 
+#   arrange(adj.P.Val) %>% 
+#   top_n(n = -2,wt = adj.P.Val) %>% 
+#   pull(adj.P.Val) %>% 
+#   pluck(2) %>% 
+#   round(digits = 2)
+
+severe_plot02_b <- td %>% 
+  mutate(significance=fct_recode(significance,
+                                 "<0.05"="FDR<0.05",
+                                 "not\nsignificant"="not sig.")) %>%
+  # dplyr::count(significance)
+  ggplot(aes(logFC,-log10(P.Value))) +
+  # geom_point(aes(colour=adj.P.Val)) +
+  # colorspace::scale_color_binned_sequential(palette = "viridis")
+  geom_point(aes(colour=significance), alpha = 0.5) +
+  colorspace::scale_color_discrete_diverging(palette = "Blue-Red 2",
+                                             rev = TRUE) +
+  # scale_color_binned(type = "viridis",
+  #                    show.limits = TRUE) +
+  ggrepel::geom_text_repel(
+    mapping = aes(label=newname),
+    data = td %>% 
+      filter((adj.P.Val<0.05 & logFC>1 & con>1)) %>% 
+      inner_join(all, by="Gene.ID") %>% 
+      filter(!is.na(Gene.Name)) %>% 
+      dplyr::rename(newname=Gene.Name),
+    force        = 0.5,
+    nudge_x      = -0.25,
+    direction    = "y",
+    hjust        = 1,
+    segment.size = 0.2
+    # size = 3,
+    # force = 15,
+    # direction = "x"
+    # box.padding = unit(4, "lines"),
+    # point.padding = unit(.5, "lines")
+  ) + 
+  theme_bw() +
+  labs(x = expression(log[2]~fold~change),
+       y = expression(-log[10](p~value)), 
+       color = "BH\nadjusted\np value") +
+  geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
+  geom_vline(aes(xintercept=-1), lty=3) +
+  geom_vline(aes(xintercept=1), lty=3)
+
+# severe_plot02_b
+
+td %>% 
+  ggplot(aes(P.Value)) +
+  geom_histogram(breaks=seq(0, 1, by = .05)) +
+  scale_x_continuous(breaks=seq(0, 1, by = .2)) +
+  geom_vline(aes(xintercept=0.05), lty=3, col="red") +
+  labs(x = "p value", y = "Frequency") +
+  severe_plot02_b +
+  patchwork::plot_annotation(#title = "Non-severe vs Severe",
+                             tag_levels = "A")
+
+
+ggsave(
+  paste0("figure/04-fig22-exposure_compare-pvalue_histogram-np_",
+                             set_non_parametric,".png"),
+  # "figure/04-fig07-severe_compare-pvalue_histogram.png",
+       height = 3,width = 6,dpi = "retina")
+```
+
 
 ##### diff reactive
 
@@ -2533,26 +2577,11 @@ r <- fin %>%
   ggplot(aes(sev_WHO,sample_freq)) +
   geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.5,0.75)) +
   ggbeeswarm::geom_quasirandom(method = "tukeyDense") +
-  # geom_boxplot(#position=position_dodge(0.8)
-  #              ) +
-  # geom_dotplot(#aes(fill=sev_WHO), 
-  #              binaxis='y', stackdir='center', 
-  #              dotsize=1#, position=position_dodge(0.8)
-  #              ) +
   scale_x_discrete(labels = c("Non-severe","Severe")) +
-  # xlab("WHO criteria") + 
   xlab("P. vivax malaria") + 
   ylab("Reactive Antigens") +
-  labs(#title="Breadth of Ab response", 
-    # title= eval(r_one)
-    title = r_one
-    # subtitle= paste0("t=",j$statistic %>% format(digits=2),
-    #                  ", df=",j$parameter %>% format(digits=2),
-    #                  ", p",ifelse(j$p.value<0.001,"<0.001",
-    #                               paste0("=",j$p.value %>% 
-    #                                        format(digits=3))))#,
-    # #caption=paste0("method:",j$method)
-  ) + theme_bw()
+  labs(title = r_one) + 
+  theme_bw()
 
 s_df <- k$parameter %>% format(digits=2)
 s_tstat <- k$statistic %>% format(digits=3)
@@ -2567,28 +2596,12 @@ s <- fin %>%
   ggplot(aes(sev_WHO,sample_mean)) +
   geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.5,0.75)) +
   ggbeeswarm::geom_quasirandom(method = "tukeyDense") +
-  # geom_boxplot(#position=position_dodge(0.8)
-  #              ) +
-  # geom_dotplot(#aes(fill=sev_WHO), 
-  #              binaxis='y', stackdir='center', 
-  #              dotsize=1#, position=position_dodge(0.8)
-  #              ) +
   scale_x_discrete(labels = c("Non-severe","Severe")) +
   xlab("P. vivax malaria") + 
   ylab("Median Intensity") +
-  labs(#title="Intensity of Ab response", 
-    # title= eval(s_one)
-    title = s_one
-    # "t=",k$statistic %>% format(digits=2),
-    # ", df=",k$parameter %>% format(digits=2),
-    # ", p",ifelse(k$p.value<0.001,"<0.001",
-    #              paste0("=",k$p.value %>% 
-    #                       format(digits=3))))#,
-    #caption=paste0("method:",k$method)
-  ) + theme_bw()
+  labs(title = s_one) + 
+  theme_bw()
 
-# s
-# Rmisc::multiplot(r,s,cols = 1)
 r + s +
   patchwork::plot_annotation(tag_levels = "A")
 ggsave("figure/04-fig06-severe_compare-subject_response.png",
@@ -2648,7 +2661,8 @@ s <- fin %>%
                dotsize=1#, position=position_dodge(0.8)
                ) +
   scale_x_discrete(labels = c("with","without")) +
-  xlab("Previous Episode") + ylab("Mean Intensity") +
+  xlab("Previous Episode") + 
+  ylab("Mean Intensity") +
   labs(title="Intensity of Ab response", 
        subtitle= paste0("t=",k$statistic %>% format(digits=3),
                         ", df=",k$parameter,
@@ -2659,6 +2673,61 @@ s <- fin %>%
 
 Rmisc::multiplot(r,s,cols = 1)
 ```
+
+```{r}
+# sources:
+# https://gist.github.com/benmarwick/5cfeda1d20ff9ab3231a5de8fac36213
+# https://stackoverflow.com/a/60153154
+# https://stackoverflow.com/a/5294214
+
+r_df <- j$parameter %>% format(digits=2)
+r_tstat <- j$statistic %>% format(digits=2)
+r_pvalue <- if_else(condition = j$p.value<0.001,
+                    true = "<0.001",
+                    false = paste0("=",j$p.value %>% 
+                                     format(digits=3)))
+# r_one <- bquote(expression(t[.(r_df)]==.(r_tstat)* ", p" * .(r_pvalue) ) )
+r_one <- paste0("p",r_pvalue)
+
+
+r <- fin %>% 
+  filter(!is.na(episodio_previo)) %>% 
+  ggplot(aes(episodio_previo,sample_freq)) +
+  # ggplot(aes(sev_WHO,sample_freq)) +
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.5,0.75)) +
+  ggbeeswarm::geom_quasirandom(method = "tukeyDense") +
+  scale_x_discrete(labels = c("With","Without")) +
+  xlab("Previous episode") +
+  ylab("Reactive Antigens") +
+  labs(title = r_one) + 
+  theme_bw()
+
+s_df <- k$parameter %>% format(digits=2)
+s_tstat <- k$statistic %>% format(digits=3)
+s_pvalue <- if_else(condition = k$p.value<0.001,
+                    true = "<0.001",
+                    false = paste0("=",k$p.value %>% 
+                                     format(digits=3)))
+# s_one <- bquote(expression(t[.(s_df)]==.(s_tstat)* ", p" * .(s_pvalue) ) )
+s_one <- paste0("p",s_pvalue)
+
+s <- fin %>% 
+  filter(!is.na(episodio_previo)) %>% 
+  ggplot(aes(episodio_previo,sample_mean)) +
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.5,0.75)) +
+  ggbeeswarm::geom_quasirandom(method = "tukeyDense") +
+  scale_x_discrete(labels = c("With","Without")) +
+  xlab("Previous episode") +
+  ylab("Median Intensity") +
+  labs(title = s_one) + 
+  theme_bw()
+
+r + s +
+  patchwork::plot_annotation(tag_levels = "A")
+ggsave("figure/04-fig21-exposure_compare-subject_response.png",
+       height = 3,width = 6,dpi = "retina")
+```
+
 
 #### 6.3 Exploratory
 
