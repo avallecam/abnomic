@@ -15,7 +15,7 @@ notrack/*
 report/*
 table/*
 *.docx
-*.pdf
+titlepage.pdf
 *.odp
 *.pptx
 *.ppt
