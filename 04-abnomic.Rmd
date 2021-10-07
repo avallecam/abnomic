@@ -535,12 +535,19 @@ rbind(a,b,c,d) %>%
   geom_histogram() + theme_bw() +
   #facet_grid(.~labl,scales = "free") +
   facet_wrap(~labl,nrow = 1,ncol = 4,scales = "free") +
-  labs(title="Preprocessing: Data distribution per step",
-       caption="*Samples by Severe Malaria Study\nand Probes by P. vivax antigens") +
-  theme(strip.background = element_rect(colour = "black"#, fill = "white"
-                                        ),
-        strip.text.x = element_text(colour = "black",size = 12#, face = "bold"
-                                    ))
+  labs(
+    x = "Value",
+    y = "Count",
+    # title="Preprocessing: Data distribution per step",
+    caption="*Samples by Severe Malaria Study and Probes by P. vivax antigens") +
+  theme(
+    strip.background = element_rect(colour = "black"#, fill = "white"
+    ),
+    strip.text.x = element_text(colour = "black",size = 12#, face = "bold"
+    ))
+
+ggsave("figure/04-fig01-preprocessing_distribution.png",
+       height = 2.25,width = 8,dpi = "retina")
 ```
 
 ```{r, fig.width=16, fig.height=4,eval=FALSE,echo=FALSE}
@@ -832,28 +839,36 @@ m <- anti %>% as.data.frame() %>%
   group_by(sample_name) %>% dplyr::summarise(mean= mean(expression),
                                              sd= sd(expression)) %>% 
   #dplyr::filter(mean<5000)
-  dplyr::mutate(labl="Raw data")
+  dplyr::mutate(labl="Raw")
 
 n <- norx %>% as.data.frame() %>% 
   rownames_to_column() %>% 
   gather(sample_name, expression, -rowname) %>% 
   group_by(sample_name) %>% dplyr::summarise(mean= mean(expression),
                                              sd= sd(expression)) %>% 
-  dplyr::mutate(labl="FOC Normalized data")
+  dplyr::mutate(labl="Normalized")
 
 rbind(m,n) %>% 
   dplyr::mutate(labl=forcats::fct_relevel(labl,
-                                          "Raw data",
-                                          "FOC Normalized data")) %>% 
+                                          "Raw",
+                                          "Normalized")) %>% 
   ggplot(aes(mean,sd)) +
-  geom_point() + theme_bw() + 
+  geom_point(alpha=0.5) + 
+  theme_bw() + 
   geom_smooth(linetype=0) +
   facet_wrap(~labl,nrow = 1,ncol = 2,scales = "free") +
-  labs(title="Mean-variance dependence") +
+  labs(
+    # title="Mean-variance dependence"
+    x = "Mean", 
+    y = "Standard deviation"
+       ) +
   theme(strip.background = element_rect(colour = "black"#, fill = "white"
                                         ),
         strip.text.x = element_text(colour = "black",size = 10#, face = "bold"
                                     ))
+
+ggsave("figure/04-fig02-heteroskedasticity_prepos.png",
+       height = 2.5,width = 5,dpi = "retina")
 ```
 
 
