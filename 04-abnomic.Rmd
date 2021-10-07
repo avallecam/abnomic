@@ -2481,7 +2481,7 @@ eset_clean_diff_top_sub %>%
         axis.text.y = element_text(size=7))
 
 ggsave("figure/04-fig23-exposure_compare-heatmap-nocluster-ggplot.png",
-       height = 3,width = 6,dpi = "retina")
+       height = 4,width = 6,dpi = "retina")
 ```
 
 ```{r}
@@ -2503,7 +2503,7 @@ eset_clean_diff_top_sub %>%
     # "Without" = "sin", 
     # "With" = "con"
     limits=c("con","sin"),
-    labels=c("Without", "With"),
+    labels=c("With", "Without"),
     rev=TRUE
   ) +
   theme_bw() +
@@ -2511,7 +2511,7 @@ eset_clean_diff_top_sub %>%
   xlab("") +
   coord_flip()
 ggsave("figure/04-fig24-exposure_compare-boxplot_highrve.png",
-       height = 3,width = 6,dpi = "retina")
+       height = 4,width = 6,dpi = "retina")
 ```
 
 
