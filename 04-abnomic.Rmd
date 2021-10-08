@@ -3026,72 +3026,125 @@ sev_d %>%
 
 ```{r, fig.height=3, fig.width=7}
 a <- exp_t %>% #dplyr::count(TM.Domains)
-  dplyr::mutate(TM.Domains.p= ifelse(TM.Domains>0,"present","absent"),
+  dplyr::mutate(
+    TM.Domains.p= ifelse(TM.Domains>0,"present","absent"),
                 SignalP= ifelse(SignalP=="SP","present","absent"),
                 summary.db="Top 10") %>%  #dplyr::count(TM.Domains.p)
   select(ID,summary.db,TM.Domains.p,SignalP) %>% 
   gather(key,value,-summary.db,-ID) %>% 
-  dplyr::mutate(key= fct_recode(key, "Signal Peptide (SP)"="SignalP", 
-                                "Transmembral Domain (TMD)"="TM.Domains.p"))
+  dplyr::mutate(
+    key= fct_recode(key, "Signal Peptide (SP)"="SignalP",
+                    "Transmembral Domain (TMD)"="TM.Domains.p"))
 b <- sev_d %>%  #dplyr::count(SignalP)
-  dplyr::mutate(TM.Domains.p= ifelse(TM.Domains>0,"present","absent"),
-                SignalP= ifelse(SignalP=="SP","present","absent"),
-                summary.db="Severe (p<0.05)") %>%  #dplyr::count(TM.Domains.p)
+  dplyr::mutate(
+    TM.Domains.p= ifelse(
+      TM.Domains>0,"present","absent"),
+    SignalP= ifelse(SignalP=="SP","present","absent"),
+    summary.db="Severe (p<0.05)") %>%  
+  #dplyr::count(TM.Domains.p)
   select(ID,summary.db,TM.Domains.p,SignalP) %>% 
   gather(key,value,-summary.db,-ID) %>% 
-  dplyr::mutate(key= fct_recode(key, "Signal Peptide (SP)"="SignalP", 
-                                "Transmembral Domain (TMD)"="TM.Domains.p"))
+  dplyr::mutate(
+    key= fct_recode(key, "Signal Peptide (SP)"="SignalP", 
+                    "Transmembral Domain (TMD)"="TM.Domains.p"))
 c <- exp_da %>%  #dplyr::count(SignalP)
-  dplyr::mutate(TM.Domains.p= ifelse(TM.Domains>0,"present","absent"),
-                SignalP= ifelse(SignalP=="SP","present","absent"),
-                summary.db="w/ Episode (FDR<0.05)") %>%  #dplyr::count(TM.Domains.p)
+  dplyr::mutate(
+    TM.Domains.p= ifelse(TM.Domains>0,"present","absent"),
+    SignalP= ifelse(SignalP=="SP","present","absent"),
+    summary.db="w/ Episode (FDR<0.05)") %>%  
+  #dplyr::count(TM.Domains.p)
   select(ID,summary.db,TM.Domains.p,SignalP) %>% 
   gather(key,value,-summary.db,-ID) %>% 
-  dplyr::mutate(key= fct_recode(key, "Signal Peptide (SP)"="SignalP", 
-                                "Transmembral Domain (TMD)"="TM.Domains.p"))
+  dplyr::mutate(
+    key= fct_recode(key, "Signal Peptide (SP)"="SignalP", 
+                    "Transmembral Domain (TMD)"="TM.Domains.p"))
 d <- exp_df %>%  #dplyr::count(SignalP)
-  dplyr::mutate(TM.Domains.p= ifelse(TM.Domains>0,"present","absent"),
-                SignalP= ifelse(SignalP=="SP","present","absent"),
-                summary.db="w/ Episode (FDR<0.05 & logFC>1)") %>%  #dplyr::count(TM.Domains.p)
+  dplyr::mutate(
+    TM.Domains.p= ifelse(
+      TM.Domains>0,"present","absent"),
+    SignalP= ifelse(SignalP=="SP","present","absent"),
+    summary.db="w/ Episode (FDR<0.05 & logFC>1)") %>%  
+  #dplyr::count(TM.Domains.p)
   select(ID,summary.db,TM.Domains.p,SignalP) %>% 
   gather(key,value,-summary.db,-ID) %>% 
-  dplyr::mutate(key= forcats::fct_recode(key, 
-                                         "Signal Peptide (SP)"="SignalP", 
-                                         "Transmembral Domain (TMD)"="TM.Domains.p"))
+  dplyr::mutate(
+    key= forcats::fct_recode(
+      key, 
+      "Signal Peptide (SP)"="SignalP", 
+      "Transmembral Domain (TMD)"="TM.Domains.p"))
 
-rbind(a,b,c,d) %>% 
-  replace_na(list(value = "absent")) %>% 
+protein_final_summary <- rbind(a,#b,
+      c,d
+      ) %>% 
+  mutate(
+    summary.db=fct_relevel(summary.db,
+                           "Top 10",
+                           "w/ Episode (FDR<0.05)")) %>% 
+  mutate(
+    summary.db=fct_recode(
+      summary.db,
+      "With previous episode\n(BH adjusted p <0.05)"=
+        "w/ Episode (FDR<0.05)",
+      "With previous episode\n(BH adjusted p <0.05,\nlog2 fold-change >1)"=
+        "w/ Episode (FDR<0.05 & logFC>1)")) %>% 
+  replace_na(list(value = "absent")) 
+
+protein_final_summary %>% 
+  # dplyr::count(summary.db,value) %>% 
   ggplot(aes(x=summary.db, fill=value)) +
   geom_bar(position = "fill") +
-  geom_text(data = rbind(a,b,c,d) %>% replace_na(list(value = "absent")) %>% 
+  # ggplot(aes(x = summary.db,y = n, fill=value)) +
+  # geom_col(position = "fill") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  geom_text(data = protein_final_summary %>% 
               group_by(summary.db,key,value) %>% 
               dplyr::count() %>% ungroup() %>% 
               group_by(summary.db,key) %>% 
               dplyr::arrange(summary.db, key, desc(value)) %>% 
-              dplyr::mutate(prop=(n/sum(n)),lab=cumsum(prop),lab= ifelse(lab==1,(2-prop)/2,lab/2)
-                            ), 
+              dplyr::mutate(
+                prop=(n/sum(n)),
+                lab=cumsum(prop),
+                lab= ifelse(lab==1,(2-prop)/2,lab/2)
+              ), 
             aes(x = summary.db, y= lab, label = n), size=3) +
   facet_grid(.~key,scales = "free", space = "free") +
-  scale_fill_discrete(name="Value") + theme_bw() +
+  # scale_fill_discrete(name="Value") + 
+  colorspace::scale_fill_discrete_qualitative(
+    name="Presence",
+    palette="Set 3",
+    # "Without" = "sin", 
+    # "With" = "con"
+    limits=c("absent","present"),
+    labels=c("No", "Yes"),
+    rev=FALSE
+  ) +
+  # theme_bw() +
   #guides(fill = guide_legend(title.position = "left")) +
-  theme(legend.position=c(-.33, .18),#"bottom"
-        legend.margin = margin(0,0,0,0),
+  theme(#legend.position=c(-.33, .18),#"bottom"
+        #legend.margin = margin(0,0,0,0),
         axis.title.y=element_blank()
         #legend.text = element_text(size = 8),
         #legend.title = element_text(size = 8)
-        ) +  
-  ylab("proportion")+
+  ) +  
+  ylab("Proportion") +
   #xlab(label = "")+
-  labs(title="Protein targeting and localization") +
+  labs(#title="Protein targeting and localization"
+       ) +
   #labs(title="Proportion of Secretory or Membrane proteins per subset") +
   #     subtitle="") +
   #     caption="*filtered by adj.P.Val<0.05 & logFC>1")+
   # and \n (logFC>1 & con>1) | (logFC>0.9 & con>2)
-  coord_flip() +
-  theme(strip.background = element_rect(colour = "black"#, fill = "white"
-                                        ),
-        strip.text.x = element_text(colour = "black",size = 10#, face = "bold"
-                                    ))
+  coord_flip() #+
+  # theme(
+  #   strip.background = 
+  #     element_rect(colour = "black"#, fill = "white"
+  #     ),
+  #   strip.text.x = 
+  #     element_text(colour = "black",size = 10#, face = "bold"
+  #     ))
+
+ggsave("figure/04-fig27-exposure_compare-protein_targeting_localization.png",
+       height = 3,width = 6,dpi = "retina")
 ```
 
 severe paper plot
