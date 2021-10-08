@@ -1866,26 +1866,31 @@ eset_clean_diff_top <-
   filter(group!="NA") %>% 
   inner_join(all, by="Gene.ID") %>% 
   inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") %>% 
-  #unite(id.name, Product.Description,Gene.Name, sep = " / ", remove = FALSE) %>% 
+  # unite(id.name, Product.Description,Gene.Name, 
+  #       sep = " / ", remove = FALSE) %>%
   unite(id.name, Gene.Name, Gene.ID, sep = " / ", remove = FALSE) %>% 
   mutate(id.name=str_replace(id.name,"NA / ","")) %>% 
   mutate(id.name=str_replace(id.name,"/","-")) %>% 
-  mutate(sev_WHO=fct_rev(sev_WHO)) %>% 
+  mutate(sev_WHO=fct_rev(sev_WHO)) #%>% 
   # test zone
   # mutate(id.name=fct_reorder(.f = id.name,
   #                            .x = value,
   #                            .fun = mean)) %>%
   # #                            .fun = median)) %>%
-  mutate(id.name=fct_reorder(.f = id.name,
-                             .x = no_severo,
-                             .fun = mean))
+  # mutate(id.name=fct_reorder(.f = id.name,
+  #                            .x = no_severo,
+  #                            .fun = mean))
 ```
 
 ###### new boxplot + heatmap 
 
 ```{r}
 eset_clean_diff_top_sub <- eset_clean_diff_top %>% 
-  select(id.name,sample,value,sev_WHO,group)
+  select(id.name,sample,value,sev_WHO,group,ID) %>% 
+  mutate(id.name=case_when(
+    ID=="PVX_099980_1o1_S2.504" ~ "MSP1.S2 - PVX_099980",
+    ID=="PVX_099980_1o1_S1.793" ~ "MSP1.S1 - PVX_099980",
+    TRUE ~ id.name))
 
 eset_clean_diff_top_sub_arrange <- eset_clean_diff_top_sub %>%
   select(id.name,value,sample) %>% 
@@ -1936,7 +1941,7 @@ ggsave("figure/04-fig09-severe_compare-heatmap-nocluster-ggplot.png",
 ```
 
 ```{r}
-eset_clean_diff_top %>%
+eset_clean_diff_top_sub %>%
   left_join(eset_clean_diff_top_sub_antigen) %>% 
   mutate(id.name = fct_reorder(.f = id.name,
                                .x = sum_antigen,
@@ -1997,23 +2002,27 @@ topTable(eb) %>% rownames_to_column() #%>% filter(adj.P.Val<0.05)#number=Inf
 ```{r}
 # tidy toptable
 td <- topTable(eb, coef = 2,               # default: slope
-         sort.by =NULL, resort.by =NULL, 
-         #genelist = NULL,                 # no fit$gene
-         number = Inf,                     # show all the hipothesis
-         confint=0.95) %>% rownames_to_column() %>% as.tbl() %>% 
+               sort.by =NULL, resort.by =NULL, 
+               #genelist = NULL,                 # no fit$gene
+               number = Inf,                     # show all the hipothesis
+               confint=0.95) %>% rownames_to_column() %>% as.tbl() %>% 
   dplyr::rename(ID=rowname) %>% 
   arrange(P.Value) %>% 
   dplyr::mutate(p.order = seq(n())) %>% 
   mutate(significance=if_else(adj.P.Val<0.05,
-                              "FDR<0.05","not sig.")) %>% #dplyr::count(significance)
-  inner_join(biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #dplyr::count(episodio_previo)
-               group_by(gene,episodio_previo) %>% dplyr::summarise(mean_group=mean(value)) %>% 
+                              "FDR<0.05","not sig.")) %>% 
+  #dplyr::count(significance)
+  inner_join(biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+               #dplyr::count(episodio_previo)
+               group_by(gene,episodio_previo) %>% 
+               dplyr::summarise(mean_group=mean(value)) %>% 
                ungroup() %>% 
                spread(episodio_previo,mean_group) %>% 
                #arrange(desc(con)) %>% 
                dplyr::rename(ID=gene),
              by="ID") 
 ```
+
 
 ##### Plots
 
@@ -2145,7 +2154,11 @@ severe_plot02_b <- td %>%
       filter((adj.P.Val<0.05 & logFC>1 & con>1)) %>% 
       inner_join(all, by="Gene.ID") %>% 
       filter(!is.na(Gene.Name)) %>% 
-      dplyr::rename(newname=Gene.Name),
+      dplyr::rename(newname=Gene.Name) %>% 
+      mutate(newname=case_when(
+        ID=="PVX_099980_1o1_S2.504" ~ "MSP1.S2",
+        ID=="PVX_099980_1o1_S1.793" ~ "MSP1.S1",
+        TRUE ~ newname)),
     force        = 0.5,
     nudge_x      = -0.25,
     direction    = "y",
@@ -2433,7 +2446,11 @@ eset_clean_diff_top <- exp_bp %>%
 eset_clean_diff_top_sub <- eset_clean_diff_top %>% 
   filter(!is.na(episodio_previo)) %>% 
   # dplyr::count(episodio_previo)
-  select(id.name,sample,value,sev_WHO=episodio_previo,group)
+  select(id.name,sample,value,sev_WHO=episodio_previo,group,ID) %>% 
+  mutate(id.name=case_when(
+    ID=="PVX_099980_1o1_S2.504" ~ "MSP1.S2 - PVX_099980",
+    ID=="PVX_099980_1o1_S1.793" ~ "MSP1.S1 - PVX_099980",
+    TRUE ~ id.name))
 
 eset_clean_diff_top_sub_arrange <- eset_clean_diff_top_sub %>%
   select(id.name,value,sample) %>% 
