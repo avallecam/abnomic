@@ -2490,7 +2490,7 @@ eset_clean_diff_top_sub %>%
     # begin = 0.2
     ) +
   labs(y = NULL, x=NULL,
-       caption="*adjusted p-value <0.05 and log2 fold-change >1") + 
+       caption="*BH adjusted p-value <0.05 and log2 fold-change >1") + 
   theme(axis.text.x = element_text(angle = 90, 
                                    vjust = 0.5, 
                                    hjust=1,
@@ -2526,6 +2526,7 @@ eset_clean_diff_top_sub %>%
   theme_bw() +
   ylab("Antigen reactivity") +
   xlab("") +
+  labs(caption="*BH adjusted p-value <0.05 and log2 fold-change >1") +
   coord_flip()
 ggsave("figure/04-fig24-exposure_compare-boxplot_highrve.png",
        height = 4,width = 6,dpi = "retina")
@@ -3530,7 +3531,8 @@ exp_da %>% dplyr::mutate(Ortholog.count=as.numeric(Ortholog.count)) %>%
 
 ```{r, fig.width=10, fig.height=5}
 a <- exp_t %>% 
-  dplyr::mutate(summary.db="Top 10") %>%  #dplyr::count(TM.Domains.p)
+  dplyr::mutate(summary.db="Top 10") %>%  
+  #dplyr::count(TM.Domains.p)
   select(ID, summary.db, Gene.ID,Gene.Name,
          NonSyn_Syn.SNP.Ratio.All.Strains,
          Total.SNPs.All.Strains,
@@ -3539,7 +3541,8 @@ a <- exp_t %>%
   dplyr::rename(intensity=AveExpr)
 
 b <- exp_df %>% 
-  dplyr::mutate(summary.db="w/ Previous Episode (FDR<0.05 & logFC>1)") %>%
+  dplyr::mutate(
+    summary.db="w/ Previous Episode (FDR<0.05 & logFC>1)") %>%
   select(ID, summary.db, Gene.ID,Gene.Name,
          NonSyn_Syn.SNP.Ratio.All.Strains,
          Total.SNPs.All.Strains,
@@ -3553,45 +3556,48 @@ rbind(a,b) %>%
   geom_point(aes(colour=Transcript.Length, size=Ortholog.count)) + 
   #scale_colour_gradientn(colours = rainbow(10),
   #                       name="Transcript\nlength") +
-  viridis::scale_color_viridis(name="Transcript\nlength(nt)",
-                               trans="log10",
-                               breaks = c(1000,2000,3000,4000,5000,10000)
-                               #,option="plasma"#,discrete = TRUE
-                               ) +
+  viridis::scale_color_viridis(
+    name="Transcript\nlength(nt)",
+    trans="log10",
+    breaks = c(1000,2000,3000,4000,5000,10000)
+    #,option="plasma"#,discrete = TRUE
+  ) +
   scale_size(name="Ortholog\ncount"#,
              #trans="log10"#, breaks = c(1000,2000,3000,5000,10000)
-             ) +
+  ) +
   #scale_colour_gradient(trans="log10") +
-  ggrepel::geom_text_repel(data = rbind(a,b) %>% 
-                             replace_na(list(Gene.Name="na")) %>% 
-                             dplyr::mutate(Gene.Name=ifelse(Gene.Name=="na",Gene.ID,Gene.Name),
-                                           Gene.Name=ifelse(ID=="PVX_099980_1o1_S2.504","MSP1_S2",Gene.Name),
-                                           Gene.Name=ifelse(ID=="PVX_099980_1o1_S1.793","MSP1_S1",Gene.Name))
-                             #mutate(Gene.Name=ifelse(NonSyn_Syn.SNP.Ratio.All.Strains < 1 | 
-                                                       #NonSyn_Syn.SNP.Ratio.All.Strains > 2.5 | 
-                              #                         Total.SNPs.All.Strains > 300 & 
-                              #                         Total.SNPs.All.Strains < 400 | 
-                              #                         Total.SNPs.All.Strains > 100 & 
-                              #                         Total.SNPs.All.Strains < 200 |
-                              #                         Total.SNPs.All.Strains < 10,
-                              #                       Gene.ID,Gene.Name))
-                           ,aes(label=Gene.Name,size=intensity*5
-                                ),
-                           #size=2.8,
-                           box.padding = unit(.65, "lines"),segment.size =.2,
-                           direction = "x",#nudge_x = 45,
-                           point.padding = unit(.5, "lines")#,
-                           #segment.color = "red"
-                           ) +
+  ggrepel::geom_text_repel(
+    data = rbind(a,b) %>% 
+      replace_na(list(Gene.Name="na")) %>% 
+      dplyr::mutate(
+        Gene.Name=ifelse(Gene.Name=="na",Gene.ID,Gene.Name),
+        Gene.Name=ifelse(ID=="PVX_099980_1o1_S2.504","MSP1_S2",Gene.Name),
+        Gene.Name=ifelse(ID=="PVX_099980_1o1_S1.793","MSP1_S1",Gene.Name))
+    #mutate(Gene.Name=ifelse(NonSyn_Syn.SNP.Ratio.All.Strains < 1 | 
+    #NonSyn_Syn.SNP.Ratio.All.Strains > 2.5 | 
+    #                         Total.SNPs.All.Strains > 300 & 
+    #                         Total.SNPs.All.Strains < 400 | 
+    #                         Total.SNPs.All.Strains > 100 & 
+    #                         Total.SNPs.All.Strains < 200 |
+    #                         Total.SNPs.All.Strains < 10,
+    #                       Gene.ID,Gene.Name))
+    ,aes(label=Gene.Name,size=intensity*5
+    ),
+    #size=2.8,
+    box.padding = unit(.65, "lines"),segment.size =.2,
+    direction = "x",#nudge_x = 45,
+    point.padding = unit(.5, "lines")#,
+    #segment.color = "red"
+  ) +
   facet_grid(.~summary.db#, 
              #scales = "free", 
              #space = "free"
-             ) + theme_bw() +
+  ) + theme_bw() +
   theme(#legend.position=c(-.25, -.025),#"bottom"
-        legend.margin = margin(0,0,0,0)#,
-        #legend.text = element_text(size = 8),
-        #legend.title = element_text(size = 8)
-        ) +  
+    legend.margin = margin(0,0,0,0)#,
+    #legend.text = element_text(size = 8),
+    #legend.title = element_text(size = 8)
+  ) +  
   coord_trans(y = "log10") +
   #geom_vline(aes(xintercept=0), lty=3, col="red") #+ 
   ylab("Total SNPs (length-normalized)")+
@@ -3601,10 +3607,13 @@ rbind(a,b) %>%
        caption="*label size in d.p. to Case mean intensity")+
   # and \n (logFC>1 & con>1) | (logFC>0.9 & con>2)
   #coord_flip() # ORDENAR eje de proteínas!!!!
-  theme(strip.background = element_rect(colour = "black"#, fill = "white"
-                                        ),
-        strip.text.x = element_text(colour = "black",size = 12#, face = "bold"
-                                    ))
+  theme(
+    strip.background = element_rect(
+      colour = "black"#, fill = "white"
+    ),
+    strip.text.x = element_text(
+      colour = "black",size = 12#, face = "bold"
+    ))
 ```
 
 only top10 for severe paper
@@ -3666,6 +3675,75 @@ ggsave("figure/04-fig10-severe_compare-variability.png",
        height = 5,width = 6,dpi = "retina")
 ```
 
+```{r}
+antigen_plot_a_exposure <- 
+  rbind(a,b
+  ) %>% 
+  # dplyr::count(summary.db)
+  mutate(summary.db = case_when(
+    summary.db == "w/ Previous Episode (FDR<0.05 & logFC>1)" ~ "With previous episode*",
+    TRUE ~ summary.db
+  )) %>% 
+  ggplot(aes(x = log2(NonSyn_Syn.SNP.Ratio.All.Strains),
+             y = Total.SNPs.All.Strains/Transcript.Length)) +
+  geom_point(aes(#size=intensity,
+                 colour=intensity),
+             size=3) + 
+  colorspace::scale_color_continuous_sequential(
+    name="Mean\nantigen\nreactivity",
+    palette = "Reds",
+    begin = 0.2) +
+  scale_size_binned(name=NULL) +
+  ggrepel::geom_text_repel(
+    data = rbind(a,b
+    ) %>% 
+      mutate(summary.db = case_when(
+        summary.db == "w/ Previous Episode (FDR<0.05 & logFC>1)" ~ "With previous episode*",
+        TRUE ~ summary.db
+      )) %>% 
+      replace_na(list(Gene.Name="na")) %>% 
+      dplyr::mutate(
+        Gene.Name=ifelse(Gene.Name=="na",Gene.ID,Gene.Name),
+        Gene.Name=ifelse(
+          ID=="PVX_099980_1o1_S2.504","MSP1.S2",Gene.Name),
+        Gene.Name=ifelse(
+          ID=="PVX_099980_1o1_S1.793","MSP1.S1",Gene.Name)
+        ) %>% 
+      distinct(Gene.Name,.keep_all = T)
+    , 
+    aes(label=Gene.Name)) +
+  facet_grid(.~summary.db) + 
+  coord_trans(y = "log10") +
+  #geom_vline(aes(xintercept=0), lty=3, col="red") #+ 
+  # ylab("Total SNPs (length-normalized)")+
+  # xlab("NonSyn/Syn SNP ratio (log2-transformed)")+
+  # ylab("SNPs per Transcript length ratio")+
+  ylab( expression(log[10]~SNPs~per~Transcript~length~ratio) ) +
+  # xlab("log2 NonSyn/Syn SNP ratio")+
+  xlab( expression(log[2]~NonSyn/Syn~SNP~ratio) ) +
+  labs(
+    title="Genetic variability",
+    caption="*BH adjusted p-value <0.05 and log2 fold-change >1"
+    #SNP space
+    #subtitle="Among all strains",
+    # caption="\nLabel sizes proportional to mean antigen reactivity"
+  )+
+  # and \n (logFC>1 & con>1) | (logFC>0.9 & con>2)
+  #coord_flip() # ORDENAR eje de proteínas!!!!
+  theme(
+    strip.background = element_rect(
+      colour = "black"#, fill = "white"
+    ),
+    strip.text.x = element_text(
+      colour = "black",size = 12#, face = "bold"
+    )) +
+  guides(size = guide_legend(reverse=T),
+         color = guide_colorbar(order = 1))
+
+antigen_plot_a_exposure
+ggsave("figure/04-fig25-exposure_compare-variability.png",
+       height = 5,width = 10,dpi = "retina")
+```
 
 - PVX_097730, a pesar de no poseer un nivel de expresión tan alto como MSP1_S1, 
 tiene una reactividad serológica mayor que MSP1_S1 y un tamaño de efecto igual a 0.9.
