@@ -3241,51 +3241,73 @@ rbind(a,b,c,d) %>%
 
 ```{r}
 a <- exp_t %>%  #dplyr::count(GO.Components) %>% dplyr::arrange(desc(n))
-  dplyr::mutate(summary.db="Top 10",
-                protype= stringr::str_count(Product.Description, "hypothetical"),
-                protype=as.factor(protype),
-                protype= forcats::fct_recode(protype, "hypothetical"="1", "known"="0")) %>%
-  select(Gene.ID,ID,Product.Description,protype,summary.db,GO.Components) #%>% dplyr::count(protype)
+  dplyr::mutate(
+    summary.db="Top 10",
+    protype= stringr::str_count(Product.Description, "hypothetical"),
+    protype=as.factor(protype),
+    protype= forcats::fct_recode(protype, 
+                                 "hypothetical"="1", "known"="0")) %>%
+  select(Gene.ID,ID,Product.Description,
+         protype,summary.db,GO.Components) #%>% dplyr::count(protype)
 
 b <- sev_d %>%  #dplyr::count(GO.Components) %>% dplyr::arrange(desc(n))
-  dplyr::mutate(summary.db="Severe Malaria (p<0.05)",
-                protype= stringr::str_count(Product.Description, "hypothetical"),
-                protype=as.factor(protype),
-                protype= forcats::fct_recode(protype, "hypothetical"="1", "known"="0")) %>%
-  select(Gene.ID,ID,Product.Description,protype,summary.db,GO.Components) #%>% dplyr::count(protype)
+  dplyr::mutate(
+    summary.db="Severe Malaria (p<0.05)",
+    protype= stringr::str_count(Product.Description, "hypothetical"),
+    protype=as.factor(protype),
+    protype= forcats::fct_recode(protype, 
+                                 "hypothetical"="1", "known"="0")) %>%
+  select(Gene.ID,ID,Product.Description,
+         protype,summary.db,GO.Components) #%>% dplyr::count(protype)
 #exp_da %>% filter(GO.Components!="NA") %>%  dplyr::count(GO.Components) %>% dplyr::arrange(desc(n)) %>% filter(n>1)
 
-c <- exp_da %>% select(Gene.ID,ID,Product.Description,GO.Components) %>% 
+c <- exp_da %>% 
+  select(Gene.ID,ID,Product.Description,GO.Components) %>% 
   separate(GO.Components, c("c1","c2","c3"),sep = ",") %>% 
   mutate_at(vars(c1:c3), funs(trimws)) %>% 
   gather(component,GO.Components,-Gene.ID,-ID,-Product.Description) %>% 
-  filter(GO.Components!="NA") %>% #dplyr::count(GO.Components) %>% dplyr::arrange(desc(n)) %>% filter(n>1)
-  dplyr::mutate(summary.db="w/ Episode (FDR<0.05)",
-                protype= stringr::str_count(Product.Description, "hypothetical"),
-                protype=as.factor(protype),
-                protype= forcats::fct_recode(protype, "hypothetical"="1", "known"="0")) %>%
-  select(Gene.ID,ID,Product.Description,protype,summary.db,GO.Components) #%>% dplyr::count(protype)
+  filter(GO.Components!="NA") %>% 
+  #dplyr::count(GO.Components) %>% 
+  # dplyr::arrange(desc(n)) %>% filter(n>1)
+  dplyr::mutate(
+    summary.db="w/ Episode (FDR<0.05)",
+    protype= stringr::str_count(Product.Description, "hypothetical"),
+    protype=as.factor(protype),
+    protype= forcats::fct_recode(protype, 
+                                 "hypothetical"="1", 
+                                 "known"="0")) %>%
+  select(Gene.ID,ID,Product.Description,
+         protype,summary.db,GO.Components) #%>% dplyr::count(protype)
 #exp_df %>%  dplyr::count(GO.Components) %>% dplyr::arrange(desc(n))
 
-d <- exp_df %>% select(Gene.ID,ID,Product.Description,GO.Components) %>% 
+d <- exp_df %>% 
+  select(Gene.ID,ID,Product.Description,GO.Components) %>% 
   separate(GO.Components, c("c1","c2","c3"),sep = ",") %>% 
   mutate_at(vars(c1:c3), funs(trimws)) %>% 
-  gather(component,GO.Components,-Gene.ID,-ID,-Product.Description) %>% 
-  filter(GO.Components!="NA") %>% #dplyr::count(GO.Components) %>% dplyr::arrange(desc(n)) #%>% filter(n>1)
-  dplyr::mutate(summary.db="w/ Episode (FDR<0.05 & logFC>1)",
-                protype= stringr::str_count(Product.Description, "hypothetical"),
-                protype=as.factor(protype),
-                protype= forcats::fct_recode(protype, "hypothetical"="1", "known"="0")) %>%
-  select(Gene.ID,ID,Product.Description,protype,summary.db,GO.Components) #%>% dplyr::count(protype)
+  gather(component,GO.Components,
+         -Gene.ID,-ID,-Product.Description) %>% 
+  filter(GO.Components!="NA") %>% 
+  #dplyr::count(GO.Components) %>% 
+  # dplyr::arrange(desc(n)) #%>% filter(n>1)
+  dplyr::mutate(
+    summary.db="w/ Episode (FDR<0.05 & logFC>1)",
+    protype= stringr::str_count(Product.Description, "hypothetical"),
+    protype=as.factor(protype),
+    protype= forcats::fct_recode(protype, 
+                                 "hypothetical"="1", 
+                                 "known"="0")) %>%
+  select(Gene.ID,ID,Product.Description,
+         protype,summary.db,GO.Components) #%>% dplyr::count(protype)
 ```
 
 ```{r,fig.height=5,fig.width=7}
-go_ord <- rbind(a,b,c,d) %>% #class()
+go_ord <- rbind(a,#b,
+                c,d) %>% #class()
   group_by(GO.Components,summary.db) %>% 
   dplyr::summarise(count=n()) %>% ungroup() %>% 
   dplyr::arrange(desc(count)) %>% 
   spread(summary.db,count) %>% 
-  dplyr::rename(sev="Severe Malaria (p<0.05)",
+  dplyr::rename(#sev="Severe Malaria (p<0.05)",
                 top="Top 10",
                 epida="w/ Episode (FDR<0.05)",
                 epidf="w/ Episode (FDR<0.05 & logFC>1)") %>% 
@@ -3293,7 +3315,8 @@ go_ord <- rbind(a,b,c,d) %>% #class()
   replace_na(list(epida = 0)) %>% 
   filter(epida==0 | epida>1)
 
-rbind(a,b,c,d) %>% 
+rbind(a,#b,
+      c,d) %>% 
   inner_join(go_ord,by = "GO.Components") %>% 
   dplyr::arrange(desc(epida)) %>% 
   #replace_na(list(SignalP = "na")) %>% 
@@ -3306,21 +3329,80 @@ rbind(a,b,c,d) %>%
   facet_wrap(~summary.db, scales = "free_x" # CON O SIN scala
              #space = "free"
              ) +#
-  coord_flip() + theme_bw() +
+  coord_flip() + 
+  # theme_bw() +
   scale_fill_discrete(name="Protein",
                       labels=c("with annotation", "hypothetical")) +
-  theme(legend.position=c(.86, .09),#"bottom"
-        legend.margin = margin(0,0,0,0),
+  theme(#legend.position=c(.86, .09),#"bottom"
+        #legend.margin = margin(0,0,0,0),
         axis.title.y=element_blank()
         #legend.text = element_text(size = 8),
         #legend.title = element_text(size = 8)
         ) +
-  labs(title="Gene Ontology: Predicted Cellular Components") +
-  theme(strip.background = element_rect(colour = "black"#, fill = "white"
-                                        ),
-        strip.text.x = element_text(colour = "black"#,size = 10#, face = "bold"
-                                    ))
+  labs(title="Gene Ontology: Predicted Cellular Components") #+
+  # theme(
+  #   strip.background = 
+  #     element_rect(colour = "black"#, fill = "white"
+  #     ),
+  #   strip.text.x = 
+  #     element_text(colour = "black"#,size = 10#, face = "bold"
+  #     ))
 ```
+
+new proportion plot
+
+```{r}
+library(treemapify)
+
+rbind(a,c,d) %>% 
+  inner_join(go_ord,by = "GO.Components") %>% 
+  select(summary.db,GO.Components,protype) %>% 
+  # dplyr::count(summary.db,GO.Components,protype) %>% 
+  mutate(
+    summary.db=fct_relevel(summary.db,
+                           "Top 10",
+                           "w/ Episode (FDR<0.05)")) %>% 
+  # mutate(
+  #   summary.db=fct_recode(
+  #     summary.db,
+  #     "top_subset_0"=
+  #       "Top 10",
+  #     "episodes_subset_1"=
+  #       "w/ Episode (FDR<0.05)",
+  #     "episodes_subset_2"=
+  #       "w/ Episode (FDR<0.05 & logFC>1)")) %>% 
+  mutate(
+    summary.db=fct_recode(
+      summary.db,
+      "With previous episode\n(BH adjusted p <0.05)"=
+        "w/ Episode (FDR<0.05)",
+      "With previous episode\n(BH adjusted p <0.05,\nlog2 fold-change >1)"=
+        "w/ Episode (FDR<0.05 & logFC>1)")) %>%
+  janitor::clean_names() %>% 
+  # dplyr::count(go_components)
+  mutate(go_components=as.factor(go_components)) %>% 
+  mutate(go_components=fct_explicit_na(go_components)) %>% 
+  dplyr::count(summary_db,go_components) %>% 
+  ggplot(aes(area = n, 
+             fill = go_components,
+             label = go_components,
+             subgroup = summary_db)) +
+  geom_treemap() +
+  geom_treemap_subgroup_border(color = "black") +
+  geom_treemap_subgroup_text(place = "top", 
+                             grow = T, 
+                             alpha = 0.5, 
+                             colour = "black", 
+                             fontface = "italic", 
+                             min.size = 0) +
+  geom_treemap_text(colour = "white", place = "bottomleft", reflow = T) +
+  colorspace::scale_fill_discrete_qualitative(palette = "Dark 3") +
+  theme(legend.position = "none")
+
+ggsave("figure/04-fig28-exposure_compare-protein_ontology_component.png",
+       height = 5,width = 5,dpi = "retina")
+```
+
 
 ```{r,fig.height=5,fig.width=6.5}
 go_ord <- rbind(full_go,all_go,
