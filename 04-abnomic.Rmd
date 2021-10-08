@@ -3672,7 +3672,7 @@ antigen_plot_a <-
 
 antigen_plot_a
 ggsave("figure/04-fig10-severe_compare-variability.png",
-       height = 5,width = 6,dpi = "retina")
+       height = 4,width = 5,dpi = "retina")
 ```
 
 ```{r}
@@ -3742,7 +3742,7 @@ antigen_plot_a_exposure <-
 
 antigen_plot_a_exposure
 ggsave("figure/04-fig25-exposure_compare-variability.png",
-       height = 5,width = 10,dpi = "retina")
+       height = 4,width = 8,dpi = "retina")
 ```
 
 - PVX_097730, a pesar de no poseer un nivel de expresión tan alto como MSP1_S1, 
@@ -4016,7 +4016,7 @@ antigen_plot_c <- rna_dt_subset %>%
     # begin = 0.2
     ) +
   labs(x="Time", y=NULL,
-       title="Transcription profile during intraerythrocytic cycle",
+       title="Intraerythrocytic cycle Transcription profile",
        # subtitle = "Data from Zhu et al. 2016",
        caption = "FPKM = Fragments Per Kilobase Million") +
   theme(
@@ -4031,7 +4031,7 @@ antigen_plot_c <- rna_dt_subset %>%
 
 antigen_plot_c
 ggsave("figure/04-fig11-severe_compare-transcription-heatmap.png",
-       height = 5,width = 6,dpi = "retina")
+       height = 4,width = 5.25,dpi = "retina")
 
 antigen_plot_a +
   # antigen_plot_b +
@@ -4039,7 +4039,70 @@ antigen_plot_a +
   plot_annotation(tag_levels = "A") #+
   # plot_layout(guides = 'collect')
 ggsave("figure/04-fig12-severe_compare-antigen_mixtureplot.png",
-       height = 5,width = 11,dpi = "retina")
+       height = 4,width = 10,dpi = "retina")
+```
+
+top10 and previous exposure new plot
+
+```{r}
+rna_dt_subset_exposure <- rna_dt %>% 
+  mutate(subset=as.character(subset)) %>% 
+  # filter(subset == "Top 10") %>% 
+  mutate(subset = case_when(
+    subset == "w/ Previous Episode (FDR<0.05 & logFC>1)" ~ "With previous episode*",
+    TRUE ~ subset
+  )) %>% 
+  mutate(id.name=str_replace(id.name,"NA / ","")) %>%
+  mutate(id.name=str_replace(id.name,"(.+) / (.+)","\\1 - \\2")) %>% 
+  dplyr::mutate(
+    # Gene.Name=ifelse(Gene.Name=="na",Gene.ID,Gene.Name),
+    id.name=case_when(
+      ID=="PVX_099980_1o1_S2.504" ~ "MSP1.S2 - PVX_099980",
+      ID=="PVX_099980_1o1_S1.793" ~ "MSP1.S1 - PVX_099980",
+      TRUE ~ id.name))
+
+rna_dt_subset_arrange_exposure <- rna_dt_subset_exposure %>% 
+  select(id.name,fpkm,rna_t) %>% 
+  group_by(id.name) %>% 
+  filter(fpkm == max(fpkm)) %>% 
+  ungroup() %>% 
+  arrange(rna_t,fpkm) %>% 
+  dplyr::rename(rna_t_max=rna_t) %>% 
+  select(-fpkm)
+
+antigen_plot_c <- rna_dt_subset_exposure %>% 
+  left_join(rna_dt_subset_arrange_exposure) %>% 
+  mutate(rna_t = as.factor(rna_t),
+         id.name = fct_reorder(.f = id.name,
+                               .x = -rna_t_max,
+                               .fun = mean)) %>%
+  ggplot(aes(x = rna_t,y = id.name, fill = fpkm)) +
+  geom_tile() +
+  facet_wrap(.~subset,scales = "free") +
+  colorspace::scale_fill_continuous_diverging(
+    name="FPKM",
+    mid = 4,
+    palette = "Blue-Red 3",
+    # begin = 0.2
+    ) +
+  labs(x="Time", y=NULL,
+       title="Intraerythrocytic cycle Transcription profile",
+       # subtitle = "Data from Zhu et al. 2016",
+       caption = "FPKM = Fragments Per Kilobase Million\n*BH adjusted p-value <0.05 and log2 fold-change >1") +
+  theme(
+    axis.text.y = element_text(size=11),
+    axis.text.x = element_text(size=12),
+    strip.background = element_rect(
+      colour = "black"#, fill = "white"
+    ),
+    strip.text.x = element_text(
+      colour = "black",size = 12#, face = "bold"
+    ))
+
+antigen_plot_c
+ggsave("figure/04-fig26-exposure_compare-transcription-heatmap.png",
+       height = 4,width = 8,dpi = "retina")
+
 ```
 
 
