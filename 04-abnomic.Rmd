@@ -539,7 +539,7 @@ rbind(a,b,c,d) %>%
     x = "Value",
     y = "Count",
     # title="Preprocessing: Data distribution per step",
-    caption="*Samples by Severe Malaria Study and Probes by P. vivax antigens") +
+    caption="*subset of samples from the severe vivax malaria study and probes with P. vivax antigens") +
   theme(
     strip.background = element_rect(colour = "black"#, fill = "white"
     ),
@@ -2490,7 +2490,7 @@ eset_clean_diff_top_sub %>%
     # begin = 0.2
     ) +
   labs(y = NULL, x=NULL,
-       caption="*BH adjusted p-value <0.05 and log2 fold-change >1") + 
+       caption="*BH adjusted p-value <0.05 and log2 fold-change>1") + 
   theme(axis.text.x = element_text(angle = 90, 
                                    vjust = 0.5, 
                                    hjust=1,
@@ -2526,7 +2526,7 @@ eset_clean_diff_top_sub %>%
   theme_bw() +
   ylab("Antigen reactivity") +
   xlab("") +
-  labs(caption="*BH adjusted p-value <0.05 and log2 fold-change >1") +
+  labs(caption="*BH adjusted p-value <0.05 and log2 fold-change>1") +
   coord_flip()
 ggsave("figure/04-fig24-exposure_compare-boxplot_highrve.png",
        height = 4,width = 6,dpi = "retina")
@@ -3083,9 +3083,9 @@ protein_final_summary <- rbind(a,#b,
   mutate(
     summary.db=fct_recode(
       summary.db,
-      "With previous episode\n(BH adjusted p <0.05)"=
+      "With previous episode\n(BH adjusted p<0.05)"=
         "w/ Episode (FDR<0.05)",
-      "With previous episode\n(BH adjusted p <0.05,\nlog2 fold-change >1)"=
+      "With previous episode\n(BH adjusted p<0.05,\nlog2 fold-change>1)"=
         "w/ Episode (FDR<0.05 & logFC>1)")) %>% 
   replace_na(list(value = "absent")) 
 
@@ -3349,12 +3349,14 @@ rbind(a,#b,
   #     ))
 ```
 
+##### treemap
+
 new proportion plot
 
 ```{r}
 library(treemapify)
 
-rbind(a,c,d) %>% 
+treemap_data <- rbind(a,c,d) %>% 
   inner_join(go_ord,by = "GO.Components") %>% 
   select(summary.db,GO.Components,protype) %>% 
   # dplyr::count(summary.db,GO.Components,protype) %>% 
@@ -3374,33 +3376,44 @@ rbind(a,c,d) %>%
   mutate(
     summary.db=fct_recode(
       summary.db,
-      "With previous episode\n(BH adjusted p <0.05)"=
+      "With previous episode\n(BH adjusted p<0.05)"=
         "w/ Episode (FDR<0.05)",
-      "With previous episode\n(BH adjusted p <0.05,\nlog2 fold-change >1)"=
+      "With previous episode\n(BH adjusted p<0.05, log2 fold-change>1)"=
         "w/ Episode (FDR<0.05 & logFC>1)")) %>%
   janitor::clean_names() %>% 
   # dplyr::count(go_components)
   mutate(go_components=as.factor(go_components)) %>% 
   mutate(go_components=fct_explicit_na(go_components)) %>% 
   dplyr::count(summary_db,go_components) %>% 
+  mutate(go_components = str_replace(go_components,"transferase","- transferase"))
+
+# treemap_data
+
+treemap_data %>% 
   ggplot(aes(area = n, 
              fill = go_components,
-             label = go_components,
-             subgroup = summary_db)) +
-  geom_treemap() +
-  geom_treemap_subgroup_border(color = "black") +
-  geom_treemap_subgroup_text(place = "top", 
-                             grow = T, 
-                             alpha = 0.5, 
-                             colour = "black", 
-                             fontface = "italic", 
-                             min.size = 0) +
-  geom_treemap_text(colour = "white", place = "bottomleft", reflow = T) +
-  colorspace::scale_fill_discrete_qualitative(palette = "Dark 3") +
+             label = go_components#,
+             # subgroup = summary_db
+             )) +
+  geom_treemap(colour = "black") +
+  facet_wrap(~summary_db) +
+  # geom_treemap_subgroup_border(color = "black") +
+  # geom_treemap_subgroup_text(place = "middle", 
+  #                            grow = T, 
+  #                            alpha = 0.5, 
+  #                            colour = "black", 
+  #                            fontface = "italic", 
+  #                            min.size = 0) +
+  geom_treemap_text(colour = "black", 
+                    place = "bottomleft", 
+                    reflow = T) +
+  colorspace::scale_fill_discrete_qualitative(palette = "Set 3") +
+  theme_classic() +
   theme(legend.position = "none")
+  
 
 ggsave("figure/04-fig28-exposure_compare-protein_ontology_component.png",
-       height = 5,width = 5,dpi = "retina")
+       height = 3,width = 7.25,dpi = "retina")
 ```
 
 
@@ -3858,7 +3871,7 @@ antigen_plot_a_exposure <-
   xlab( expression(log[2]~NonSyn/Syn~SNP~ratio) ) +
   labs(
     title="Genetic variability",
-    caption="*BH adjusted p-value <0.05 and log2 fold-change >1"
+    caption="*BH adjusted p-value <0.05 and log2 fold-change>1"
     #SNP space
     #subtitle="Among all strains",
     # caption="\nLabel sizes proportional to mean antigen reactivity"
@@ -4223,7 +4236,7 @@ antigen_plot_c <- rna_dt_subset_exposure %>%
   labs(x="Time", y=NULL,
        title="Intraerythrocytic cycle Transcription profile",
        # subtitle = "Data from Zhu et al. 2016",
-       caption = "FPKM = Fragments Per Kilobase Million\n*BH adjusted p-value <0.05 and log2 fold-change >1") +
+       caption = "FPKM = Fragments Per Kilobase Million\n*BH adjusted p-value <0.05 and log2 fold-change>1") +
   theme(
     axis.text.y = element_text(size=11),
     axis.text.x = element_text(size=12),
