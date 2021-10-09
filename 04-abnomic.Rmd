@@ -776,20 +776,60 @@ rbind(full_go,all_go) %>%
   scale_fill_discrete(name="Protein",
                       labels=c("with annotation", "hypothetical")) +
   theme(#legend.position=c(-.38, -0.04),#"bottom"
-        legend.position=c(.85, 0.15),
-        legend.margin = margin(0,0,0,0),
+        # legend.position=c(.85, 0.15),
+        # legend.margin = margin(0,0,0,0),
         axis.title.y=element_blank()
         #legend.text = element_text(size = 8),
         #legend.title = element_text(size = 8)
         ) +
-  labs(title="Gene Ontology: Pf/Pv500 microarray proteins",
-       subtitle="Predicted Cellular Components compared to P. vivax genome") +
-  theme(strip.background = element_rect(colour = "black"#, fill = "white"
-                                        ),
-        strip.text.x = element_text(colour = "black"#,#size = 12, 
-                                    #face = "bold"
-                                    ))
+  # labs(title="Gene Ontology: Pf/Pv500 microarray proteins",
+  #      subtitle="Predicted Cellular Components compared to P. vivax genome") +
+  theme(
+    strip.background = 
+      element_rect(colour = "black"#, fill = "white"
+      ),
+    strip.text.x = element_text(colour = "black"#,#size = 12, 
+                                #face = "bold"
+    ))
+
+ggsave("figure/04-fig04-microarray_genome_comparison.png",
+       height = 3.5,width = 6.5,dpi = "retina")
 ```
+
+```{r}
+library(treemapify)
+
+rbind(full_go,all_go) %>% 
+  inner_join(go_ord %>% 
+               filter(micro>3),by = "GO.Components") %>% 
+  dplyr::arrange(desc(micro)) %>% 
+  janitor::clean_names() %>% 
+  dplyr::count(summary_db,go_components) %>% 
+  ggplot(aes(area = n, 
+             fill = go_components,
+             label = go_components#,
+             # subgroup = summary_db
+             )) +
+  geom_treemap(colour = "black") +
+  facet_wrap(~summary_db) +
+  # geom_treemap_subgroup_border(color = "black") +
+  # geom_treemap_subgroup_text(place = "middle", 
+  #                            grow = T, 
+  #                            alpha = 0.5, 
+  #                            colour = "black", 
+  #                            fontface = "italic", 
+  #                            min.size = 0) +
+  geom_treemap_text(colour = "black", 
+                    place = "bottomleft", 
+                    reflow = T) +
+  colorspace::scale_fill_discrete_qualitative(palette = "Set 3") +
+  theme_classic() +
+  theme(legend.position = "none")
+
+ggsave("figure/04-fig04-microarray_genome_comparison-tree.png",
+       height = 3.5,width = 6.5,dpi = "retina")
+```
+
 
 ```{r}
 # rbind(full_go,all_go) %>% 
