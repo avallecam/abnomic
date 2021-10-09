@@ -1895,7 +1895,7 @@ eset_clean_diff_top <-
               dplyr::mutate(ID=as.character(ID)),
             by="ID") %>% 
   full_join(s %>% as.data.frame() %>% 
-              dplyr::mutate(group="p < 0.05") %>% 
+              dplyr::mutate(group="p-value < 0.05*") %>% 
               #dplyr::rename(gene="ID") %>% 
               dplyr::mutate(ID=as.character(ID)),
             by="ID") %>% 
@@ -1969,7 +1969,8 @@ eset_clean_diff_top_sub %>%
     palette = "Blue-Red 3",
     # begin = 0.2
     ) +
-  labs(y = NULL, x=NULL) + 
+  labs(y = NULL, x=NULL,
+       caption = "*BH adjusted p-values between 0.968-0.690") + 
   theme(axis.text.x = element_text(angle = 90, 
                                    vjust = 0.5, 
                                    hjust=1,
@@ -2003,6 +2004,7 @@ eset_clean_diff_top_sub %>%
   theme_bw() +
   ylab("Antigen reactivity") +
   xlab("") +
+  labs(caption = "*BH adjusted p-values between 0.968-0.690") +
   coord_flip()
 ggsave("figure/04-fig08-severe_compare-boxplot_highrve.png",
        height = 3,width = 6,dpi = "retina")
@@ -2200,11 +2202,12 @@ severe_plot02_b <- td %>%
         ID=="PVX_099980_1o1_S1.793" ~ "MSP1.S1",
         TRUE ~ newname)),
     force        = 0.5,
-    nudge_x      = -0.25,
+    nudge_x      = -1,
     direction    = "y",
     hjust        = 1,
-    segment.size = 0.2
-    # size = 3,
+    segment.size = 0.2,
+    size = 3#,
+    # nudge_y = 5
     # force = 15,
     # direction = "x"
     # box.padding = unit(4, "lines"),
@@ -2530,7 +2533,7 @@ eset_clean_diff_top_sub %>%
     # begin = 0.2
     ) +
   labs(y = NULL, x=NULL,
-       caption="*BH adjusted p-value <0.05 and log2 fold-change>1") + 
+       caption="*BH adjusted p-value <0.05 and log2 fold-change >1") + 
   theme(axis.text.x = element_text(angle = 90, 
                                    vjust = 0.5, 
                                    hjust=1,
@@ -2566,7 +2569,7 @@ eset_clean_diff_top_sub %>%
   theme_bw() +
   ylab("Antigen reactivity") +
   xlab("") +
-  labs(caption="*BH adjusted p-value <0.05 and log2 fold-change>1") +
+  labs(caption="*BH adjusted p-value <0.05 and log2 fold-change >1") +
   coord_flip()
 ggsave("figure/04-fig24-exposure_compare-boxplot_highrve.png",
        height = 4,width = 6,dpi = "retina")
@@ -3125,7 +3128,7 @@ protein_final_summary <- rbind(a,#b,
       summary.db,
       "With previous episode\n(BH adjusted p<0.05)"=
         "w/ Episode (FDR<0.05)",
-      "With previous episode\n(BH adjusted p<0.05,\nlog2 fold-change>1)"=
+      "With previous episode\n(BH adjusted p<0.05,\nlog2 fold-change >1)"=
         "w/ Episode (FDR<0.05 & logFC>1)")) %>% 
   replace_na(list(value = "absent")) 
 
@@ -3911,7 +3914,7 @@ antigen_plot_a_exposure <-
   xlab( expression(log[2]~NonSyn/Syn~SNP~ratio) ) +
   labs(
     title="Genetic variability",
-    caption="*BH adjusted p-value <0.05 and log2 fold-change>1"
+    caption="*BH adjusted p-value <0.05 and log2 fold-change >1"
     #SNP space
     #subtitle="Among all strains",
     # caption="\nLabel sizes proportional to mean antigen reactivity"
@@ -4276,7 +4279,7 @@ antigen_plot_c <- rna_dt_subset_exposure %>%
   labs(x="Time", y=NULL,
        title="Intraerythrocytic cycle Transcription profile",
        # subtitle = "Data from Zhu et al. 2016",
-       caption = "FPKM = Fragments Per Kilobase Million\n*BH adjusted p-value <0.05 and log2 fold-change>1") +
+       caption = "FPKM = Fragments Per Kilobase Million\n*BH adjusted p-value <0.05 and log2 fold-change >1") +
   theme(
     axis.text.y = element_text(size=11),
     axis.text.x = element_text(size=12),
