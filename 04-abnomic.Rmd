@@ -47,7 +47,7 @@ library("ggrepel")
 library("forcats")
 library("stringr")
 
-library("Rmisc")       #multiploting ggplots
+# library("Rmisc")       #multiploting ggplots
 
 library("Biobase")     #ExpressionSet
 library("genefilter")  #DataCondensation
@@ -359,7 +359,8 @@ q <- norx %>% as.data.frame() %>%
   theme(axis.text.x = element_blank()) +
   labs(title="Conditional edition of a single element")
 
-Rmisc::multiplot(p,q,cols = 2)
+# Rmisc::multiplot(p,q,cols = 2)
+p+q
 ```
 
 ### 3. ExpressionSet
@@ -573,7 +574,8 @@ d <- exprs(eset.VIVAX.SEV.FILTER) %>% as.data.frame() %>%
   geom_histogram() +
   labs(title="SEVERE VIVAX FILTERED DATA") + theme_bw()
 
-Rmisc::multiplot(a,b,c,d,cols = 4)
+# Rmisc::multiplot(a,b,c,d,cols = 4)
+a+b+c+d
 ```
 
 *Of sample covariates, feature covariates and microarray whole dataset*
@@ -939,7 +941,8 @@ n <- norx %>% as.data.frame() %>%
   labs(title="Mean-variance dependence",
        subtitle="FOC Normalization method") + theme_bw()
 
-Rmisc::multiplot(m,n,cols = 2)
+# Rmisc::multiplot(m,n,cols = 2)
+m+n
 ```
 
 ##### Validity test
@@ -1089,7 +1092,8 @@ v41 <- CSP %>%
        #caption=paste0("method: ",h$method)
        ) + theme_bw()
 
-multiplot(v11, v32, v41, cols= 3)
+# multiplot(v11, v32, v41, cols= 3)
+v11+v32+v41
 ```
 
 ```{r, fig.width=8.5, fig.height=3}
@@ -1431,7 +1435,71 @@ td <- topTable(eb, coef = 2,               # default: slope
              by="ID")
 ```
 
-feature correlation
+###### pareto of top antigens 
+
+```{r}
+pareto_test <- biobroom::tidy.ExpressionSet(eset) %>% 
+  group_by(gene) %>% 
+  dplyr::summarise(median_value = median(value,na.rm = T)) %>%
+  ungroup()
+
+pareto_test %>% 
+  ggplot(aes(x = median_value)) + 
+  geom_histogram()
+
+cut_descriptive <- 7.5
+cut_selective <- 10
+
+pareto_test %>% 
+  # top_n(n = 100,wt = median_value) %>% 
+  cdcper::cdc_pareto_lista(variable = median_value,
+                           pareto_cut = cut_descriptive) %>% 
+  count(cut_median_value) %>% 
+  mutate(pct = 100*n/sum(n))
+
+pareto_test %>% 
+  # top_n(n = 100,wt = median_value) %>% 
+  cdcper::cdc_pareto_lista(variable = median_value,
+                           pareto_cut = cut_selective) %>% 
+  count(cut_median_value) %>% 
+  mutate(pct = 100*n/sum(n))
+
+cdcper::cdc_pareto_lista(data = pareto_test,
+                         variable = median_value,
+                         pareto_cut = cut_selective) %>% 
+  rownames_to_column() %>% 
+  mutate(rowname=as.numeric(rowname)) %>% 
+  ggplot(aes(x = cum_median_value, y = rowname)) +
+  geom_step() +
+  scale_x_continuous(breaks = scales::pretty_breaks()) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n=20)) +
+  geom_vline(aes(xintercept=cut_selective),lty=3)
+
+cdcper::cdc_pareto_lista(data = pareto_test,
+                         variable = median_value,
+                         pareto_cut = cut_selective) %>% 
+  cdcper::cdc_pareto_plot(pct_ = pct_median_value, 
+                          cum_ = cum_median_value, 
+                          variable_value = median_value,
+                          variable_label = gene,
+                          with_format = FALSE) +
+  scale_x_continuous(breaks = scales::pretty_breaks()) +
+  geom_vline(aes(xintercept=cut_descriptive),lty=3) +
+  geom_point(size = 1, alpha = 0.5) +
+  # geom_step(size = 0.5) +
+  guides(color = guide_colorbar(order = 1),
+         size = guide_legend(reverse=T)) +
+  labs(x = "Cumulative %",
+       y = "Unitary %",
+       color = "Median\nantigen\nreactivity",
+       size = NULL)
+
+ggsave("figure/04-fig05-highly_reactive-pareto_plot.png",
+       height = 3.5,width = 7,dpi = "retina")
+```
+
+
+###### feature correlation
 
 ```{r}
 tidyeset <- 
@@ -1638,7 +1706,8 @@ bx <-  td %>% ggplot(aes(adj.P.Val)) +
   labs(title="P-value histogram",
        subtitle="After multiple testing correction") + 
   xlab("adjust p.value") + theme_bw()
-Rmisc::multiplot(ax,bx,cols = 2)
+# Rmisc::multiplot(ax,bx,cols = 2)
+ax+bx
 ```
 
 ###### volcano plot
@@ -2084,7 +2153,8 @@ bx <-  td %>% ggplot(aes(adj.P.Val)) +
   coord_cartesian(xlim = c(0,1)) +
   labs(title="P-value histogram",
        subtitle="After multiple testing correction") + xlab("adjust p.value") + theme_bw()
-Rmisc::multiplot(ax,bx,cols = 2)
+# Rmisc::multiplot(ax,bx,cols = 2)
+ax+bx
 ```
 
 ###### volcano plot
@@ -2273,7 +2343,8 @@ t <- td %>%
   labs(title="Case mean intensity vs logFC",
        subtitle="filtered by adj.P.Val<0.05") + theme_bw()
 
-Rmisc::multiplot(l,t,cols = 1)
+# Rmisc::multiplot(l,t,cols = 1)
+l+t
 ```
 
 ###### Application
@@ -2806,7 +2877,8 @@ s <- fin %>%
        #caption=paste0("method:",k$method)
        ) + theme_bw()
 
-Rmisc::multiplot(r,s,cols = 1)
+# Rmisc::multiplot(r,s,cols = 1)
+r+s
 ```
 
 ```{r}
@@ -2914,7 +2986,8 @@ s <- fin %>%
 #  labs(title="Intensity of Ab response", 
 #       subtitle="per previous episode category")  + theme_bw()
 
-Rmisc::multiplot(r,s,cols = 2)
+# Rmisc::multiplot(r,s,cols = 2)
+r+s
 ```
 
 
@@ -2982,7 +3055,8 @@ u <- fin %>%
   xlab("Categorized Age") + ylab("Mean Intensity") +
   labs(title="Intensity of Ab response", subtitle="per Age and Previous Episode")  + theme_bw()
 
-Rmisc::multiplot(r,t,s,u,cols = 2)
+# Rmisc::multiplot(r,t,s,u,cols = 2)
+r+t+s+u
 ```
 
 ### 0. Extra-Analysis
@@ -3972,8 +4046,9 @@ c <- exp_df %>% select(Gene.ID,NonSyn_Syn.SNP.Ratio.All.Strains,Total.SNPs.All.S
                            segment.color = "red") +
   labs(title="SNP space",subtitle="with Previous Episode") + theme_bw()
 
-Rmisc::multiplot(a,#b,
-                 c,cols = 2)
+# Rmisc::multiplot(a,#b,
+#                  c,cols = 2)
+a+c
 ```
 
 - Subset of __differentially reactive antigens__ in samples __with previous episodes__ having:
