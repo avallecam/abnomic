@@ -1481,18 +1481,20 @@ cdcper::cdc_pareto_lista(data = pareto_test,
 cdcper::cdc_pareto_lista(data = pareto_test,
                          variable = median_value,
                          pareto_cut = cut_selective) %>% 
-  cdcper::cdc_pareto_plot(pct_ = pct_median_value, 
-                          cum_ = cum_median_value, 
-                          variable_value = median_value,
-                          variable_label = gene,
-                          with_format = FALSE) +
-  # colorspace::scale_color_continuous_sequential(
-  #   name="Mean\nantigen\nreactivity",
-  #   palette = "Reds",
-  #   begin = 0.2) +
+  # cdcper::cdc_pareto_plot(pct_ = pct_median_value, 
+  #                         cum_ = cum_median_value, 
+  #                         variable_value = median_value,
+  #                         variable_label = gene,
+  #                         with_format = FALSE) +
+  ggplot(aes(x = cum_median_value,y = pct_median_value)) +
+  geom_point(aes(color = median_value), alpha = 0.25) +
+  colorspace::scale_color_continuous_sequential(
+    name="Mean\nantigen\nreactivity",
+    palette = "Reds",
+    begin = 0.2) +
   scale_x_continuous(breaks = scales::pretty_breaks()) +
   geom_vline(aes(xintercept=cut_descriptive),lty=3) +
-  geom_point(size = 1, alpha = 0.5) +
+  # geom_point(size = 1, alpha = 0.5) +
   # geom_step(size = 0.5) +
   guides(color = guide_colorbar(order = 1),
          size = guide_legend(reverse=T)) +
