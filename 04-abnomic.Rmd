@@ -2149,12 +2149,13 @@ severe_heatmap <- eset_clean_diff_top_sub %>%
   theme(axis.text.x = element_text(angle = 90, 
                                    vjust = 0.5, 
                                    hjust=1,
-                                   size=5),
-        axis.text.y = element_text(size=7))
+                                   size=5)#,
+        # axis.text.y = element_text(size=7)
+        )
 
 severe_heatmap
 ggsave("figure/04-fig09-severe_compare-heatmap-nocluster-ggplot-severe.png",
-       height = 2,width = 6,dpi = "retina")
+       height = 2.25,width = 6,dpi = "retina")
 ```
 
 ```{r}
