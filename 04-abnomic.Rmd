@@ -2103,7 +2103,7 @@ eset_clean_diff_top_sub %>%
   labs(caption = "*BH adjusted p-values between 0.968-0.690") +
   coord_flip()
 ggsave("figure/04-fig08-severe_compare-boxplot_highrve.png",
-       height = 3,width = 6,dpi = "retina")
+       height = 5,width = 6,dpi = "retina")
 ```
 
 alternative figures without top antigens
@@ -2166,7 +2166,7 @@ severe_heatmap <- eset_clean_diff_top_sub %>%
 
 severe_heatmap
 ggsave("figure/04-fig09-severe_compare-heatmap-nocluster-ggplot-severe.png",
-       height = 2.25,width = 6,dpi = "retina")
+       height = 3.25,width = 6,dpi = "retina")
 ```
 
 ```{r}
@@ -2199,7 +2199,7 @@ severe_boxplot <- eset_clean_diff_top_sub %>%
 
 severe_boxplot
 ggsave("figure/04-fig08-severe_compare-boxplot_highrve-severe.png",
-       height = 2,width = 6,dpi = "retina")
+       height = 3,width = 6,dpi = "retina")
 ```
 
 ```{r}
@@ -2216,7 +2216,7 @@ severe_heatmap +
   plot_layout(ncol = 1) +
   plot_annotation(tag_levels = "A")
 ggsave("figure/04-fig08-severe_compare-mix-boxplot_heatmap.png",
-       height = 5.5,width = 7,dpi = "retina")
+       height = 6.5,width = 7,dpi = "retina")
 ```
 
 
@@ -2796,7 +2796,7 @@ eset_clean_diff_top_sub %>%
   labs(caption="*BH adjusted p-value <0.05 and log2 fold-change >1") +
   coord_flip()
 ggsave("figure/04-fig24-exposure_compare-boxplot_highrve.png",
-       height = 4,width = 6,dpi = "retina")
+       height = 4.5,width = 6,dpi = "retina")
 ```
 
 
@@ -4066,7 +4066,8 @@ antigen_plot_a <-
         #   ID=="PVX_099980_1o1_S1.793","MSP1_S1",Gene.Name)
         )
     , 
-    aes(label=Gene.Name)) +
+    aes(label=Gene.Name),
+    size = 3) +
   facet_grid(.~summary.db) + 
   coord_trans(y = "log10") +
   #geom_vline(aes(xintercept=0), lty=3, col="red") #+ 
@@ -4138,7 +4139,7 @@ antigen_plot_a_exposure <-
       distinct(Gene.Name,summary.db,
                .keep_all = T)
     , 
-    aes(label=Gene.Name), size =3.5) +
+    aes(label=Gene.Name), size =3) +
   facet_grid(.~summary.db) + 
   coord_trans(y = "log10") +
   #geom_vline(aes(xintercept=0), lty=3, col="red") #+ 
