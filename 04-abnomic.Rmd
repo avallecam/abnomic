@@ -1841,7 +1841,7 @@ sev_d <- td %>%
            #no_severo>1
            ) %>%
   #top_n(10,t) %>% 
-  top_n(-10,P.Value) %>% 
+  # top_n(-10,P.Value) %>% 
   arrange(P.Value) %>% 
   #arrange(desc(no_severo)) %>% 
   select(ID,Gene.ID,Description,logFC,severo,no_severo,t,P.Value,adj.P.Val,p.order) %>% #slice(1:10)
@@ -1858,7 +1858,8 @@ sev_d
 ```{r}
 sev_t <- td %>% 
   arrange(desc(AveExpr)) %>% 
-  select(ID,Gene.ID,Description,AveExpr,p.order) %>% slice(1:10) %>% 
+  select(ID,Gene.ID,Description,AveExpr,p.order) %>% 
+  slice(1:16) %>% 
   inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
 
 sev_t
@@ -1892,14 +1893,14 @@ s <- td %>%
            #logFC>1 & 
            #no_severo>1
            ) %>%
-  top_n(-10,P.Value) %>% 
+  # top_n(-10,P.Value) %>% 
   arrange(P.Value) %>% 
   #arrange(desc(no_severo)) %>% 
   select(ID) %>% as.matrix() 
 
 x <- td %>% 
   arrange(desc(AveExpr)) %>% 
-  top_n(10,AveExpr) %>% 
+  top_n(16,AveExpr) %>% 
   arrange(desc(no_severo)) %>% # If diff order at boxplot is achieved, then desactivate this line.
   select(ID) %>% as.matrix() 
 
@@ -1976,21 +1977,29 @@ eset_clean_diff_top <-
   biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   dplyr::rename(ID="gene") %>% 
   full_join(td, by = "ID") %>%
-  full_join(x %>% as.data.frame() %>% 
+  inner_join(x %>% as.data.frame() %>% 
               dplyr::mutate(group="Top 10%") %>% 
               #dplyr::rename(gene="ID") %>% 
               dplyr::mutate(ID=as.character(ID)),
             by="ID") %>% 
-  full_join(s %>% as.data.frame() %>% 
-              dplyr::mutate(group="p-value < 0.05*") %>% 
-              #dplyr::rename(gene="ID") %>% 
-              dplyr::mutate(ID=as.character(ID)),
-            by="ID") %>% 
-  unite(group, group.x, group.y) %>% 
-  mutate(group=stringr::str_replace(group,"NA_(.)", "\\1")) %>% 
-  mutate(group=stringr::str_replace(group,"(.)_NA", "\\1")) %>% 
-  mutate(group=forcats::fct_relevel(group,"Top 10%")) %>% 
-  filter(group!="NA") %>% 
+  # count(ID)
+  bind_rows(
+    biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+      #count(gene)
+      dplyr::rename(ID="gene") %>% 
+      full_join(td, by = "ID") %>% 
+      inner_join(s %>% as.data.frame() %>% 
+                   dplyr::mutate(group="p-value < 0.05*") %>% 
+                   #dplyr::rename(gene="ID") %>% 
+                   dplyr::mutate(ID=as.character(ID)),
+                 by="ID") #%>% count(ID)
+    ) %>% 
+  # count(ID,group)
+  # unite(group, group.x, group.y) %>% 
+  # mutate(group=stringr::str_replace(group,"NA_(.)", "\\1")) %>% 
+  # mutate(group=stringr::str_replace(group,"(.)_NA", "\\1")) %>% 
+  mutate(group=forcats::fct_relevel(group,"Top 10%")) %>%
+  # filter(group!="NA") %>% 
   inner_join(all, by="Gene.ID") %>% 
   inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") %>% 
   # unite(id.name, Product.Description,Gene.Name, 
@@ -2065,7 +2074,7 @@ eset_clean_diff_top_sub %>%
         axis.text.y = element_text(size=7))
 
 ggsave("figure/04-fig09-severe_compare-heatmap-nocluster-ggplot.png",
-       height = 3,width = 6,dpi = "retina")
+       height = 6,width = 6,dpi = "retina")
 ```
 
 ```{r}
@@ -2571,7 +2580,7 @@ s <- td %>%
 
 x <- td %>% 
   arrange(desc(AveExpr)) %>% 
-  top_n(10,AveExpr) %>% 
+  top_n(16,AveExpr) %>% 
   arrange(desc(con)) %>% # If diff order at boxplot is achieved, then desactivate this line.
   select(ID) %>% as.matrix() 
 
@@ -2609,31 +2618,42 @@ aheatmap(exprs(eset),
 ```{r, fig.width=5.15,fig.height=4.5, echo=TRUE,message=FALSE}
 eset <- eset.VIVAX.SEV.FILTER
 
-exp_bp <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
+exp_bp <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  #count(gene)
   dplyr::rename(ID="gene") %>% 
   full_join(td, by = "ID") %>%
-  full_join(x %>% as.data.frame() %>% 
+  inner_join(x %>% as.data.frame() %>% 
               dplyr::mutate(group="Top 10%") %>% 
               #dplyr::rename(gene="ID") %>% 
               dplyr::mutate(ID=as.character(ID)),
             by="ID") %>% 
-  full_join(s %>% as.data.frame() %>% 
-              dplyr::mutate(group="Differentially*") %>% 
-              #dplyr::rename(gene="ID") %>% 
-              dplyr::mutate(ID=as.character(ID)),
-            by="ID") %>% 
-  unite(group, group.x, group.y) %>% 
-  mutate(group=stringr::str_replace(group,"NA_(.)", "\\1")) %>% 
-  mutate(group=stringr::str_replace(group,"(.)_NA", "\\1")) %>% 
+  # count(ID)
+  bind_rows(
+    biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+      #count(gene)
+      dplyr::rename(ID="gene") %>% 
+      full_join(td, by = "ID") %>% 
+      inner_join(s %>% as.data.frame() %>% 
+                   dplyr::mutate(group="Differentially*") %>% 
+                   #dplyr::rename(gene="ID") %>% 
+                   dplyr::mutate(ID=as.character(ID)),
+                 by="ID") #%>% count(ID)
+    ) %>% 
+  # unite(group, group.x, group.y) %>% 
+  # mutate(group=stringr::str_replace(group,"NA_(.)", "\\1")) %>% 
+  # mutate(group=stringr::str_replace(group,"(.)_NA", "\\1")) %>% 
   mutate(group=forcats::fct_relevel(group,"Top 10%")) %>% 
-  mutate(episodio_previo=forcats::fct_relevel(episodio_previo,"con")) %>% 
-  filter(group!="NA") %>% 
+  mutate(episodio_previo=forcats::fct_relevel(episodio_previo,
+                                              "con")) %>% 
+  # filter(group!="NA") %>% 
   inner_join(all, by="Gene.ID") %>% 
   inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") %>% 
-  #unite(id.name, Product.Description,Gene.Name, sep = " / ", remove = FALSE) %>% 
+  # unite(id.name, Product.Description,Gene.Name, 
+  #       sep = " / ", remove = FALSE) %>%
   unite(id.name, Gene.Name, Gene.ID, sep = " / ", remove = FALSE) %>%
   #unite(id.name, id.name, p.order, sep = " / ", remove = FALSE)  %>% 
-  dplyr::mutate(id.name= ifelse(ID == "PVX_003775_2o2.150", "MSP4. / PVX_003775", id.name))
+  dplyr::mutate(id.name= ifelse(ID == "PVX_003775_2o2.150", 
+                                "MSP4. / PVX_003775", id.name))
 
 #exp_ls <- exp_bp %>% 
 #  dplyr::group_by(ID,id.name,group) %>% 
