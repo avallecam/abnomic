@@ -1975,7 +1975,7 @@ eset_clean_diff_top <-
   dplyr::rename(ID="gene") %>% 
   full_join(td, by = "ID") %>%
   full_join(x %>% as.data.frame() %>% 
-              dplyr::mutate(group="Top 10") %>% 
+              dplyr::mutate(group="Top 10%") %>% 
               #dplyr::rename(gene="ID") %>% 
               dplyr::mutate(ID=as.character(ID)),
             by="ID") %>% 
@@ -1987,7 +1987,7 @@ eset_clean_diff_top <-
   unite(group, group.x, group.y) %>% 
   mutate(group=stringr::str_replace(group,"NA_(.)", "\\1")) %>% 
   mutate(group=stringr::str_replace(group,"(.)_NA", "\\1")) %>% 
-  mutate(group=forcats::fct_relevel(group,"Top 10")) %>% 
+  mutate(group=forcats::fct_relevel(group,"Top 10%")) %>% 
   filter(group!="NA") %>% 
   inner_join(all, by="Gene.ID") %>% 
   inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") %>% 
@@ -2133,7 +2133,7 @@ severe_heatmap <- eset_clean_diff_top_sub %>%
                               "Severe" = "severo", 
                               "Non-severe" = "no_severo")) %>% 
   # key removal
-  filter(group!="Top 10") %>% 
+  filter(group!="Top 10%") %>% 
   ggplot(aes(x = sample,y = id.name, fill = value)) +
   geom_tile() +
   facet_grid(group~sev_WHO,
@@ -2165,7 +2165,7 @@ severe_boxplot <- eset_clean_diff_top_sub %>%
                                .x = sum_antigen,
                                .fun = mean)) %>% 
   # key removal
-  filter(group!="Top 10") %>% 
+  filter(group!="Top 10%") %>% 
   # All sorted w.r.t. Case mean reactivity
   ggplot(aes(x = id.name,
              y = value,
@@ -2611,7 +2611,7 @@ exp_bp <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   dplyr::rename(ID="gene") %>% 
   full_join(td, by = "ID") %>%
   full_join(x %>% as.data.frame() %>% 
-              dplyr::mutate(group="Top 10") %>% 
+              dplyr::mutate(group="Top 10%") %>% 
               #dplyr::rename(gene="ID") %>% 
               dplyr::mutate(ID=as.character(ID)),
             by="ID") %>% 
@@ -2623,7 +2623,7 @@ exp_bp <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
   unite(group, group.x, group.y) %>% 
   mutate(group=stringr::str_replace(group,"NA_(.)", "\\1")) %>% 
   mutate(group=stringr::str_replace(group,"(.)_NA", "\\1")) %>% 
-  mutate(group=forcats::fct_relevel(group,"Top 10")) %>% 
+  mutate(group=forcats::fct_relevel(group,"Top 10%")) %>% 
   mutate(episodio_previo=forcats::fct_relevel(episodio_previo,"con")) %>% 
   filter(group!="NA") %>% 
   inner_join(all, by="Gene.ID") %>% 
@@ -3277,7 +3277,7 @@ a <- exp_t %>% #dplyr::count(TM.Domains)
   dplyr::mutate(
     TM.Domains.p= ifelse(TM.Domains>0,"present","absent"),
                 SignalP= ifelse(SignalP=="SP","present","absent"),
-                summary.db="Top 10") %>%  #dplyr::count(TM.Domains.p)
+                summary.db="Top 10%") %>%  #dplyr::count(TM.Domains.p)
   select(ID,summary.db,TM.Domains.p,SignalP) %>% 
   gather(key,value,-summary.db,-ID) %>% 
   dplyr::mutate(
@@ -3326,7 +3326,7 @@ protein_final_summary <- rbind(a,#b,
       ) %>% 
   mutate(
     summary.db=fct_relevel(summary.db,
-                           "Top 10",
+                           "Top 10%",
                            "w/ Episode (FDR<0.05)")) %>% 
   mutate(
     summary.db=fct_recode(
@@ -3440,7 +3440,7 @@ rbind(a,b#,c,d
 ##### TMD proportion
 a <- exp_t %>% #dplyr::count(TM.Domains)
   dplyr::mutate(TM.Domains.p= ifelse(TM.Domains>0,"1+",0),
-                summary.db="Top 10") %>%  #dplyr::count(TM.Domains.p)
+                summary.db="Top 10%") %>%  #dplyr::count(TM.Domains.p)
   select(summary.db,TM.Domains.p)
 b <- sev_d %>% #dplyr::count(TM.Domains)
   dplyr::mutate(TM.Domains.p= ifelse(TM.Domains>0,"1+",0),
@@ -3465,7 +3465,7 @@ rbind(a,b,c,d) %>%
 ```{r, fig.height=3, fig.width=6, eval=FALSE}
 ##### SP proportion
 a <- exp_t %>%  #dplyr::count(SignalP)
-  #dplyr::mutate(summary.db="Top 10") %>%
+  #dplyr::mutate(summary.db="Top 10%") %>%
   dplyr::mutate(summary.db="Top 10%") %>%  
   select(summary.db,SignalP)
 b <- sev_d %>%  #dplyr::count(SignalP)
@@ -3491,7 +3491,7 @@ rbind(a,b,c,d) %>%
 ```{r}
 a <- exp_t %>%  #dplyr::count(GO.Components) %>% dplyr::arrange(desc(n))
   dplyr::mutate(
-    summary.db="Top 10",
+    summary.db="Top 10%",
     protype= stringr::str_count(Product.Description, "hypothetical"),
     protype=as.factor(protype),
     protype= forcats::fct_recode(protype, 
@@ -3557,7 +3557,7 @@ go_ord <- rbind(a,#b,
   dplyr::arrange(desc(count)) %>% 
   spread(summary.db,count) %>% 
   dplyr::rename(#sev="Severe Malaria (p<0.05)",
-                top="Top 10",
+                top="Top 10%",
                 epida="w/ Episode (FDR<0.05)",
                 epidf="w/ Episode (FDR<0.05 & logFC>1)") %>% 
   dplyr::arrange(desc(epida)) %>% 
@@ -3611,13 +3611,13 @@ treemap_data <- rbind(a,c,d) %>%
   # dplyr::count(summary.db,GO.Components,protype) %>% 
   mutate(
     summary.db=fct_relevel(summary.db,
-                           "Top 10",
+                           "Top 10%",
                            "w/ Episode (FDR<0.05)")) %>% 
   # mutate(
   #   summary.db=fct_recode(
   #     summary.db,
   #     "top_subset_0"=
-  #       "Top 10",
+  #       "Top 10%",
   #     "episodes_subset_1"=
   #       "w/ Episode (FDR<0.05)",
   #     "episodes_subset_2"=
@@ -3677,7 +3677,7 @@ go_ord <- rbind(full_go,all_go,
   dplyr::arrange(desc(count)) %>% 
   spread(summary.db,count) %>% 
   dplyr::rename(all="Pf/Pv500 microarray",
-                #top="Top 10",
+                #top="Top 10%",
                 epida="w/ Episode (FDR<0.05)",
                 epidf="w/ Episode (FDR<0.05 & logFC>1)") %>% 
   dplyr::arrange(desc(all)) %>% 
@@ -3757,7 +3757,7 @@ exp_df %>% select(Gene.ID,GO.Functions) %>%
 
 ```{r,fig.height=5,fig.width=12, eval=FALSE, echo=FALSE}
 a <- exp_t %>%  #dplyr::count(GO.Functions) %>% dplyr::arrange(desc(n))
-  #dplyr::mutate(summary.db="Top 10") %>%
+  #dplyr::mutate(summary.db="Top 10%") %>%
   dplyr::mutate(summary.db="Top 10%") %>%  
   select(summary.db,GO.Functions)
 b <- sev_d %>%  #dplyr::count(GO.Functions) %>% dplyr::arrange(desc(n))
@@ -3809,7 +3809,7 @@ exp_df %>%  dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n))
 
 ```{r,fig.height=5,fig.width=12, eval=FALSE, echo=FALSE}
 a <- exp_t %>%  #dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n))
-  #dplyr::mutate(summary.db="Top 10") %>%
+  #dplyr::mutate(summary.db="Top 10%") %>%
   dplyr::mutate(summary.db="Top 10%") %>%  
   select(summary.db,GO.Processes)
 b <- sev_d %>%  #dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n))
@@ -3930,7 +3930,7 @@ exp_da %>% dplyr::mutate(Ortholog.count=as.numeric(Ortholog.count)) %>%
 
 ```{r, fig.width=10, fig.height=5}
 a <- exp_t %>% 
-  #dplyr::mutate(summary.db="Top 10") %>%
+  #dplyr::mutate(summary.db="Top 10%") %>%
   dplyr::mutate(summary.db="Top 10%") %>%  
   #dplyr::count(TM.Domains.p)
   select(ID, summary.db, Gene.ID,Gene.Name,
@@ -4163,7 +4163,7 @@ a <- exp_t %>% select(Gene.ID,NonSyn_Syn.SNP.Ratio.All.Strains,Total.SNPs.All.St
                            point.padding = unit(.5, "lines"),
                            segment.color = "red"
                            ) +
-  labs(title="SNP space",subtitle="Top 10") + theme_bw()
+  labs(title="SNP space",subtitle="Top 10%") + theme_bw()
 b <- sev_d %>% select(Gene.ID,NonSyn_Syn.SNP.Ratio.All.Strains,Total.SNPs.All.Strains) %>% 
   ggplot(aes(NonSyn_Syn.SNP.Ratio.All.Strains,Total.SNPs.All.Strains)) +
   geom_point() + ggrepel::geom_text_repel(data = sev_d,aes(label=Gene.Name)) +
@@ -4283,7 +4283,7 @@ rna_dt <- rbind(
     subset= forcats::fct_recode(
       subset, 
       "w/ Previous Episode (FDR<0.05 & logFC>1)"="diff", 
-      "Top 10"="atop"))
+      "Top 10%"="atop"))
 
 rna_dt %>% 
   ggplot(aes(rna_t,fpkm,colour=id.name)) +
@@ -4317,17 +4317,17 @@ severe paper, onlu top10
 ```{r}
 # rna_dt_last <- rna_dt %>% 
 #   # dplyr::count(subset)
-#   filter(subset == "Top 10") %>% 
+#   filter(subset == "Top 10%") %>% 
 #   group_by(id.name) %>% 
 #   dplyr::summarise(last = dplyr::last(fpkm)) %>% 
 #   mutate(id.name=str_replace(id.name,"NA / ","")) %>% 
 #   mutate(id.name=str_replace(id.name,"(.+) / (.+)","\\2 - \\1"))
 
 rna_dt_subset <- rna_dt %>% 
-  filter(subset == "Top 10") %>% 
+  filter(subset == "Top 10%") %>% 
   mutate(subset=fct_recode(
     subset,
-    "Top 10%"="Top 10")) %>% 
+    "Top 10%"="Top 10%")) %>% 
   mutate(id.name=str_replace(id.name,"NA / ","")) %>%
   mutate(id.name=str_replace(id.name,"(.+) / (.+)","\\1 - \\2")) #%>% 
   # dplyr::mutate(
@@ -4450,10 +4450,10 @@ top10 and previous exposure new plot
 
 ```{r}
 rna_dt_subset_exposure <- rna_dt %>% 
-  # filter(subset == "Top 10") %>% 
+  # filter(subset == "Top 10%") %>% 
   mutate(subset=fct_recode(
     subset,
-    "Top 10%"="Top 10")) %>% 
+    "Top 10%"="Top 10%")) %>% 
   mutate(subset=as.character(subset)) %>% 
   mutate(subset = case_when(
     subset == "w/ Previous Episode (FDR<0.05 & logFC>1)" ~ "With previous episode*",
