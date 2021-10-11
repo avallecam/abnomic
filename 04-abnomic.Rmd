@@ -1442,29 +1442,30 @@ td <- topTable(eb, coef = 2,               # default: slope
 ```{r}
 pareto_test <- biobroom::tidy.ExpressionSet(eset) %>% 
   group_by(gene) %>% 
-  dplyr::summarise(median_value = median(value,na.rm = T)) %>%
+  dplyr::summarise(median_value = mean(value,na.rm = T)) %>%
   ungroup()
 
 pareto_test %>% 
   ggplot(aes(x = median_value)) + 
   geom_histogram()
 
-cut_descriptive <- 7.5
+cut_descriptive <- 10
 cut_selective <- 10
 
-pareto_test %>% 
+pareto_table <- pareto_test %>% 
   # top_n(n = 100,wt = median_value) %>% 
   cdcper::cdc_pareto_lista(variable = median_value,
                            pareto_cut = cut_descriptive) %>% 
   count(cut_median_value) %>% 
   mutate(pct = 100*n/sum(n))
 
-pareto_test %>% 
-  # top_n(n = 100,wt = median_value) %>% 
-  cdcper::cdc_pareto_lista(variable = median_value,
-                           pareto_cut = cut_selective) %>% 
-  count(cut_median_value) %>% 
-  mutate(pct = 100*n/sum(n))
+pareto_pct <- pareto_table %>% filter(cut_median_value!="no") %>% pull(pct) %>% format(digits=2)
+pareto_n <- pareto_table %>% filter(cut_median_value!="no") %>% pull(n)
+
+pareto_table_text <- paste0(pareto_pct,"% (n=",pareto_n,
+                            ") of antigens accumulate\n",
+                            cut_descriptive,
+                            "% of total mean antigen reactivity")
 
 cdcper::cdc_pareto_lista(data = pareto_test,
                          variable = median_value,
@@ -1485,6 +1486,10 @@ cdcper::cdc_pareto_lista(data = pareto_test,
                           variable_value = median_value,
                           variable_label = gene,
                           with_format = FALSE) +
+  # colorspace::scale_color_continuous_sequential(
+  #   name="Mean\nantigen\nreactivity",
+  #   palette = "Reds",
+  #   begin = 0.2) +
   scale_x_continuous(breaks = scales::pretty_breaks()) +
   geom_vline(aes(xintercept=cut_descriptive),lty=3) +
   geom_point(size = 1, alpha = 0.5) +
@@ -1493,11 +1498,20 @@ cdcper::cdc_pareto_lista(data = pareto_test,
          size = guide_legend(reverse=T)) +
   labs(x = "Cumulative %",
        y = "Unitary %",
-       color = "Median\nantigen\nreactivity",
-       size = NULL)
+       color = "Mean\nantigen\nreactivity",
+       size = NULL) +
+  annotate(geom = "text",
+           x = cut_descriptive+2,
+           y = 0.63, hjust =0,
+           label = pareto_table_text)
 
 ggsave("figure/04-fig05-highly_reactive-pareto_plot.png",
-       height = 3.5,width = 7,dpi = "retina")
+       height = 3,width = 7,dpi = "retina")
+
+# el 20% de los individuos acumulan el 80% de la ganancia
+# el 4.1% (n=16) antígenos acumulan el 10% de la reactividad total promedio
+# 4.1% (n=16) of antigens accumulate 
+# 10% of total mean antigen reactivity
 ```
 
 
