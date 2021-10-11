@@ -2081,6 +2081,119 @@ ggsave("figure/04-fig08-severe_compare-boxplot_highrve.png",
        height = 3,width = 6,dpi = "retina")
 ```
 
+alternative figures without top antigens
+
+```{r}
+eset_clean_diff_top_sub <- eset_clean_diff_top %>% 
+  select(id.name,sample,value,sev_WHO,group,ID) %>% 
+  mutate(id.name=case_when(
+    ID=="PVX_099980_1o1_S2.504" ~ "MSP1.S2 - PVX_099980",
+    ID=="PVX_099980_1o1_S1.793" ~ "MSP1.S1 - PVX_099980",
+    TRUE ~ id.name))
+
+eset_clean_diff_top_sub_arrange <- eset_clean_diff_top_sub %>%
+  select(id.name,value,sample) %>% 
+  group_by(sample) %>% 
+  dplyr::summarise(sum_value = median(value,na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  arrange(sum_value)
+
+eset_clean_diff_top_sub_antigen <- eset_clean_diff_top_sub %>% 
+  select(id.name,value) %>% 
+  group_by(id.name) %>% 
+  dplyr::summarise(sum_antigen = median(value,na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  arrange(sum_antigen)
+
+severe_heatmap <- eset_clean_diff_top_sub %>% 
+  left_join(eset_clean_diff_top_sub_arrange) %>%
+  left_join(eset_clean_diff_top_sub_antigen) %>% 
+  mutate(sample = fct_reorder(.f = sample,
+                               .x = sum_value,
+                               .fun = mean),
+         id.name = fct_reorder(.f = id.name,
+                               .x = sum_antigen,
+                               .fun = mean)) %>% 
+  mutate(sev_WHO = fct_rev(sev_WHO)) %>% 
+  mutate(sev_WHO = fct_recode(sev_WHO, 
+                              "Severe" = "severo", 
+                              "Non-severe" = "no_severo")) %>% 
+  # key removal
+  filter(group!="Top 10") %>% 
+  ggplot(aes(x = sample,y = id.name, fill = value)) +
+  geom_tile() +
+  facet_grid(group~sev_WHO,
+             scale = 'free', space = 'free') +
+  colorspace::scale_fill_continuous_diverging(
+    name="Antigen\nreactivity",
+    mid = 1,
+    palette = "Blue-Red 3",
+    # begin = 0.2
+    ) +
+  labs(y = NULL, x=NULL,
+       caption = "*BH adjusted p-values between 0.968-0.690") + 
+  theme(axis.text.x = element_text(angle = 90, 
+                                   vjust = 0.5, 
+                                   hjust=1,
+                                   size=5),
+        axis.text.y = element_text(size=7))
+
+severe_heatmap
+ggsave("figure/04-fig09-severe_compare-heatmap-nocluster-ggplot-severe.png",
+       height = 2,width = 6,dpi = "retina")
+```
+
+```{r}
+severe_boxplot <- eset_clean_diff_top_sub %>%
+  left_join(eset_clean_diff_top_sub_antigen) %>% 
+  mutate(id.name = fct_reorder(.f = id.name,
+                               .x = sum_antigen,
+                               .fun = mean)) %>% 
+  # key removal
+  filter(group!="Top 10") %>% 
+  # All sorted w.r.t. Case mean reactivity
+  ggplot(aes(x = id.name,
+             y = value,
+             fill = sev_WHO))+
+  geom_boxplot()+
+  #geom_point() +
+  facet_grid(group~.,scales = "free", space = "free") +
+  colorspace::scale_fill_discrete_qualitative(
+    name="P. vivax\nmalaria",
+    palette="Set 3",
+    limits=c("no_severo","severo"),
+    labels=c("Non-severe", "Severe"),
+    rev=TRUE
+  ) +
+  theme_bw() +
+  ylab("Antigen reactivity") +
+  xlab("") +
+  labs(caption = "*BH adjusted p-values between 0.968-0.690") +
+  coord_flip()
+
+severe_boxplot
+ggsave("figure/04-fig08-severe_compare-boxplot_highrve-severe.png",
+       height = 2,width = 6,dpi = "retina")
+```
+
+```{r}
+severe_heatmap +
+  theme(axis.text.x = element_text(angle = 90, 
+                                   vjust = 0.5, 
+                                   hjust=1,
+                                   size=5),
+        axis.text.y = element_text(size=9)) +
+  labs(caption=NULL) +
+  severe_boxplot +
+  theme(plot.caption = element_text(hjust = 0),
+        plot.caption.position =  "plot") +
+  plot_layout(ncol = 1) +
+  plot_annotation(tag_levels = "A")
+ggsave("figure/04-fig08-severe_compare-mix-boxplot_heatmap.png",
+       height = 5.5,width = 7,dpi = "retina")
+```
+
+
 
 #### 5.2 previous episode
 
