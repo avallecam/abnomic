@@ -1506,7 +1506,7 @@ cdcper::cdc_pareto_lista(data = pareto_test,
            label = pareto_table_text)
 
 ggsave("figure/04-fig05-highly_reactive-pareto_plot.png",
-       height = 3,width = 7,dpi = "retina")
+       height = 3,width = 5,dpi = "retina")
 
 # el 20% de los individuos acumulan el 80% de la ganancia
 # el 4.1% (n=16) antígenos acumulan el 10% de la reactividad total promedio
@@ -2548,7 +2548,8 @@ exp_df
 ```{r}
 exp_t <- td %>% 
   arrange(desc(AveExpr)) %>% 
-  select(ID,Gene.ID,Description,AveExpr,p.order,logFC) %>% slice(1:10) %>% 
+  select(ID,Gene.ID,Description,AveExpr,p.order,logFC) %>% 
+  slice(1:16) %>% 
   inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
 
 exp_t 
@@ -3464,7 +3465,8 @@ rbind(a,b,c,d) %>%
 ```{r, fig.height=3, fig.width=6, eval=FALSE}
 ##### SP proportion
 a <- exp_t %>%  #dplyr::count(SignalP)
-  dplyr::mutate(summary.db="Top 10") %>%
+  #dplyr::mutate(summary.db="Top 10") %>%
+  dplyr::mutate(summary.db="Top 10%") %>%  
   select(summary.db,SignalP)
 b <- sev_d %>%  #dplyr::count(SignalP)
   dplyr::mutate(summary.db="severe p<0.05") %>%
@@ -3755,7 +3757,8 @@ exp_df %>% select(Gene.ID,GO.Functions) %>%
 
 ```{r,fig.height=5,fig.width=12, eval=FALSE, echo=FALSE}
 a <- exp_t %>%  #dplyr::count(GO.Functions) %>% dplyr::arrange(desc(n))
-  dplyr::mutate(summary.db="Top 10") %>%
+  #dplyr::mutate(summary.db="Top 10") %>%
+  dplyr::mutate(summary.db="Top 10%") %>%  
   select(summary.db,GO.Functions)
 b <- sev_d %>%  #dplyr::count(GO.Functions) %>% dplyr::arrange(desc(n))
   dplyr::mutate(summary.db="severe p<0.05") %>%
@@ -3806,7 +3809,8 @@ exp_df %>%  dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n))
 
 ```{r,fig.height=5,fig.width=12, eval=FALSE, echo=FALSE}
 a <- exp_t %>%  #dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n))
-  dplyr::mutate(summary.db="Top 10") %>%
+  #dplyr::mutate(summary.db="Top 10") %>%
+  dplyr::mutate(summary.db="Top 10%") %>%  
   select(summary.db,GO.Processes)
 b <- sev_d %>%  #dplyr::count(GO.Processes) %>% dplyr::arrange(desc(n))
   dplyr::mutate(summary.db="severe p<0.05") %>%
@@ -3926,7 +3930,8 @@ exp_da %>% dplyr::mutate(Ortholog.count=as.numeric(Ortholog.count)) %>%
 
 ```{r, fig.width=10, fig.height=5}
 a <- exp_t %>% 
-  dplyr::mutate(summary.db="Top 10") %>%  
+  #dplyr::mutate(summary.db="Top 10") %>%
+  dplyr::mutate(summary.db="Top 10%") %>%  
   #dplyr::count(TM.Domains.p)
   select(ID, summary.db, Gene.ID,Gene.Name,
          NonSyn_Syn.SNP.Ratio.All.Strains,
@@ -4067,7 +4072,7 @@ antigen_plot_a <-
 
 antigen_plot_a
 ggsave("figure/04-fig10-severe_compare-variability.png",
-       height = 4,width = 5,dpi = "retina")
+       height = 4.5,width = 5,dpi = "retina")
 ```
 
 ```{r}
@@ -4320,6 +4325,9 @@ severe paper, onlu top10
 
 rna_dt_subset <- rna_dt %>% 
   filter(subset == "Top 10") %>% 
+  mutate(subset=fct_recode(
+    subset,
+    "Top 10%"="Top 10")) %>% 
   mutate(id.name=str_replace(id.name,"NA / ","")) %>%
   mutate(id.name=str_replace(id.name,"(.+) / (.+)","\\1 - \\2")) #%>% 
   # dplyr::mutate(
@@ -4427,7 +4435,7 @@ antigen_plot_c <- rna_dt_subset %>%
 
 antigen_plot_c
 ggsave("figure/04-fig11-severe_compare-transcription-heatmap.png",
-       height = 4,width = 5.25,dpi = "retina")
+       height = 4.5,width = 5.25,dpi = "retina")
 
 antigen_plot_a +
   # antigen_plot_b +
@@ -4435,15 +4443,18 @@ antigen_plot_a +
   plot_annotation(tag_levels = "A") #+
   # plot_layout(guides = 'collect')
 ggsave("figure/04-fig12-severe_compare-antigen_mixtureplot.png",
-       height = 4,width = 10,dpi = "retina")
+       height = 4.5,width = 10,dpi = "retina")
 ```
 
 top10 and previous exposure new plot
 
 ```{r}
 rna_dt_subset_exposure <- rna_dt %>% 
-  mutate(subset=as.character(subset)) %>% 
   # filter(subset == "Top 10") %>% 
+  mutate(subset=fct_recode(
+    subset,
+    "Top 10%"="Top 10")) %>% 
+  mutate(subset=as.character(subset)) %>% 
   mutate(subset = case_when(
     subset == "w/ Previous Episode (FDR<0.05 & logFC>1)" ~ "With previous episode*",
     TRUE ~ subset
