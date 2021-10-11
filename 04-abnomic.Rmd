@@ -526,7 +526,7 @@ d <- exprs(eset.VIVAX.SEV.FILTER) %>% as.data.frame() %>%
   gather(sample_name,expression) %>% 
   dplyr::mutate(labl="Filtered*")
 
-rbind(a,b,c,d) %>% 
+preprocessing_plot <- rbind(a,b,c,d) %>% 
   dplyr::mutate(labl=forcats::fct_relevel(labl,
                                           "Raw",
                                           "Normalized",
@@ -547,6 +547,7 @@ rbind(a,b,c,d) %>%
     strip.text.x = element_text(colour = "black",size = 12#, face = "bold"
     ))
 
+preprocessing_plot
 ggsave("figure/04-fig01-preprocessing_distribution.png",
        height = 2.25,width = 8,dpi = "retina")
 ```
@@ -892,7 +893,7 @@ n <- norx %>% as.data.frame() %>%
                    sd= sd(expression)) %>% 
   dplyr::mutate(labl="Transformed")
 
-rbind(m,n) %>% 
+heteroskedasticity_plot <- rbind(m,n) %>% 
   dplyr::mutate(labl=forcats::fct_relevel(labl,
                                           "Raw",
                                           "Transformed")) %>% 
@@ -911,8 +912,18 @@ rbind(m,n) %>%
         strip.text.x = element_text(colour = "black",size = 10#, face = "bold"
                                     ))
 
+heteroskedasticity_plot
 ggsave("figure/04-fig02-heteroskedasticity_prepos.png",
        height = 2.5,width = 5,dpi = "retina")
+```
+
+```{r,eval=FALSE}
+preprocessing_plot +
+heteroskedasticity_plot +
+  plot_layout(ncol = 1) +
+  plot_annotation(tag_levels = "A")
+ggsave("figure/04-fig02-mix-preprocessing_heteroskedasticity.png",
+       height = 5,width = 5,dpi = "retina")
 ```
 
 
