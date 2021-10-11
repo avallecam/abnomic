@@ -4105,15 +4105,20 @@ antigen_plot_a_exposure <-
       )) %>% 
       replace_na(list(Gene.Name="na")) %>% 
       dplyr::mutate(
-        Gene.Name=ifelse(Gene.Name=="na",Gene.ID,Gene.Name),
+        Gene.Name=ifelse(Gene.Name=="na",
+                         Gene.ID,Gene.Name),
         Gene.Name=ifelse(
-          ID=="PVX_099980_1o1_S2.504","MSP1.S2",Gene.Name),
+          ID=="PVX_099980_1o1_S2.504",
+          "MSP1.S2",Gene.Name),
         Gene.Name=ifelse(
-          ID=="PVX_099980_1o1_S1.793","MSP1.S1",Gene.Name)
+          ID=="PVX_099980_1o1_S1.793",
+          "MSP1.S1",Gene.Name)
         ) %>% 
-      distinct(Gene.Name,.keep_all = T)
+      # group_by(Gene.Name) %>% filter(n()>1)
+      distinct(Gene.Name,summary.db,
+               .keep_all = T)
     , 
-    aes(label=Gene.Name)) +
+    aes(label=Gene.Name), size =3.5) +
   facet_grid(.~summary.db) + 
   coord_trans(y = "log10") +
   #geom_vline(aes(xintercept=0), lty=3, col="red") #+ 
@@ -4144,7 +4149,7 @@ antigen_plot_a_exposure <-
 
 antigen_plot_a_exposure
 ggsave("figure/04-fig25-exposure_compare-variability.png",
-       height = 4,width = 8,dpi = "retina")
+       height = 4.5,width = 8,dpi = "retina")
 ```
 
 - PVX_097730, a pesar de no poseer un nivel de expresión tan alto como MSP1_S1, 
