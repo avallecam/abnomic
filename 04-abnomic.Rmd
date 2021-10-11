@@ -1811,23 +1811,26 @@ severe_plot02_b <- td %>%
 
 # severe_plot02_b
 
-td %>% 
+severe_antigen_a <- td %>% 
   ggplot(aes(P.Value)) +
   geom_histogram(breaks=seq(0, 1, by = .05)) +
   scale_x_continuous(breaks=seq(0, 1, by = .2)) +
   geom_vline(aes(xintercept=0.05), lty=3, col="red") +
-  labs(x = "p value", y = "Frequency") +
-  severe_plot02_b +
+  labs(x = "p value", y = "Frequency") 
+
+severe_antigen_b <- severe_plot02_b
+
+severe_antigen_a +
+  severe_antigen_b +
   patchwork::plot_annotation(#title = "Non-severe vs Severe",
                              tag_levels = "A")
-
-
 ggsave(
   paste0("figure/04-fig07-severe_compare-pvalue_histogram-np_",
                              set_non_parametric,".png"),
   # "figure/04-fig07-severe_compare-pvalue_histogram.png",
        height = 3,width = 6,dpi = "retina")
 ```
+
 
 ##### diff reactive
 
@@ -2434,13 +2437,18 @@ severe_plot02_b <- td %>%
 
 # severe_plot02_b
 
-td %>% 
+exposure_antigen_a <- td %>% 
   ggplot(aes(P.Value)) +
   geom_histogram(breaks=seq(0, 1, by = .05)) +
   scale_x_continuous(breaks=seq(0, 1, by = .2)) +
   geom_vline(aes(xintercept=0.05), lty=3, col="red") +
-  labs(x = "p value", y = "Frequency") +
-  severe_plot02_b +
+  labs(x = "p value", y = "Frequency")
+
+
+exposure_antigen_b <- severe_plot02_b
+
+exposure_antigen_a +
+  exposure_antigen_b +
   patchwork::plot_annotation(#title = "Non-severe vs Severe",
                              tag_levels = "A")
 
@@ -2769,6 +2777,46 @@ ggsave("figure/04-fig23-exposure_compare-heatmap-nocluster-ggplot.png",
 ```
 
 ```{r}
+exposure_heatmap <- eset_clean_diff_top_sub %>% 
+  left_join(eset_clean_diff_top_sub_arrange) %>%
+  left_join(eset_clean_diff_top_sub_antigen) %>% 
+  mutate(sample = fct_reorder(.f = sample,
+                               .x = sum_value,
+                               .fun = mean),
+         id.name = fct_reorder(.f = id.name,
+                               .x = sum_antigen,
+                               .fun = mean)) %>% 
+  mutate(sev_WHO = fct_rev(sev_WHO)) %>% 
+  mutate(sev_WHO = fct_recode(sev_WHO, 
+                              "Without" = "sin", 
+                              "With" = "con")) %>% 
+  # key removal
+  filter(group!="Top 10%") %>% 
+  ggplot(aes(x = sample,y = id.name, fill = value)) +
+  geom_tile() +
+  facet_grid(group~sev_WHO,
+             scale = 'free', space = 'free') +
+  colorspace::scale_fill_continuous_diverging(
+    name="Antigen\nreactivity",
+    mid = 1,
+    palette = "Blue-Red 3",
+    # begin = 0.2
+    ) +
+  labs(y = NULL, x=NULL,
+       caption="*BH adjusted p-value <0.05 and log2 fold-change >1") + 
+  theme(axis.text.x = element_text(angle = 90, 
+                                   vjust = 0.5, 
+                                   hjust=1,
+                                   size=5),
+        axis.text.y = element_text(size=7))
+
+exposure_heatmap
+ggsave("figure/04-fig23-exposure_compare-heatmap-nocluster-ggplot-exposure.png",
+       height = 2.5,width = 6,dpi = "retina")
+```
+
+
+```{r}
 eset_clean_diff_top_sub %>% 
   left_join(eset_clean_diff_top_sub_antigen) %>% 
   mutate(id.name = fct_reorder(.f = id.name,
@@ -2797,6 +2845,58 @@ eset_clean_diff_top_sub %>%
   coord_flip()
 ggsave("figure/04-fig24-exposure_compare-boxplot_highrve.png",
        height = 4.5,width = 6,dpi = "retina")
+```
+
+```{r}
+exposure_boxplot <- eset_clean_diff_top_sub %>% 
+  left_join(eset_clean_diff_top_sub_antigen) %>% 
+  mutate(id.name = fct_reorder(.f = id.name,
+                               .x = sum_antigen,
+                               .fun = mean)) %>%
+  # key removal
+  filter(group!="Top 10%") %>% 
+  # All sorted w.r.t. Case mean reactivity
+  ggplot(aes(x = id.name,
+             y = value,
+             fill = sev_WHO))+
+  geom_boxplot()+
+  #geom_point() +
+  facet_grid(group~.,scales = "free", space = "free") +
+  colorspace::scale_fill_discrete_qualitative(
+    name="Previous\nexposure",
+    palette="Set 3",
+    # "Without" = "sin", 
+    # "With" = "con"
+    limits=c("con","sin"),
+    labels=c("With", "Without"),
+    rev=TRUE
+  ) +
+  theme_bw() +
+  ylab("Antigen reactivity") +
+  xlab("") +
+  labs(caption="*BH adjusted p-value <0.05 and log2 fold-change >1") +
+  coord_flip()
+
+exposure_boxplot
+ggsave("figure/04-fig24-exposure_compare-boxplot_highrve-exposure.png",
+       height = 3,width = 6,dpi = "retina")
+```
+
+```{r}
+exposure_heatmap +
+  theme(axis.text.x = element_text(angle = 90, 
+                                   vjust = 0.5, 
+                                   hjust=1,
+                                   size=5),
+        axis.text.y = element_text(size=9)) +
+  labs(caption=NULL) +
+  exposure_boxplot +
+  theme(plot.caption = element_text(hjust = 0),
+        plot.caption.position =  "plot") +
+  plot_layout(ncol = 1) +
+  plot_annotation(tag_levels = "A")
+ggsave("figure/04-fig24-exposure_compare-mix-boxplot_heatmap.png",
+       height = 6.5,width = 7,dpi = "retina")
 ```
 
 
@@ -2932,7 +3032,7 @@ r_pvalue <- if_else(condition = j$p.value<0.001,
 r_one <- paste0("p",r_pvalue)
 
 
-r <- fin %>% 
+r_severe_plot_01 <- fin %>% 
   ggplot(aes(sev_WHO,sample_freq)) +
   geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.5,0.75)) +
   ggbeeswarm::geom_quasirandom(method = "tukeyDense") +
@@ -2951,7 +3051,7 @@ s_pvalue <- if_else(condition = k$p.value<0.001,
 # s_one <- bquote(expression(t[.(s_df)]==.(s_tstat)* ", p" * .(s_pvalue) ) )
 s_one <- paste0("p",s_pvalue)
 
-s <- fin %>% 
+s_severe_plot_01 <- fin %>% 
   ggplot(aes(sev_WHO,sample_mean)) +
   geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.5,0.75)) +
   ggbeeswarm::geom_quasirandom(method = "tukeyDense") +
@@ -2961,10 +3061,25 @@ s <- fin %>%
   labs(title = s_one) + 
   theme_bw()
 
-r + s +
+severe_subject_a <- r_severe_plot_01
+severe_subject_b <- s_severe_plot_01
+
+severe_subject_a +
+  severe_subject_b +
   patchwork::plot_annotation(tag_levels = "A")
 ggsave("figure/04-fig06-severe_compare-subject_response.png",
        height = 3,width = 6,dpi = "retina")
+```
+
+```{r}
+severe_subject_a +
+  severe_subject_b +
+  severe_antigen_a +
+  severe_antigen_b +
+  plot_layout(ncol = 2,nrow = 2) +
+  plot_annotation(tag_levels = "A")
+ggsave("figure/04-fig06-severe_compare-mix-subject_antigen.png",
+       height = 6.5,width = 7,dpi = "retina")
 ```
 
 #### 6.2 previous episode
@@ -3082,12 +3197,26 @@ s <- fin %>%
   labs(title = s_one) + 
   theme_bw()
 
-r + s +
+exposure_subject_a <- r
+exposure_subject_b <- s
+
+exposure_subject_a +
+  exposure_subject_b +
   patchwork::plot_annotation(tag_levels = "A")
 ggsave("figure/04-fig21-exposure_compare-subject_response.png",
        height = 3,width = 6,dpi = "retina")
 ```
 
+```{r}
+exposure_subject_a +
+  exposure_subject_b +
+  exposure_antigen_a +
+  exposure_antigen_b +
+  plot_layout(ncol = 2,nrow = 2) +
+  plot_annotation(tag_levels = "A")
+ggsave("figure/04-fig21-exposure_compare-mix-subject_antigen.png",
+       height = 6.5,width = 7,dpi = "retina")
+```
 
 #### 6.3 Exploratory
 
