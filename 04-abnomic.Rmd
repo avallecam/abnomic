@@ -4217,10 +4217,10 @@ antigen_plot_a <-
   ylab( expression(log[10]~SNPs~per~Transcript~length~ratio) ) +
   # xlab("log2 NonSyn/Syn SNP ratio")+
   xlab( expression(log[2]~NonSyn/Syn~SNP~ratio) ) +
-  labs(title="Genetic variability",#SNP space
-       #subtitle="Among all strains",
-       # caption="\nLabel sizes proportional to mean antigen reactivity"
-       )+
+  # labs(#title="Genetic variability",#SNP space
+  #      #subtitle="Among all strains",
+  #      # caption="\nLabel sizes proportional to mean antigen reactivity"
+  #      )+
   # and \n (logFC>1 & con>1) | (logFC>0.9 & con>2)
   #coord_flip() # ORDENAR eje de proteínas!!!!
   theme(
@@ -4290,7 +4290,7 @@ antigen_plot_a_exposure <-
   # xlab("log2 NonSyn/Syn SNP ratio")+
   xlab( expression(log[2]~NonSyn/Syn~SNP~ratio) ) +
   labs(
-    title="Genetic variability",
+    # title="Genetic variability",
     caption="*BH adjusted p-value <0.05 and log2 fold-change >1"
     #SNP space
     #subtitle="Among all strains",
@@ -4572,7 +4572,7 @@ rna_dt_subset_arrange <- rna_dt_subset %>%
   dplyr::rename(rna_t_max=rna_t) %>% 
   select(-fpkm)
 
-antigen_plot_c <- rna_dt_subset %>% 
+antigen_plot_c_top <- rna_dt_subset %>% 
   left_join(rna_dt_subset_arrange) %>% 
   mutate(rna_t = as.factor(rna_t),
          id.name = fct_reorder(.f = id.name,
@@ -4588,7 +4588,7 @@ antigen_plot_c <- rna_dt_subset %>%
     # begin = 0.2
     ) +
   labs(x="Time", y=NULL,
-       title="Intraerythrocytic cycle Transcription profile",
+       # title="Intraerythrocytic cycle Transcription profile",
        # subtitle = "Data from Zhu et al. 2016",
        caption = "FPKM = Fragments Per Kilobase Million") +
   theme(
@@ -4601,16 +4601,17 @@ antigen_plot_c <- rna_dt_subset %>%
       colour = "black",size = 12#, face = "bold"
     ))
 
-antigen_plot_c
+antigen_plot_c_top
 ggsave("figure/04-fig11-severe_compare-transcription-heatmap.png",
        height = 4.5,width = 5.25,dpi = "retina")
 
 antigen_plot_a +
   # antigen_plot_b +
-  antigen_plot_c +
+  antigen_plot_c_top +
+  plot_layout(widths = c(1.3,1)) +
   plot_annotation(tag_levels = "A") #+
+ggsave("figure/04-fig12-severe_compare-mix-variable_transcript.png",
   # plot_layout(guides = 'collect')
-ggsave("figure/04-fig12-severe_compare-antigen_mixtureplot.png",
        height = 4.5,width = 10,dpi = "retina")
 ```
 
@@ -4661,7 +4662,7 @@ antigen_plot_c <- rna_dt_subset_exposure %>%
     # begin = 0.2
     ) +
   labs(x="Time", y=NULL,
-       title="Intraerythrocytic cycle Transcription profile",
+       # title="Intraerythrocytic cycle Transcription profile",
        # subtitle = "Data from Zhu et al. 2016",
        caption = "FPKM = Fragments Per Kilobase Million\n*BH adjusted p-value <0.05 and log2 fold-change >1") +
   theme(
