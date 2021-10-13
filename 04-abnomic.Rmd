@@ -3045,8 +3045,9 @@ r_one <- paste0("p",r_pvalue)
 
 r_severe_plot_01 <- fin %>% 
   ggplot(aes(sev_WHO,sample_freq)) +
-  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.5,0.75)) +
-  ggbeeswarm::geom_quasirandom(method = "tukeyDense") +
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.75)) +
+  geom_violin(alpha=0,lwd=0.8,draw_quantiles = c(0.5)) +
+  ggbeeswarm::geom_quasirandom(method = "tukeyDense",alpha=0.2) +
   scale_x_discrete(labels = c("Non-severe","Severe")) +
   xlab("P. vivax malaria") + 
   ylab("Reactive Antigens") +
@@ -3064,8 +3065,9 @@ s_one <- paste0("p",s_pvalue)
 
 s_severe_plot_01 <- fin %>% 
   ggplot(aes(sev_WHO,sample_mean)) +
-  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.5,0.75)) +
-  ggbeeswarm::geom_quasirandom(method = "tukeyDense") +
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.75)) +
+  geom_violin(alpha=0,lwd=0.8,draw_quantiles = c(0.5)) +
+  ggbeeswarm::geom_quasirandom(method = "tukeyDense",alpha=0.2) +
   scale_x_discrete(labels = c("Non-severe","Severe")) +
   xlab("P. vivax malaria") + 
   ylab("Median Intensity") +
@@ -3180,8 +3182,9 @@ r <- fin %>%
   filter(!is.na(episodio_previo)) %>% 
   ggplot(aes(episodio_previo,sample_freq)) +
   # ggplot(aes(sev_WHO,sample_freq)) +
-  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.5,0.75)) +
-  ggbeeswarm::geom_quasirandom(method = "tukeyDense") +
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.75)) +
+  geom_violin(alpha=0,lwd=0.8,draw_quantiles = c(0.5)) +
+  ggbeeswarm::geom_quasirandom(method = "tukeyDense",alpha=0.2) +
   scale_x_discrete(labels = c("With","Without")) +
   xlab("Previous episode") +
   ylab("Reactive Antigens") +
@@ -3200,8 +3203,9 @@ s_one <- paste0("p",s_pvalue)
 s <- fin %>% 
   filter(!is.na(episodio_previo)) %>% 
   ggplot(aes(episodio_previo,sample_mean)) +
-  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.5,0.75)) +
-  ggbeeswarm::geom_quasirandom(method = "tukeyDense") +
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.75)) +
+  geom_violin(alpha=0,lwd=0.8,draw_quantiles = c(0.5)) +
+  ggbeeswarm::geom_quasirandom(method = "tukeyDense",alpha=0.2) +
   scale_x_discrete(labels = c("With","Without")) +
   xlab("Previous episode") +
   ylab("Median Intensity") +
