@@ -50,6 +50,37 @@ Dataset required:
   - `data/00-protn6c.xlsx`
   - `data/00-protn6c.xlsx`
 
+### plasmodb search strategy
+
+__whole genome__
+
+- link: https://plasmodb.org/plasmo/app/workspace/strategies/import/1247ea53c4a464a3  
+- local route: data/20211013-02_whole_31ago2017-pvx_genome.txt
+- characteristics:
+    + 5665 genes
+- variables:
+    + Gene ID
+    + Transcript ID
+    + Product description
+    + Gene name or symbol
+
+__all genes by ID in microarray chip__
+
+- link: https://plasmodb.org/plasmo/app/workspace/strategies/import/b32a1aefa2a27bbd  
+- local route: data/20211013-01_allgen_20ago2017-microarray_chip.txt
+- characteristics:
+    + 873 genes
+    + 880 transcripts
+- variables:
+    + Same as previous, plus
+    + Ortholog count
+    + Gene variability (Total SNPs, NonSyn/Syn SNP ratio)
+    + Protein extracellular localization and secretory pathways (# TM domains, SignalP scores)
+    + Gene ontology (components, functions, processes)
+    + Gene characteristics (# exons and transcripts, length of transcript, CDS and protein)
+
+
+
 <!-- ## Related projects -->
 
 <!-- - paper: epidemiological analysis of original case-control study -->
