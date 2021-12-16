@@ -78,7 +78,7 @@ norm <- log2(anti/ctrm) %>%
   as_tibble() %>% 
   mutate(across(.cols = x50:x56,
                 .fns = ~if_else(condition = .x==-Inf,
-                               true = NA_real_,
+                               true = 0,
                                false = .x))) %>% 
   mutate(x6specie=case_when(
     str_starts(x6,"pf") ~ "pf",
@@ -120,6 +120,52 @@ norm %>%
 ## output
 
 ```{r}
-norm
+usctrlpv <- norm %>% 
+  filter(x6specie=="pv") %>% 
+  filter(!str_detect(x6,"pvivax")) %>% 
+  mutate(x6 = str_to_upper(x6)) %>% 
+  mutate(x6=str_replace_all(x6,"_O_","o")) %>% 
+  mutate(x6=str_replace_all(x6,"_S_","_S")) %>% 
+  select(-x6specie)
+```
+
+```{r}
+eset.VIVAX.SEV.FILTER <- 
+  readr::read_rds("data/04-eset_vivax_sev_filter.rds")
+
+preanalysis <- eset.VIVAX.SEV.FILTER@assayData$exprs %>% 
+  as_tibble(rownames = "feature") %>% 
+  mutate(num = str_replace(feature,"(.+)\\.(.+)","\\2"),
+         orf = str_replace(feature,"(.+)\\.(.+)","\\1")) %>% 
+  select(feature,orf,num,everything())
+
+preanalysis %>% 
+  left_join(usctrlpv,by = c("orf" = "x6")) %>% 
+  # glimpse()
+  # naniar::vis_miss()
+  filter(is.na(x50)) %>% 
+  select(feature:num) %>% 
+  arrange(orf)
+```
+
+```{r}
+usctrlpv %>% 
+  filter(str_detect(x6,"PVX_097720|PVX_095185|PVX_003825|
+                    PVX_082700|PVX_083240|PVX_085915|PVX_100680")) %>% 
+  arrange(x6)
+
+preanalysis %>% 
+  filter(str_detect(orf,"PVX_097720|PVX_095185|PVX_003825|
+                    PVX_082700|PVX_083240|PVX_085915|PVX_100680")) %>% 
+  select(feature:num) %>% 
+  arrange(orf)
+```
+
+pendiente:
+  - resolver nombres para unir ambas listas limpiamente
+  - al finalizar, retirar 0 por NA en línea 81 --> (true = 0,) --> true = NA_real_,
+
+```{r}
+
 ```
 

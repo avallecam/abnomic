@@ -504,6 +504,12 @@ eset.FALCIP.SEV.FILTER<-eset.FALCIP.SEV[wh5,]
 
 ```
 
+```{r}
+eset.VIVAX.SEV.FILTER %>% 
+  readr::write_rds("data/04-eset_vivax_sev_filter.rds")
+```
+
+
 ### 0. Descriptive Statistics
 
 #### Preprocessing
