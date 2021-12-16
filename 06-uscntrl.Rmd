@@ -1,0 +1,125 @@
+---
+title: "non-exposed US control samples - GCRC"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(readxl)
+```
+
+## data cleaning
+
+negative controls are non-malaria infected individuals from the USA controls (GCRC, General Clinical Research Center)
+
+```{r}
+rute <- "data-raw/Microarray results - First analysis wDNAfree controls.xlsx"
+data_uscntrl <- read_xlsx(path = rute) %>% 
+  janitor::clean_names() %>% 
+  select(x1:x6,unexposed_controls:x56) %>% 
+  filter(!is.na(x56)) %>% 
+  filter(!is.na(x1)) %>% 
+  rename(x50=unexposed_controls) %>% 
+  mutate(across(.cols = x50:x56,.fns = as.numeric)) %>% 
+  # tail(n=100)
+  mutate(x6=snakecase::to_snake_case(x6)) %>%
+  filter(str_starts(string = x6,
+                    pattern = "PF|pf|PV|pv|NODNA|nodna")) %>%
+  select(-(x1:x5)) %>% 
+  mutate(x6=janitor::make_clean_names(x6))
+  #epihelper::print_inf()
+```
+
+```{r}
+anti <- data_uscntrl %>% 
+  filter(str_starts(string = x6,
+                    pattern = "PF|pf|PV|pv")) %>% 
+  column_to_rownames(var = "x6")
+```
+
+```{r}
+ctrl <- data_uscntrl %>% 
+  filter(str_starts(string = x6,pattern = "nodna")) %>% 
+  summarise_if(is.numeric,funs(median)) %>% 
+  # MEDIAN to NORMALIZE against noDNA controls
+  mutate(x6="nodna") %>% 
+  column_to_rownames(var = "x6")
+```
+
+
+```{r}
+ctrm <- NULL # crear objeto vacío
+# loop para generar una matriz de las dimensiones de `anti`
+for(i in 1:nrow(anti)){
+  ctrm <- rbind(ctrm,ctrl)
+}
+# dimensiones de la matriz con la mediana de ctrls `noDNA` creada
+dim(ctrm)
+dim(anti)
+# matriz con la mediana de ctrls `noDNA` para las 8 primeras muestras
+# ctrm[1:8,] #%>% class()
+```
+
+
+```{r}
+# definir resultado para los valores menores o iguales a cero:
+# log2.NA = function(x) {log2(ifelse(x>0, x, NA))}
+
+# normalización con respecto a los controles `noDNA` 
+# c/ transformación log2
+norm <- log2(anti/ctrm) %>% 
+  rownames_to_column(var = "x6") %>% 
+  as_tibble() %>% 
+  mutate(across(.cols = x50:x56,
+                .fns = ~if_else(condition = .x==-Inf,
+                               true = NA_real_,
+                               false = .x))) %>% 
+  mutate(x6specie=case_when(
+    str_starts(x6,"pf") ~ "pf",
+    str_starts(x6,"pv") ~ "pv",
+    TRUE ~ NA_character_
+  )) #%>% 
+  #count(x6specie)
+```
+
+```{r}
+norm %>% 
+  pivot_longer(cols = x50:x56,
+               names_to = "usctrl",
+               values_to = "usvalue") %>% 
+  ggplot(aes(x = usvalue)) +
+  geom_histogram()
+```
+
+```{r}
+norm %>% 
+  pivot_longer(cols = x50:x56,
+               names_to = "usctrl",
+               values_to = "usvalue") %>% 
+  ggplot(aes(x = usvalue)) +
+  geom_histogram() +
+  facet_grid(~x6specie)
+```
+
+```{r}
+norm %>% 
+  filter(x6specie=="pv") %>% 
+  pivot_longer(cols = x50:x56,
+               names_to = "usctrl",
+               values_to = "usvalue") %>% 
+  ggplot(aes(x = usvalue,y = x6)) +
+  geom_point()
+```
+
+## output
+
+```{r}
+norm
+```
+

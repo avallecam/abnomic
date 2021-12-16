@@ -133,7 +133,8 @@ head(anti[,1:8])
 ctrl <- raw %>% 
   dplyr::filter(Spot.Type=="IVTT.CTRL") %>% #head()
   select(ID,11:ncol(.)) %>% #head()
-  summarise_if(is.numeric,funs(median)) %>% # MEDIAN to NORMALIZE against noDNA controls
+  summarise_if(is.numeric,funs(median)) %>% 
+  # MEDIAN to NORMALIZE against noDNA controls
   mutate(ID="noDNA") %>% 
   gather(sample_name, expression, -ID) %>% 
   mutate(expression=as.numeric(expression)) %>% 
