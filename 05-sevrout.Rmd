@@ -247,7 +247,6 @@ tab01oms %>% export2md()
 tab01oms %>% export2xls("table/05-tab01-oms_covariates.xls")
 ```
 
-
 ## Table 2 - all observations
 
 ```{r}
@@ -384,6 +383,75 @@ sevdb_2ws_clean %>%
   geom_point() +
   geom_errorbar(aes(max=conf.high, min = conf.low)) +
   ylim(0,1)
+```
+
+
+### upset plot
+
+#### all
+
+```{r}
+upset_all <- sevdb_2ws_clean %>% 
+  # filter observations
+  # filter(study=="in-microarray") %>% 
+  # extract edad quartiles
+  select(-edad_4) %>% 
+  select(-parasitemia_mil_4,
+         -en_zona_endemica_4) %>% 
+  # extract variables
+  select(codigo,glas_oms:hiperbil_oms) %>% 
+  pivot_longer(cols = -codigo,
+               names_to = "symptom",
+               values_to = "member") %>% 
+  filter(member=="Sí") %>%
+  select(-member) %>% 
+  select(codigo,symptom) %>% 
+  arrange(codigo) %>% 
+  #create list of pathways per gene
+  nest(cols=symptom) %>% 
+  #the list should be a character not a dataframe, so pull them out
+  mutate(pathways_c = map(cols,pull)) %>%
+  #plot it
+  ggplot(aes(x = pathways_c)) +
+  geom_bar() +
+  scale_x_upset()
+upset_all
+ggsave("figure/05-fig01-severe_symptoms-upset.png",
+       plot = upset_all,
+       height = 6,width = 6,dpi = "retina")
+```
+
+#### in-microarray
+
+```{r}
+upset_micro <- sevdb_2ws_clean %>% 
+  # filter observations
+  filter(study=="in-microarray") %>% 
+  # extract edad quartiles
+  select(-edad_4) %>% 
+  select(-parasitemia_mil_4,
+         -en_zona_endemica_4) %>% 
+  # extract variables
+  select(codigo,glas_oms:hiperbil_oms) %>% 
+  pivot_longer(cols = -codigo,
+               names_to = "symptom",
+               values_to = "member") %>% 
+  filter(member=="Sí") %>%
+  select(-member) %>% 
+  select(codigo,symptom) %>% 
+  arrange(codigo) %>% 
+  #create list of pathways per gene
+  nest(cols=symptom) %>% 
+  #the list should be a character not a dataframe, so pull them out
+  mutate(pathways_c = map(cols,pull)) %>%
+  #plot it
+  ggplot(aes(x = pathways_c)) +
+  geom_bar() +
+  scale_x_upset()
+upset_micro
+ggsave("figure/05-fig02-severe_symptoms-upset-microarray.png",
+       plot = upset_micro,
+       height = 6,width = 6,dpi = "retina")
 ```
 
 ## Additional 
