@@ -78,7 +78,7 @@ norm <- log2(anti/ctrm) %>%
   as_tibble() %>% 
   mutate(across(.cols = x50:x56,
                 .fns = ~if_else(condition = .x==-Inf,
-                               true = 0,
+                               true = NA_real_,
                                false = .x))) %>% 
   mutate(x6specie=case_when(
     str_starts(x6,"pf") ~ "pf",
@@ -107,7 +107,7 @@ norm %>%
   facet_grid(~x6specie)
 ```
 
-```{r}
+```{r,eval=FALSE}
 norm %>% 
   filter(x6specie=="pv") %>% 
   pivot_longer(cols = x50:x56,
@@ -126,7 +126,17 @@ usctrlpv <- norm %>%
   mutate(x6 = str_to_upper(x6)) %>% 
   mutate(x6=str_replace_all(x6,"_O_","o")) %>% 
   mutate(x6=str_replace_all(x6,"_S_","_S")) %>% 
-  select(-x6specie)
+  select(-x6specie) %>% 
+  mutate(x6=case_when(
+    str_detect(x6,"PVX_100680") ~ "PVX_100680_1o1",
+    str_detect(x6,"PVX_003825_RENAMED") ~ "PVX_003825",
+    str_detect(x6,"PVX_083240_RENAMED") ~ "PVX_083240",
+    str_detect(x6,"PVX_085915_RENAMED") ~ "PVX_085915 (renamed)",
+    str_detect(x6,"PVX_095185_RENAMED") ~ "PVX_095185",
+    str_detect(x6,"PVX_097720_RENAMED") ~ "PVX_097720",
+    str_detect(x6,"PVX_082700_RENAMED_0") ~ "PVX_082700 (renamed0",
+    TRUE ~ x6
+  ))
 ```
 
 ```{r}
@@ -139,31 +149,83 @@ preanalysis <- eset.VIVAX.SEV.FILTER@assayData$exprs %>%
          orf = str_replace(feature,"(.+)\\.(.+)","\\1")) %>% 
   select(feature,orf,num,everything())
 
-preanalysis %>% 
+expression_set <- preanalysis %>% 
   left_join(usctrlpv,by = c("orf" = "x6")) %>% 
+  select(-orf,-num)
   # glimpse()
   # naniar::vis_miss()
-  filter(is.na(x50)) %>% 
-  select(feature:num) %>% 
-  arrange(orf)
+  # filter(is.na(x50)) %>% 
+  # select(feature:num) %>% 
+  # arrange(orf)
 ```
 
 ```{r}
-usctrlpv %>% 
-  filter(str_detect(x6,"PVX_097720|PVX_095185|PVX_003825|
-                    PVX_082700|PVX_083240|PVX_085915|PVX_100680")) %>% 
-  arrange(x6)
-
-preanalysis %>% 
-  filter(str_detect(orf,"PVX_097720|PVX_095185|PVX_003825|
-                    PVX_082700|PVX_083240|PVX_085915|PVX_100680")) %>% 
-  select(feature:num) %>% 
-  arrange(orf)
+# usctrlpv %>% 
+#   filter(str_detect(x6,"PVX_082700")) %>% 
+#   arrange(x6) %>% 
+#   mutate(x6=case_when(
+#     # str_detect(x6,"PVX_100680") ~ "PVX_100680_1o1",
+#     # str_detect(x6,"PVX_003825_RENAMED") ~ "PVX_003825",
+#     # str_detect(x6,"PVX_083240_RENAMED") ~ "PVX_083240",
+#     # str_detect(x6,"PVX_085915_RENAMED") ~ "PVX_085915 (renamed)",
+#     # str_detect(x6,"PVX_095185_RENAMED") ~ "PVX_095185",
+#     # str_detect(x6,"PVX_097720_RENAMED") ~ "PVX_097720",
+#     # str_detect(x6,"PVX_082700_RENAMED_0") ~ "PVX_082700 (renamed0",
+#     TRUE ~ x6
+#   ))
+# 
+# preanalysis %>% 
+#   filter(str_detect(orf,"PVX_082700")) %>% 
+#   select(feature:num) %>% 
+#   arrange(orf)
 ```
 
-pendiente:
-  - resolver nombres para unir ambas listas limpiamente
-  - al finalizar, retirar 0 por NA en línea 81 --> (true = 0,) --> true = NA_real_,
+```{r}
+expression_set_long <- expression_set %>% 
+  pivot_longer(cols = -feature,
+               names_to = "samples",
+               values_to = "values") %>% 
+  mutate(type=case_when(
+    str_starts(samples,"LIM") ~ "sample",
+    str_starts(samples,"x") ~ "control",
+    TRUE ~ NA_character_
+  ))
+
+expression_pheno <- expression_set %>% 
+  select(-feature) %>% 
+  colnames() %>% 
+  enframe(name = NULL,value = "samples") %>% 
+  mutate(type=case_when(
+    str_starts(samples,"LIM") ~ "sample",
+    str_starts(samples,"x") ~ "control",
+    TRUE ~ NA_character_
+  )) %>% 
+  epihelper::print_inf()
+```
+
+```{r}
+expression_set_long %>% 
+  ggplot(aes(x = values, fill = type)) +
+  geom_histogram(position = position_identity(),alpha = 0.5)
+```
+
+```{r}
+expression_set_long %>% 
+  ggplot(aes(x = values, y = feature, color = type)) +
+  geom_point(alpha = 0.5)
+```
+
+### build experessionSet
+
+```{r}
+expression_set
+expression_pheno
+```
+
+pendientes:
+   - unir elementos en un expressionSet
+   - calcular features con intensidad diferencial entre muestras y controles
+   - contabilizar cantidades en cada paso: original -> filtrado -> us-control
 
 ```{r}
 
