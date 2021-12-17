@@ -333,6 +333,8 @@ norx <- norm %>% as.data.frame() %>%
   reshape2::acast(rowname ~ sample_name,
                   value.var = "expression") #%>% class()
  
+# norm %>% write_rds("data/04-eset_assay.rds")
+
 #norm["PVX_111175.544","LIM2017"] <- NA ## messy modification
 
 #anti %>% as.data.frame() %>% 
@@ -505,6 +507,8 @@ eset.FALCIP.SEV.FILTER<-eset.FALCIP.SEV[wh5,]
 ```
 
 ```{r}
+eset.VIVAX.SEV %>% 
+  readr::write_rds("data/04-eset_vivax_sev.rds")
 eset.VIVAX.SEV.FILTER %>% 
   readr::write_rds("data/04-eset_vivax_sev_filter.rds")
 ```

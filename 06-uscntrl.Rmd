@@ -12,6 +12,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(tidyverse)
 library(readxl)
+library(Biobase)
+library(limma)
+library(patchwork)
 ```
 
 ## data cleaning
@@ -86,7 +89,8 @@ norm <- log2(anti/ctrm) %>%
   as_tibble() %>% 
   mutate(across(.cols = x50:x56,
                 .fns = ~if_else(condition = .x==-Inf,
-                               true = NA_real_,
+                               true = 0,
+                                # true = NA_real_,
                                false = .x))) %>% 
   mutate(x6specie=case_when(
     str_starts(x6,"pf") ~ "pf",
@@ -152,6 +156,8 @@ usctrlpv <- norm %>%
 ### importar eset vivax
 
 ```{r}
+eset.VIVAX.SEV_import <- 
+  readr::read_rds("data/04-eset_vivax_sev.rds")
 eset.VIVAX.SEV.FILTER_import <- 
   readr::read_rds("data/04-eset_vivax_sev_filter.rds")
 ```
@@ -178,6 +184,17 @@ expression_set <- preanalysis %>%
   # select(feature:num) %>% 
   # arrange(orf)
 ```
+
+```{r,eval=FALSE}
+expression_set %>% 
+  filter(str_detect(feature,"123520"))
+preanalysis %>% 
+  filter(str_detect(feature,"123520"))
+usctrlpv %>% 
+  filter(str_detect(x6,"123520"))
+# filter(feature=="PVX_123520.241")
+```
+
 
 ### control de calidad
 
@@ -209,7 +226,7 @@ expression_set_long <- expression_set %>%
   pivot_longer(cols = -feature,
                names_to = "samples",
                values_to = "values") %>% 
-  mutate(type=case_when(
+  mutate(sample_type=case_when(
     str_starts(samples,"LIM") ~ "sample",
     str_starts(samples,"x") ~ "control",
     TRUE ~ NA_character_
@@ -219,7 +236,7 @@ expression_pheno <- expression_set %>%
   select(-feature) %>% 
   colnames() %>% 
   enframe(name = NULL,value = "samples") %>% 
-  mutate(type=case_when(
+  mutate(sample_type=case_when(
     str_starts(samples,"LIM") ~ "sample",
     str_starts(samples,"x") ~ "control",
     TRUE ~ NA_character_
@@ -230,13 +247,13 @@ expression_pheno <- expression_set %>%
 
 ```{r}
 expression_set_long %>% 
-  ggplot(aes(x = values, fill = type)) +
+  ggplot(aes(x = values, fill = sample_type)) +
   geom_histogram(position = position_identity(),alpha = 0.5)
 ```
 
 ```{r}
 expression_set_long %>% 
-  ggplot(aes(x = values, y = feature, color = type)) +
+  ggplot(aes(x = values, y = feature, color = sample_type)) +
   geom_point(alpha = 0.5)
 ```
 
@@ -291,6 +308,9 @@ eset
 
 ## differential expression analysis
 
+```{r}
+eset.VIVAX.SEV.FILTER <- eset
+```
 
 #### 5.2 previous episode
 
@@ -304,19 +324,19 @@ pData(eset) %>% glimpse()
 ###### Define the control group
 
 ```{r}
-#eset$episodio_previo <- factor(eset$episodio_previo)
+#eset$sample_type <- factor(eset$sample_type)
 
-table(eset$episodio_previo) # debe ser: control (fct referencia) vs caso
-eset$episodio_previo <- relevel(eset$episodio_previo, ref = "sin")
-table(eset$episodio_previo) # debe ser: control (fct referencia) vs caso
+table(eset$sample_type) # debe ser: control (fct referencia) vs caso
+# eset$sample_type <- relevel(eset$sample_type, ref = "sin")
+table(eset$sample_type) # debe ser: control (fct referencia) vs caso
 ```
 
 ###### Matrix + Linear model + eBayes
 
 ```{r}
 # related with manual imputation in 'pheno' object
-eset <- eset[,(rowSums(is.na(pData(eset)["episodio_previo"]))==0)] # new
-design <- model.matrix(~ eset$episodio_previo)
+eset <- eset[,(rowSums(is.na(pData(eset)["sample_type"]))==0)] # new
+design <- model.matrix(~ eset$sample_type)
 fit <- lmFit(eset, design)
 eb <- eBayes(fit)
 topTable(eb) %>% rownames_to_column() #%>% filter(adj.P.Val<0.05)#number=Inf
@@ -336,14 +356,50 @@ td <- topTable(eb, coef = 2,               # default: slope
                               "FDR<0.05","not sig.")) %>% 
   #dplyr::count(significance)
   inner_join(biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
-               #dplyr::count(episodio_previo)
-               group_by(gene,episodio_previo) %>% 
+               #dplyr::count(sample_type)
+               group_by(gene,sample_type) %>% 
                dplyr::summarise(mean_group=mean(value)) %>% 
                ungroup() %>% 
-               spread(episodio_previo,mean_group) %>% 
+               spread(sample_type,mean_group) %>% 
                #arrange(desc(con)) %>% 
                dplyr::rename(ID=gene),
              by="ID") 
+```
+
+###### missings?
+
+```{r, eval=FALSE}
+td %>% epihelper::print_inf()
+td_missing_p <- td %>% 
+  filter(is.na(P.Value)) %>% 
+  arrange(desc(AveExpr)) %>% 
+  select(ID) %>% 
+  pull()
+  # glimpse()
+expression_set %>% 
+  # filter(feature=="PVX_083560_2o2.1028") %>% 
+  filter(magrittr::is_in(feature,td_missing_p)) %>% 
+  naniar::vis_miss()
+  # ggplot(aes(x = values, y = feature, color = sample_type)) +
+  # geom_point(alpha = 0.5)
+```
+
+###### extreme negative?
+
+```{r}
+eb_negative <- biobroom::tidy.MArrayLM(eb) %>% 
+  filter(estimate<0) %>% 
+  pull(gene)
+# biobroom::glance.MArrayLM(eb)
+# biobroom::augment.MArrayLM(eb)
+
+expression_set_long %>% 
+  # filter(feature=="PVX_123520.241") %>%
+  filter(magrittr::is_in(feature,eb_negative)) %>% 
+  # filter(magrittr::is_in(feature,td_missing_p)) %>% 
+  # naniar::vis_miss()
+  ggplot(aes(x = values, y = feature, color = sample_type)) +
+  geom_point()
 ```
 
 
@@ -366,7 +422,7 @@ bx <-  td %>% ggplot(aes(adj.P.Val)) +
   labs(title="P-value histogram",
        subtitle="After multiple testing correction") + xlab("adjust p.value") + theme_bw()
 # Rmisc::multiplot(ax,bx,cols = 2)
-ax+bx
+ax#+bx
 ```
 
 ###### volcano plot
@@ -374,194 +430,78 @@ ax+bx
 ```{r, fig.height=6, fig.width=3.4}
 td %>% 
   ggplot(aes(logFC,-log10(P.Value))) +
-  geom_point(aes(colour=significance)) + scale_color_manual(values=c("red","black")) +
+  geom_point(aes(colour=significance)) + 
+  scale_color_manual(values=c("red","black")) +
   #geom_point(aes(colour=con)) + viridis::scale_color_viridis() +
   ggrepel::geom_text_repel(
     data = td %>% 
-      filter((adj.P.Val<0.05 & logFC>1 & con>1)# | 
-             #(adj.P.Val<0.001 & #logFC>0.9 & 
-             #   con>2.7) 
-      ) %>% 
-      inner_join(all, by="Gene.ID") %>% 
-      inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") #%>% 
-    #arrange(desc(con)) %>% 
-    #top_n(10,con)
-    ,
-    aes(label=Gene.Name), #force = 15,
-    direction = "x",
-    box.padding = unit(4, "lines"),
-    point.padding = unit(.5, "lines")
-  ) + theme_bw() +
+      filter(logFC < -1),
+    aes(label=ID)
+  ) +
+  # ggrepel::geom_text_repel(
+  #   data = td %>% 
+  #     filter((adj.P.Val<0.05 & logFC>1 #& con>1
+  #             )# | 
+  #            #(adj.P.Val<0.001 & #logFC>0.9 & 
+  #            #   con>2.7) 
+  #     ) %>% 
+  #     inner_join(all, by="Gene.ID") %>% 
+  #     inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") #%>% 
+  #   #arrange(desc(con)) %>% 
+  #   #top_n(10,con)
+  #   ,
+  #   aes(label=Gene.Name), #force = 15,
+  #   direction = "x",
+  #   box.padding = unit(4, "lines"),
+  #   point.padding = unit(.5, "lines")
+  # ) + 
+  theme_bw() +
   #theme(legend.position="bottom") +
-  theme(#legend.position=c(.18, .44),
-    legend.position=c(.17, .92),
-    legend.margin = margin(2,2,2,2)) +
-  labs(title="With vs Without previous episode",
-       #title="Con vs Sin episodio previo",
-       subtitle="Effect size against statistical significance"#,
-       #subtitle="Tamaño del efecto y significancia estadística",
-       #caption="annotated features filtered by\n(adj.P.Val<0.05 & con>1 & logFC>1.5)"
+  # theme(#legend.position=c(.18, .44),
+  #   legend.position=c(.17, .92),
+  #   legend.margin = margin(2,2,2,2)) +
+  labs(
+    # title="With vs Without previous episode",
+    #    #title="Con vs Sin episodio previo",
+    #    subtitle="Effect size against statistical significance"#,
+    #    #subtitle="Tamaño del efecto y significancia estadística",
+    #    #caption="annotated features filtered by\n(adj.P.Val<0.05 & con>1 & logFC>1.5)"
   )+
   # or (adj.P.Val<0.001 & con>AveExpr(top1))
   geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
-  geom_vline(aes(xintercept=1), lty=3) +
+  geom_vline(aes(xintercept=1), lty=3) #+
   #geom_vline(aes(xintercept=-1), lty=3) +
-  coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
+  # coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
 ```
 
-```{r, fig.height=6, fig.width=3.4}
-td %>% 
-  ggplot(aes(logFC,-log10(P.Value))) +
-  #geom_point(aes(colour=significance)) + scale_color_manual(values=c("red","black")) +
-  geom_point(aes(colour=con)) + viridis::scale_color_viridis(name="Case\nmean\nintensity") +
-  ggrepel::geom_text_repel(data = td %>% 
-                             filter(#(adj.P.Val<0.05 & logFC>1.5 & con>1) | 
-                                      (adj.P.Val<0.001 & #logFC>0.9 & 
-                                         con>2.7) ) %>% 
-                             inner_join(all, by="Gene.ID") %>% 
-                             inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
-                             #arrange(desc(con)) %>% 
-                             #top_n(10,con)
-                           ,
-                           aes(label=Product.Description), #force = 15,
-                           direction = "x",
-                           box.padding = unit(7, "lines"),
-                           point.padding = unit(.4, "lines")
-                           ) + theme_bw() +
-  #theme(legend.position="bottom") +
-  theme(legend.position=c(.11, .84),
-        legend.margin = margin(2,2,2,2),
-        legend.title = element_text(size=10)) +
-  guides(colour = guide_colorbar(barwidth = 1, barheight = 5)) +
-  #guides(colour = guide_legend(title.theme = element_text(size = 15))) +
-  labs(title="With vs Without previous episode",
-       #title="Con vs Sin episodio previo",
-       subtitle="Effect size against statistical significance"#,
-       #subtitle="Tamaño del efecto y significancia estadística",
-       #caption="annotated features filtered by\nlogFC>1.5 or Case>AveExpr(top1)"
-       )+
-  # or (adj.P.Val<0.001 & con>AveExpr(top1))
-  geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
-  geom_vline(aes(xintercept=1), lty=3) +
-  coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
+##### top reactive
+
+###### list
+
+```{r}
+exp_t <- td %>% 
+  # arrange(desc(AveExpr)) %>% 
+  arrange(desc(sample)) %>% 
+  select(-feature_specie,-t,-B,-p.order,-significance,-AveExpr) %>% 
+  # select(ID,#Gene.ID,Description,
+  #        AveExpr,p.order,logFC) %>% 
+  slice(1:16) #%>% 
+  # inner_join(all, by="Gene.ID") %>% 
+  # inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
+
+exp_t 
 ```
 
 
-###### figure output 2
+## contabilizar antigenos
 
-```{r, fig.height=6, fig.width=3}
-
-# adj_pval_limit <- td %>% 
-#   dplyr::count(adj.P.Val) %>% 
-#   arrange(adj.P.Val) %>% 
-#   top_n(n = -2,wt = adj.P.Val) %>% 
-#   pull(adj.P.Val) %>% 
-#   pluck(2) %>% 
-#   round(digits = 2)
-
-severe_plot02_b <- td %>% 
-  mutate(significance=fct_recode(significance,
-                                 "<0.05"="FDR<0.05",
-                                 "not\nsignificant"="not sig.")) %>%
-  # dplyr::count(significance)
-  ggplot(aes(logFC,-log10(P.Value))) +
-  # geom_point(aes(colour=adj.P.Val)) +
-  # colorspace::scale_color_binned_sequential(palette = "viridis")
-  geom_point(aes(colour=significance), alpha = 0.5) +
-  colorspace::scale_color_discrete_diverging(palette = "Blue-Red 2",
-                                             rev = TRUE) +
-  # scale_color_binned(type = "viridis",
-  #                    show.limits = TRUE) +
-  ggrepel::geom_text_repel(
-    mapping = aes(label=newname),
-    data = td %>% 
-      filter((adj.P.Val<0.05 & logFC>1 & con>1)) %>% 
-      inner_join(all, by="Gene.ID") %>% 
-      filter(!is.na(Gene.Name)) %>% 
-      dplyr::rename(newname=Gene.Name) %>% 
-      mutate(newname=case_when(
-        ID=="PVX_099980_1o1_S2.504" ~ "MSP1.S2",
-        ID=="PVX_099980_1o1_S1.793" ~ "MSP1.S1",
-        TRUE ~ newname)),
-    force        = 0.5,
-    nudge_x      = -1,
-    direction    = "y",
-    hjust        = 1,
-    segment.size = 0.2,
-    size = 3#,
-    # nudge_y = 5
-    # force = 15,
-    # direction = "x"
-    # box.padding = unit(4, "lines"),
-    # point.padding = unit(.5, "lines")
-  ) + 
-  theme_bw() +
-  labs(x = expression(log[2]~fold~change),
-       y = expression(-log[10](p~value)), 
-       color = "BH\nadjusted\np value") +
-  geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
-  geom_vline(aes(xintercept=-1), lty=3) +
-  geom_vline(aes(xintercept=1), lty=3)
-
-# severe_plot02_b
-
-exposure_antigen_a <- td %>% 
-  ggplot(aes(P.Value)) +
-  geom_histogram(breaks=seq(0, 1, by = .05)) +
-  scale_x_continuous(breaks=seq(0, 1, by = .2)) +
-  geom_vline(aes(xintercept=0.05), lty=3, col="red") +
-  labs(x = "p value", y = "Frequency")
-
-
-exposure_antigen_b <- severe_plot02_b
-
-exposure_antigen_a +
-  exposure_antigen_b +
-  patchwork::plot_annotation(#title = "Non-severe vs Severe",
-                             tag_levels = "A")
-
-
-ggsave(
-  paste0("figure/04-fig22-exposure_compare-pvalue_histogram-np_",
-                             set_non_parametric,".png"),
-  # "figure/04-fig07-severe_compare-pvalue_histogram.png",
-       height = 3,width = 6,dpi = "retina")
-```
-
-
-##### diff reactive
-
-###### Cutt-off points
-
-```{r, fig.height=6, fig.width=3}
-sp <- td %>% filter(adj.P.Val<0.05, logFC>0) %>% dplyr::count()
-sc <- td %>% filter(adj.P.Val<0.05, con>1) %>% dplyr::count()
-sf <- td %>% filter(adj.P.Val<0.05, con>1, logFC>1) %>% dplyr::count()
-top <- td %>% top_n(1,AveExpr) %>% select(AveExpr)
-
-l <- td %>% 
-  filter(adj.P.Val<0.05) %>% 
-  select(p.order, logFC) %>% 
-  arrange(logFC) %>% 
-  ggplot(aes(logFC)) + geom_histogram() +
-  geom_vline(aes(xintercept=1), lty=3, col="red") +
-  labs(title="Distribution of logFC",
-       subtitle="filtered by adj.P.Val<0.05") + theme_bw()
-
-t <- td %>% 
-  filter(adj.P.Val<0.05, logFC>0) %>% 
-  select(p.order, logFC,con) %>% 
-  arrange(logFC) %>% 
-  ggplot(aes(logFC,con)) + geom_line() + #geom_point(size=.5) +
-  geom_vline(aes(xintercept=1), lty=3, col="red") +
-  #geom_hline(aes(yintercept=1), lty=3, col="red") +
-  geom_hline(aes(yintercept=top$AveExpr), lty=2, col="grey") +
-  ylab("case mean intensity") +
-  labs(title="Case mean intensity vs logFC",
-       subtitle="filtered by adj.P.Val<0.05") + theme_bw()
-
-# Rmisc::multiplot(l,t,cols = 1)
-l+t
+```{r}
+# 515 features originales
+eset.VIVAX.SEV_import
+# 394 features filtrados
+eset.VIVAX.SEV.FILTER_import
+# 341 significativos
+td %>% count(significance)
 ```
 
 
@@ -570,11 +510,6 @@ l+t
 ```{r}
 
 ```
-
-
-pendientes:
-   - calcular features con intensidad diferencial entre muestras y controles
-   - contabilizar cantidades en cada paso: original -> filtrado -> us-control
 
 ```{r}
 
