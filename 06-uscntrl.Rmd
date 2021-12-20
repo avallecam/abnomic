@@ -17,6 +17,12 @@ library(limma)
 library(patchwork)
 ```
 
+## import useful data
+
+```{r}
+all_listgen <- readr::read_rds("data/04-listgen-microarray_chip-clean.rds")
+```
+
 ## data cleaning
 
 negative controls are non-malaria infected individuals from the USA controls (GCRC, General Clinical Research Center)
@@ -227,8 +233,8 @@ expression_set_long <- expression_set %>%
                names_to = "samples",
                values_to = "values") %>% 
   mutate(sample_type=case_when(
-    str_starts(samples,"LIM") ~ "P. vivax malaria",
-    str_starts(samples,"x") ~ "US-control",
+    str_starts(samples,"LIM") ~ "sample",
+    str_starts(samples,"x") ~ "control",
     TRUE ~ NA_character_
   ))
 
@@ -237,8 +243,8 @@ expression_pheno <- expression_set %>%
   colnames() %>% 
   enframe(name = NULL,value = "samples") %>% 
   mutate(sample_type=case_when(
-    str_starts(samples,"LIM") ~ "P. vivax malaria",
-    str_starts(samples,"x") ~ "US-control",
+    str_starts(samples,"LIM") ~ "sample",
+    str_starts(samples,"x") ~ "control",
     TRUE ~ NA_character_
   ))
 ```
@@ -412,7 +418,7 @@ expression_set_long %>%
 ```{r}
 exp_t <- td %>% 
   # arrange(desc(AveExpr)) %>% 
-  arrange(desc(sample)) %>% 
+  dplyr::arrange(desc(sample)) %>% 
   select(-feature_specie,-t,-B,-p.order,-significance,-AveExpr) %>% 
   # select(ID,#Gene.ID,Description,
   #        AveExpr,p.order,logFC) %>% 
@@ -543,25 +549,41 @@ eset_tidy_arrange <- eset_tidy %>%
 
 # summarize antigens
 eset_tidy_antigen <- eset_tidy %>% 
+  filter(sample_type=="sample") %>% 
   select(id.name,value) %>% 
   group_by(id.name) %>% 
-  dplyr::summarise(sum_antigen = median(value,na.rm = TRUE)) %>% 
+  dplyr::summarise(sum_antigen = mean(value,na.rm = TRUE)) %>% 
   ungroup() %>% 
   arrange(sum_antigen)
+
+eset_tidy_antigen %>% arrange(desc(sum_antigen))
 ```
 
 ```{r}
 # join in one dataset
 pre_heatmap_all <- eset_tidy %>% 
+  # add labels for each gene code and common name
+  mutate(id.name_ag = str_replace(id.name,"(.{10})(.+)","\\1")) %>% 
+  left_join(all_listgen %>% select(id_name,gene_id),
+            by = c("id.name_ag"="gene_id")) %>% 
   # join columns useful to reorder row and columns
   left_join(eset_tidy_arrange) %>% 
   left_join(eset_tidy_antigen) %>%
+  # directly add values from summary table
+  # left_join(td %>% select(id.name = ID, average_sample = sample)) %>% 
   mutate(sample = fct_reorder(.f = sample,
                                .x = sum_value,
                                .fun = mean),
          id.name = fct_reorder(.f = id.name,
                                .x = sum_antigen,
                                .fun = mean)) %>% 
+  # extra step to add order to column with code-names
+  mutate(
+    id_name = fct_reorder(.f = id_name,
+                          .x = sum_antigen,
+                          #.x = average_sample,
+                          .fun = mean)
+  ) %>% 
   mutate(group =case_when(
     magrittr::is_in(id.name,exp_t %>% pull(ID)) ~ "top",
     TRUE ~ "rest"
@@ -606,11 +628,26 @@ ggsave("figure/06-fig04-reactive_compare-heatmap-nocluster.png",
 ```
 
 ```{r}
+# all_listgen %>% glimpse()
 # crear heatmap plot (top subset)
 reactive_heatmap_top <- pre_heatmap_all %>% 
+  # only top antigens
   filter(group=="top") %>% 
+  # replace one category
   mutate(group=fct_recode(group,"Top 10%"="top")) %>% 
-  ggplot(aes(x = sample,y = id.name, fill = value)) +
+  mutate(sample_type=fct_recode(sample_type,
+                                "P. vivax malaria"="sample",
+                                "US-control"="control")) %>% 
+  # try to reorder
+  mutate(
+    id_name = fct_reorder(.f = id_name,
+                          .x = sum_antigen,
+                          #.x = average_sample,
+                          .fun = mean)
+  ) %>% 
+  arrange(id_name) %>% 
+  # make plot
+  ggplot(aes(x = sample,y = id_name, fill = value)) +
   geom_tile() +
   facet_grid(group~sample_type,
              scale = 'free', space = 'free') +
@@ -631,7 +668,7 @@ reactive_heatmap_top <- pre_heatmap_all %>%
 
 reactive_heatmap_top
 ggsave("figure/06-fig05-reactive_compare-heatmap-nocluster-top.png",
-       height = 2.5,width = 6,dpi = "retina")
+       height = 2.5,width = 8,dpi = "retina")
 ```
 
 ## contabilizar antigenos
@@ -649,10 +686,6 @@ pendientes
   - revisar si lista de diferencialmente reactivos (por exposicion) está dentro del conjunto de antígenos reactivos en comparación a us-control, o en todo caso, restringir el análisis en 04-abnomics según esta lista de antígenos seleccionados (filtro posterior al filtro)
 
 ## end
-
-```{r}
-
-```
 
 ```{r}
 

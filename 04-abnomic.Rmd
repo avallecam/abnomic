@@ -661,9 +661,16 @@ all <- readr::read_tsv("data/04-listgen.tsv") %>% #colnames() %>% #class()
   dplyr::mutate(Gene.Name= ifelse(Gene.ID == "PVX_114145", "MSP10", Gene.Name)) %>% 
   dplyr::mutate(Gene.Name= ifelse(Gene.ID == "PVX_116780", "SFT2", Gene.Name))
 #lg
-head(all)
+# head(all)
+all
 #raw %>% filter(Gene.ID=="PVX_003775")#only_2o2 --> IS THIS SUGGESTING A MISTAKE IN ID TIPYING? --> COMPARE!
 #raw %>% filter(stringr::str_detect(Description, "MSP7"))
+all %>% 
+  unite(id.name, Gene.Name, Gene.ID, sep = " / ", remove = FALSE) %>% 
+  mutate(id.name=str_replace(id.name,"NA / ","")) %>% 
+  mutate(id.name=str_replace(id.name,"/","-")) %>% 
+  janitor::clean_names() %>% 
+  readr::write_rds("data/04-listgen-microarray_chip-clean.rds")
 ```
 
 ```{r, message=FALSE}
