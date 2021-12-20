@@ -402,36 +402,69 @@ expression_set_long %>%
   geom_point()
 ```
 
+##### top reactive
+
+###### list
+
+```{r}
+exp_t <- td %>% 
+  # arrange(desc(AveExpr)) %>% 
+  arrange(desc(sample)) %>% 
+  select(-feature_specie,-t,-B,-p.order,-significance,-AveExpr) %>% 
+  # select(ID,#Gene.ID,Description,
+  #        AveExpr,p.order,logFC) %>% 
+  slice(1:16) #%>% 
+  # inner_join(all, by="Gene.ID") %>% 
+  # inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
+
+exp_t
+writexl::write_xlsx(x = exp_t,
+                    path = "table/06-tab01-reactive_compare-top_reactives.xlsx")
+```
+
+
 
 ##### Plots
 
 ###### p-value histogram
 
 ```{r, fig.height=3, fig.width=6}
-ax <- td %>% ggplot(aes(P.Value)) +
+reactive_antigen_a <- td %>% 
+  ggplot(aes(P.Value)) +
   geom_histogram(breaks=seq(0, 1, by = .05)) +
   scale_x_continuous(breaks=seq(0, 1, by = .5)) +
   geom_vline(aes(xintercept=0.05), lty=3, col="red") +
-  labs(title="P-value histogram",
-       subtitle="Without multiple testing correction") + xlab("p.value") + theme_bw()
-bx <-  td %>% ggplot(aes(adj.P.Val)) +
-  geom_histogram(breaks=seq(0, 1, by = .05)) +
-  scale_x_continuous(breaks=seq(0, 1, by = .5)) +
-  geom_vline(aes(xintercept=0.05), lty=3, col="red") +
-  coord_cartesian(xlim = c(0,1)) +
-  labs(title="P-value histogram",
-       subtitle="After multiple testing correction") + xlab("adjust p.value") + theme_bw()
+  labs(#title="P-value histogram",
+       #subtitle="Without multiple testing correction"
+       ) + 
+  xlab("p value") + 
+  ylab("Frequency") +
+  theme_bw()
+# bx <-  td %>% ggplot(aes(adj.P.Val)) +
+#   geom_histogram(breaks=seq(0, 1, by = .05)) +
+#   scale_x_continuous(breaks=seq(0, 1, by = .5)) +
+#   geom_vline(aes(xintercept=0.05), lty=3, col="red") +
+#   coord_cartesian(xlim = c(0,1)) +
+#   labs(title="P-value histogram",
+#        subtitle="After multiple testing correction") + xlab("adjust p.value") + theme_bw()
 # Rmisc::multiplot(ax,bx,cols = 2)
-ax#+bx
+reactive_antigen_a#+bx
+ggsave("figure/06-fig01-reactive_compare-pvalue_histogram.png",
+       height = 3.5,width = 3.5,dpi = "retina")
 ```
 
 ###### volcano plot
 
 ```{r, fig.height=6, fig.width=3.4}
-td %>% 
+reactive_antigen_b <- td %>% 
+  mutate(significance=fct_recode(significance,
+                                 "<0.05"="FDR<0.05",
+                                 "not\nsignificant"="not sig.")) %>%
   ggplot(aes(logFC,-log10(P.Value))) +
   geom_point(aes(colour=significance)) + 
-  scale_color_manual(values=c("red","black")) +
+  colorspace::scale_color_discrete_diverging(palette = "Blue-Red 2",
+                                             rev = TRUE) +
+  # scale_color_manual(values=c("red","black")) +
   #geom_point(aes(colour=con)) + viridis::scale_color_viridis() +
   ggrepel::geom_text_repel(
     data = td %>% 
@@ -460,38 +493,104 @@ td %>%
   # theme(#legend.position=c(.18, .44),
   #   legend.position=c(.17, .92),
   #   legend.margin = margin(2,2,2,2)) +
-  labs(
-    # title="With vs Without previous episode",
-    #    #title="Con vs Sin episodio previo",
-    #    subtitle="Effect size against statistical significance"#,
-    #    #subtitle="Tamaño del efecto y significancia estadística",
-    #    #caption="annotated features filtered by\n(adj.P.Val<0.05 & con>1 & logFC>1.5)"
-  )+
+  labs(x = expression(log[2]~fold~change),
+       y = expression(-log[10](p~value)), 
+       color = "BH\nadjusted\np value") +
+  # labs(
+  #   # title="With vs Without previous episode",
+  #   #    #title="Con vs Sin episodio previo",
+  #   #    subtitle="Effect size against statistical significance"#,
+  #   #    #subtitle="Tamaño del efecto y significancia estadística",
+  #   #    #caption="annotated features filtered by\n(adj.P.Val<0.05 & con>1 & logFC>1.5)"
+  # )+
   # or (adj.P.Val<0.001 & con>AveExpr(top1))
   geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
   geom_vline(aes(xintercept=1), lty=3) #+
   #geom_vline(aes(xintercept=-1), lty=3) +
   # coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
+ggsave("figure/06-fig02-reactive_compare-volcano_plot.png",
+       height = 3.5,width = 3.5,dpi = "retina")
 ```
-
-##### top reactive
-
-###### list
 
 ```{r}
-exp_t <- td %>% 
-  # arrange(desc(AveExpr)) %>% 
-  arrange(desc(sample)) %>% 
-  select(-feature_specie,-t,-B,-p.order,-significance,-AveExpr) %>% 
-  # select(ID,#Gene.ID,Description,
-  #        AveExpr,p.order,logFC) %>% 
-  slice(1:16) #%>% 
-  # inner_join(all, by="Gene.ID") %>% 
-  # inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
-
-exp_t 
+reactive_antigen_a +
+  reactive_antigen_b +
+  # plot_layout(ncol = 2,nrow = 2) +
+  plot_annotation(tag_levels = "A")
+ggsave("figure/06-fig03-reactive_compare-histogram_volcano.png",
+       height = 3.5,width = 6.5,dpi = "retina")
 ```
 
+
+###### heatmap
+
+```{r}
+eset_tidy <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  rename(id.name = gene)
+
+eset_tidy_arrange <- eset_tidy %>%
+  select(id.name,value,sample) %>% 
+  group_by(sample) %>% 
+  dplyr::summarise(sum_value = median(value,na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  arrange(sum_value)
+
+eset_tidy_antigen <- eset_tidy %>% 
+  select(id.name,value) %>% 
+  group_by(id.name) %>% 
+  dplyr::summarise(sum_antigen = median(value,na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  arrange(sum_antigen)
+
+```
+
+```{r}
+reactive_heatmap <- eset_tidy %>% 
+  # join columns useful to reorder row and columns
+  left_join(eset_tidy_arrange) %>% 
+  left_join(eset_tidy_antigen) %>%
+  mutate(sample = fct_reorder(.f = sample,
+                               .x = sum_value,
+                               .fun = mean),
+         id.name = fct_reorder(.f = id.name,
+                               .x = sum_antigen,
+                               .fun = mean)) %>% 
+  mutate(group =case_when(
+    magrittr::is_in(id.name,exp_t %>% pull(ID)) ~ "top",
+    TRUE ~ "rest"
+  )) %>% 
+  mutate(group = as.factor(group)) %>% 
+  mutate(group = fct_rev(group)) %>% 
+  #only plot the differentially reactive antigens
+  filter(
+    magrittr::is_in(id.name,
+                    td %>% 
+                      filter(significance=="FDR<0.05") %>% 
+                      pull(ID))
+  ) %>% 
+  ggplot(aes(x = sample,y = id.name, fill = value)) +
+  geom_tile() +
+  facet_grid(group~sample_type,
+             scale = 'free', space = 'free') +
+  colorspace::scale_fill_continuous_diverging(
+    name="Antigen\nreactivity",
+    mid = 1,
+    palette = "Blue-Red 3",
+    # begin = 0.2
+    ) +
+  labs(y = NULL, x=NULL#,
+       #caption="*BH adjusted p-value <0.05 and log2 fold-change >1"
+       ) + 
+  theme(axis.text.x = element_text(angle = 90, 
+                                   vjust = 0.5, 
+                                   hjust=1,
+                                   size=5),
+        axis.text.y = element_text(size=1))
+
+reactive_heatmap
+ggsave("figure/06-fig04-reactive_compare-heatmap-nocluster.png",
+       height = 6,width = 6,dpi = "retina")
+```
 
 ## contabilizar antigenos
 
@@ -504,6 +603,8 @@ eset.VIVAX.SEV.FILTER_import
 td %>% count(significance)
 ```
 
+pendientes
+  - revisar si lista de diferencialmente reactivos (por exposicion) está dentro del conjunto de antígenos reactivos en comparación a us-control, o en todo caso, restringir el análisis en 04-abnomics según esta lista de antígenos seleccionados (filtro posterior al filtro)
 
 ## end
 
