@@ -227,8 +227,8 @@ expression_set_long <- expression_set %>%
                names_to = "samples",
                values_to = "values") %>% 
   mutate(sample_type=case_when(
-    str_starts(samples,"LIM") ~ "sample",
-    str_starts(samples,"x") ~ "control",
+    str_starts(samples,"LIM") ~ "P. vivax malaria",
+    str_starts(samples,"x") ~ "US-control",
     TRUE ~ NA_character_
   ))
 
@@ -237,8 +237,8 @@ expression_pheno <- expression_set %>%
   colnames() %>% 
   enframe(name = NULL,value = "samples") %>% 
   mutate(sample_type=case_when(
-    str_starts(samples,"LIM") ~ "sample",
-    str_starts(samples,"x") ~ "control",
+    str_starts(samples,"LIM") ~ "P. vivax malaria",
+    str_starts(samples,"x") ~ "US-control",
     TRUE ~ NA_character_
   ))
 ```
@@ -354,6 +354,8 @@ td <- topTable(eb, coef = 2,               # default: slope
   dplyr::mutate(p.order = seq(n())) %>% 
   mutate(significance=if_else(adj.P.Val<0.05,
                               "FDR<0.05","not sig.")) %>% 
+  mutate(reactivity=if_else(adj.P.Val<0.05 & logFC>0,
+                              "FDR<0.05 & logFC>0","not reactive")) %>% 
   #dplyr::count(significance)
   inner_join(biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
                #dplyr::count(sample_type)
@@ -363,7 +365,8 @@ td <- topTable(eb, coef = 2,               # default: slope
                spread(sample_type,mean_group) %>% 
                #arrange(desc(con)) %>% 
                dplyr::rename(ID=gene),
-             by="ID") 
+             by="ID") %>% 
+  relocate(reactivity,.after = last_col())
 ```
 
 ###### missings?
@@ -399,7 +402,7 @@ expression_set_long %>%
   # filter(magrittr::is_in(feature,td_missing_p)) %>% 
   # naniar::vis_miss()
   ggplot(aes(x = values, y = feature, color = sample_type)) +
-  geom_point()
+  geom_point(alpha=0.5)
 ```
 
 ##### top reactive
@@ -461,16 +464,16 @@ reactive_antigen_b <- td %>%
                                  "<0.05"="FDR<0.05",
                                  "not\nsignificant"="not sig.")) %>%
   ggplot(aes(logFC,-log10(P.Value))) +
-  geom_point(aes(colour=significance)) + 
+  geom_point(aes(colour=significance), alpha =0.75) + 
   colorspace::scale_color_discrete_diverging(palette = "Blue-Red 2",
                                              rev = TRUE) +
   # scale_color_manual(values=c("red","black")) +
   #geom_point(aes(colour=con)) + viridis::scale_color_viridis() +
-  ggrepel::geom_text_repel(
-    data = td %>% 
-      filter(logFC < -1),
-    aes(label=ID)
-  ) +
+  # ggrepel::geom_text_repel(
+  #   data = td %>% 
+  #     filter(logFC < -1),
+  #   aes(label=ID)
+  # ) +
   # ggrepel::geom_text_repel(
   #   data = td %>% 
   #     filter((adj.P.Val<0.05 & logFC>1 #& con>1
@@ -508,6 +511,7 @@ reactive_antigen_b <- td %>%
   geom_vline(aes(xintercept=1), lty=3) #+
   #geom_vline(aes(xintercept=-1), lty=3) +
   # coord_cartesian(xlim = c(-2, 2), ylim = c(0,15)) 
+reactive_antigen_b
 ggsave("figure/06-fig02-reactive_compare-volcano_plot.png",
        height = 3.5,width = 3.5,dpi = "retina")
 ```
@@ -525,9 +529,11 @@ ggsave("figure/06-fig03-reactive_compare-histogram_volcano.png",
 ###### heatmap
 
 ```{r}
+# tidy eset
 eset_tidy <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
   rename(id.name = gene)
 
+# summarize samples
 eset_tidy_arrange <- eset_tidy %>%
   select(id.name,value,sample) %>% 
   group_by(sample) %>% 
@@ -535,17 +541,18 @@ eset_tidy_arrange <- eset_tidy %>%
   ungroup() %>% 
   arrange(sum_value)
 
+# summarize antigens
 eset_tidy_antigen <- eset_tidy %>% 
   select(id.name,value) %>% 
   group_by(id.name) %>% 
   dplyr::summarise(sum_antigen = median(value,na.rm = TRUE)) %>% 
   ungroup() %>% 
   arrange(sum_antigen)
-
 ```
 
 ```{r}
-reactive_heatmap <- eset_tidy %>% 
+# join in one dataset
+pre_heatmap_all <- eset_tidy %>% 
   # join columns useful to reorder row and columns
   left_join(eset_tidy_arrange) %>% 
   left_join(eset_tidy_antigen) %>%
@@ -565,9 +572,15 @@ reactive_heatmap <- eset_tidy %>%
   filter(
     magrittr::is_in(id.name,
                     td %>% 
-                      filter(significance=="FDR<0.05") %>% 
+                      filter(reactivity!="not reactive") %>% 
                       pull(ID))
-  ) %>% 
+  ) 
+
+```
+
+```{r}
+# crear heatmap plot
+reactive_heatmap <- pre_heatmap_all %>% 
   ggplot(aes(x = sample,y = id.name, fill = value)) +
   geom_tile() +
   facet_grid(group~sample_type,
@@ -592,6 +605,35 @@ ggsave("figure/06-fig04-reactive_compare-heatmap-nocluster.png",
        height = 6,width = 6,dpi = "retina")
 ```
 
+```{r}
+# crear heatmap plot (top subset)
+reactive_heatmap_top <- pre_heatmap_all %>% 
+  filter(group=="top") %>% 
+  mutate(group=fct_recode(group,"Top 10%"="top")) %>% 
+  ggplot(aes(x = sample,y = id.name, fill = value)) +
+  geom_tile() +
+  facet_grid(group~sample_type,
+             scale = 'free', space = 'free') +
+  colorspace::scale_fill_continuous_diverging(
+    name="Antigen\nreactivity",
+    mid = 1,
+    palette = "Blue-Red 3",
+    # begin = 0.2
+    ) +
+  labs(y = NULL, x=NULL#,
+       #caption="*BH adjusted p-value <0.05 and log2 fold-change >1"
+       ) + 
+  theme(axis.text.x = element_text(angle = 90, 
+                                   vjust = 0.5, 
+                                   hjust=1,
+                                   size=5),
+        axis.text.y = element_text(size=7))
+
+reactive_heatmap_top
+ggsave("figure/06-fig05-reactive_compare-heatmap-nocluster-top.png",
+       height = 2.5,width = 6,dpi = "retina")
+```
+
 ## contabilizar antigenos
 
 ```{r}
@@ -599,8 +641,8 @@ ggsave("figure/06-fig04-reactive_compare-heatmap-nocluster.png",
 eset.VIVAX.SEV_import
 # 394 features filtrados
 eset.VIVAX.SEV.FILTER_import
-# 341 significativos
-td %>% count(significance)
+# 340 significativos
+td %>% count(reactivity)
 ```
 
 pendientes
