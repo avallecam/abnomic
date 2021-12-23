@@ -361,7 +361,7 @@ td <- topTable(eb, coef = 2,               # default: slope
   mutate(significance=if_else(adj.P.Val<0.05,
                               "FDR<0.05","not sig.")) %>% 
   mutate(reactivity=if_else(adj.P.Val<0.05 & logFC>0,
-                              "FDR<0.05 & logFC>0","not reactive")) %>% 
+                              "reactive","not_reactive")) %>% 
   #dplyr::count(significance)
   inner_join(biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
                #dplyr::count(sample_type)
@@ -594,7 +594,7 @@ pre_heatmap_all <- eset_tidy %>%
   filter(
     magrittr::is_in(id.name,
                     td %>% 
-                      filter(reactivity!="not reactive") %>% 
+                      filter(reactivity!="not_reactive") %>% 
                       pull(ID))
   ) 
 
@@ -682,8 +682,125 @@ eset.VIVAX.SEV.FILTER_import
 td %>% count(reactivity)
 ```
 
+## compare diversity - selection pressure
+
+```{r}
+all_listgen_snp <- all_listgen %>% 
+  # glimpse()
+  select(id_name,gene_id,
+         non_syn_syn_snp_ratio_all_strains,
+         total_sn_ps_all_strains,
+         transcript_length) %>% 
+  mutate(
+    non_syn_syn_snp_ratio_length_norm_e5 = (non_syn_syn_snp_ratio_all_strains/transcript_length)*100000,
+    total_snps_length_norm_e3 = (total_sn_ps_all_strains/transcript_length)*1000
+  ) %>% 
+  mutate(non_syn_snp_number = 
+           total_sn_ps_all_strains - 
+           (total_sn_ps_all_strains / (1+non_syn_syn_snp_ratio_all_strains))) %>% 
+  mutate(non_syn_snp_number_length_norm_e3 = 
+           (non_syn_snp_number/transcript_length)*1000)
+
+all_listgen_snp %>% 
+  filter(str_starts(gene_id,"PV")) %>% 
+  pivot_longer(
+    cols = -c(id_name:gene_id)) %>% 
+  ggplot(aes(x = value)) +
+  geom_histogram() +
+  facet_wrap(~name,scales = "free")
+
+ag_selection <- td %>% 
+  janitor::clean_names() %>% 
+  select(id.name = id, sample, reactivity) %>% 
+  mutate(id.name_ag = str_replace(id.name,"(.{10})(.+)","\\1")) %>% 
+  left_join(all_listgen_snp %>% 
+              select(-transcript_length),
+            by = c("id.name_ag"="gene_id")) %>% 
+  mutate(category = case_when(
+    magrittr::is_in(id.name,exp_t %>% pull(ID)) ~ "reactive_top",
+    reactivity =="reactive" ~ "reactive",
+    TRUE ~ "non_reactive"
+    ))
+```
+
+```{r}
+ag_selection %>% 
+  pivot_longer(
+    cols = -c(id.name:id_name,category)) %>% 
+  ggplot(aes(x = value, fill = reactivity)) +
+  geom_histogram(alpha = 0.25, position = position_identity()) +
+  facet_wrap(~name,scales = "free")
+
+ag_selection %>% 
+  pivot_longer(
+    cols = -c(id.name:id_name,category)) %>% 
+  ggplot(aes(x = value, fill = category)) +
+  geom_histogram(alpha = 0.25, position = position_identity()) +
+  facet_wrap(~name,scales = "free")
+```
+
+
+```{r}
+ag_selection %>% 
+  # glimpse()
+  # select(id.name,reactivity,non_syn_syn_snp_ratio_all_strains) %>% 
+  compareGroups::compareGroups(
+    formula = 
+      reactivity ~ non_syn_syn_snp_ratio_all_strains + 
+      non_syn_syn_snp_ratio_length_norm_e5 +
+      total_sn_ps_all_strains +
+      total_snps_length_norm_e3 +
+      non_syn_snp_number +
+      non_syn_snp_number_length_norm_e3,
+    data = .,
+    method = list(non_syn_syn_snp_ratio_all_strains = 2,
+                  non_syn_syn_snp_ratio_length_norm_e5 = 2,
+                  total_sn_ps_all_strains = 2,
+                  total_snps_length_norm_e3 = 2,
+                  non_syn_snp_number = 2,
+                  non_syn_snp_number_length_norm_e3 = 2)) %>% 
+  compareGroups::createTable()
+
+ag_selection %>% 
+  # glimpse()
+  # select(id.name,reactivity,non_syn_syn_snp_ratio_all_strains) %>% 
+  compareGroups::compareGroups(
+    formula = 
+      category ~ non_syn_syn_snp_ratio_all_strains + 
+      non_syn_syn_snp_ratio_length_norm_e5 +
+      total_sn_ps_all_strains +
+      total_snps_length_norm_e3 +
+      non_syn_snp_number +
+      non_syn_snp_number_length_norm_e3,
+    data = .,
+    method = list(non_syn_syn_snp_ratio_all_strains = 2,
+                  non_syn_syn_snp_ratio_length_norm_e5 = 2,
+                  total_sn_ps_all_strains = 2,
+                  total_snps_length_norm_e3 = 2,
+                  non_syn_snp_number = 2,
+                  non_syn_snp_number_length_norm_e3 = 2)) %>% 
+  compareGroups::createTable()
+```
+
+```{r}
+ag_selection %>% 
+  select(id.name,reactivity,total_snps_length_norm_e3) %>% 
+  mutate(reactivity = as.factor(reactivity)) %>% 
+  wilcox.test(total_snps_length_norm_e3 ~ reactivity, 
+              data = .) %>% 
+  broom::tidy()
+```
+
+
+```{r}
+
+```
+
+
 pendientes
-  - revisar si lista de diferencialmente reactivos (por exposicion) está dentro del conjunto de antígenos reactivos en comparación a us-control, o en todo caso, restringir el análisis en 04-abnomics según esta lista de antígenos seleccionados (filtro posterior al filtro)
+  - comparar distribución de snp en reactivos vs no-reactivos (con respecto al genoma, no solo a los antigenos del chip)
+  - restringir el análisis en 04-abnomics según esta lista de antígenos seleccionados (transformación -> filtrado -> diferencialmente rvo a control)
+  
 
 ## end
 

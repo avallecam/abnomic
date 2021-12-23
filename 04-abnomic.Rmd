@@ -706,7 +706,8 @@ full <- readr::read_tsv("data/04-listall.tsv") %>% #colnames() %>% #class()
   #dplyr::mutate(Gene.Name= ifelse(Gene.ID == "PVX_114145", "MSP10", Gene.Name)) %>% 
   #dplyr::mutate(Gene.Name= ifelse(Gene.ID == "PVX_116780", "SFT2", Gene.Name))
 #lg
-head(full)
+# head(full)
+full
 #raw %>% filter(Gene.ID=="PVX_003775")#only_2o2 --> IS THIS SUGGESTING A MISTAKE IN ID TIPYING? --> COMPARE!
 #raw %>% filter(stringr::str_detect(Description, "MSP7"))
 ```
