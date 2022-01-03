@@ -218,7 +218,9 @@ unir_pos %>%
 
 # comparar null vs reactives ----------------------------------------------
 
-unir_pos %>% glimpse()
+unir_pos %>% 
+  select(-ortholog_count,-paralog_count) %>% 
+  write_rds("data/20211223-pvivax-sal1-p01-snp_variant_solution.rds")
 
 #' pendiente:
 #' - usar esta lista como distribución nula para comparación de snp por gene en 06-uscntrl.Rmd!

@@ -413,7 +413,16 @@ expression_set_long %>%
 
 ##### top reactive
 
-###### list
+###### all reactives
+
+```{r}
+td %>% glimpse()
+td %>% count(reactivity)
+td %>% write_rds("data/06-reactive_compare-all_reactives.rds")
+```
+
+
+###### top10% reactives
 
 ```{r}
 exp_t <- td %>% 
@@ -683,6 +692,30 @@ td %>% count(reactivity)
 ```
 
 ## compare diversity - selection pressure
+
+```{r, eval=FALSE}
+# De forma transitoria, descargué la info de P01 para todos sus genes y 
+# la empareje con genes de Sal1 usando grupos ortólogos con 17% de missings
+# partir de aqui
+# aprovechar para comparar genes con snp counts de sal1 y p01
+# usar como denominador
+# comparar
+# - numero de snps
+# - numero de snp sinonimos
+# - numero de snp no sinonimos
+pv_p01_sal1 <- readr::read_rds("data/20211223-pvivax-sal1-p01-snp_variant_solution.rds")
+
+td %>% 
+  select(id=ID,reactivity) %>% 
+  mutate(gene_id_sal = str_replace(id,"(PVX_.{6}).+","\\1")) %>% 
+  # count(str_length(gene_id_sal)) %>% 
+  left_join(pv_p01_sal1) %>% 
+  # naniar::vis_miss()
+  # naniar::miss_var_summary()
+  filter(is.na(gene_id_p01)) %>% 
+  epihelper::print_inf()
+```
+
 
 ```{r}
 all_listgen_snp <- all_listgen %>% 
