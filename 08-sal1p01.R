@@ -83,6 +83,28 @@ sal_ortholog_unico <- unir_sal %>%
   count(ortholog_group,sort = T) %>% 
   filter(n==1)
 
+unir_sal %>%   
+  count(ortholog_group,sort = T)
+unir_sal %>%   
+  count(ortholog_group,product_description,sort = T)
+unir_sal %>%
+  filter(ortholog_group=="OG6_100908")
+
+pvp01 %>% 
+  filter(ortholog_group=="OG6_100908") %>%
+  select(-source_id_p01) %>% 
+  # rename(product_description_p01 = product_description) %>%
+  # rename(ortholog_group_p01 = ortholog_group) %>%
+  left_join(
+    unir_sal %>%
+      filter(ortholog_group=="OG6_100908") %>%
+      select(-id)
+  ) %>% 
+  # distinct(gene_id_p01,.keep_all = T) %>% 
+  epihelper::print_inf()
+  identity() %>% 
+  count(reactivity)
+
 # _test -------------------------------------------------------------------
 
 wrongwayround <- pvp01 %>% 
@@ -90,6 +112,7 @@ wrongwayround <- pvp01 %>%
   rename(product_description_p01 = product_description) %>%
   # rename(ortholog_group_p01 = ortholog_group) %>%
   left_join(unir_sal) %>% 
+  # count(reactivity)
   mutate(reactivity=if_else(is.na(reactivity),
                             "not_reactive",
                             reactivity)) 
@@ -99,15 +122,28 @@ wrongwayround %>%
   # naniar::vis_miss()
   # naniar::miss_var_summary()
 
+wrongwayround %>% 
+  group_by(gene_id_p01) %>% 
+  filter(n()>1)
+
 wrongwayround_unique <- wrongwayround %>% 
-  arrange(gene_id_p01,desc(non_syn_syn_snp_ratio_all_strains)) %>% 
-  distinct(gene_id_p01,.keep_all = T)
+  # arrange(gene_id_p01,desc(non_syn_syn_snp_ratio_all_strains)) %>% 
+  distinct(gene_id_p01,.keep_all = T) %>%
+  identity()
  
 wrongwayround_unique %>% 
   count(reactivity)
 
+# td %>% count(reactivity)
+
 wrongwayround_final <- wrongwayround_unique %>% 
   select(reactivity,id,gene_id_sal,gene_id_p01) 
+
+# wrongwayround_final
+# wrongwayround_unique %>% 
+#   select(gene_id_p01,product_description_p01,ortholog_group,
+#          id,gene_id_sal,product_description) %>% 
+#   epihelper::print_inf()
 
 # # _con ortholog ---------------------------------------------------------
 # 
@@ -229,6 +265,10 @@ all_listgen %>% glimpse()
 all_listgen %>% 
   count(reactivity)
 
+# all_listgen %>% 
+#   filter(reactivity=="reactive") %>% 
+#   epihelper::print_inf()
+
 # code from 06-...Rmd ------------------------------------------------------
 
 # exp_t <- td %>% 
@@ -313,9 +353,9 @@ all_listgen_snp_table %>%
 
 
 all_listgen_snp %>% 
-  select(gene_id,reactivity,non_synonymous_sn_ps_all_strains) %>% 
+  select(gene_id,reactivity,non_synonymous_sn_ps_all_strains_norm) %>% 
   mutate(reactivity = as.factor(reactivity)) %>% 
-  wilcox.test(non_synonymous_sn_ps_all_strains ~ reactivity, 
+  wilcox.test(non_synonymous_sn_ps_all_strains_norm ~ reactivity, 
               data = .) %>% 
   broom::tidy()
 
