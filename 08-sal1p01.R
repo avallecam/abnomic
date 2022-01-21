@@ -313,9 +313,9 @@ all_listgen_snp_table %>%
 
 
 all_listgen_snp %>% 
-  select(gene_id,reactivity,total_sn_ps_all_strains_norm) %>% 
+  select(gene_id,reactivity,non_synonymous_sn_ps_all_strains) %>% 
   mutate(reactivity = as.factor(reactivity)) %>% 
-  wilcox.test(total_sn_ps_all_strains_norm ~ reactivity, 
+  wilcox.test(non_synonymous_sn_ps_all_strains ~ reactivity, 
               data = .) %>% 
   broom::tidy()
 
