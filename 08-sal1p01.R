@@ -5,6 +5,16 @@ library(tidyverse)
 td <- read_rds("data/06-reactive_compare-all_reactives.rds")
 td %>% count(reactivity)
 
+pvx_sal1_snp_2017 <- read_tsv("data/04-listgen.tsv") %>% 
+  janitor::clean_names() %>% 
+  select(gene_id,product_description,
+         total_sn_ps_all_strains,
+         non_syn_syn_snp_ratio_all_strains,
+         transcript_length) %>% 
+  filter(str_detect(gene_id,"PVX"))
+
+pvx_sal1_snp_2017
+
 # importar referencia -----------------------------------------------------
 
 ## _p01 -----
@@ -83,61 +93,259 @@ sal_ortholog_unico <- unir_sal %>%
   count(ortholog_group,sort = T) %>% 
   filter(n==1)
 
-unir_sal %>%   
-  count(ortholog_group,sort = T)
-unir_sal %>%   
-  count(ortholog_group,product_description,sort = T)
-unir_sal %>%
-  filter(ortholog_group=="OG6_100908")
+#25
+sal_product_vario <- unir_sal %>%   
+  count(product_description,sort = T) %>% 
+  filter(n>1)
 
-pvp01 %>% 
-  filter(ortholog_group=="OG6_100908") %>%
-  select(-source_id_p01) %>% 
-  # rename(product_description_p01 = product_description) %>%
-  # rename(ortholog_group_p01 = ortholog_group) %>%
-  left_join(
-    unir_sal %>%
-      filter(ortholog_group=="OG6_100908") %>%
-      select(-id)
-  ) %>% 
-  # distinct(gene_id_p01,.keep_all = T) %>% 
-  epihelper::print_inf()
-  identity() %>% 
-  count(reactivity)
+#139
+sal_product_unico <- unir_sal %>%   
+  count(product_description,sort = T) %>% 
+  filter(n==1)
 
-# _test -------------------------------------------------------------------
+sal_ortholog_vario
+sal_ortholog_unico
+sal_product_vario
+sal_product_unico
 
-wrongwayround <- pvp01 %>% 
-  # left join only by ortholog
+#' # _test one ortho ---------------------------------------------------------
+#' 
+#' unir_sal %>%   
+#'   count(ortholog_group,sort = T)
+#' unir_sal %>%   
+#'   count(ortholog_group,product_description,sort = T)
+#' unir_sal %>%
+#'   filter(ortholog_group=="OG6_100908")
+#' 
+#' pvp01 %>% 
+#'   filter(ortholog_group=="OG6_100908") %>%
+#'   select(-source_id_p01) %>% 
+#'   # rename(product_description_p01 = product_description) %>%
+#'   # rename(ortholog_group_p01 = ortholog_group) %>%
+#'   left_join(
+#'     unir_sal %>%
+#'       filter(ortholog_group=="OG6_100908") %>%
+#'       select(-id)
+#'   ) %>% 
+#'   distinct(gene_id_p01,.keep_all = T) %>%
+#'   epihelper::print_inf()
+#'   # identity() %>% 
+#'   # count(reactivity)
+#' 
+#' #' input n=17
+#' #' input n=05
+#' #' 
+#' #' resultados de join + distinct
+#' #' by product -> 03/17 reactivos
+#' #' by ortholog -> 17/17 reactivos
+#' #' by product + ortholog -> 03/17  reactivos
+#' #' 
+#' #' resultados de join (sin distinct)
+#' #' by product + ortholog -> 07/21  reactivos
+
+# _pretest ----------------------------------------------------------------
+
+#' plan
+#' 
+#' primero,
+#' unir genes p01 y sal1 
+#' a traves de ortholog_group y product_name
+#' debido a replicas en sal1
+#' retirar genes replicados en p01
+#' 
+#' segundo,
+#' del complemento de genes que no se hayan unido en ambas bases
+#' unir genes de p01 y sal1
+#' a traves de ortholog_group (unicamente)
+#' debido a replicas en sal1
+#' retirar genes replicados en p01
+#' 
+#' tercero,
+#' el complemento de ambos conjuntos anteriores
+#' al intentar unirlos, solo identifica
+#' 02 genes hipoteticos de sal1
+#' por lo tanto
+#' decidimos no tomar en cuenta esta union
+#' y solo usar los valores de snp del 2017
+#' 
+
+# __ortho+prod ------------------------------------------------------------
+
+sal_test <- unir_sal %>% 
+  select(gene_id_sal,ortholog_group,product_description,reactivity)
+
+p01_test <- pvp01 %>% 
+  select(gene_id_p01,ortholog_group,product_description,
+         non_syn_syn_snp_ratio_all_strains,total_sn_ps_all_strains)
+
+p01_sal_by_ortho_prod_unique <- 
+  p01_test %>% 
+  inner_join(sal_test) %>% 
+  distinct(gene_id_p01,.keep_all = T)
+
+# n=164 por ortholog + product + distinct
+# p01_sal_by_ortho_prod_unique #%>% 
+#   # epihelper::print_inf()
+
+p01_sal_by_ortho_prod_unique %>% 
+  # count(gene_id_sal,sort = T)
+  arrange(gene_id_p01,desc(non_syn_syn_snp_ratio_all_strains)) %>% 
+  distinct(gene_id_sal,.keep_all = T) %>%
+  # count(gene_id_sal,sort = T) %>% 
+  identity()
+
+p01_sal_by_ortho_prod_unique
+
+# __ortho only ------------------------------------------------------------
+
+p01_sal_by_ortho_prod_unique_complement_ortho <- p01_test %>% 
+  filter(!magrittr::is_in(gene_id_p01,
+                         p01_sal_by_ortho_prod_unique %>% 
+                           pull(gene_id_p01))) %>% 
   rename(product_description_p01 = product_description) %>%
   # rename(ortholog_group_p01 = ortholog_group) %>%
-  left_join(unir_sal) %>% 
-  # count(reactivity)
-  mutate(reactivity=if_else(is.na(reactivity),
-                            "not_reactive",
-                            reactivity)) 
-
-wrongwayround %>% 
-  count(reactivity)
-  # naniar::vis_miss()
-  # naniar::miss_var_summary()
-
-wrongwayround %>% 
-  group_by(gene_id_p01) %>% 
-  filter(n()>1)
-
-wrongwayround_unique <- wrongwayround %>% 
-  # arrange(gene_id_p01,desc(non_syn_syn_snp_ratio_all_strains)) %>% 
+  inner_join(
+    # 220 subset
+    sal_test %>% 
+      filter(!magrittr::is_in(gene_id_sal,
+                             p01_sal_by_ortho_prod_unique %>% 
+                               distinct(gene_id_sal,.keep_all = T) %>%
+                               pull(gene_id_sal)))
+  ) %>% 
   distinct(gene_id_p01,.keep_all = T) %>%
+  # select(-non_syn_syn_snp_ratio_all_strains,-total_sn_ps_all_strains) %>% 
+  # epihelper::print_inf()
+  # view()
   identity()
- 
-wrongwayround_unique %>% 
+
+p01_sal_by_ortho_prod_unique_complement_ortho %>% 
+  distinct(gene_id_sal,.keep_all = T)
+
+p01_sal_by_ortho_prod_unique
+p01_sal_by_ortho_prod_unique_complement_ortho
+
+# __prod only -------------------------------------------------------------
+
+#' esta lista de genes no será incluida
+#' por que solo pegan por nombre 
+#' 02 genes de sal1 a
+#' 58 genes de p01
+
+p01_test %>% 
+  filter(!magrittr::is_in(gene_id_p01,
+                          p01_sal_by_ortho_prod_unique %>% 
+                            pull(gene_id_p01))) %>% 
+  filter(!magrittr::is_in(gene_id_p01,
+                          p01_sal_by_ortho_prod_unique_complement_ortho %>% 
+                            pull(gene_id_p01))) %>% 
+  # rename(product_description_p01 = product_description) %>%
+  rename(ortholog_group_p01 = ortholog_group) %>%
+  inner_join(
+    sal_test %>% 
+      filter(!magrittr::is_in(gene_id_sal,
+                              p01_sal_by_ortho_prod_unique %>% 
+                                distinct(gene_id_sal,.keep_all = T) %>%
+                                pull(gene_id_sal))) %>% 
+      filter(!magrittr::is_in(gene_id_sal,
+                              p01_sal_by_ortho_prod_unique_complement_ortho %>% 
+                                distinct(gene_id_sal,.keep_all = T) %>%
+                                pull(gene_id_sal))) %>% 
+      # epihelper::print_inf() %>% 
+      identity()
+  ) %>% 
+  distinct(gene_id_p01,.keep_all = T) %>%
+  distinct(gene_id_sal,.keep_all = T) %>%
+  select(-non_syn_syn_snp_ratio_all_strains,-total_sn_ps_all_strains) %>% 
+  epihelper::print_inf()
+
+p01_sal_by_ortho_prod_unique_complement_ortho_complement_sal1 <- 
+  sal_test %>% 
+  filter(!magrittr::is_in(gene_id_sal,
+                          p01_sal_by_ortho_prod_unique %>% 
+                            distinct(gene_id_sal,.keep_all = T) %>%
+                            pull(gene_id_sal))) %>% 
+  filter(!magrittr::is_in(gene_id_sal,
+                          p01_sal_by_ortho_prod_unique_complement_ortho %>% 
+                            distinct(gene_id_sal,.keep_all = T) %>%
+                            pull(gene_id_sal))) %>% 
+  # epihelper::print_inf() %>% 
+  # identity()
+  left_join(
+    pvx_sal1_snp_2017,
+    by = c("gene_id_sal" = "gene_id",
+           "product_description" = "product_description")
+  )
+
+p01_sal_by_ortho_prod_unique
+p01_sal_by_ortho_prod_unique_complement_ortho
+p01_sal_by_ortho_prod_unique_complement_ortho_complement_sal1
+
+# __unite all -------------------------------------------------------------
+
+p01_sal_union_strategy_p01 <- p01_sal_by_ortho_prod_unique %>% 
+  union_all(p01_sal_by_ortho_prod_unique_complement_ortho)
+
+p01_sal_union_strategy_sal1 <- 
+  p01_sal_by_ortho_prod_unique_complement_ortho_complement_sal1 %>% 
+  mutate(non_synonymous_sn_ps_all_strains = 
+           total_sn_ps_all_strains - 
+           (total_sn_ps_all_strains / (1+non_syn_syn_snp_ratio_all_strains))) %>% 
+  mutate(synonymous_sn_ps_all_strains = 
+           total_sn_ps_all_strains -non_synonymous_sn_ps_all_strains) %>% 
+  # make unique names
+  mutate(gene_id_sal=janitor::make_clean_names(gene_id_sal))
+
+p01_sal_union_strategy_p01_sal1 <- p01_sal_union_strategy_p01 %>% 
+  union_all(p01_sal_union_strategy_sal1)
+
+p01_sal_union_strategy_p01_sal1 %>% 
+  naniar::vis_miss()
+
+p01_sal_union_strategy_p01_sal1 %>% 
+  count(reactivity)
+td %>% 
   count(reactivity)
 
-# td %>% count(reactivity)
+p01_sal_union_strategy_sal1 %>% 
+  # mutate(gene_id_sal=janitor::make_clean_names(gene_id_sal)) %>% 
+  count(gene_id_sal,sort = T)
 
-wrongwayround_final <- wrongwayround_unique %>% 
-  select(reactivity,id,gene_id_sal,gene_id_p01) 
+# # _test ---
+# 
+#' wrongwayround <- pvp01 %>% 
+#'   # left join only by ortholog
+#'   # rename(product_description_p01 = product_description) %>%
+#'   # rename(ortholog_group_p01 = ortholog_group) %>%
+#'   left_join(unir_sal) %>% 
+#'   # count(reactivity)
+#'   mutate(reactivity=if_else(is.na(reactivity),
+#'                             "not_reactive",
+#'                             reactivity)) 
+#' 
+#' wrongwayround %>% 
+#'   count(reactivity)
+#'   # naniar::vis_miss()
+#'   # naniar::miss_var_summary()
+#' 
+#' wrongwayround %>% 
+#'   group_by(gene_id_p01) %>% 
+#'   filter(n()>1)
+#' 
+#' wrongwayround_unique <- wrongwayround %>% 
+#'   # arrange(gene_id_p01,desc(non_syn_syn_snp_ratio_all_strains)) %>% 
+#'   distinct(gene_id_p01,.keep_all = T) %>%
+#'   identity()
+#'  
+#' wrongwayround_unique %>% 
+#'   count(reactivity)
+#' td %>% 
+#'   count(reactivity)
+#' 
+#' #' 340/5655
+#' #' 164/6861
+#' 
+#' wrongwayround_final <- wrongwayround_unique %>% 
+#'   select(reactivity,id,gene_id_sal,gene_id_p01) 
 
 # wrongwayround_final
 # wrongwayround_unique %>% 
@@ -145,7 +353,7 @@ wrongwayround_final <- wrongwayround_unique %>%
 #          id,gene_id_sal,product_description) %>% 
 #   epihelper::print_inf()
 
-# # _con ortholog ---------------------------------------------------------
+# # _con ortholog ---
 # 
 # unir_conortho <- unir_sal %>% 
 #   # 260
@@ -185,7 +393,7 @@ wrongwayround_final <- wrongwayround_unique %>%
 #   # count(ortholog_group,sort = T)
 # 
 # 
-# # _sin ortholog ---------------------------------------------------------
+# # _sin ortholog ---
 # 
 # unir_sinortho <- unir_conortho %>% 
 #   filter(is.na(gene_id_p01)) %>% 
@@ -235,7 +443,7 @@ wrongwayround_final <- wrongwayround_unique %>%
 # #   epihelper::print_inf()
 # 
 # 
-# # final -------------------------------------------------------------------
+# # final ---
 # 
 # unir_conortho %>% naniar::miss_var_summary()
 # 
@@ -254,14 +462,21 @@ pvp01 <- read_tsv("data/20220103-pvivax-p01-variability-metadata-v2.tsv") %>%
          total_sn_ps_all_strains:transcript_length) %>% 
   rename(gene_id_p01=gene_id)
 
+pvp01 %>% glimpse()
+
 all_listgen <- pvp01 %>% 
-  left_join(wrongwayround_final)
+  left_join(p01_sal_union_strategy_p01 %>% 
+              select(-total_sn_ps_all_strains,
+                     -non_syn_syn_snp_ratio_all_strains)) %>% 
+  union_all(p01_sal_union_strategy_sal1) %>%
+  # count(reactivity)
   # left_join(unir_final) %>% 
-  # mutate(reactivity=if_else(is.na(reactivity),
-  #                           "not_reactive",
-  #                           reactivity))
+  mutate(reactivity=if_else(is.na(reactivity),
+                            "not_reactive",
+                            reactivity))
 
 all_listgen %>% glimpse()
+all_listgen %>% naniar::miss_var_summary()
 all_listgen %>% 
   count(reactivity)
 
@@ -287,19 +502,29 @@ all_listgen %>%
 
 all_listgen_snp <- 
   all_listgen %>%
+  # count(gene_id_p01,sort = T)
   # glimpse()
+  mutate(gene_id=case_when(
+    is.na(gene_id_p01) ~ gene_id_sal,
+    TRUE ~ gene_id_p01 
+  )) %>% 
+  # count(gene_id,sort = T)
   select(reactivity,
-         gene_id=gene_id_p01,
+         gene_id,
          # non_syn_syn_snp_ratio_all_strains,
          total_sn_ps_all_strains,
          synonymous_sn_ps_all_strains,
          non_synonymous_sn_ps_all_strains,
          transcript_length) %>%
-  mutate(total_sn_ps_all_strains_norm=(total_sn_ps_all_strains/transcript_length)*(10^3),
-         synonymous_sn_ps_all_strains_norm=(synonymous_sn_ps_all_strains/transcript_length)*(10^3),
-         non_synonymous_sn_ps_all_strains_norm=(non_synonymous_sn_ps_all_strains/transcript_length)*(10^3))
+  mutate(total_sn_ps_all_strains_norm=
+           (total_sn_ps_all_strains/transcript_length)*(10^3),
+         synonymous_sn_ps_all_strains_norm=
+           (synonymous_sn_ps_all_strains/transcript_length)*(10^3),
+         non_synonymous_sn_ps_all_strains_norm=
+           (non_synonymous_sn_ps_all_strains/transcript_length)*(10^3))
 
 all_listgen_snp %>% glimpse()
+all_listgen_snp %>% naniar::miss_var_summary()
 
 # __distribution ---------------------------------------------------------
 
@@ -351,6 +576,13 @@ all_listgen_snp_table %>%
 
 # __raw -------------------------------------------------------------------
 
+
+all_listgen_snp %>% 
+  select(gene_id,reactivity,non_synonymous_sn_ps_all_strains) %>% 
+  mutate(reactivity = as.factor(reactivity)) %>% 
+  wilcox.test(non_synonymous_sn_ps_all_strains ~ reactivity, 
+              data = .) %>% 
+  broom::tidy()
 
 all_listgen_snp %>% 
   select(gene_id,reactivity,non_synonymous_sn_ps_all_strains_norm) %>% 
