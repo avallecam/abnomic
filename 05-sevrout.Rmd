@@ -42,6 +42,8 @@ library(tidyverse)
 library(compareGroups)
 library(ggupset)
 library(patchwork)
+library(dagitty)
+library(ggdag)
 ```
 
 ## Data input
@@ -298,8 +300,6 @@ dagify(y ~ x,
 
 
 ```{r}
-library(dagitty)
-library(ggdag)
 
 dag <- dagitty("dag {
     cronica -> severe
@@ -455,12 +455,44 @@ tab02abn %>% export2xls("table/05-tab02-abn_observations.xls")
 ### conditional association
 
 ```{r}
+# dag {
+# bb="-1.519,-1.953,1.998,1.641"
+# age [pos="-0.470,-0.943"]
+# antibody [outcome,pos="0.656,-0.124"]
+# chronic [pos="-0.654,-0.525"]
+# episode [adjusted,pos="0.199,-0.954"]
+# severe [exposure,pos="-0.197,-0.124"]
+# sex [pos="-0.315,-1.372"]
+# t_endemica [pos="0.007,-1.547"]
+# age -> chronic
+# age -> episode
+# age -> severe
+# age -> t_endemica
+# chronic -> severe
+# episode -> antibody
+# episode -> severe
+# severe -> antibody
+# sex -> episode
+# sex -> severe
+# t_endemica -> episode
+# }
+
+
 dag <- dagitty("dag {
     severe [exposure]
+    episode [adjusted]
     antibody [outcome]
+    age -> chronic
+    age -> episode
+    age -> severe
+    age -> t_endemica
+    chronic -> severe
     episode -> antibody
     episode -> severe
     severe -> antibody
+    sex -> episode
+    sex -> severe
+    t_endemica -> episode
 }")
 
 dag
