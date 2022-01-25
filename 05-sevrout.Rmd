@@ -280,6 +280,145 @@ tab02all %>% export2xls("table/05-tab02-all_observations.xls")
   
 ```
 
+### conditional association
+
+```{r,eval=FALSE,echo=FALSE}
+dagify(y ~ x,
+       y ~ conf + x,
+       x ~ conf,
+       labels = c("y" = "cáncer piel", 
+                  "x" = "exp. solar",
+                  "conf" = "café"
+       ),
+       exposure = "x",
+       outcome = "y") %>% 
+  tidy_dagitty() %>% 
+  ggdag_adjustment_set()
+```
+
+
+```{r}
+library(dagitty)
+library(ggdag)
+
+dag <- dagitty("dag {
+    cronica -> severe
+    edad -> cronica
+    edad -> episode
+    edad -> living
+    edad -> severe
+    episode -> severe
+    living -> episode
+    sexo -> episode
+    sexo -> severe
+}")
+
+dag
+
+tidy_dag <- tidy_dagitty(dag)
+
+tidy_dag
+
+ggdag(tidy_dag,
+      use_labels = "name",
+      text = FALSE) +
+  theme_dag()
+
+ggdag_adjustment_set(tidy_dag,
+                     exposure = "episode",
+                     outcome = "severe",
+                     use_labels = "name",
+                     text = FALSE,
+                     node_size = 14) + 
+  theme_dag() +
+  theme(legend.position = "bottom")
+
+ggdag_paths(tidy_dag,
+            use_labels = "name",
+            from = "episode",
+            to = "severe",
+            text = FALSE,
+            adjust_for = c("edad","sexo")) +
+  theme_dag()
+```
+
+```{r,eval=FALSE,echo=FALSE}
+testImplications <- function( covariance.matrix, sample.size ){
+	library(ggm)
+	tst <- function(i){ pcor.test( pcor(i,covariance.matrix), length(i)-2, sample.size )$pvalue }
+tos <- function(i){ paste(i,collapse=" ") }
+implications <- list(c("cronica","episode","edad"),
+		c("cronica","living","edad"),
+		c("cronica","sexo"),
+		c("edad","sexo"),
+		c("living","severe","edad","episode","sexo"),
+		c("living","sexo"))
+	data.frame( implication=unlist(lapply(implications,tos)),
+		pvalue=unlist( lapply( implications, tst ) ) )
+
+}
+
+# testImplications(covariance.matrix = ___,sample.size = 300)
+```
+
+
+```{r}
+
+sevdb_2ws_clean_glm <- sevdb_2ws_clean %>%
+  # select(episodio_previo,sev_who,sexo,edad_4,
+  #        enf_cronica,en_zona_endemica) %>%
+  # count(sev_who)
+  mutate(sev_who_cat = as.numeric(sev_who)-1,
+         # sev_who_cat = as.factor(sev_who_cat)
+         ) #%>% 
+  # filter(!is.na(episodio_previo))
+
+sevdb_2ws_clean_glm %>% 
+  # naniar::vis_miss()
+  count(sev_who,sev_who_cat,episodio_previo)
+
+# glm(sev_who_cat ~ episodio_previo,
+#     data = sevdb_2ws_clean_glm,
+#     family = binomial(link = "log"),
+#     na.action = na.exclude) %>%
+#   epitidy::epi_tidymodel_pr()
+
+glm(sev_who_cat ~ episodio_previo + sexo + edad_4,
+    data = sevdb_2ws_clean_glm,
+    family = poisson(link = "log"),
+    na.action = na.exclude) %>%
+  epitidy::epi_tidymodel_pr()
+
+# glm(sev_who_cat ~ 
+#       episodio_previo + sexo + edad_4 + 
+#       enf_cronica + en_zona_endemica,
+#     data = sevdb_2ws_clean_glm,
+#     family = poisson(link = "log"),
+#     na.action = na.exclude) %>%
+#   epitidy::epi_tidymodel_pr()
+```
+
+
+```{r,eval=FALSE,echo=FALSE}
+library(tidymodels)
+
+# poisson_reg()
+
+lm_model <- linear_reg() %>% 
+  set_engine(engine = "lm") %>% 
+  set_mode(mode = "regression")
+
+lm_model %>% 
+  fit(sev_who ~ episodio_previo, data = sevdb_2ws_clean)
+
+sevdb_2ws_clean %>%
+  select(episodio_previo,sev_who,sexo,edad_4,sev_who_num) %>% 
+  count(sev_who_num)
+
+
+```
+
+
 ## Table 2 - microarray study
 
 ```{r}
@@ -312,6 +451,39 @@ tab02abn %>% export2md()
 tab02abn %>% export2xls("table/05-tab02-abn_observations.xls")
   
 ```
+
+## Table 3 - microarray study and oms criteria
+
+```{r}
+tab03oms <- sevdb_2ws_clean %>% 
+  # filter observations
+  filter(study=="in-microarray") %>% 
+  # extract edad quartiles
+  select(-edad_4) %>% 
+  select(-parasitemia_mil_4,
+         -en_zona_endemica_4) %>% 
+  # extract variables
+  select(glas_oms:hiperbil_oms,
+         sev_who_num,
+         # study,
+         sev_who) %>% 
+  compareGroups(sev_who~.,data = .,
+                byrow = F,
+                # method = c(edad=2,
+                #            en_zona_endemica=2,
+                #            episodio_previo_num=2,
+                #            parasitemia_mil=2)
+                ) %>% 
+  createTable(digits = 1,
+              sd.type = 2,
+              show.n = T,
+              show.all = T)
+
+tab03oms %>% export2md() 
+tab03oms %>% export2xls("table/05-tab03-abn_oms_covariates.xls")
+  
+```
+
 
 
 <!-- ```{r} -->

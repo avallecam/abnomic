@@ -594,5 +594,5 @@ all_listgen_snp %>%
 # [pendiente] ---------------------------------------------------------------
 #' 
 #' hecho: usar solo pvp01 como referencia
-#' posibilidad: reemplazar sal1-2017 values de reactive antigens [no]
+#' posibilidad: conseguir lista completa de genes y snp values
 
