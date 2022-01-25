@@ -1436,6 +1436,28 @@ table(eset$sev_WHO) # debe ser: control (fct referencia) vs caso
 <!-- eset@assayData$exprs %>% head() -->
 <!-- ``` -->
 
+```{r,eval=FALSE}
+# test confounding adjustment
+biobroom::tidy.ExpressionSet(eset, addPheno = T) %>% 
+  count(sev_WHO,episodio_previo)
+
+design2 <- model.matrix(~ sev_WHO + episodio_previo,
+                        data = eset)
+colnames(design2)
+
+fit2 <- 
+  design2 %>% 
+  lmFit(object = eset, design = .) %>%
+  eBayes()
+
+biobroom::tidy.MArrayLM(fit2)
+biobroom::tidy.MArrayLM(fit2) %>% 
+  count(term)
+
+# topTable(fit2,coef = "LeukemiaTypeNoL")
+# topTable(fit2,coef = "SubtypeT_ALL")
+```
+
 
 ###### Matrix + Linear model + eBayes
 
@@ -1719,7 +1741,8 @@ td %>%
     is.na(Gene.Name) ~ Product.Description,
     !is.na(Gene.Name) ~ str_c(Product.Description," (",Gene.Name,")")
   )) %>% 
-  # replace Description (original from AD chips) with PlasmoDB annotations
+  # replace Description (original from AD chips) with 
+  # PlasmoDB annotations
   select(-Description) %>% 
   select(ID,Gene.ID,product_description,everything()) %>% 
   # unnecesary columns
@@ -1727,9 +1750,11 @@ td %>%
          -B,-significance,-logFCunite2_,
          -Product.Description,-Gene.Name) %>% 
   # view()
-  writexl::write_xlsx(paste0("table/04-tab03-severe_compare-pvalue_results-np_",
+  writexl::write_xlsx(
+    paste0("table/04-tab03-severe_compare-pvalue_results-np_",
                              set_non_parametric,".xlsx"))
-  # writexl::write_xlsx("table/04-tab03-severe_compare-pvalue_results.xlsx")
+  # writexl::write_xlsx(
+  #   "table/04-tab03-severe_compare-pvalue_results.xlsx")
   # write("table/04-table03-severe_compare-protein_features.xlsx")
 ```
 

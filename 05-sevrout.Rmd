@@ -452,6 +452,38 @@ tab02abn %>% export2xls("table/05-tab02-abn_observations.xls")
   
 ```
 
+### conditional association
+
+```{r}
+dag <- dagitty("dag {
+    severe [exposure]
+    antibody [outcome]
+    episode -> antibody
+    episode -> severe
+    severe -> antibody
+}")
+
+dag
+
+tidy_dag <- tidy_dagitty(dag)
+
+tidy_dag
+
+ggdag(tidy_dag,
+      use_labels = "name",
+      text = FALSE) +
+  theme_dag()
+
+ggdag_adjustment_set(tidy_dag,
+                     use_labels = "name",
+                     text = FALSE,
+                     node_size = 14) + 
+  theme_dag() +
+  theme(legend.position = "bottom")
+
+```
+
+
 ## Table 3 - microarray study and oms criteria
 
 ```{r}
