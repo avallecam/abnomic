@@ -61,6 +61,7 @@ topTable(fit2,coef = "LeukemiaTypeNoL")
 topTable(fit2,coef = "SubtypeT_ALL")
 
 # smyth tutorial ----------------------------------------------------------
+# https://www.bioconductor.org/packages/devel/bioc/vignettes/limma/inst/doc/usersguide.pdf
 
 # URL <- "https://www.ebi.ac.uk/arrayexpress/files/E-GEOD-33005"
 # SDRF.file <- "E-GEOD-33005.sdrf.txt"
@@ -75,3 +76,10 @@ topTable(fit2,coef = "SubtypeT_ALL")
 # Pasilla <- factor(GEO$Pasilla,levels=c("Normal","Down"))
 # design <- model.matrix(~ Batch + Pasilla)
 
+
+
+# higher criticism threshold ----------------------------------------------
+# https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6164648/
+
+qbinom(p = 0.95, size = 201,prob = 0.05)
+qbinom(p = 0.95, size = 394,prob = 0.05)
