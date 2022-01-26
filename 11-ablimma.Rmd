@@ -1,0 +1,356 @@
+---
+title: "linear regression models with confounder"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## dependencies
+
+This document has the following dependencies:
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(haven)
+library(broom)
+library(biobroom)
+library(ggrepel)
+
+
+library(Biobase)     #ExpressionSet
+library(genefilter)  #DataCondensation
+library(limma)       #DifferentialAnalysisOfGenes
+
+library(patchwork)
+library(qvalue)
+
+theme_set(theme_bw())
+```
+
+## read eset data
+
+```{r}
+eset.VIVAX.SEV.FILTER <- readr::read_rds("data/04-eset_vivax_sev_filter.rds")
+```
+
+## data preparation
+
+```{r}
+eset <- eset.VIVAX.SEV.FILTER
+pData(eset) %>% glimpse()
+
+table(eset$sev_WHO) # debe ser: control (fct referencia) vs caso
+eset$sev_WHO <- relevel(eset$sev_WHO, ref = "no_severo")
+table(eset$sev_WHO) # debe ser: control (fct referencia) vs caso
+
+# imputation step
+# here we only remove sample with missing (lim2017)
+# related with manual imputation in 'pheno' object
+eset <- eset[,(rowSums(is.na(pData(eset)["episodio_previo"]))==0)] # new
+
+# test confounding adjustment
+# biobroom::tidy.ExpressionSet(eset, addPheno = T) %>% glimpse()
+biobroom::tidy.ExpressionSet(eset, addPheno = T) %>% 
+  count(episodio_previo,expo_CAT)
+biobroom::tidy.ExpressionSet(eset,addPheno = T) %>% 
+  count(sev_WHO,sev_WHO_num,sev_WHO_cat)
+```
+
+
+## model 1: x1 severe (dicotomic) x2 exposure (politomic, n=4)
+
+```{r}
+# only cat severe criteria ----------
+
+design2 <- model.matrix(~ sev_WHO + 
+                          # sev_WHO_num +
+                          # episodio_previo_num
+                          expo_CAT
+                          # episodio_previo
+                        ,
+                        data = eset)
+colnames(design2)
+
+fit2 <- 
+  design2 %>% 
+  lmFit(object = eset, design = .) %>%
+  eBayes()
+
+biobroom::tidy.MArrayLM(fit2) %>% 
+  count(term)
+
+top_model10 <- topTable(fit2,coef = "sev_WHOsevero",number = Inf) %>% 
+  rownames_to_column() %>% 
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  select(-t,-b) %>% 
+  select(rowname:species,ave_expr,everything()) %>% 
+  rename_with(.cols = log_fc:adj_p_val,.fn = str_replace,"(.+)","m10_\\1")
+top_model10
+# topTable(fit2,coef = "episodio_previocon")
+# topTable(fit2,coef = "sev_WHO_num1")
+
+td_confounding <- 
+  biobroom::tidy.MArrayLM(fit2) %>% 
+  filter(term=="sev_WHOsevero") %>%
+  # filter(term=="sev_WHO_num1") %>%
+  arrange(p.value) %>% 
+  mutate(fdr = p.adjust(p.value, method = "fdr")) %>% 
+  mutate(q.value = qvalue(p.value)$qvalues,
+         q.value_pass=if_else(q.value < .15,"TRUE","FALSE")) 
+
+td_confounding
+
+hc_threshold <- qbinom(p = 0.95, size = nrow(td_confounding), prob = 0.05)
+hc_threshold
+
+td_confounding %>% 
+  ggplot(aes(p.value)) +
+  # ggplot(aes(p.value,fill=q.value_pass)) +
+  geom_histogram(breaks=seq(0, 1, by = .05)) +
+  scale_x_continuous(breaks=seq(0, 1, by = .5)) +
+  geom_vline(aes(xintercept=0.05), lty=3, col="red") +
+  geom_hline(aes(yintercept=hc_threshold), lty=1, col="red")
+
+# count bins like histogram
+# td_confounding %>% 
+#   mutate(pvalue_bins = Hmisc::cut2(pvalue_bins))
+
+td_confounding %>% 
+  mutate(log10pvalue = -log10(p.value)) %>% 
+  ggplot(aes(x = estimate,y = log10pvalue)) +
+  geom_point(aes(colour=fdr)) +
+  scale_color_binned(type = "viridis",show.limits = TRUE)
+
+# using storey qvalue approach
+qsev <- qvalue(p = td_confounding %>% pull(p.value))
+summary(qsev)
+hist(qsev)
+plot(qsev)
+
+tidy(qsev)
+augment(qsev)
+glance(qsev)
+```
+
+## model 2: x1 severe (politomic, n=3) x2 exposure (politomic, n=4)
+
+```{r}
+# one vs non severe criteria ----------
+
+design2 <- model.matrix(~ # sev_WHO + 
+                          sev_WHO_cat +
+                          # episodio_previo_num
+                          expo_CAT
+                          # episodio_previo
+                        ,
+                        data = eset)
+colnames(design2)
+
+fit2 <- 
+  design2 %>% 
+  lmFit(object = eset, design = .) %>%
+  eBayes()
+
+biobroom::tidy.MArrayLM(fit2) %>% 
+  count(term)
+
+# topTable(fit2,coef = "sev_WHOno_severo")
+# topTable(fit2,coef = "episodio_previocon")
+top_model21 <- topTable(fit2,coef = "sev_WHO_cat1",number = Inf) %>% 
+  rownames_to_column() %>% 
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  select(-t,-b) %>% 
+  select(rowname:species,ave_expr,everything()) %>% 
+  rename_with(.cols = log_fc:adj_p_val,.fn = str_replace,"(.+)","m21_\\1")
+top_model21
+
+td_confounding <- 
+  biobroom::tidy.MArrayLM(fit2) %>% 
+  # filter(term=="sev_WHOno_severo") %>%
+  filter(term=="sev_WHO_cat1") %>%
+  arrange(p.value) %>% 
+  mutate(fdr = p.adjust(p.value, method = "fdr")) %>% 
+  mutate(q.value = qvalue(p.value)$qvalues,
+         q.value_pass=if_else(q.value < .15,"TRUE","FALSE")) 
+
+td_confounding
+
+hc_threshold <- qbinom(p = 0.95, size = nrow(td_confounding), prob = 0.05)
+hc_threshold
+
+td_confounding %>% 
+  ggplot(aes(p.value)) +
+  # ggplot(aes(p.value,fill=q.value_pass)) +
+  geom_histogram(breaks=seq(0, 1, by = .05)) +
+  scale_x_continuous(breaks=seq(0, 1, by = .5)) +
+  geom_vline(aes(xintercept=0.05), lty=3, col="red") +
+  geom_hline(aes(yintercept=hc_threshold), lty=1, col="red")
+
+# count bins like histogram
+# td_confounding %>% 
+#   mutate(pvalue_bins = Hmisc::cut2(pvalue_bins))
+
+td_confounding %>% 
+  mutate(log10pvalue = -log10(p.value)) %>% 
+  ggplot(aes(x = estimate,y = log10pvalue)) +
+  geom_point(aes(colour=fdr)) +
+  scale_color_binned(type = "viridis",show.limits = TRUE)
+
+# using storey qvalue approach
+qsev <- qvalue(p = td_confounding %>% pull(p.value))
+summary(qsev)
+hist(qsev)
+plot(qsev)
+
+tidy(qsev)
+augment(qsev)
+glance(qsev)
+```
+
+```{r}
+# one or more vs non severe ------
+
+top_model22 <- topTable(fit2,coef = "sev_WHO_cat1+",number = Inf) %>% 
+  rownames_to_column() %>% 
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  select(-t,-b) %>% 
+  select(rowname:species,ave_expr,everything()) %>% 
+  rename_with(.cols = log_fc:adj_p_val,.fn = str_replace,"(.+)","m22_\\1")
+top_model22
+
+td_confounding <- 
+  biobroom::tidy.MArrayLM(fit2) %>% 
+  # filter(term=="sev_WHOno_severo") %>%
+  filter(term=="sev_WHO_cat1+") %>%
+  arrange(p.value) %>% 
+  mutate(fdr = p.adjust(p.value, method = "fdr")) %>% 
+  mutate(q.value = qvalue(p.value)$qvalues,
+         q.value_pass=if_else(q.value < .15,"TRUE","FALSE")) 
+
+td_confounding
+
+hc_threshold <- qbinom(p = 0.95, size = nrow(td_confounding), prob = 0.05)
+hc_threshold
+
+td_confounding %>% 
+  ggplot(aes(p.value)) +
+  # ggplot(aes(p.value,fill=q.value_pass)) +
+  geom_histogram(breaks=seq(0, 1, by = .05)) +
+  scale_x_continuous(breaks=seq(0, 1, by = .5)) +
+  geom_vline(aes(xintercept=0.05), lty=3, col="red") +
+  geom_hline(aes(yintercept=hc_threshold), lty=1, col="red")
+
+# count bins like histogram
+# td_confounding %>% 
+#   mutate(pvalue_bins = Hmisc::cut2(pvalue_bins))
+
+td_confounding %>% 
+  mutate(log10pvalue = -log10(p.value)) %>% 
+  ggplot(aes(x = estimate,y = log10pvalue)) +
+  geom_point(aes(colour=fdr)) +
+  scale_color_binned(type = "viridis",show.limits = TRUE)
+
+# using storey qvalue approach
+qsev <- qvalue(p = td_confounding %>% pull(p.value))
+summary(qsev)
+hist(qsev)
+plot(qsev)
+
+tidy(qsev)
+augment(qsev)
+glance(qsev)
+```
+
+## summary
+
+```{r}
+microarray_data <- 
+  readr::read_rds("data/04-listgen-microarray_chip-clean.rds") %>% 
+  select(gene_id,id_name,gene_name) %>% 
+  filter(str_starts(gene_id,"PVX"))
+microarray_data
+```
+
+
+```{r}
+model_results <- top_model10 %>% 
+  filter(m10_p_value<0.05) %>% 
+  left_join(top_model21) %>% 
+  left_join(top_model22)
+
+model_results %>% 
+  mutate(rowname=str_replace(rowname,"(.+)\\.(.+)","\\1")) %>% 
+  left_join(microarray_data) %>% 
+  # select(rowname,id_name,gene_name) %>%
+  mutate(rowname_peptide = case_when(
+    is.na(gene_name) ~ paste0(".\n",rowname),
+    !is.na(gene_name) ~ paste0(gene_name,"\n",rowname),
+    TRUE ~ rowname
+  )) %>% 
+  # identity()
+  # mutate(rowname_peptide = case_when(
+  #   str_detect(rowname,"renamed") ~ gene_name,
+  #   is.na(gene_name) ~ 
+  #     str_replace(rowname,"(PVX_)(......)(\\_)(.+)","\\1\\2 \\(\\4\\)"),
+  #   !is.na(gene_name) & str_length(rowname)>10 ~ 
+  #     paste0(gene_name,
+  #            #"-",
+  #            str_replace(rowname,"(PVX_)(......)(\\_)(.+)"," \\(\\4\\)")),
+  #   TRUE ~ gene_name
+  # )) %>% 
+  # identity()
+  select(-rowname) %>%
+  rename(rowname=rowname_peptide) %>%
+  mutate(rowname=case_when(
+    str_detect(rowname,"renamed") ~ str_replace(rowname,
+                                                "(.+) \\(renamed0","\\1"),
+    TRUE ~ rowname
+  )) %>% 
+  # epihelper::print_inf()
+  mutate(rowname = fct_reorder(.f = rowname,
+                               .x = m10_p_value,
+                               .fun = mean)) %>% 
+  select(rowname:ave_expr,ends_with("_p_value"),ends_with("_log_fc")) %>% 
+  pivot_longer(cols = c(ends_with("p_value"),ends_with("_log_fc")),
+               names_to = "xname",
+               values_to = "xvalue") %>% 
+  mutate(xname=str_replace(xname,"(...)(\\_)(.+)","\\1\\.\\3")) %>% 
+  separate(col = xname,into = c("model","measure"),sep = "\\.") %>% 
+  pivot_wider(id_cols = rowname:model,
+              names_from = measure,
+              values_from = xvalue) %>% 
+  # filter(str_detect(rowname,"\\.152")) %>%
+  mutate(log10pvalue = -log10(p_value)) %>% 
+  ggplot(aes(x = model,y = log10pvalue,group = rowname)) +
+  geom_point(aes(color = log_fc),size = 3) +
+  geom_line() +
+  facet_wrap(~rowname) +
+  colorspace::scale_color_continuous_diverging(
+    name=expression(atop(paste(log[2]," fold"),"change")),
+    mid = 0,
+    palette = "Blue-Red 3",
+    # begin = 0.2
+    ) +
+  labs(y= expression(-log[10](p~value))) +
+  theme(
+    axis.text.x = element_text(
+      angle = 90,
+      hjust = 1,
+      vjust = 0.5
+  ))
+
+ggsave("figure/11-fig01-severe_compare-models_confounder.png",
+       height = 6,width = 10,dpi = "retina")
+```
+
+```{r}
+
+```
+

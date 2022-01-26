@@ -81,5 +81,58 @@ topTable(fit2,coef = "SubtypeT_ALL")
 # higher criticism threshold ----------------------------------------------
 # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6164648/
 
+# defines a bound of random variation
+
+# benjamini hochberg
 qbinom(p = 0.95, size = 201,prob = 0.05)
 qbinom(p = 0.95, size = 394,prob = 0.05)
+qbinom(p = 0.95, size = 23332,prob = 0.05)
+
+# bonferroni
+qbinom(p = 1-(0.05/20), size = 23332,prob = 0.05)
+qbinom(p = 1-(0.05/20), size = 394,prob = 0.05)
+
+#kolmogorov smirnoff
+x<-runif(1000,0,1)
+ks.test(x,"punif",0,1)
+enframe(x) %>% 
+  ggplot(aes(x = value)) +
+  geom_histogram()
+
+
+# storey qvalue -----------------------------------------------------------
+
+
+# _good histogram ---------------------------------------------------------
+
+library(qvalue)
+
+data(hedenfalk)
+hedenfalk %>% 
+  as_tibble()
+
+pvalues <- hedenfalk$p
+
+qobj <- qvalue(p = pvalues)
+qobj %>% str()
+
+# quick_sumviz, eval=FALSE-
+summary(qobj)
+hist(qobj)
+plot(qobj)
+
+
+# _bad histogram ----------------------------------------------------------
+
+# pvalue_histBad, dependson=c("load_qvalue", "quick_p"), echo=FALSE, fig.height=3, fig.width=5-
+set.seed(478)
+p2 = c(hedenfalk$p, (runif(450, min=0.7, max=1))^(0.33))
+somethingsWrong = list(p=p2)
+hist(somethingsWrong$p, nclass=20, main="Problematic p-values", xlab="intentionally bad, simulated p-values")
+
+wrong_pvalue <- somethingsWrong$p
+qobj <- qvalue(p = wrong_pvalue)
+summary(qobj)
+hist(qobj)
+plot(qobj)
+
