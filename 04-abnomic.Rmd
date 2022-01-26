@@ -39,20 +39,20 @@ options(width = 90) # expand limits of CONSOLE output
 
 This document has the following dependencies:
 ```{r, warning=FALSE, message=FALSE}
-library("tidyverse")
-library("haven")
-library("broom")
-library("biobroom")
-library("ggrepel")
-library("forcats")
-library("stringr")
+library(tidyverse)
+library(haven)
+library(broom)
+library(biobroom)
+library(ggrepel)
+library(forcats)
+library(stringr)
 
 # library("Rmisc")       #multiploting ggplots
 
-library("Biobase")     #ExpressionSet
-library("genefilter")  #DataCondensation
-library("limma")       #DifferentialAnalysisOfGenes
-library("NMF")         #AnnotatedHeatmaps!!!
+library(Biobase)     #ExpressionSet
+library(genefilter)  #DataCondensation
+library(limma)       #DifferentialAnalysisOfGenes
+library(NMF)         #AnnotatedHeatmaps!!!
 
 #library(PerformanceAnalytics) #GRAPHICAL CORRELATIONS
 #library(beeswarm)
@@ -62,6 +62,7 @@ library("NMF")         #AnnotatedHeatmaps!!!
 #library(knitr)        #better it seems
 
 library(patchwork)
+library(qvalue)
 
 theme_set(theme_bw())
 ```
@@ -238,11 +239,25 @@ pridb <- #readr::read_csv("analysis/more/ADi-NAMRU6_Data/samples.csv") %>% ## BU
 ```
 
 ```{r, message=FALSE}
-pheno <- readr::read_csv("data-raw/samples.csv") %>% #dplyr::count(Sample.Type)
+pheno <- readr::read_csv("data-raw/samples.csv") %>% 
+  #dplyr::count(Sample.Type)
   dplyr::filter(Sample.Type!="Control") %>% #str()
-  select(Sample.ID, 1:9, -Sample.Type,-Subject.ID) %>% #dplyr::count(Filename)
+  select(Sample.ID, 1:9, -Sample.Type,-Subject.ID) %>% 
+  #dplyr::count(Filename)
   dplyr::arrange(Sample.ID) %>%
-  full_join(sevdb_3,by = "Sample.ID") %>% 
+  full_join(
+    sevdb_3 %>% 
+      mutate(
+        sev_WHO_num_precat = as.character(sev_WHO_num),
+        sev_WHO_num_precat = as.numeric(sev_WHO_num_precat),
+        sev_WHO_cat = case_when(
+          sev_WHO_num_precat == 0 ~ "0",
+          sev_WHO_num_precat == 1 ~ "1",
+          sev_WHO_num_precat > 1 ~ "1+"),
+        sev_WHO_cat = as.factor(sev_WHO_cat)
+      ) %>% #count(sev_WHO_cat,sev_WHO_num_precat,sev_WHO_num)
+      select(-sev_WHO_num_precat)
+    ,by = "Sample.ID") %>% 
   full_join(pridb,by = "Sample.ID") %>% 
   dplyr::arrange(Sample.ID) %>% 
   # # manual imputation of one observation # warning! (post-hoc decision)
@@ -418,7 +433,7 @@ table(pData(eset)$Group)
 
 ```{r}
 pData(eset.VIVAX.SEV) <- pData(eset.VIVAX.SEV) %>% 
-  select(Filename:expo_CAT,-Filename,-Slide,-Pad,-Probing.Day)
+  select(Filename:expo_CAT,sev_WHO_cat,-Filename,-Slide,-Pad,-Probing.Day)
 
 eset.VIVAX.SEV
 ```
@@ -1436,29 +1451,6 @@ table(eset$sev_WHO) # debe ser: control (fct referencia) vs caso
 <!-- eset@assayData$exprs %>% head() -->
 <!-- ``` -->
 
-```{r,eval=FALSE}
-# test confounding adjustment
-biobroom::tidy.ExpressionSet(eset, addPheno = T) %>% 
-  count(sev_WHO,episodio_previo)
-
-design2 <- model.matrix(~ sev_WHO + episodio_previo,
-                        data = eset)
-colnames(design2)
-
-fit2 <- 
-  design2 %>% 
-  lmFit(object = eset, design = .) %>%
-  eBayes()
-
-biobroom::tidy.MArrayLM(fit2)
-biobroom::tidy.MArrayLM(fit2) %>% 
-  count(term)
-
-# topTable(fit2,coef = "LeukemiaTypeNoL")
-# topTable(fit2,coef = "SubtypeT_ALL")
-```
-
-
 ###### Matrix + Linear model + eBayes
 
 ```{r}
@@ -1479,9 +1471,12 @@ td <- topTable(eb, coef = 2,               # default: slope
   arrange(P.Value) %>% 
   dplyr::mutate(p.order = seq(n())) %>% 
   mutate(significance=if_else(adj.P.Val<0.05,
-                              "FDR<0.05","not sig.")) %>% #dplyr::count(significance)
-  inner_join(biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #dplyr::count(sev_WHO)
-               group_by(gene,sev_WHO) %>% dplyr::summarise(mean_group=mean(value)) %>% 
+                              "FDR<0.05","not sig.")) %>% 
+  #dplyr::count(significance)
+  inner_join(biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+               #dplyr::count(sev_WHO)
+               group_by(gene,sev_WHO) %>% 
+               dplyr::summarise(mean_group=mean(value)) %>% 
                ungroup() %>% 
                spread(sev_WHO,mean_group) %>% 
                #arrange(desc(no_severo)) %>% 
@@ -2301,8 +2296,26 @@ table(eset$episodio_previo) # debe ser: control (fct referencia) vs caso
 ###### Matrix + Linear model + eBayes
 
 ```{r}
+# imputation step
+# here we only remove sample with missing (lim2017)
+
+#pre
+biobroom::tidy.ExpressionSet(eset, addPheno = T) %>% 
+  count(episodio_previo)
+biobroom::tidy.ExpressionSet(eset, addPheno = T) %>% 
+  count(sample)
+
 # related with manual imputation in 'pheno' object
 eset <- eset[,(rowSums(is.na(pData(eset)["episodio_previo"]))==0)] # new
+
+#pos
+biobroom::tidy.ExpressionSet(eset, addPheno = T) %>% 
+  count(episodio_previo)
+biobroom::tidy.ExpressionSet(eset, addPheno = T) %>% 
+  count(sample)
+```
+
+```{r}
 design <- model.matrix(~ eset$episodio_previo)
 fit <- lmFit(eset, design)
 eb <- eBayes(fit)
