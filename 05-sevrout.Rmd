@@ -626,7 +626,9 @@ sevdb_2ws_clean %>%
 
 ### upset plot
 
-#### all
+#### all observations
+
+esta sección no se agrega a HTML automáticamente. generar en consola.
 
 ```{r,eval=FALSE}
 upset_all <- sevdb_2ws_clean %>% 
