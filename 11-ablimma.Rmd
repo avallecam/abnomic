@@ -60,6 +60,85 @@ biobroom::tidy.ExpressionSet(eset,addPheno = T) %>%
   count(sev_WHO,sev_WHO_num,sev_WHO_cat)
 ```
 
+## model 0: x1 severe (dicotomic)
+
+```{r}
+# only cat severe criteria ----------
+
+design2 <- model.matrix(~ sev_WHO #+ 
+                          # sev_WHO_num +
+                          # episodio_previo_num
+                          # expo_CAT
+                          # episodio_previo
+                        ,
+                        data = eset)
+colnames(design2)
+
+fit2 <- 
+  design2 %>% 
+  lmFit(object = eset, design = .) %>%
+  eBayes()
+
+biobroom::tidy.MArrayLM(fit2) %>% 
+  count(term)
+
+top_model00 <- topTable(fit2,coef = "sev_WHOsevero",
+                        number = Inf) %>% 
+  rownames_to_column() %>% 
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  select(-t,-b) %>% 
+  select(rowname:species,ave_expr,everything()) %>% 
+  rename_with(.cols = log_fc:adj_p_val,.fn = str_replace,"(.+)","m00_\\1")
+top_model00
+# topTable(fit2,coef = "episodio_previocon")
+# topTable(fit2,coef = "sev_WHO_num1")
+
+td_confounding <- 
+  biobroom::tidy.MArrayLM(fit2) %>% 
+  filter(term=="sev_WHOsevero") %>%
+  # filter(term=="sev_WHO_num1") %>%
+  arrange(p.value) %>% 
+  mutate(fdr = p.adjust(p.value, method = "fdr")) %>% 
+  mutate(q.value = qvalue(p.value)$qvalues,
+         q.value_pass=if_else(q.value < .15,"TRUE","FALSE")) 
+
+td_confounding
+
+hc_threshold <- qbinom(p = 0.95, 
+                       size = nrow(td_confounding), 
+                       prob = 0.05)
+hc_threshold
+
+td_confounding %>% 
+  ggplot(aes(p.value)) +
+  # ggplot(aes(p.value,fill=q.value_pass)) +
+  geom_histogram(breaks=seq(0, 1, by = .05)) +
+  scale_x_continuous(breaks=seq(0, 1, by = .5)) +
+  geom_vline(aes(xintercept=0.05), lty=3, col="red") +
+  geom_hline(aes(yintercept=hc_threshold), lty=1, col="red")
+
+# count bins like histogram
+# td_confounding %>% 
+#   mutate(pvalue_bins = Hmisc::cut2(pvalue_bins))
+
+td_confounding %>% 
+  mutate(log10pvalue = -log10(p.value)) %>% 
+  ggplot(aes(x = estimate,y = log10pvalue)) +
+  geom_point(aes(colour=fdr)) +
+  scale_color_binned(type = "viridis",show.limits = TRUE)
+
+# using storey qvalue approach
+qsev <- qvalue(p = td_confounding %>% pull(p.value))
+summary(qsev)
+hist(qsev)
+plot(qsev)
+
+tidy(qsev)
+augment(qsev)
+glance(qsev)
+```
+
 
 ## model 1: x1 severe (dicotomic) x2 exposure (politomic, n=4)
 
@@ -161,13 +240,15 @@ biobroom::tidy.MArrayLM(fit2) %>%
 
 # topTable(fit2,coef = "sev_WHOno_severo")
 # topTable(fit2,coef = "episodio_previocon")
-top_model21 <- topTable(fit2,coef = "sev_WHO_cat1",number = Inf) %>% 
+top_model21 <- topTable(fit2,coef = "sev_WHO_cat1",
+                        number = Inf) %>% 
   rownames_to_column() %>% 
   as_tibble() %>% 
   janitor::clean_names() %>% 
   select(-t,-b) %>% 
   select(rowname:species,ave_expr,everything()) %>% 
-  rename_with(.cols = log_fc:adj_p_val,.fn = str_replace,"(.+)","m21_\\1")
+  rename_with(.cols = log_fc:adj_p_val,
+              .fn = str_replace,"(.+)","m21_\\1")
 top_model21
 
 td_confounding <- 
@@ -181,7 +262,9 @@ td_confounding <-
 
 td_confounding
 
-hc_threshold <- qbinom(p = 0.95, size = nrow(td_confounding), prob = 0.05)
+hc_threshold <- qbinom(p = 0.95, 
+                       size = nrow(td_confounding), 
+                       prob = 0.05)
 hc_threshold
 
 td_confounding %>% 
@@ -216,13 +299,15 @@ glance(qsev)
 ```{r}
 # one or more vs non severe ------
 
-top_model22 <- topTable(fit2,coef = "sev_WHO_cat1+",number = Inf) %>% 
+top_model22 <- topTable(fit2,coef = "sev_WHO_cat1+",
+                        number = Inf) %>% 
   rownames_to_column() %>% 
   as_tibble() %>% 
   janitor::clean_names() %>% 
   select(-t,-b) %>% 
   select(rowname:species,ave_expr,everything()) %>% 
-  rename_with(.cols = log_fc:adj_p_val,.fn = str_replace,"(.+)","m22_\\1")
+  rename_with(.cols = log_fc:adj_p_val,
+              .fn = str_replace,"(.+)","m22_\\1")
 top_model22
 
 td_confounding <- 
@@ -236,7 +321,9 @@ td_confounding <-
 
 td_confounding
 
-hc_threshold <- qbinom(p = 0.95, size = nrow(td_confounding), prob = 0.05)
+hc_threshold <- qbinom(p = 0.95, 
+                       size = nrow(td_confounding), 
+                       prob = 0.05)
 hc_threshold
 
 td_confounding %>% 
@@ -280,12 +367,25 @@ microarray_data
 
 
 ```{r}
-model_results <- top_model10 %>% 
-  filter(m10_p_value<0.05) %>% 
-  left_join(top_model21) %>% 
-  left_join(top_model22)
+model_results <- 
+  # 
+  # alt 1
+  # top_model10 %>%
+  # filter(m10_p_value<0.05) %>%
+  # left_join(top_model21) %>%
+  # 
+  # alt 2
+  top_model21 %>%
+  filter(m21_p_value<0.05) %>%
+  top_n(n = 21,wt = -m21_p_value) %>%
+  # 
+  # continuar
+  left_join(top_model10) %>% 
+  left_join(top_model22) %>% 
+  left_join(top_model00)
 
-model_results %>% 
+model_results_name <- 
+  model_results %>% 
   mutate(rowname=str_replace(rowname,"(.+)\\.(.+)","\\1")) %>% 
   left_join(microarray_data) %>% 
   # select(rowname,id_name,gene_name) %>%
@@ -294,43 +394,47 @@ model_results %>%
     !is.na(gene_name) ~ paste0(gene_name,"\n",rowname),
     TRUE ~ rowname
   )) %>% 
-  # identity()
-  # mutate(rowname_peptide = case_when(
-  #   str_detect(rowname,"renamed") ~ gene_name,
-  #   is.na(gene_name) ~ 
-  #     str_replace(rowname,"(PVX_)(......)(\\_)(.+)","\\1\\2 \\(\\4\\)"),
-  #   !is.na(gene_name) & str_length(rowname)>10 ~ 
-  #     paste0(gene_name,
-  #            #"-",
-  #            str_replace(rowname,"(PVX_)(......)(\\_)(.+)"," \\(\\4\\)")),
-  #   TRUE ~ gene_name
-  # )) %>% 
-  # identity()
   select(-rowname) %>%
   rename(rowname=rowname_peptide) %>%
   mutate(rowname=case_when(
-    str_detect(rowname,"renamed") ~ str_replace(rowname,
-                                                "(.+) \\(renamed0","\\1"),
+    str_detect(rowname,"renamed") ~ 
+      str_replace(rowname,"(.+) \\(renamed0","\\1"),
     TRUE ~ rowname
-  )) %>% 
+  ))
+
+model_results_plot <- 
+  model_results_name %>% 
   # epihelper::print_inf()
   mutate(rowname = fct_reorder(.f = rowname,
-                               .x = m10_p_value,
+                               .x = m21_p_value,
+                               # .x = m10_p_value,
                                .fun = mean)) %>% 
-  select(rowname:ave_expr,ends_with("_p_value"),ends_with("_log_fc")) %>% 
-  pivot_longer(cols = c(ends_with("p_value"),ends_with("_log_fc")),
+  select(rowname:ave_expr,ends_with("_p_value"),
+         ends_with("_log_fc")) %>% 
+  pivot_longer(cols = c(ends_with("p_value"),
+                        ends_with("_log_fc")),
                names_to = "xname",
                values_to = "xvalue") %>% 
-  mutate(xname=str_replace(xname,"(...)(\\_)(.+)","\\1\\.\\3")) %>% 
-  separate(col = xname,into = c("model","measure"),sep = "\\.") %>% 
+  mutate(xname=str_replace(xname,
+                           "(...)(\\_)(.+)",
+                           "\\1\\.\\3")) %>% 
+  separate(col = xname,
+           into = c("model","measure"),sep = "\\.") %>% 
   pivot_wider(id_cols = rowname:model,
               names_from = measure,
               values_from = xvalue) %>% 
   # filter(str_detect(rowname,"\\.152")) %>%
   mutate(log10pvalue = -log10(p_value)) %>% 
+  select(rowname:id_name,ave_expr:log10pvalue) %>% 
+  # mutate(model = fct_relevel(model,"m00","m10","m21","m22")) %>% 
+  identity()
+
+model_results_plot %>% 
+  distinct(rowname,model,.keep_all = T) %>% 
   ggplot(aes(x = model,y = log10pvalue,group = rowname)) +
   geom_point(aes(color = log_fc),size = 3) +
   geom_line() +
+  geom_hline(aes(yintercept = -log10(0.05)), lty=3, col="black") +
   facet_wrap(~rowname) +
   colorspace::scale_color_continuous_diverging(
     name=expression(atop(paste(log[2]," fold"),"change")),
@@ -338,8 +442,13 @@ model_results %>%
     palette = "Blue-Red 3",
     # begin = 0.2
     ) +
-  labs(y= expression(-log[10](p~value))) +
+  labs(
+    x = "model coefficient for\nsevere vivax malaria",
+    y = expression(-log[10](p~value)),
+    caption = expression(paste("m00: Ab ~ b[0] + severe[yes] \nm10: Ab ~ b[0] + severe[yes] + exposure[yes] \nm21: Ab ~ b[0] + severe_1only[yes] + exposure[yes] \nm22: Ab ~ b[0] + severe_1plus[yes] + exposure[yes]"))
+    ) +
   theme(
+    plot.caption = element_text(vjust = 1,hjust=1,size = 7),
     axis.text.x = element_text(
       angle = 90,
       hjust = 1,
@@ -347,7 +456,7 @@ model_results %>%
   ))
 
 ggsave("figure/11-fig01-severe_compare-models_confounder.png",
-       height = 6,width = 10,dpi = "retina")
+       height = 6.5,width = 8,dpi = "retina")
 ```
 
 ```{r}
