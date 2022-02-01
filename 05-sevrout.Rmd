@@ -301,66 +301,101 @@ dagify(y ~ x,
 
 ```{r}
 
+# episode [pos="0.363,0.464"]
+# severe [pos="0.575,0.460"]
+# age [pos="0.461,0.157"]
+# sex [pos="0.462,0.286"]
+# time_endemic [pos="0.311,0.250"]
+# chronic [pos="0.618,0.244"]
+
+dag_loc <- tribble(
+  ~name,~x,~y,
+  "episode",0.363,0.464,
+  "severe",0.575,0.460,
+  "age",0.461,0.157+0.45,
+  "sex",0.462,0.286+0.25,
+  "time_endemic",0.311,0.250+0.3,
+  "chronic",0.618,0.244+0.3
+  ) %>% 
+  mutate(to=name,
+         xend=x,
+         yend=y)
+
 dag <- dagitty("dag {
-    cronica -> severe
-    edad -> cronica
-    edad -> episode
-    edad -> living
-    edad -> severe
+    chronic -> severe
+    age -> chronic
+    age -> episode
+    age -> time_endemic
+    age -> severe
     episode -> severe
-    living -> episode
-    sexo -> episode
-    sexo -> severe
+    time_endemic -> episode
+    sex -> episode
+    sex -> severe
 }")
 
 dag
 
 tidy_dag <- tidy_dagitty(dag)
 
-tidy_dag
+tidy_dag$data <- tidy_dag$data %>% 
+  select(-x,-y,-xend,-yend) %>% 
+  left_join(dag_loc %>% select(name:y)) %>% 
+  left_join(dag_loc %>% select(to:yend)) %>% 
+  select(name,x,y,direction,to,xend,yend,circular) %>% 
+  mutate(label=name)
 
-ggdag(tidy_dag,
+# tidy_dag
+```
+
+```{r}
+dag_gen_one <- 
+  ggdag(tidy_dag,
       use_labels = "name",
       text = FALSE) +
   theme_dag()
+# dag_gen_one
+ggsave("figure/05-fig08-severe_compare-dag_only-epi.png",
+       plot = dag_gen_one,
+       height = 6,width = 6,dpi = "retina")
+```
 
-ggdag_adjustment_set(tidy_dag,
-                     exposure = "episode",
-                     outcome = "severe",
-                     use_labels = "name",
-                     text = FALSE,
-                     node_size = 14) + 
+```{r}
+dag_gen_two <- 
+  ggdag_adjustment_set(tidy_dag,
+                       exposure = "episode",
+                       outcome = "severe",
+                       use_labels = "name",
+                       text = FALSE,
+                       node_size = 14) + 
   theme_dag() +
   theme(legend.position = "bottom")
+# dag_gen_two
+ggsave("figure/05-fig09-severe_compare-dag_adjust-epi.png",
+       plot = dag_gen_two,
+       height = 6,width = 6,dpi = "retina")
+```
 
+```{r,eval=FALSE}
 ggdag_paths(tidy_dag,
             use_labels = "name",
             from = "episode",
             to = "severe",
             text = FALSE,
-            adjust_for = c("edad","sexo")) +
+            adjust_for = c("age","sex")) +
   theme_dag()
 ```
 
-```{r,eval=FALSE,echo=FALSE}
-testImplications <- function( covariance.matrix, sample.size ){
-	library(ggm)
-	tst <- function(i){ pcor.test( pcor(i,covariance.matrix), length(i)-2, sample.size )$pvalue }
-tos <- function(i){ paste(i,collapse=" ") }
-implications <- list(c("cronica","episode","edad"),
-		c("cronica","living","edad"),
-		c("cronica","sexo"),
-		c("edad","sexo"),
-		c("living","severe","edad","episode","sexo"),
-		c("living","sexo"))
-	data.frame( implication=unlist(lapply(implications,tos)),
-		pvalue=unlist( lapply( implications, tst ) ) )
 
-}
-
-# testImplications(covariance.matrix = ___,sample.size = 300)
+```{r}
+dag_gen_both <- dag_gen_one +
+  dag_gen_two +
+  # plot_layout(ncol = 2,nrow = 2) +
+  plot_annotation(tag_levels = "A")
+dag_gen_both
+ggsave("figure/05-fig07-severe_compare-dag_both-epi.png",
+       plot = dag_gen_both,
+       height = 5,width = 10,dpi = "retina")
 ```
-
 
 ```{r}
 
@@ -457,41 +492,42 @@ tab02abn %>% export2xls("table/05-tab02-abn_observations.xls")
 ```{r}
 # dag {
 # bb="-1.519,-1.953,1.998,1.641"
-# age [pos="-0.470,-0.943"]
+# age [pos="-0.454,-0.966"]
 # antibody [outcome,pos="0.656,-0.124"]
-# chronic [pos="-0.654,-0.525"]
-# episode [adjusted,pos="0.199,-0.954"]
+# chronic [pos="-0.646,-0.426"]
+# episode [adjusted,pos="0.199,-0.600"]
 # severe [exposure,pos="-0.197,-0.124"]
-# sex [pos="-0.315,-1.372"]
-# t_endemica [pos="0.007,-1.547"]
+# sex [pos="-0.111,-1.239"]
+# time_endemic [pos="0.301,-1.198"]
 # age -> chronic
 # age -> episode
 # age -> severe
-# age -> t_endemica
+# age -> time_endemic
 # chronic -> severe
 # episode -> antibody
 # episode -> severe
 # severe -> antibody
 # sex -> episode
 # sex -> severe
-# t_endemica -> episode
+# time_endemic -> episode
 # }
+
 
 dag_loc <- tribble(
   ~name,~x,~y,
-  "age",-0.470,0.943,
+  "age",-0.454,-0.966+1.3,
   "antibody",0.656,-0.124,
-  "chronic",-0.654,0.525,
-  "episode",0.199,0.525,
+  "chronic",-0.646,-0.426+0.45,
+  "episode",0.199,-0.600+0.8,
   "severe",-0.197,-0.124,
-  "sex",-0.315,1.372,
-  "t_endemica",0.007,1.547
-) %>% 
+  "sex",-0.111,-1.239+1.8,
+  "time_endemic",0.301+0.2,-1.198+1.67
+  ) %>% 
   mutate(to=name,
          xend=x,
          yend=y)
 
-dag_loc
+# dag_loc
 
 dag <- dagitty("dag {
     severe [exposure]
@@ -500,14 +536,14 @@ dag <- dagitty("dag {
     age -> chronic
     age -> episode
     age -> severe
-    age -> t_endemica
+    age -> time_endemic
     chronic -> severe
     episode -> antibody
     episode -> severe
     severe -> antibody
     sex -> episode
     sex -> severe
-    t_endemica -> episode
+    time_endemic -> episode
 }")
 
 dag
@@ -530,6 +566,7 @@ dag_only <-
       use_labels = "name",
       text = FALSE) +
   theme_dag()
+# dag_only
 ggsave("figure/05-fig04-severe_compare-dag.png",
        plot = dag_only,
        height = 6,width = 6,dpi = "retina")
@@ -543,6 +580,7 @@ dag_adjust <-
                        node_size = 14) + 
   theme_dag() +
   theme(legend.position = "bottom")
+# dag_adjust
 ggsave("figure/05-fig05-severe_compare-dag_adjust.png",
        plot = dag_adjust,
        height = 6,width = 6,dpi = "retina")
@@ -553,6 +591,7 @@ dag_both <- dag_only +
   dag_adjust +
   # plot_layout(ncol = 2,nrow = 2) +
   plot_annotation(tag_levels = "A")
+dag_both
 ggsave("figure/05-fig06-severe_compare-dag_both.png",
        plot = dag_both,
        height = 5,width = 10,dpi = "retina")
