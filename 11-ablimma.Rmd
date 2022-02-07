@@ -42,23 +42,31 @@ eset.VIVAX.SEV.FILTER <- readr::read_rds("data/04-eset_vivax_sev_filter.rds")
 ```{r}
 eset <- eset.VIVAX.SEV.FILTER
 pData(eset) %>% glimpse()
+```
 
+```{r}
+# set reference using relevel
 table(eset$sev_WHO) # debe ser: control (fct referencia) vs caso
 eset$sev_WHO <- relevel(eset$sev_WHO, ref = "no_severo")
 table(eset$sev_WHO) # debe ser: control (fct referencia) vs caso
+```
 
+```{r}
 # imputation step
 # here we only remove sample with missing (lim2017)
 # related with manual imputation in 'pheno' object
 eset <- eset[,(rowSums(is.na(pData(eset)["episodio_previo"]))==0)] # new
+```
 
-# test confounding adjustment
+```{r}
+# explore levels
 # biobroom::tidy.ExpressionSet(eset, addPheno = T) %>% glimpse()
 biobroom::tidy.ExpressionSet(eset, addPheno = T) %>% 
   count(episodio_previo,expo_CAT)
 biobroom::tidy.ExpressionSet(eset,addPheno = T) %>% 
   count(sev_WHO,sev_WHO_num,sev_WHO_cat)
 ```
+
 
 ## model 0: x1 severe (dicotomic)
 

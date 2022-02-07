@@ -1,0 +1,1410 @@
+---
+title: "12-absevere"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## dependencies
+
+This document has the following dependencies:
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(haven)
+library(broom)
+library(biobroom)
+library(ggrepel)
+
+
+library(Biobase)     #ExpressionSet
+library(genefilter)  #DataCondensation
+library(limma)       #DifferentialAnalysisOfGenes
+
+library(patchwork)
+library(qvalue)
+
+theme_set(theme_bw())
+```
+
+## read eset data
+
+```{r}
+eset.VIVAX.SEV.FILTER <- readr::read_rds("data/04-eset_vivax_sev_filter.rds")
+```
+
+
+### 5. Group comparison
+
+#### 5.1 severe
+
+```{r}
+eset <- eset.VIVAX.SEV.FILTER
+pData(eset) %>% glimpse()
+```
+
+##### Differential expression
+
+###### Define the control group
+
+```{r}
+#eset$sev_WHO <- factor(eset$sev_WHO)
+
+# table(eset$sev_WHO) # debe ser: control (fct referencia) vs caso
+# eset$sev_WHO <- relevel(eset$sev_WHO, ref = "severo")
+# table(eset$sev_WHO) # debe ser: control (fct referencia) vs caso
+
+table(eset$sev_WHO) # debe ser: control (fct referencia) vs caso
+eset$sev_WHO <- relevel(eset$sev_WHO, ref = "no_severo")
+table(eset$sev_WHO) # debe ser: control (fct referencia) vs caso
+
+# imputation step
+# here we only remove sample with missing (lim2017)
+# related with manual imputation in 'pheno' object
+eset <- eset[,(rowSums(is.na(pData(eset)["episodio_previo"]))==0)] # new
+
+# test confounding adjustment
+# biobroom::tidy.ExpressionSet(eset, addPheno = T) %>% glimpse()
+biobroom::tidy.ExpressionSet(eset, addPheno = T) %>% 
+  count(episodio_previo,expo_CAT)
+biobroom::tidy.ExpressionSet(eset,addPheno = T) %>% 
+  count(sev_WHO,sev_WHO_num,sev_WHO_cat)
+```
+
+<!-- ###### Intervention [IMPORTANT] -->
+
+<!-- An critical evaluation the p value histogram  -->
+<!-- generated for the severe comparison -->
+<!-- using moderated t-test  -->
+<!-- showed that its distribution was irregular -->
+<!-- (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6164648/) -->
+<!-- one suggested alternative was to use a wilcoxon rank sum test -->
+<!-- instead od a t test -->
+<!-- following lindeloev (https://lindeloev.github.io/tests-as-linear/#51_independent_t-test_and_mann-whitney_u) -->
+<!-- we transformed the raw values of the matrix to rank values -->
+<!-- to apply a linear model to data and remake a non-parametric test -->
+
+<!-- chunk in eval = FALSE by default -->
+
+<!-- ```{r,eval=FALSE} -->
+<!-- rank_to_eset <- function(eset) { -->
+
+<!--   esApply(X = eset,MARGIN = 1,FUN = rank) %>% t() -->
+
+<!-- } -->
+
+<!-- eset <- ExpressionSet(assayData = rank_to_eset(eset = eset),  -->
+<!--                       phenoData = eset@phenoData, -->
+<!--                       featureData = eset@featureData) -->
+
+<!-- eset@assayData$exprs %>% head() -->
+<!-- ``` -->
+
+###### Matrix + Linear model + eBayes
+
+```{r}
+design <- model.matrix(~ sev_WHO + 
+                          # sev_WHO_num +
+                          # episodio_previo_num
+                          expo_CAT
+                          # episodio_previo
+                        ,
+                        data = eset)
+fit <- lmFit(eset, design)
+eb <- eBayes(fit)
+topTable(eb, coef = "sev_WHOsevero") %>% rownames_to_column()
+```
+
+```{r}
+# tidy toptable
+td <- topTable(eb, 
+               coef = "sev_WHOsevero",
+               # coef = 2,               # default: slope
+               sort.by =NULL, resort.by =NULL, 
+               #genelist = NULL,                 # no fit$gene
+               number = Inf,                     # show all the hipothesis
+               confint=0.95) %>% 
+  rownames_to_column() %>% 
+  as_tibble() %>% 
+  dplyr::rename(ID=rowname) %>% 
+  arrange(P.Value) %>% 
+  dplyr::mutate(p.order = seq(n())) %>% 
+  mutate(significance=if_else(adj.P.Val<0.05,
+                              "FDR<0.05","not sig.")) %>% 
+  #dplyr::count(significance)
+  inner_join(biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+               #dplyr::count(sev_WHO)
+               group_by(gene,sev_WHO) %>% 
+               dplyr::summarise(mean_group=mean(value)) %>% 
+               ungroup() %>% 
+               spread(sev_WHO,mean_group) %>% 
+               #arrange(desc(no_severo)) %>% 
+               dplyr::rename(ID=gene),
+             by="ID")
+```
+
+```{r}
+# td_confounding <- 
+#   biobroom::tidy.MArrayLM(eb) %>% 
+#   filter(term=="sev_WHOsevero") %>%
+#   # filter(term=="sev_WHO_num1") %>%
+#   arrange(p.value) %>% 
+#   mutate(fdr = p.adjust(p.value, method = "fdr")) %>% 
+#   mutate(q.value = qvalue(p.value)$qvalues,
+#          q.value_pass=if_else(q.value < .15,"TRUE","FALSE")) 
+# 
+# td_confounding
+
+hc_threshold <- qbinom(p = 0.95, 
+                       size = nrow(td), 
+                       prob = 0.05)
+hc_threshold
+```
+
+
+
+
+###### Intervention [IMPORTANT]
+
+An critical evaluation the p value histogram 
+generated for the severe comparison
+using moderated t-test 
+showed that its distribution was irregular
+(https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6164648/)
+one suggested alternative was to use a wilcoxon rank sum test
+instead od a t test
+following lindeloev (https://lindeloev.github.io/tests-as-linear/#51_independent_t-test_and_mann-whitney_u)
+we transformed the raw values of the matrix to rank values
+to apply a linear model to data and remake a non-parametric test
+
+chunk in eval = FALSE by default
+
+```{r}
+set_non_parametric <- FALSE #if change here, then next chunk too
+```
+
+```{r,eval=FALSE}
+rank_to_eset <- function(eset) {
+  
+  esApply(X = eset,MARGIN = 1,FUN = rank) %>% t()
+  
+}
+
+np_eset <- ExpressionSet(assayData = rank_to_eset(eset = eset), 
+                         phenoData = eset@phenoData,
+                         featureData = eset@featureData)
+
+np_eset@assayData$exprs %>% head()
+
+np_design <- model.matrix(~ np_eset$sev_WHO)
+np_fit <- lmFit(np_eset, np_design)
+np_eb <- eBayes(np_fit)
+topTable(np_eb) %>% rownames_to_column()
+
+td_nonparam <- topTable(np_eb, coef = 2,               # default: slope
+         sort.by =NULL, resort.by =NULL, 
+         #genelist = NULL,                 # no fit$gene
+         number = Inf,                     # show all the hipothesis
+         confint=0.95) %>% rownames_to_column() %>% as.tbl() %>% 
+  dplyr::rename(ID=rowname) %>% 
+  arrange(P.Value) %>% 
+  rename_with(.fn = ~str_replace(string = .,
+                                 pattern = "(.+)",
+                                 replacement = "np_\\1")) %>% 
+  select(np_ID,np_P.Value,np_adj.P.Val)
+
+# unir y reemplazar valores parametricos por no parametricos 
+td <- td %>% 
+  left_join(td_nonparam,by = c("ID" = "np_ID")) %>% 
+  dplyr::rename(pp_P.Value=P.Value,
+                P.Value=np_P.Value) %>% 
+  dplyr::rename(pp_adj.P.Val=adj.P.Val,
+                adj.P.Val=np_adj.P.Val)
+```
+
+```{r}
+td %>% 
+  arrange(P.Value) %>% 
+  filter(P.Value<0.05)
+
+td %>% 
+  arrange(P.Value) %>% 
+  filter(P.Value<0.05) %>% 
+  serosurvey::unite_dotwhiskers(variable_dot = logFC,
+                                variable_low = CI.L,
+                                variable_upp = CI.R,
+                                digits_dot = 2,
+                                digits_low = 1,
+                                digits_upp = 1,
+                                decimal_to_percent = F) %>% 
+  select(ID,Gene.ID,Description,
+         AveExpr,no_severo,severo,
+         logFCunite1_,P.Value,adj.P.Val,
+         everything()) %>% 
+  # add plasmo db annotation to 
+  # update description names and
+  # add protein characteristics in one table
+  left_join(all) %>% 
+  # select(Gene.ID,#Description,
+  #        Product.Description,Gene.Name) %>%
+  # mutate(Gene.Name=replace_na(Gene.Name,"")) %>% 
+  mutate(product_description = case_when(
+    is.na(Gene.Name) ~ Product.Description,
+    !is.na(Gene.Name) ~ str_c(Product.Description," (",Gene.Name,")")
+  )) %>% 
+  # replace Description (original from AD chips) with 
+  # PlasmoDB annotations
+  select(-Description) %>% 
+  select(ID,Gene.ID,product_description,everything()) %>% 
+  # unnecesary columns
+  select(-Species,-logFC,-CI.L,-CI.R,-t,
+         -B,-significance,-logFCunite2_,
+         -Product.Description,-Gene.Name) %>% 
+  # view()
+  writexl::write_xlsx(
+    paste0("table/04-tab03-severe_compare-pvalue_results-np_",
+                             set_non_parametric,".xlsx"))
+  # writexl::write_xlsx(
+  #   "table/04-tab03-severe_compare-pvalue_results.xlsx")
+  # write("table/04-table03-severe_compare-protein_features.xlsx")
+```
+
+
+##### Plots
+
+###### p-value histogram
+
+```{r, fig.height=3, fig.width=6}
+ax <- td %>% ggplot(aes(P.Value)) +
+  geom_histogram(breaks=seq(0, 1, by = .05)) +
+  scale_x_continuous(breaks=seq(0, 1, by = .5)) +
+  geom_vline(aes(xintercept=0.05), lty=3, col="red") +
+  geom_hline(aes(yintercept=hc_threshold), lty=1, col="red") +
+  labs(title="P-value histogram",
+       subtitle="Without multiple testing correction") + 
+  xlab("p.value") + theme_bw()
+bx <-  td %>% ggplot(aes(adj.P.Val)) +
+  geom_histogram(breaks=seq(0, 1, by = .05)) +
+  scale_x_continuous(breaks=seq(0, 1, by = .5)) +
+  geom_vline(aes(xintercept=0.05), lty=3, col="red") +
+  coord_cartesian(xlim = c(0,1)) +
+  labs(title="P-value histogram",
+       subtitle="After multiple testing correction") + 
+  xlab("adjust p.value") + theme_bw()
+# Rmisc::multiplot(ax,bx,cols = 2)
+ax+bx
+```
+
+###### volcano plot
+
+```{r, fig.height=6, fig.width=3.4}
+td %>% 
+  mutate(unadj_significance=if_else(P.Value<0.05,
+                              "P.Value<0.05","not sig.")) %>% #dplyr::count(significance)
+  ggplot(aes(logFC,-log10(P.Value))) +
+  geom_point(aes(colour=unadj_significance)) + 
+  scale_color_manual(name="unadjust\nsignificance",
+                     values=c("black","red")) + 
+  theme_bw() +
+  #geom_point(aes(colour=no_severo)) + viridis::scale_color_viridis() +
+  #ggrepel::geom_text_repel(data = td %>% 
+  #                           top_n(-10,P.Value) %>% 
+  #                           inner_join(all, by="Gene.ID") %>% 
+  #                           inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
+  #                           #filter(adj.P.Val<0.05 & logFC>1.5 & no_severo>1)# %>% 
+  #                           #arrange(desc(no_severo)) %>% 
+  #                           #top_n(10,no_severo)
+  #                         ,
+  #                         aes(label=Gene.Name), #force = 5,
+  #                         #direction = "both",
+  #                         box.padding = unit(5.5, "lines"),
+  #                         point.padding = unit(.5, "lines")
+  #                         ) + 
+  theme(legend.position=c(.2, .91),#"bottom"
+        legend.margin = margin(2,2,2,2)) +
+  labs(title="Severe vs Non-severe",
+    #title="Non-severe vs Severe",
+       #title="No-severo vs Severo",
+       subtitle="Effect size against statistical significance"#,
+       #subtitle="Tamaño del efecto y significancia estadística",
+       #caption="annotated features filtered by\nP.Value<0.01"
+       )+
+  geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
+  geom_vline(aes(xintercept=1), lty=3) +
+  geom_vline(aes(xintercept=-1), lty=3) +
+  coord_cartesian(xlim = c(-2, 2), ylim = c(0,15))
+```
+
+###### figure output 2
+
+```{r, fig.height=6, fig.width=3}
+
+adj_pval_limit <- td %>% 
+  dplyr::count(adj.P.Val) %>% 
+  arrange(adj.P.Val) %>% 
+  top_n(n = -2,wt = adj.P.Val) %>% 
+  pull(adj.P.Val) %>% 
+  pluck(2) %>% 
+  round(digits = 2)
+
+severe_plot02_b <- td %>% 
+  ggplot(aes(logFC,-log10(P.Value))) +
+  geom_point(aes(colour=adj.P.Val)) + 
+  scale_color_binned(type = "viridis",show.limits = TRUE) +
+  ggrepel::geom_text_repel(
+    data = td %>% 
+      filter((adj.P.Val<=adj_pval_limit)) %>% 
+      inner_join(all, by="Gene.ID") %>% 
+      inner_join(lg %>% 
+                   dplyr::rename(seg.num=n), 
+                 by="Gene.ID")  %>% 
+      mutate(newname=case_when(
+        is.na(Gene.Name) ~ Gene.ID,
+        TRUE ~ Gene.Name
+      )),
+    aes(label=newname), 
+    force        = 0.5,
+    nudge_x      = -1,
+    direction    = "y",
+    hjust        = 1,
+    segment.size = 0.2,
+    size = 3#,
+    # force = 15,
+    # direction = "x",
+    # box.padding = unit(4, "lines"),
+    # point.padding = unit(.5, "lines")
+  ) + 
+  theme_bw() +
+  labs(x = expression(log[2]~fold~change),
+       y = expression(-log[10](p~value)), 
+       color = "BH\nadjusted\np value") +
+  geom_hline(aes(yintercept=-log10(0.05)), lty=3)+
+  geom_vline(aes(xintercept=-1), lty=3) +
+  geom_vline(aes(xintercept=1), lty=3)
+
+# severe_plot02_b
+
+severe_antigen_a <- td %>% 
+  ggplot(aes(P.Value)) +
+  geom_histogram(breaks=seq(0, 1, by = .05)) +
+  scale_x_continuous(breaks=seq(0, 1, by = .2)) +
+  geom_vline(aes(xintercept=0.05), lty=3, col="red") +
+  geom_hline(aes(yintercept=hc_threshold), lty=1, col="red") +
+  labs(x = "p value", y = "Frequency") 
+
+severe_antigen_b <- severe_plot02_b
+
+severe_antigen_a +
+  severe_antigen_b +
+  patchwork::plot_annotation(#title = "Non-severe vs Severe",
+                             tag_levels = "A")
+ggsave(
+  paste0("figure/04-fig07-severe_compare-pvalue_histogram-np_",
+                             set_non_parametric,".png"),
+  # "figure/04-fig07-severe_compare-pvalue_histogram.png",
+       height = 3,width = 6,dpi = "retina")
+```
+
+
+##### diff reactive
+
+###### list
+
+```{r}
+sev_d <- td %>% 
+  filter(#adj.P.Val<0.05 &
+           P.Value<0.05 #& 
+           #logFC>1 & 
+           #no_severo>1
+           ) %>%
+  #top_n(10,t) %>% 
+  # top_n(-10,P.Value) %>% 
+  arrange(P.Value) %>% 
+  #arrange(desc(no_severo)) %>% 
+  select(ID,Gene.ID,Description,logFC,severo,no_severo,t,P.Value,adj.P.Val,p.order) %>% #slice(1:10)
+  inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
+
+sev_d
+```
+
+
+##### top reactive
+
+###### list
+
+```{r}
+sev_t <- td %>% 
+  arrange(desc(AveExpr)) %>% 
+  select(ID,Gene.ID,Description,AveExpr,p.order) %>% 
+  slice(1:16) %>% 
+  inner_join(all, by="Gene.ID") %>% inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
+
+sev_t
+```
+
+```{r}
+sev_t %>% 
+  select(-p.order,-Species,-seg.num) %>% 
+  mutate(product_description = case_when(
+    is.na(Gene.Name) ~ Product.Description,
+    !is.na(Gene.Name) ~ str_c(Product.Description," (",Gene.Name,")")
+  )) %>% 
+  # replace Description (original from AD chips) with PlasmoDB annotations
+  select(-Description,-Product.Description,-Gene.Name) %>% 
+  select(ID,Gene.ID,product_description,everything()) %>% 
+  writexl::write_xlsx("table/04-tab06-severe_compare-top_reactives.xlsx")
+```
+
+
+##### both
+
+###### heatmap
+
+```{r}
+eset <- eset.VIVAX.SEV.FILTER
+
+s <- td %>% 
+  #filter(adj.P.Val<0.05 & logFC>1 & no_severo>1) %>% 
+  filter(#adj.P.Val<0.05 &
+           P.Value<0.05 #& 
+           #logFC>1 & 
+           #no_severo>1
+           ) %>%
+  # top_n(-10,P.Value) %>% 
+  arrange(P.Value) %>% 
+  #arrange(desc(no_severo)) %>% 
+  select(ID) %>% as.matrix() 
+
+x <- td %>% 
+  arrange(desc(AveExpr)) %>% 
+  top_n(16,AveExpr) %>% 
+  arrange(desc(no_severo)) %>% # If diff order at boxplot is achieved, then desactivate this line.
+  select(ID) %>% as.matrix() 
+
+pData(eset) <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  group_by(sample) %>% 
+  dplyr::summarise(sample_median=median(value, na.rm=TRUE)) %>% 
+  full_join(pData(eset) %>% 
+              rownames_to_column() %>% 
+              dplyr::rename(sample=rowname),
+            by="sample") %>% 
+  select(-Study,-Group,-episodio_previo,-edad_CAT, 
+         -expo_CAT, -episodio_previo_num) %>% 
+  arrange(sev_WHO,sample_median) %>% #dplyr::count(sample)
+  as.data.frame() %>% #class()
+  column_to_rownames(var="sample")
+
+y <- pData(eset) %>% rownames_to_column() %>% 
+  select(rowname) %>% as.matrix() %>% as.character()
+
+eset <- eset[c(x,s),y]
+
+aheatmap(exprs(eset), 
+         Rowv = NA, Colv = NA, 
+         annCol = pData(eset) %>% 
+           # mutate(parasitemia_mil=log(parasitemia_mil)) %>% 
+           # 20210827 - remove excessive characteristics
+           select(-(sev_WHO_1:sev_WHO_4),
+                  -sev_WHO_num,
+                  -parasitemia_mil_4,
+                  -parasitemia_mil,
+                  -en_zona_endemica_4,-edad_4) %>% 
+           mutate(sev_WHO=case_when(
+             sev_WHO=="no_severo"~"Non-severe",
+             sev_WHO=="severo"~"Severe")) %>% 
+           dplyr::rename("Median intensity"=sample_median,
+                  "P.vivax malaria"=sev_WHO),
+         filename = "figure/04-fig09-severe_compare-heatmap-nocluster.png",
+         fontsize = 6,
+         width = 6,
+         height = 3
+         #layout = "_"
+)
+
+aheatmap(exprs(eset), 
+         Rowv = TRUE, Colv = NA, 
+         annCol = pData(eset) %>% 
+           # mutate(parasitemia_mil=log(parasitemia_mil)) %>% 
+           # 20210827 - remove excessive characteristics
+           select(-(sev_WHO_1:sev_WHO_4),
+                  -sev_WHO_num,
+                  -parasitemia_mil_4,
+                  -parasitemia_mil,
+                  -en_zona_endemica_4,-edad_4) %>% 
+           mutate(sev_WHO=case_when(
+             sev_WHO=="no_severo"~"Non-severe",
+             sev_WHO=="severo"~"Severe")) %>% 
+           dplyr::rename("Median intensity"=sample_median,
+                  "P.vivax malaria"=sev_WHO),
+         filename = "figure/04-fig09-severe_compare-heatmap-wtcluster.png",
+         fontsize = 6,
+         width = 6,
+         height = 3
+         #layout = "_"
+         )
+```
+
+
+###### boxplot
+
+```{r}
+pvalue_adj_min <- td %>% 
+  select(ID:Description,P.Value,adj.P.Val) %>% 
+  filter(P.Value<0.05) %>% 
+  filter(adj.P.Val==min(adj.P.Val)) %>% 
+  slice(1) %>% 
+  pull(adj.P.Val)
+
+pvalue_adj_max <- td %>% 
+  select(ID:Description,P.Value,adj.P.Val) %>% 
+  filter(P.Value<0.05) %>% 
+  filter(adj.P.Val==max(adj.P.Val)) %>% 
+  slice(1) %>% 
+  pull(adj.P.Val)
+
+bh_pvalues_beween <- paste0(round(pvalue_adj_min,digits = 3), "-", 
+       round(pvalue_adj_max,digits = 3))
+```
+
+
+```{r, fig.width=5.1,fig.height=4, echo=TRUE}
+eset <- eset.VIVAX.SEV.FILTER
+
+eset_clean_diff_top <- 
+  biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% #count(gene)
+  dplyr::rename(ID="gene") %>% 
+  full_join(td, by = "ID") %>%
+  inner_join(x %>% as.data.frame() %>% 
+              dplyr::mutate(group="Top 10%") %>% 
+              #dplyr::rename(gene="ID") %>% 
+              dplyr::mutate(ID=as.character(ID)),
+            by="ID") %>% 
+  # count(ID)
+  bind_rows(
+    biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+      #count(gene)
+      dplyr::rename(ID="gene") %>% 
+      full_join(td, by = "ID") %>% 
+      inner_join(s %>% as.data.frame() %>% 
+                   dplyr::mutate(group="p-value < 0.05*") %>% 
+                   #dplyr::rename(gene="ID") %>% 
+                   dplyr::mutate(ID=as.character(ID)),
+                 by="ID") #%>% count(ID)
+    ) %>% 
+  # count(ID,group)
+  # unite(group, group.x, group.y) %>% 
+  # mutate(group=stringr::str_replace(group,"NA_(.)", "\\1")) %>% 
+  # mutate(group=stringr::str_replace(group,"(.)_NA", "\\1")) %>% 
+  mutate(group=forcats::fct_relevel(group,"Top 10%")) %>%
+  # filter(group!="NA") %>% 
+  inner_join(all, by="Gene.ID") %>% 
+  inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID") %>% 
+  # unite(id.name, Product.Description,Gene.Name, 
+  #       sep = " / ", remove = FALSE) %>%
+  unite(id.name, Gene.Name, Gene.ID, sep = " / ", remove = FALSE) %>% 
+  mutate(id.name=str_replace(id.name,"NA / ","")) %>% 
+  mutate(id.name=str_replace(id.name,"/","-")) %>% 
+  mutate(sev_WHO=fct_rev(sev_WHO)) #%>% 
+  # test zone
+  # mutate(id.name=fct_reorder(.f = id.name,
+  #                            .x = value,
+  #                            .fun = mean)) %>%
+  # #                            .fun = median)) %>%
+  # mutate(id.name=fct_reorder(.f = id.name,
+  #                            .x = no_severo,
+  #                            .fun = mean))
+```
+
+###### new boxplot + heatmap 
+
+```{r}
+eset_clean_diff_top_sub <- eset_clean_diff_top %>% 
+  select(id.name,sample,value,sev_WHO,group,ID) %>% 
+  mutate(id.name=case_when(
+    ID=="PVX_099980_1o1_S2.504" ~ "MSP1.S2 - PVX_099980",
+    ID=="PVX_099980_1o1_S1.793" ~ "MSP1.S1 - PVX_099980",
+    TRUE ~ id.name))
+
+eset_clean_diff_top_sub_arrange <- eset_clean_diff_top_sub %>%
+  select(id.name,value,sample) %>% 
+  group_by(sample) %>% 
+  dplyr::summarise(sum_value = median(value,na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  arrange(sum_value)
+
+eset_clean_diff_top_sub_antigen <- eset_clean_diff_top_sub %>% 
+  select(id.name,value) %>% 
+  group_by(id.name) %>% 
+  dplyr::summarise(sum_antigen = median(value,na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  arrange(sum_antigen)
+
+eset_clean_diff_top_sub %>% 
+  left_join(eset_clean_diff_top_sub_arrange) %>%
+  left_join(eset_clean_diff_top_sub_antigen) %>% 
+  mutate(sample = fct_reorder(.f = sample,
+                               .x = sum_value,
+                               .fun = mean),
+         id.name = fct_reorder(.f = id.name,
+                               .x = sum_antigen,
+                               .fun = mean)) %>% 
+  mutate(sev_WHO = fct_rev(sev_WHO)) %>% 
+  mutate(sev_WHO = fct_recode(sev_WHO, 
+                              "Severe" = "severo", 
+                              "Non-severe" = "no_severo")) %>% 
+  ggplot(aes(x = sample,y = id.name, fill = value)) +
+  geom_tile() +
+  facet_grid(group~sev_WHO,
+             scale = 'free', space = 'free') +
+  colorspace::scale_fill_continuous_diverging(
+    name="Antigen\nreactivity",
+    mid = 1,
+    palette = "Blue-Red 3",
+    # begin = 0.2
+    ) +
+  labs(y = NULL, x=NULL,
+       caption = paste0("*BH adjusted p-values between ",
+                        bh_pvalues_beween)) + 
+  theme(axis.text.x = element_text(angle = 90, 
+                                   vjust = 0.5, 
+                                   hjust=1,
+                                   size=5),
+        axis.text.y = element_text(size=7))
+
+ggsave("figure/04-fig09-severe_compare-heatmap-nocluster-ggplot.png",
+       height = 6,width = 6,dpi = "retina")
+```
+
+```{r}
+eset_clean_diff_top_sub %>%
+  left_join(eset_clean_diff_top_sub_antigen) %>% 
+  mutate(id.name = fct_reorder(.f = id.name,
+                               .x = sum_antigen,
+                               .fun = mean)) %>% 
+  # All sorted w.r.t. Case mean reactivity
+  ggplot(aes(x = id.name,
+             y = value,
+             fill = sev_WHO))+
+  geom_boxplot()+
+  #geom_point() +
+  facet_grid(group~.,scales = "free", space = "free") +
+  colorspace::scale_fill_discrete_qualitative(
+    name="P. vivax\nmalaria",
+    palette="Set 3",
+    limits=c("no_severo","severo"),
+    labels=c("Non-severe", "Severe"),
+    rev=TRUE
+  ) +
+  theme_bw() +
+  ylab("Antigen reactivity") +
+  xlab("") +
+  labs(caption = paste0("*BH adjusted p-values between ",
+                        bh_pvalues_beween)) +
+  coord_flip()
+ggsave("figure/04-fig08-severe_compare-boxplot_highrve.png",
+       height = 5,width = 6,dpi = "retina")
+```
+
+alternative figures without top antigens
+
+```{r}
+eset_clean_diff_top_sub <- eset_clean_diff_top %>% 
+  select(id.name,sample,value,sev_WHO,group,ID) %>% 
+  mutate(id.name=case_when(
+    ID=="PVX_099980_1o1_S2.504" ~ "MSP1.S2 - PVX_099980",
+    ID=="PVX_099980_1o1_S1.793" ~ "MSP1.S1 - PVX_099980",
+    TRUE ~ id.name))
+
+eset_clean_diff_top_sub_arrange <- eset_clean_diff_top_sub %>%
+  select(id.name,value,sample) %>% 
+  group_by(sample) %>% 
+  dplyr::summarise(sum_value = median(value,na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  arrange(sum_value)
+
+eset_clean_diff_top_sub_antigen <- eset_clean_diff_top_sub %>% 
+  select(id.name,value) %>% 
+  group_by(id.name) %>% 
+  dplyr::summarise(sum_antigen = median(value,na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  arrange(sum_antigen)
+
+severe_heatmap <- eset_clean_diff_top_sub %>% 
+  left_join(eset_clean_diff_top_sub_arrange) %>%
+  left_join(eset_clean_diff_top_sub_antigen) %>% 
+  mutate(sample = fct_reorder(.f = sample,
+                               .x = sum_value,
+                               .fun = mean),
+         id.name = fct_reorder(.f = id.name,
+                               .x = sum_antigen,
+                               .fun = mean)) %>% 
+  mutate(sev_WHO = fct_rev(sev_WHO)) %>% 
+  mutate(sev_WHO = fct_recode(sev_WHO, 
+                              "Severe" = "severo", 
+                              "Non-severe" = "no_severo")) %>% 
+  # key removal
+  filter(group!="Top 10%") %>% 
+  ggplot(aes(x = sample,y = id.name, fill = value)) +
+  geom_tile() +
+  facet_grid(group~sev_WHO,
+             scale = 'free', space = 'free') +
+  colorspace::scale_fill_continuous_diverging(
+    name="Antigen\nreactivity",
+    mid = 1,
+    palette = "Blue-Red 3",
+    # begin = 0.2
+    ) +
+  labs(y = NULL, x=NULL,
+       caption = paste0("*BH adjusted p-values between ",
+                        bh_pvalues_beween)) + 
+  theme(axis.text.x = element_text(angle = 90, 
+                                   vjust = 0.5, 
+                                   hjust=1,
+                                   size=5)#,
+        # axis.text.y = element_text(size=7)
+        )
+
+severe_heatmap
+ggsave("figure/04-fig09-severe_compare-heatmap-nocluster-ggplot-severe.png",
+       height = 3.25,width = 6,dpi = "retina")
+```
+
+```{r}
+severe_boxplot <- eset_clean_diff_top_sub %>%
+  left_join(eset_clean_diff_top_sub_antigen) %>% 
+  mutate(id.name = fct_reorder(.f = id.name,
+                               .x = sum_antigen,
+                               .fun = mean)) %>% 
+  # key removal
+  filter(group!="Top 10%") %>% 
+  # All sorted w.r.t. Case mean reactivity
+  ggplot(aes(x = id.name,
+             y = value,
+             fill = sev_WHO))+
+  geom_boxplot()+
+  #geom_point() +
+  facet_grid(group~.,scales = "free", space = "free") +
+  colorspace::scale_fill_discrete_qualitative(
+    name="P. vivax\nmalaria",
+    palette="Set 3",
+    limits=c("no_severo","severo"),
+    labels=c("Non-severe", "Severe"),
+    rev=TRUE
+  ) +
+  theme_bw() +
+  ylab("Antigen reactivity") +
+  xlab("") +
+  labs(caption = paste0("*BH adjusted p-values between ",
+                        bh_pvalues_beween)) +
+  coord_flip()
+
+severe_boxplot
+ggsave("figure/04-fig08-severe_compare-boxplot_highrve-severe.png",
+       height = 3,width = 6,dpi = "retina")
+```
+
+```{r}
+severe_heatmap +
+  theme(axis.text.x = element_text(angle = 90, 
+                                   vjust = 0.5, 
+                                   hjust=1,
+                                   size=5),
+        axis.text.y = element_text(size=9)) +
+  labs(caption=NULL) +
+  severe_boxplot +
+  theme(plot.caption = element_text(hjust = 0),
+        plot.caption.position =  "plot") +
+  plot_layout(ncol = 1) +
+  plot_annotation(tag_levels = "A")
+ggsave("figure/04-fig08-severe_compare-mix-boxplot_heatmap.png",
+       height = 6.5,width = 7,dpi = "retina")
+```
+
+### 6. Breath and Intensity of response
+
+- Método:
+    + __Primero,__ Prueba de Hipótesis para comparar varianzas:
+        + Rpta: Bajo un n.s. 0.05, F cae en Región de no-Rechazo de Hipótesis Nula (__RnoRHo__).
+            + Conclusión: Supuesto de igualdad de varianzas poblacionales SÍ es válido.
+        + Rpta: Bajo un n.s. 0.05, F cae en Región de Rechazo de Hipótesis Nula (__RRHo__).
+            + Conclusión: Supuesto de igualdad de varianzas poblacionales NO es válido.
+    + __Segundo,__ Prueba de Hipótesis para comparar medias:
+        + Si es que SÍ se asume que las varianzas son iguales: __Student t-test__
+        + Si es que NO se asume que las varianzas son iguales: __Welch t-test__
+
+- Definiciones:
+    + __Amplitud:__ Número de Ag reactivos por paciente
+    + __Intensidad:__ Media de intensidad de Ag por paciente
+
+```{r}
+eset <- eset.VIVAX.SEV.FILTER
+
+fin <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  group_by(sample) %>% 
+  # dplyr::summarise(sample_mean=mean(value, na.rm=TRUE), 
+  # cambio por exploracion de distribuciones!
+  dplyr::summarise(sample_mean=median(value, na.rm=TRUE),
+                   sample_freq=(sum(value>1, na.rm=TRUE)#*100/n()
+                                )) %>% 
+  full_join(pData(eset) %>% 
+              rownames_to_column() %>% 
+              dplyr::rename(sample=rowname),
+            by="sample") %>% 
+  select(-Study,-Group) %>% 
+  mutate(episodio_previo=forcats::fct_relevel(episodio_previo,"con")) %>% 
+  mutate(sev_WHO=forcats::fct_relevel(sev_WHO,"no-severo"))
+
+#biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+#filter(sample=="LIM2071") %>% select(value) %>% filter(value > 1)
+```
+
+__evaluate distribution per subject__
+
+```{r,fig.height=8,fig.width=8}
+# explorar distribuciones individuales
+biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  ggplot(aes(x = value)) +
+  geom_histogram() +
+  facet_wrap(~sample)
+```
+
+```{r,fig.width=3,fig.height=3}
+biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  select(value) %>% 
+  # group_by(sample) %>% 
+  skimr::skim()
+
+biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  select(sev_WHO,value) %>% 
+  group_by(sev_WHO) %>%
+  skimr::skim()
+
+biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  select(episodio_previo,value) %>% 
+  filter(!is.na(episodio_previo)) %>% 
+  group_by(episodio_previo) %>%
+  skimr::skim()
+
+biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  select(sample,value) %>% 
+  group_by(sample) %>% 
+  skimr::skim() %>% 
+  as_tibble() %>% 
+  mutate(diff_median_mean=numeric.p50-numeric.mean) %>% 
+  ggplot(aes(x = diff_median_mean)) +
+  geom_histogram()
+```
+
+
+#### 6.1 severe
+
+```{r}
+## Primero, Prueba de Hipótesis para comparar varianzas:
+#fin %>% var.test(sample_freq ~ sev_WHO, data = .) %>% broom::tidy()
+## Rpta: Bajo n.s. 0.05, F cae en Región de no-Rechazo de Hipótesis Nula (RnoRHo)
+## Conclusión: Supuesto de igualdad de varianzas poblacionales SÍ es válido
+## Segundo, Prueba de Hipótesis para comparar medias:
+j <- fin %>% 
+  t.test(sample_freq ~ sev_WHO, data = ., var.equal=TRUE) %>% 
+  broom::tidy() %>% #%>% format(digits=2)
+  mutate(test="breadth") %>% 
+  select(test,everything())
+
+## Primero, Prueba de Hipótesis para comparar varianzas
+#fin %>% var.test(sample_mean ~ sev_WHO, data = .) %>% broom::tidy()
+## Rpta: Bajo n.s. 0.05, F cae en Región de no-Rechazo de Hipótesis Nula (RnoRHo)
+## Conclusión: Supuesto de igualdad de varianzas poblacionales SÍ es válido
+## Segundo, Prueba de Hipótesis para comparar medias:
+k <- fin %>% 
+  t.test(sample_mean ~ sev_WHO, data = ., var.equal=TRUE) %>% 
+  broom::tidy() %>% #%>% format(digits=2)
+  mutate(test="intensity") %>% 
+  select(test,everything()) #%>% format(digits=2)
+```
+
+```{r}
+
+fin %>% 
+  compareGroups(formula = sev_WHO ~ sample_freq + sample_mean,data = .) %>% 
+  createTable(sd.type = 2,digits = 2) %>% 
+  export2xls("table/04-tab05-severe_compare-subject_response.xls")
+
+j %>% 
+  union_all(k) %>% 
+  writexl::write_xlsx("table/04-tab04-severe_compare-subject_response.xlsx")
+```
+
+
+```{r, fig.height=6, fig.width=3}
+
+# sources:
+# https://gist.github.com/benmarwick/5cfeda1d20ff9ab3231a5de8fac36213
+# https://stackoverflow.com/a/60153154
+# https://stackoverflow.com/a/5294214
+
+r_df <- j$parameter %>% format(digits=2)
+r_tstat <- j$statistic %>% format(digits=2)
+r_pvalue <- if_else(condition = j$p.value<0.001,
+                    true = "<0.001",
+                    false = paste0("=",j$p.value %>% 
+                                     format(digits=3)))
+# r_one <- bquote(expression(t[.(r_df)]==.(r_tstat)* ", p" * .(r_pvalue) ) )
+r_one <- paste0("p",r_pvalue)
+
+
+r_severe_plot_01 <- fin %>% 
+  ggplot(aes(sev_WHO,sample_freq)) +
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.75)) +
+  geom_violin(alpha=0,lwd=0.8,draw_quantiles = c(0.5)) +
+  ggbeeswarm::geom_quasirandom(method = "tukeyDense",alpha=0.2) +
+  scale_x_discrete(labels = c("Non-severe","Severe")) +
+  xlab("P. vivax malaria") + 
+  ylab("Reactive Antigens") +
+  labs(title = r_one) + 
+  theme_bw()
+
+s_df <- k$parameter %>% format(digits=2)
+s_tstat <- k$statistic %>% format(digits=3)
+s_pvalue <- if_else(condition = k$p.value<0.001,
+                    true = "<0.001",
+                    false = paste0("=",k$p.value %>% 
+                                     format(digits=3)))
+# s_one <- bquote(expression(t[.(s_df)]==.(s_tstat)* ", p" * .(s_pvalue) ) )
+s_one <- paste0("p",s_pvalue)
+
+s_severe_plot_01 <- fin %>% 
+  ggplot(aes(sev_WHO,sample_mean)) +
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.75)) +
+  geom_violin(alpha=0,lwd=0.8,draw_quantiles = c(0.5)) +
+  ggbeeswarm::geom_quasirandom(method = "tukeyDense",alpha=0.2) +
+  scale_x_discrete(labels = c("Non-severe","Severe")) +
+  xlab("P. vivax malaria") + 
+  ylab("Median Intensity") +
+  labs(title = s_one) + 
+  theme_bw()
+
+severe_subject_a <- r_severe_plot_01
+severe_subject_b <- s_severe_plot_01
+
+severe_subject_a +
+  severe_subject_b +
+  patchwork::plot_annotation(tag_levels = "A")
+ggsave("figure/04-fig06-severe_compare-subject_response.png",
+       height = 3,width = 6,dpi = "retina")
+```
+
+```{r}
+severe_subject_a +
+  severe_subject_b +
+  severe_antigen_a +
+  severe_antigen_b +
+  plot_layout(ncol = 2,nrow = 2) +
+  plot_annotation(tag_levels = "A")
+ggsave("figure/04-fig06-severe_compare-mix-subject_antigen.png",
+       height = 6.5,width = 7,dpi = "retina")
+```
+
+
+### 7. PlasmoDB summaries
+
+
+##### SNP summary
+
+```{r, fig.width=10, fig.height=5}
+a <- exp_t %>% 
+  #dplyr::mutate(summary.db="Top 10%") %>%
+  dplyr::mutate(summary.db="Top 10%") %>%  
+  #dplyr::count(TM.Domains.p)
+  select(ID, summary.db, Gene.ID,Gene.Name,
+         NonSyn_Syn.SNP.Ratio.All.Strains,
+         Total.SNPs.All.Strains,
+         Transcript.Length,
+         Ortholog.count,AveExpr) %>% 
+  dplyr::rename(intensity=AveExpr)
+
+b <- exp_df %>% 
+  dplyr::mutate(
+    summary.db="w/ Previous Episode (FDR<0.05 & logFC>1)") %>%
+  select(ID, summary.db, Gene.ID,Gene.Name,
+         NonSyn_Syn.SNP.Ratio.All.Strains,
+         Total.SNPs.All.Strains,
+         Transcript.Length,
+         Ortholog.count,con) %>% 
+  dplyr::rename(intensity=con)
+
+rbind(a,b) %>% 
+  ggplot(aes(log2(NonSyn_Syn.SNP.Ratio.All.Strains),
+             Total.SNPs.All.Strains/Transcript.Length)) +
+  geom_point(aes(colour=Transcript.Length, size=Ortholog.count)) + 
+  #scale_colour_gradientn(colours = rainbow(10),
+  #                       name="Transcript\nlength") +
+  viridis::scale_color_viridis(
+    name="Transcript\nlength(nt)",
+    trans="log10",
+    breaks = c(1000,2000,3000,4000,5000,10000)
+    #,option="plasma"#,discrete = TRUE
+  ) +
+  scale_size(name="Ortholog\ncount"#,
+             #trans="log10"#, breaks = c(1000,2000,3000,5000,10000)
+  ) +
+  #scale_colour_gradient(trans="log10") +
+  ggrepel::geom_text_repel(
+    data = rbind(a,b) %>% 
+      replace_na(list(Gene.Name="na")) %>% 
+      dplyr::mutate(
+        Gene.Name=ifelse(Gene.Name=="na",Gene.ID,Gene.Name),
+        Gene.Name=ifelse(ID=="PVX_099980_1o1_S2.504","MSP1_S2",Gene.Name),
+        Gene.Name=ifelse(ID=="PVX_099980_1o1_S1.793","MSP1_S1",Gene.Name))
+    #mutate(Gene.Name=ifelse(NonSyn_Syn.SNP.Ratio.All.Strains < 1 | 
+    #NonSyn_Syn.SNP.Ratio.All.Strains > 2.5 | 
+    #                         Total.SNPs.All.Strains > 300 & 
+    #                         Total.SNPs.All.Strains < 400 | 
+    #                         Total.SNPs.All.Strains > 100 & 
+    #                         Total.SNPs.All.Strains < 200 |
+    #                         Total.SNPs.All.Strains < 10,
+    #                       Gene.ID,Gene.Name))
+    ,aes(label=Gene.Name,size=intensity*5
+    ),
+    #size=2.8,
+    box.padding = unit(.65, "lines"),segment.size =.2,
+    direction = "x",#nudge_x = 45,
+    point.padding = unit(.5, "lines")#,
+    #segment.color = "red"
+  ) +
+  facet_grid(.~summary.db#, 
+             #scales = "free", 
+             #space = "free"
+  ) + theme_bw() +
+  theme(#legend.position=c(-.25, -.025),#"bottom"
+    legend.margin = margin(0,0,0,0)#,
+    #legend.text = element_text(size = 8),
+    #legend.title = element_text(size = 8)
+  ) +  
+  coord_trans(y = "log10") +
+  #geom_vline(aes(xintercept=0), lty=3, col="red") #+ 
+  ylab("Total SNPs (length-normalized)")+
+  xlab("NonSyn/Syn SNP ratio (log2-transformed)")+
+  labs(title="Genetic variation among all strains per subset",#SNP space
+       #subtitle="Among all strains",
+       caption="*label size in d.p. to Case mean intensity")+
+  # and \n (logFC>1 & con>1) | (logFC>0.9 & con>2)
+  #coord_flip() # ORDENAR eje de proteínas!!!!
+  theme(
+    strip.background = element_rect(
+      colour = "black"#, fill = "white"
+    ),
+    strip.text.x = element_text(
+      colour = "black",size = 12#, face = "bold"
+    ))
+```
+
+only top10 for severe paper
+
+```{r}
+antigen_plot_a <- 
+  rbind(a#,b
+  ) %>% 
+  ggplot(aes(x = log2(NonSyn_Syn.SNP.Ratio.All.Strains),
+             y = Total.SNPs.All.Strains/Transcript.Length)) +
+  geom_point(aes(#size=intensity,
+                 colour=intensity),
+             size=3) + 
+  colorspace::scale_color_continuous_sequential(
+    name="Mean\nantigen\nreactivity",
+    palette = "Reds",
+    begin = 0.2) +
+  scale_size_binned(name=NULL) +
+  ggrepel::geom_text_repel(
+    data = rbind(a#,b
+    ) %>% 
+      replace_na(list(Gene.Name="na")) %>% 
+      dplyr::mutate(
+        Gene.Name=ifelse(Gene.Name=="na",Gene.ID,Gene.Name),
+        # Gene.Name=ifelse(
+        #   ID=="PVX_099980_1o1_S2.504","MSP1_S2",Gene.Name),
+        # Gene.Name=ifelse(
+        #   ID=="PVX_099980_1o1_S1.793","MSP1_S1",Gene.Name)
+        )
+    , 
+    aes(label=Gene.Name),
+    size = 3) +
+  facet_grid(.~summary.db) + 
+  coord_trans(y = "log10") +
+  #geom_vline(aes(xintercept=0), lty=3, col="red") #+ 
+  # ylab("Total SNPs (length-normalized)")+
+  # xlab("NonSyn/Syn SNP ratio (log2-transformed)")+
+  # ylab("SNPs per Transcript length ratio")+
+  ylab( expression(log[10]~SNPs~per~Transcript~length~ratio) ) +
+  # xlab("log2 NonSyn/Syn SNP ratio")+
+  xlab( expression(log[2]~NonSyn/Syn~SNP~ratio) ) +
+  # labs(#title="Genetic variability",#SNP space
+  #      #subtitle="Among all strains",
+  #      # caption="\nLabel sizes proportional to mean antigen reactivity"
+  #      )+
+  # and \n (logFC>1 & con>1) | (logFC>0.9 & con>2)
+  #coord_flip() # ORDENAR eje de proteínas!!!!
+  theme(
+    strip.background = element_rect(
+      colour = "black"#, fill = "white"
+    ),
+    strip.text.x = element_text(
+      colour = "black",size = 12#, face = "bold"
+    )) +
+  guides(size = guide_legend(reverse=T),
+         color = guide_colorbar(order = 1))
+
+antigen_plot_a
+ggsave("figure/04-fig10-severe_compare-variability.png",
+       height = 4.5,width = 5,dpi = "retina")
+```
+
+##### (**) EXPRESSION pattern
+
+- __Load RNA-seq profile__ from Zhu et al.
+    - __Transcription profile of intraerythrocytic cycle (Zhu et al. 2016) per subset__
+
+```{r, message=FALSE}
+rna <- readr::read_tsv("data/04-listgit.tsv") %>% #colnames() %>% #class()
+  #make.names(unique = TRUE) %>% 
+  rename_all(
+      funs(
+        #stringr::str_to_lower(.) %>%
+        stringr::str_replace_all(., '\\s', '\\.') %>% 
+        stringr::str_replace_all(., '\\[|\\]', '') %>% 
+        stringr::str_replace_all(., '\\#.', '') %>% 
+        stringr::str_replace_all(., 'Computed.', '') %>% 
+        stringr::str_replace_all(., '\\/', '\\_') %>% 
+        stringr::str_replace_all(., '(smru\\d..-.smru)', 's') %>% 
+        stringr::str_replace_all(., '.hours', 'h')
+      )
+  ) %>% 
+  select(-source_id,-...33#-X18
+         ) %>% 
+  dplyr::rename(Gene.Name=Gene.Name.or.Symbol) %>% 
+  dplyr::mutate_all(
+    funs(
+      stringr::str_replace_all(.,"N/A",replacement = NA_character_)
+    )) %>% 
+  dplyr::mutate(
+    SignalP.Scores=stringr::str_replace(SignalP.Scores, "^NN.{0,}","SP")) %>% 
+  dplyr::mutate(
+    NonSyn_Syn.SNP.Ratio.All.Strains=
+      as.numeric(NonSyn_Syn.SNP.Ratio.All.Strains),
+    Total.SNPs.All.Strains=as.numeric(Total.SNPs.All.Strains),
+    Transcript.Length=as.numeric(Transcript.Length),
+    Ortholog.count=as.numeric(Ortholog.count)) %>% 
+  # dplyr::mutate(
+  #   SignalP=stringr::str_replace(SignalP.Scores, "^NN.{0,}","SP")) %>%
+  #group_by(SignalP.Scores,SignalP) %>% dplyr::count()
+  dplyr::rename(SignalP=SignalP.Scores) %>% 
+  dplyr::mutate(
+    Gene.Name= ifelse(Gene.ID == "PVX_003775", "MSP4", Gene.Name)) %>%
+  dplyr::mutate(
+    Gene.Name= ifelse(Gene.ID == "PVX_003770", "MSP5", Gene.Name)) %>% 
+  dplyr::mutate(
+    Gene.Name= ifelse(Gene.ID == "PVX_097625", "MSP8", Gene.Name)) %>% 
+  dplyr::mutate(
+    Gene.Name= ifelse(Gene.ID == "PVX_114145", "MSP10", Gene.Name)) %>% 
+  dplyr::mutate(
+    Gene.Name= ifelse(Gene.ID == "PVX_116780", "SFT2", Gene.Name)) %>% 
+  select(-(Ortholog.count:Transcripts))
+#lg
+tail(rna)
+#raw %>% filter(Gene.ID=="PVX_003775")#only_2o2 --> IS THIS SUGGESTING A MISTAKE IN ID TIPYING? --> COMPARE!
+#raw %>% filter(stringr::str_detect(Description, "MSP7"))
+```
+
+```{r,fig.height=5.3,fig.width=10}
+rna_dt <- rbind(
+  exp_df %>% 
+    mutate(subset="diff") %>% 
+    select(ID,Gene.ID,subset,con,logFC) %>% #
+    dplyr::rename(intensity=con),
+  exp_t %>% 
+    mutate(subset="atop") %>% 
+    select(ID,Gene.ID,subset,AveExpr,logFC) %>% #,logFC
+    dplyr::rename(intensity=AveExpr)
+  ) %>% 
+  inner_join(rna,by = "Gene.ID") %>% 
+  gather(rna,fpkm,-(ID:Gene.Name)) %>% 
+  separate(rna,c("rna_s","rna_t")) %>% #dplyr::count(rna_t)
+  dplyr::mutate(rna_t=stringr::str_replace(rna_t,"h",""),
+                rna_t=as.numeric(rna_t),
+                fpkm=as.numeric(fpkm)) %>% 
+  dplyr::mutate(fpkm=log2(fpkm)) %>% filter(fpkm!="-Inf") %>% 
+  filter(rna_s=="s1") %>% 
+  unite(id.name, Gene.Name, Gene.ID, sep = " / ", remove = FALSE) %>%
+  #unite(id.name, id.name, p.order, sep = " / ", remove = FALSE)  %>% 
+  #dplyr::mutate(id.name= ifelse(ID == "PVX_003775_2o2.150", "MSP4. / PVX_003775", id.name))
+  dplyr::mutate(
+    subset= forcats::fct_recode(
+      subset, 
+      "w/ Previous Episode (FDR<0.05 & logFC>1)"="diff", 
+      "Top 10%"="atop"))
+
+rna_dt %>% 
+  ggplot(aes(rna_t,fpkm,colour=id.name)) +
+  #geom_point() + 
+  geom_point() + theme_bw() +
+  geom_smooth(method = "lm", se = FALSE) +
+  #viridis::scale_color_viridis(discrete = T,) +
+  coord_cartesian(xlim = c(min(rna_dt$rna_t), max(rna_dt$rna_t) + 13)) +
+  facet_grid(.~subset) +
+  ggrepel::geom_text_repel(data=subset(rna_dt, rna_t == max(rna_t)),
+                           aes(label=id.name),
+                           size = 3,fontface = 'bold',
+                           nudge_x = 45,#direction = "x",
+                           box.padding = unit(.08, "lines"),
+                           segment.color = NA
+                           ) +
+  scale_x_continuous(breaks=seq(6, 48, by = 6)) +
+  theme(legend.position = "none") +
+  xlab("Time (hours)") +
+  ylab("log2 FPKM") +
+  labs(title="Transcription profile of intraerythrocytic cycle (Zhu et al. 2016) per subset") +
+  #coord_trans(y = "log10")
+  theme(strip.background = element_rect(colour = "black"#, fill = "white"
+                                        ),
+        strip.text.x = element_text(colour = "black",size = 12#, face = "bold"
+                                    ))
+```
+
+severe paper, onlu top10
+
+```{r}
+# rna_dt_last <- rna_dt %>% 
+#   # dplyr::count(subset)
+#   filter(subset == "Top 10%") %>% 
+#   group_by(id.name) %>% 
+#   dplyr::summarise(last = dplyr::last(fpkm)) %>% 
+#   mutate(id.name=str_replace(id.name,"NA / ","")) %>% 
+#   mutate(id.name=str_replace(id.name,"(.+) / (.+)","\\2 - \\1"))
+
+rna_dt_subset <- rna_dt %>% 
+  filter(subset == "Top 10%") %>% 
+  mutate(subset=fct_recode(
+    subset,
+    "Top 10%"="Top 10%")) %>% 
+  mutate(id.name=str_replace(id.name,"NA / ","")) %>%
+  mutate(id.name=str_replace(id.name,"(.+) / (.+)","\\1 - \\2")) #%>% 
+  # dplyr::mutate(
+  #   # Gene.Name=ifelse(Gene.Name=="na",Gene.ID,Gene.Name),
+  #   id.name=case_when(
+  #     ID=="PVX_099980_1o1_S2.504" ~ "MSP1_S2 - PVX_099980",
+  #     ID=="PVX_099980_1o1_S1.793" ~ "MSP1_S1 - PVX_099980",
+  #     TRUE ~ id.name))
+
+antigen_plot_b <- rna_dt_subset %>% 
+  ggplot(aes(x = rna_t,
+             y = fpkm,
+             group=id.name,
+             colour=intensity)) +
+  #geom_point() + 
+  geom_point() + theme_bw() +
+  geom_smooth(#method = "lm", 
+    se = FALSE) +
+  # scale_y_continuous(sec.axis = dup_axis(
+  #   breaks = rna_dt_last$last,
+  #   labels = rna_dt_last$id.name,
+  #   name = NULL,
+  #   guide = guide_axis(n.dodge=2))) +
+  # guides(color="none") #+
+  colorspace::scale_color_continuous_sequential(
+    name="Mean\nantigen\nreactivity",
+    palette = "Reds",
+    begin = 0.2) +
+  # viridis::scale_color_viridis(#discrete = T,
+  #                              option = "inferno") +
+  coord_cartesian(
+    xlim = c(min(rna_dt$rna_t), 
+             max(rna_dt$rna_t) + 15)) +
+  facet_grid(.~subset) +
+  ggrepel::geom_text_repel(
+    data=subset(rna_dt_subset,
+                rna_t == max(rna_t)),
+    aes(label=id.name),
+    color = "black",
+    size = 3,
+    # fontface = 'bold',
+    nudge_x = 45,
+    direction = "y",
+    # box.padding = unit(.08, "lines"),
+    # segment.color = NA
+  ) +
+  scale_x_continuous(breaks=seq(6, 48, by = 6)) +
+  # theme(legend.position = "none") +
+  xlab("Time (hours)") +
+  ylab("FPKM") +
+  labs(
+    title="Transcription profile of antigens during intraerythrocytic cycle",
+    caption = "Data from Zhu et al. 2016") +
+  #coord_trans(y = "log10")
+  theme(strip.background = element_rect(
+    colour = "black"#, fill = "white"
+  ),
+  strip.text.x = element_text(
+    colour = "black",size = 12#, face = "bold"
+  ))
+
+# antigen_plot_b
+# ggsave("figure/04-fig11-severe_compare-transcription.png",
+#        height = 5,width = 6,dpi = "retina")
+```
+
+```{r}
+rna_dt_subset_arrange <- rna_dt_subset %>% 
+  select(id.name,fpkm,rna_t) %>% 
+  group_by(id.name) %>% 
+  filter(fpkm == max(fpkm)) %>% 
+  ungroup() %>% 
+  arrange(rna_t,fpkm) %>% 
+  dplyr::rename(rna_t_max=rna_t) %>% 
+  select(-fpkm)
+
+antigen_plot_c_top <- rna_dt_subset %>% 
+  left_join(rna_dt_subset_arrange) %>% 
+  mutate(rna_t = as.factor(rna_t),
+         id.name = fct_reorder(.f = id.name,
+                               .x = -rna_t_max,
+                               .fun = mean)) %>%
+  ggplot(aes(x = rna_t,y = id.name, fill = fpkm)) +
+  geom_tile() +
+  facet_grid(.~subset,scales = "free",space = "free") +
+  colorspace::scale_fill_continuous_diverging(
+    name="FPKM",
+    mid = 4,
+    palette = "Blue-Red 3",
+    # begin = 0.2
+    ) +
+  labs(x="Time", y=NULL,
+       # title="Intraerythrocytic cycle Transcription profile",
+       # subtitle = "Data from Zhu et al. 2016",
+       caption = "FPKM = Fragments Per Kilobase Million") +
+  theme(
+    axis.text.y = element_text(size=11),
+    axis.text.x = element_text(size=12),
+    strip.background = element_rect(
+      colour = "black"#, fill = "white"
+    ),
+    strip.text.x = element_text(
+      colour = "black",size = 12#, face = "bold"
+    ))
+
+antigen_plot_c_top
+ggsave("figure/04-fig11-severe_compare-transcription-heatmap.png",
+       height = 4.5,width = 5.25,dpi = "retina")
+
+antigen_plot_a +
+  # antigen_plot_b +
+  antigen_plot_c_top +
+  plot_layout(widths = c(1.3,1)) +
+  plot_annotation(tag_levels = "A") #+
+ggsave("figure/04-fig12-severe_compare-mix-variable_transcript.png",
+  # plot_layout(guides = 'collect')
+       height = 4.5,width = 10,dpi = "retina")
+```
+

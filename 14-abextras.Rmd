@@ -1,0 +1,219 @@
+---
+title: "14-abextras"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## dependencies
+
+This document has the following dependencies:
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(haven)
+library(broom)
+library(biobroom)
+library(ggrepel)
+
+
+library(Biobase)     #ExpressionSet
+library(genefilter)  #DataCondensation
+library(limma)       #DifferentialAnalysisOfGenes
+
+library(patchwork)
+library(qvalue)
+
+theme_set(theme_bw())
+```
+
+## read eset data
+
+```{r}
+eset.VIVAX.SEV.FILTER <- readr::read_rds("data/04-eset_vivax_sev_filter.rds")
+```
+
+## data preparation
+
+```{r}
+eset <- eset.VIVAX.SEV.FILTER
+pData(eset) %>% glimpse()
+```
+
+
+### 0. extra analysis
+
+###### pareto of top antigens 
+
+```{r}
+pareto_test <- biobroom::tidy.ExpressionSet(eset) %>% 
+  group_by(gene) %>% 
+  dplyr::summarise(median_value = mean(value,na.rm = T)) %>%
+  ungroup()
+
+pareto_test %>% 
+  ggplot(aes(x = median_value)) + 
+  geom_histogram()
+
+cut_descriptive <- 10
+cut_selective <- 10
+
+pareto_table <- pareto_test %>% 
+  # top_n(n = 100,wt = median_value) %>% 
+  cdcper::cdc_pareto_lista(variable = median_value,
+                           pareto_cut = cut_descriptive) %>% 
+  count(cut_median_value) %>% 
+  mutate(pct = 100*n/sum(n))
+
+pareto_pct <- pareto_table %>% 
+  filter(cut_median_value!="no") %>% 
+  pull(pct) %>% format(digits=2)
+pareto_n <- pareto_table %>% 
+  filter(cut_median_value!="no") %>% 
+  pull(n)
+
+pareto_table_text <- paste0(pareto_pct,"% (n=",pareto_n,
+                            ") of antigens accumulate\n",
+                            cut_descriptive,
+                            "% of total mean antigen reactivity")
+
+cdcper::cdc_pareto_lista(data = pareto_test,
+                         variable = median_value,
+                         pareto_cut = cut_selective) %>% 
+  rownames_to_column() %>% 
+  mutate(rowname=as.numeric(rowname)) %>% 
+  ggplot(aes(x = cum_median_value, y = rowname)) +
+  geom_step() +
+  scale_x_continuous(breaks = scales::pretty_breaks()) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n=20)) +
+  geom_vline(aes(xintercept=cut_selective),lty=3)
+
+cdcper::cdc_pareto_lista(data = pareto_test,
+                         variable = median_value,
+                         pareto_cut = cut_selective) %>% 
+  # cdcper::cdc_pareto_plot(pct_ = pct_median_value, 
+  #                         cum_ = cum_median_value, 
+  #                         variable_value = median_value,
+  #                         variable_label = gene,
+  #                         with_format = FALSE) +
+  ggplot(aes(x = cum_median_value,y = pct_median_value)) +
+  geom_point(aes(color = median_value), alpha = 0.25) +
+  colorspace::scale_color_continuous_sequential(
+    name="Mean\nantigen\nreactivity",
+    palette = "Reds",
+    begin = 0.2) +
+  scale_x_continuous(breaks = scales::pretty_breaks()) +
+  geom_vline(aes(xintercept=cut_descriptive),lty=3) +
+  # geom_point(size = 1, alpha = 0.5) +
+  # geom_step(size = 0.5) +
+  guides(color = guide_colorbar(order = 1),
+         size = guide_legend(reverse=T)) +
+  labs(x = "Cumulative %",
+       y = "Unitary %",
+       color = "Mean\nantigen\nreactivity",
+       size = NULL) +
+  annotate(geom = "text",
+           x = cut_descriptive+2,
+           y = 0.63, hjust =0,
+           label = pareto_table_text)
+
+ggsave("figure/04-fig05-highly_reactive-pareto_plot.png",
+       height = 3,width = 5,dpi = "retina")
+
+# el 20% de los individuos acumulan el 80% de la ganancia
+# el 4.1% (n=16) antígenos acumulan el 10% de la reactividad total promedio
+# 4.1% (n=16) of antigens accumulate 
+# 10% of total mean antigen reactivity
+```
+
+
+###### feature correlation
+
+```{r}
+tidyeset <- 
+  biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  select(gene,sample,sev_WHO,episodio_previo,value) %>% 
+  pivot_wider(id_cols = gene:episodio_previo,names_from = gene,
+              values_from = value) %>% 
+  janitor::clean_names() 
+
+tidyeset_all <- tidyeset %>% 
+  select(-(sample:episodio_previo)) %>%
+  corrr::correlate(method = "spearman") %>%
+  corrr::stretch() %>%
+  arrange(desc(r)) %>% 
+  mutate(r_cut = Hmisc::cut2(x = r,cuts = seq(0,1,0.2))) %>% 
+  dplyr::count(r_cut)
+  # ggplot(aes(x = r)) +
+  # geom_histogram(binwidth = 0.1)
+
+tidyeset_sev <- tidyeset %>% 
+  group_by(sev_who) %>%
+  # filter(!is.na(episodio_previo)) %>% 
+  # group_by(episodio_previo) %>% 
+  nest() %>% 
+  mutate(select_data = map(.x = data,
+                           .f = select, 
+                           -(sample:episodio_previo)
+                           # -c(sample,sev_who)
+                           )) %>% 
+  mutate(corrr_data = map(.x = select_data,
+                          .f = corrr::correlate,
+                          method = "spearman")) %>% 
+  mutate(corrr_data = map(.x = corrr_data,
+                          .f = corrr::stretch)) %>% 
+  unnest(cols = corrr_data) %>% 
+  select(-(data:select_data)) %>% 
+  mutate(r_cut = Hmisc::cut2(x = r,cuts = seq(0,1,0.2))) %>% 
+  dplyr::count(sev_who,r_cut) %>% 
+  pivot_wider(id_cols = -n,
+              names_from = sev_who,
+              values_from = n)
+  # # select(-(sample:episodio_previo)) %>% 
+  # # corrr::correlate(method = "spearman") %>%
+  # # corrr::stretch() %>% 
+  # # arrange(desc(r)) %>% 
+  # ggplot(aes(x = r)) +
+  # geom_histogram(binwidth = 0.1) +
+  # geom_vline(aes(xintercept = 0)) +
+  # facet_wrap(~sev_who)
+  # # facet_wrap(~episodio_previo)
+
+tidyeset_epi <- tidyeset %>% 
+  # group_by(sev_who) %>%
+  filter(!is.na(episodio_previo)) %>%
+  group_by(episodio_previo) %>%
+  nest() %>% 
+  mutate(select_data = map(.x = data,
+                           .f = select, 
+                           # -(sample:episodio_previo)
+                           -c(sample,sev_who)
+                           )) %>% 
+  mutate(corrr_data = map(.x = select_data,
+                          .f = corrr::correlate,
+                          method = "spearman")) %>% 
+  mutate(corrr_data = map(.x = corrr_data,
+                          .f = corrr::stretch)) %>% 
+  unnest(cols = corrr_data) %>% 
+  select(-(data:select_data)) %>% 
+  mutate(r_cut = Hmisc::cut2(x = r,cuts = seq(0,1,0.2))) %>% 
+  dplyr::count(episodio_previo,r_cut) %>% 
+  pivot_wider(id_cols = -n,
+              names_from = episodio_previo,
+              values_from = n)
+
+feature_correlation <- 
+  left_join(tidyeset_all,tidyeset_epi) %>% 
+  left_join(tidyeset_sev)
+
+feature_correlation %>% 
+  writexl::write_xlsx("table/04-tab07-feature_correlation.xlsx")
+```
+
+```{r}
+
+```
+
