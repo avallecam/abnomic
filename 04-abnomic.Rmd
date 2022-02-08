@@ -186,6 +186,7 @@ lg <- ln %>% #dplyr::count(Gene.ID)
   group_by(Gene.ID,Species) %>% dplyr::count() %>% #filter(Species=="Pv") %>% arrange(desc(n))
   ungroup()
 
+readr::write_csv(lg, "data/04-listgen-raw.csv")
 readr::write_csv(lg %>% select(Gene.ID), "data/04-listgen.csv")
 ```
 
@@ -692,6 +693,9 @@ all <- readr::read_tsv("data/04-listgen.tsv") %>% #colnames() %>% #class()
 all
 #raw %>% filter(Gene.ID=="PVX_003775")#only_2o2 --> IS THIS SUGGESTING A MISTAKE IN ID TIPYING? --> COMPARE!
 #raw %>% filter(stringr::str_detect(Description, "MSP7"))
+all %>% 
+  readr::write_rds("data/04-listgen-microarray_chip-raw.rds")
+
 all %>% 
   unite(id.name, Gene.Name, Gene.ID, sep = " / ", remove = FALSE) %>% 
   mutate(id.name=str_replace(id.name,"NA / ","")) %>% 
