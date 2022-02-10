@@ -43,6 +43,8 @@ all <-
   readr::read_rds("data/04-listgen-microarray_chip-raw.rds")
 
 lg <- readr::read_csv("data/04-listgen-raw.csv")
+
+pareto_n <- read_rds("data/14-pareto_n.rds")
 ```
 
 
@@ -131,10 +133,10 @@ topTable(eb, coef = "sev_WHOsevero") %>% rownames_to_column()
 # tidy toptable
 td <- topTable(eb, 
                coef = "sev_WHOsevero",
-               # coef = 2,               # default: slope
+               # coef = 2, # default: slope
                sort.by =NULL, resort.by =NULL, 
-               #genelist = NULL,                 # no fit$gene
-               number = Inf,                     # show all the hipothesis
+               #genelist = NULL, # no fit$gene
+               number = Inf, # show all the hipothesis
                confint=0.95) %>% 
   rownames_to_column() %>% 
   as_tibble() %>% 
@@ -144,7 +146,8 @@ td <- topTable(eb,
   mutate(significance=if_else(adj.P.Val<0.05,
                               "FDR<0.05","not sig.")) %>% 
   #dplyr::count(significance)
-  inner_join(biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
+  inner_join(
+    biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
                #dplyr::count(sev_WHO)
                group_by(gene,sev_WHO) %>% 
                dplyr::summarise(mean_group=mean(value)) %>% 
@@ -450,7 +453,7 @@ sev_d
 sev_t <- td %>% 
   arrange(desc(AveExpr)) %>% 
   select(ID,Gene.ID,Description,AveExpr,p.order, logFC) %>% 
-  slice(1:16) %>% 
+  slice(1:pareto_n) %>% 
   inner_join(all, by="Gene.ID") %>% 
   inner_join(lg %>% dplyr::rename(seg.num=n), by="Gene.ID")
 
@@ -481,10 +484,12 @@ eset <- eset.VIVAX.SEV.FILTER
 s <- td %>% 
   #filter(adj.P.Val<0.05 & logFC>1 & no_severo>1) %>% 
   filter(#adj.P.Val<0.05 &
-           P.Value<0.05 #& 
-           #logFC>1 & 
-           #no_severo>1
-           ) %>%
+    # P.Value<0.05
+    P.Value<0.05 & 
+      abs(logFC)>0.5
+    #logFC>1 & 
+    #no_severo>1
+  ) %>%
   # top_n(-10,P.Value) %>% 
   arrange(P.Value) %>% 
   #arrange(desc(no_severo)) %>% 
@@ -492,7 +497,7 @@ s <- td %>%
 
 x <- td %>% 
   arrange(desc(AveExpr)) %>% 
-  top_n(16,AveExpr) %>% 
+  top_n(pareto_n,AveExpr) %>% 
   arrange(desc(no_severo)) %>% # If diff order at boxplot is achieved, then desactivate this line.
   select(ID) %>% as.matrix() 
 
@@ -564,21 +569,27 @@ aheatmap(exprs(eset),
 
 ```{r}
 pvalue_adj_min <- td %>% 
+  inner_join(s %>% as.data.frame()) %>%
   select(ID:Description,P.Value,adj.P.Val) %>% 
-  filter(P.Value<0.05) %>% 
+  # filter(P.Value<0.05) %>%
   filter(adj.P.Val==min(adj.P.Val)) %>% 
   slice(1) %>% 
   pull(adj.P.Val)
 
 pvalue_adj_max <- td %>% 
+  inner_join(s %>% as.data.frame()) %>%
   select(ID:Description,P.Value,adj.P.Val) %>% 
-  filter(P.Value<0.05) %>% 
+  # filter(P.Value<0.05) %>%
   filter(adj.P.Val==max(adj.P.Val)) %>% 
   slice(1) %>% 
   pull(adj.P.Val)
 
-bh_pvalues_beween <- paste0(round(pvalue_adj_min,digits = 3), "-", 
-       round(pvalue_adj_max,digits = 3))
+bh_pvalues_beween <- 
+  paste0(round(pvalue_adj_min,digits = 3), 
+         "-", 
+         round(pvalue_adj_max,digits = 2))
+
+bh_pvalues_beween
 ```
 
 
@@ -679,7 +690,8 @@ eset_clean_diff_top_sub %>%
     ) +
   labs(y = NULL, x=NULL,
        caption = paste0("*BH adjusted p-values between ",
-                        bh_pvalues_beween)) + 
+                        bh_pvalues_beween, 
+                        ",\n and absolute log2 fold-change >0.5")) + 
   theme(axis.text.x = element_text(angle = 90, 
                                    vjust = 0.5, 
                                    hjust=1,
@@ -714,8 +726,11 @@ eset_clean_diff_top_sub %>%
   ylab("Antigen reactivity") +
   xlab("") +
   labs(caption = paste0("*BH adjusted p-values between ",
-                        bh_pvalues_beween)) +
-  coord_flip()
+                        bh_pvalues_beween, 
+                        ",\n and absolute log2 fold-change >0.5")) +
+  coord_flip() +
+  theme(plot.caption = element_text(hjust = 0),
+        plot.caption.position =  "plot")
 ggsave("figure/04-fig08-severe_compare-boxplot_highrve.png",
        height = 5,width = 6,dpi = "retina")
 ```
@@ -771,7 +786,8 @@ severe_heatmap <- eset_clean_diff_top_sub %>%
     ) +
   labs(y = NULL, x=NULL,
        caption = paste0("*BH adjusted p-values between ",
-                        bh_pvalues_beween)) + 
+                        bh_pvalues_beween, 
+                        ",\n and absolute log2 fold-change >0.5")) + 
   theme(axis.text.x = element_text(angle = 90, 
                                    vjust = 0.5, 
                                    hjust=1,
@@ -810,10 +826,13 @@ severe_boxplot <- eset_clean_diff_top_sub %>%
   ylab("Antigen reactivity") +
   xlab("") +
   labs(caption = paste0("*BH adjusted p-values between ",
-                        bh_pvalues_beween)) +
+                        bh_pvalues_beween, 
+                        ",\n and absolute log2 fold-change >0.5")) +
   coord_flip()
 
-severe_boxplot
+severe_boxplot +
+  theme(plot.caption = element_text(hjust = 0),
+        plot.caption.position =  "plot")
 ggsave("figure/04-fig08-severe_compare-boxplot_highrve-severe.png",
        height = 3,width = 6,dpi = "retina")
 ```
@@ -974,7 +993,7 @@ r_severe_plot_01 <- fin %>%
   ggbeeswarm::geom_quasirandom(method = "tukeyDense",alpha=0.2) +
   scale_x_discrete(labels = c("Non-severe","Severe")) +
   xlab("P. vivax malaria") + 
-  ylab("Reactive Antigens") +
+  ylab("No. of Reactive Antigens") +
   labs(title = r_one) + 
   theme_bw()
 

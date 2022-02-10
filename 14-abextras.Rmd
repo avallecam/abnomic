@@ -131,6 +131,11 @@ ggsave("figure/04-fig05-highly_reactive-pareto_plot.png",
 # 10% of total mean antigen reactivity
 ```
 
+```{r}
+pareto_n %>% 
+  write_rds("data/14-pareto_n.rds")
+```
+
 
 ###### feature correlation
 
@@ -214,6 +219,8 @@ feature_correlation <-
 feature_correlation %>% 
   writexl::write_xlsx("table/04-tab07-feature_correlation.xlsx")
 ```
+
+## 0. end
 
 ```{r}
 
