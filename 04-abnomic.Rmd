@@ -968,6 +968,8 @@ ggsave("figure/04-fig02-heteroskedasticity_prepos.png",
 ```
 
 ```{r,eval=FALSE}
+# this may require adjusting the height of each 
+# plot inside the patchwork
 preprocessing_plot +
 heteroskedasticity_plot +
   plot_layout(ncol = 1) +

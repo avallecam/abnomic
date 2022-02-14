@@ -128,6 +128,12 @@ td <- topTable(eb, coef = 2,               # default: slope
              by="ID") 
 ```
 
+set parameter to avoid error:
+
+```{r}
+set_non_parametric <- FALSE #if change here, then next chunk too
+```
+
 
 ##### Plots
 
@@ -630,12 +636,14 @@ eset_clean_diff_top_sub %>%
     # begin = 0.2
     ) +
   labs(y = NULL, x=NULL,
-       caption="*BH adjusted p-value <0.05 and log2 fold-change >1") + 
+       caption="*BH adjusted p-value <0.05,\n and log2 fold-change >1") + 
   theme(axis.text.x = element_text(angle = 90, 
                                    vjust = 0.5, 
                                    hjust=1,
                                    size=5),
-        axis.text.y = element_text(size=7))
+        axis.text.y = element_text(size=7),
+        plot.caption = element_text(hjust = 0),
+        plot.caption.position =  "plot")
 
 ggsave("figure/04-fig23-exposure_compare-heatmap-nocluster-ggplot.png",
        height = 4,width = 6,dpi = "retina")
@@ -668,12 +676,14 @@ exposure_heatmap <- eset_clean_diff_top_sub %>%
     # begin = 0.2
     ) +
   labs(y = NULL, x=NULL,
-       caption="*BH adjusted p-value <0.05 and log2 fold-change >1") + 
+       caption="*BH adjusted p-value <0.05,\n and log2 fold-change >1") + 
   theme(axis.text.x = element_text(angle = 90, 
                                    vjust = 0.5, 
                                    hjust=1,
                                    size=5),
-        axis.text.y = element_text(size=7))
+        axis.text.y = element_text(size=7),
+        plot.caption = element_text(hjust = 0),
+        plot.caption.position =  "plot")
 
 exposure_heatmap
 ggsave("figure/04-fig23-exposure_compare-heatmap-nocluster-ggplot-exposure.png",
@@ -708,8 +718,10 @@ eset_clean_diff_top_sub %>%
   theme_bw() +
   ylab("Antigen reactivity") +
   xlab("") +
-  labs(caption="*BH adjusted p-value <0.05 and log2 fold-change >1") +
-  coord_flip()
+  labs(caption="*BH adjusted p-value <0.05,\n and log2 fold-change >1") +
+  coord_flip() +
+  theme(plot.caption = element_text(hjust = 0),
+        plot.caption.position =  "plot")
 ggsave("figure/04-fig24-exposure_compare-boxplot_highrve.png",
        height = 4.5,width = 6,dpi = "retina")
 ```
@@ -743,10 +755,12 @@ exposure_boxplot <- eset_clean_diff_top_sub %>%
   theme_bw() +
   ylab("Antigen reactivity") +
   xlab("") +
-  labs(caption="*BH adjusted p-value <0.05 and log2 fold-change >1") +
+  labs(caption="*BH adjusted p-value <0.05,\n and log2 fold-change >1") +
   coord_flip()
 
-exposure_boxplot
+exposure_boxplot +
+  theme(plot.caption = element_text(hjust = 0),
+        plot.caption.position =  "plot")
 ggsave("figure/04-fig24-exposure_compare-boxplot_highrve-exposure.png",
        height = 3,width = 6,dpi = "retina")
 ```
@@ -1530,7 +1544,7 @@ antigen_plot_a_exposure <-
   xlab( expression(log[2]~NonSyn/Syn~SNP~ratio) ) +
   labs(
     # title="Genetic variability",
-    caption="*BH adjusted p-value <0.05 and log2 fold-change >1"
+    caption="*BH adjusted p-value <0.05,\n and log2 fold-change >1"
     #SNP space
     #subtitle="Among all strains",
     # caption="\nLabel sizes proportional to mean antigen reactivity"
@@ -1538,6 +1552,8 @@ antigen_plot_a_exposure <-
   # and \n (logFC>1 & con>1) | (logFC>0.9 & con>2)
   #coord_flip() # ORDENAR eje de proteínas!!!!
   theme(
+    plot.caption = element_text(hjust = 0),
+        plot.caption.position =  "plot",
     strip.background = element_rect(
       colour = "black"#, fill = "white"
     ),
@@ -1860,8 +1876,10 @@ antigen_plot_c <- rna_dt_subset_exposure %>%
   labs(x="Time", y=NULL,
        # title="Intraerythrocytic cycle Transcription profile",
        # subtitle = "Data from Zhu et al. 2016",
-       caption = "FPKM = Fragments Per Kilobase Million\n*BH adjusted p-value <0.05 and log2 fold-change >1") +
+       caption = "FPKM = Fragments Per Kilobase Million\n*BH adjusted p-value <0.05,\n and log2 fold-change >1") +
   theme(
+    plot.caption = element_text(hjust = 0),
+        plot.caption.position =  "plot",
     axis.text.y = element_text(size=11),
     axis.text.x = element_text(size=12),
     strip.background = element_rect(
