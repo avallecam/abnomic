@@ -687,6 +687,7 @@ eset_clean_diff_top_sub %>%
   mutate(id.name = fct_reorder(.f = id.name,
                                .x = sum_antigen,
                                .fun = mean)) %>% 
+  mutate(sev_WHO = fct_relevel(sev_WHO,"sin")) %>% 
   # All sorted w.r.t. Case mean reactivity
   ggplot(aes(x = id.name,
              y = value,
@@ -699,8 +700,9 @@ eset_clean_diff_top_sub %>%
     palette="Set 3",
     # "Without" = "sin", 
     # "With" = "con"
-    limits=c("con","sin"),
-    labels=c("With", "Without"),
+    # limits=c("con","sin"),
+    # labels=c("With", "Without"),
+    labels=c("Without", "With"),
     rev=TRUE
   ) +
   theme_bw() +
@@ -720,6 +722,7 @@ exposure_boxplot <- eset_clean_diff_top_sub %>%
                                .fun = mean)) %>%
   # key removal
   filter(group!="Top 10%") %>% 
+  mutate(sev_WHO = fct_relevel(sev_WHO,"sin")) %>% 
   # All sorted w.r.t. Case mean reactivity
   ggplot(aes(x = id.name,
              y = value,
@@ -732,8 +735,9 @@ exposure_boxplot <- eset_clean_diff_top_sub %>%
     palette="Set 3",
     # "Without" = "sin", 
     # "With" = "con"
-    limits=c("con","sin"),
-    labels=c("With", "Without"),
+    # limits=c("con","sin"),
+    # labels=c("With", "Without"),
+    labels=c("Without", "With"),
     rev=TRUE
   ) +
   theme_bw() +
