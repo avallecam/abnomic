@@ -46,9 +46,9 @@ pData(eset) %>% glimpse()
 ```
 
 
-### 0. extra analysis
+## 0. extra analysis
 
-###### pareto of top antigens 
+### pareto of top antigens 
 
 ```{r}
 pareto_test <- biobroom::tidy.ExpressionSet(eset) %>% 
@@ -137,7 +137,7 @@ pareto_n %>%
 ```
 
 
-###### feature correlation
+### feature correlation
 
 ```{r}
 tidyeset <- 
