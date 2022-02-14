@@ -439,6 +439,13 @@ model_results_plot <-
 
 model_results_plot %>% 
   distinct(rowname,model,.keep_all = T) %>% 
+  mutate(model=case_when(
+    model == "m00" ~ "A",
+    model == "m10" ~ "B",
+    model == "m21" ~ "C",
+    model == "m22" ~ "D",
+    TRUE ~ model
+  )) %>% 
   ggplot(aes(x = model,y = log10pvalue,group = rowname)) +
   geom_point(aes(color = log_fc),size = 3) +
   geom_line() +
@@ -451,17 +458,20 @@ model_results_plot %>%
     # begin = 0.2
     ) +
   labs(
-    x = "model coefficient for\nsevere vivax malaria",
+    x = "model coefficients* for\nsevere vivax malaria",
     y = expression(-log[10](p~value)),
-    caption = expression(paste("m00: Ab ~ b[0] + severe[yes] \nm10: Ab ~ b[0] + severe[yes] + exposure[yes] \nm21: Ab ~ b[0] + severe_1only[yes] + exposure[yes] \nm22: Ab ~ b[0] + severe_1plus[yes] + exposure[yes]"))
+    caption = expression(paste(
+      "A: antibody = b0 + A * severe \nB: antibody = b0 + B * severe + b2 * exposure \nC: antibody = b0 + C * severe_1only + b2 * exposure \nD: antibody = b0 + D * severe_1plus + b2 * exposure"))
     ) +
   theme(
     plot.caption = element_text(vjust = 1,hjust=1,size = 7),
-    axis.text.x = element_text(
-      angle = 90,
-      hjust = 1,
-      vjust = 0.5
-  ))
+    plot.caption.position =  "plot"#,
+    # axis.text.x = element_text(
+    #   angle = 90,
+    #   hjust = 1,
+    #   vjust = 0.5
+  # )
+)
 
 ggsave("figure/11-fig01-severe_compare-models_confounder.png",
        height = 6.5,width = 8,dpi = "retina")
