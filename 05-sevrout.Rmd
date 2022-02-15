@@ -397,6 +397,18 @@ ggsave("figure/05-fig07-severe_compare-dag_both-epi.png",
        height = 5,width = 10,dpi = "retina")
 ```
 
+### multiple linear model
+
+- multiple logistic regression
+- estimate the prevalence ratio 
+of severe vivax malaria cases 
+with respect to 
+patients with and without previous episodes,
+using a
+minimum sufficient adjustment set of variables
+(age and sex)
+identified as confounders
+
 ```{r}
 
 sevdb_2ws_clean_glm <- sevdb_2ws_clean %>%
@@ -412,17 +424,61 @@ sevdb_2ws_clean_glm %>%
   # naniar::vis_miss()
   count(sev_who,sev_who_cat,episodio_previo)
 
+sevdb_2ws_clean_glm %>% 
+  # naniar::vis_miss()
+  count(sev_who,sev_who_cat,episodio_previo_cat)
+
 # glm(sev_who_cat ~ episodio_previo,
 #     data = sevdb_2ws_clean_glm,
 #     family = binomial(link = "log"),
 #     na.action = na.exclude) %>%
 #   epitidy::epi_tidymodel_pr()
 
-glm(sev_who_cat ~ episodio_previo + sexo + edad_4,
+model_epi_sev_01 <- 
+  glm(sev_who_cat ~ episodio_previo + sexo + edad_4,
     data = sevdb_2ws_clean_glm,
     family = poisson(link = "log"),
     na.action = na.exclude) %>%
-  epitidy::epi_tidymodel_pr()
+  epitidy::epi_tidymodel_pr() %>% 
+  # potential function to epitidy
+  # epitidy::epi_tidyoutput(
+  # data,variable_dot,variable_low,variable_upp,variable_pval,
+  # digits_dot = 2,digits_low = 2,digits_upp = 2,digits_pval=3)
+  select(-log.pr,-se) %>% 
+  # round numeric values
+  mutate_at(.vars = vars(pr,conf.low,conf.high),
+            .funs = round, digits=2) %>%
+  mutate_at(.vars = vars(p.value),
+            .funs = round, digits=3) %>%
+  #join confidence intervals
+  mutate(ci=str_c(conf.low," - ",conf.high)) %>% 
+  select(-conf.low,-conf.high) %>% 
+  relocate(p.value,.after = last_col())
+
+model_epi_sev_01
+model_epi_sev_01 %>% 
+  writexl::write_xlsx("table/05-tab04-severe_episode_dic-multiple.xlsx")
+
+model_epi_sev_02 <- 
+  glm(sev_who_cat ~ episodio_previo_cat + sexo + edad_4,
+    data = sevdb_2ws_clean_glm,
+    family = poisson(link = "log"),
+    na.action = na.exclude) %>%
+  epitidy::epi_tidymodel_pr() %>% 
+  select(-log.pr,-se) %>% 
+  # round numeric values
+  mutate_at(.vars = vars(pr,conf.low,conf.high),
+            .funs = round, digits=2) %>%
+  mutate_at(.vars = vars(p.value),
+            .funs = round, digits=3) %>%
+  #join confidence intervals
+  mutate(ci=str_c(conf.low," - ",conf.high)) %>% 
+  select(-conf.low,-conf.high) %>% 
+  relocate(p.value,.after = last_col())
+
+model_epi_sev_02
+model_epi_sev_02 %>% 
+  writexl::write_xlsx("table/05-tab04-severe_episode_cat-multiple.xlsx")
 
 # glm(sev_who_cat ~ 
 #       episodio_previo + sexo + edad_4 + 
@@ -597,6 +653,18 @@ ggsave("figure/05-fig06-severe_compare-dag_both.png",
        height = 5,width = 10,dpi = "retina")
 ```
 
+### multiple linear regression
+
+- multiple linear regression
+- estimate the average change 
+of antibody reactivity
+with respect to 
+severe and non-severe vivax malaria patients,
+using a
+minimum sufficient adjustment set of variables
+(previous episodes)
+identified as confounders
+- results in `12-absevere.Rmd`
 
 ## Table 3 - microarray study and oms criteria
 
