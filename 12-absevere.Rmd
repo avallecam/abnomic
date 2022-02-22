@@ -253,7 +253,8 @@ td %>%
                                 digits_upp = 1,
                                 decimal_to_percent = F) %>% 
   select(ID,Gene.ID,Description,
-         AveExpr,no_severo,severo,
+         AveExpr,
+         no_severo,severo, # outcome
          logFCunite1_,P.Value,adj.P.Val,
          everything()) %>% 
   # add plasmo db annotation to 
@@ -277,7 +278,7 @@ td %>%
          -Product.Description,-Gene.Name) %>% 
   # view()
   writexl::write_xlsx(
-    paste0("table/04-tab03-severe_compare-pvalue_results-np_",
+    paste0("table/12-tab03-severe_compare-pvalue_results-np_",
                              set_non_parametric,".xlsx"))
   # writexl::write_xlsx(
   #   "table/04-tab03-severe_compare-pvalue_results.xlsx")
@@ -470,7 +471,7 @@ sev_t %>%
   # replace Description (original from AD chips) with PlasmoDB annotations
   select(-Description,-Product.Description,-Gene.Name) %>% 
   select(ID,Gene.ID,product_description,everything()) %>% 
-  writexl::write_xlsx("table/04-tab06-severe_compare-top_reactives.xlsx")
+  writexl::write_xlsx("table/12-tab06-severe_compare-top_reactives.xlsx")
 ```
 
 
@@ -943,6 +944,8 @@ biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>%
 ## Conclusión: Supuesto de igualdad de varianzas poblacionales SÍ es válido
 ## Segundo, Prueba de Hipótesis para comparar medias:
 j <- fin %>% 
+  mutate(sev_WHO=fct_relevel(sev_WHO,"severo")) %>% 
+  # count(sev_WHO)
   t.test(sample_freq ~ sev_WHO, data = ., var.equal=TRUE) %>% 
   broom::tidy() %>% #%>% format(digits=2)
   mutate(test="breadth") %>% 
@@ -953,7 +956,9 @@ j <- fin %>%
 ## Rpta: Bajo n.s. 0.05, F cae en Región de no-Rechazo de Hipótesis Nula (RnoRHo)
 ## Conclusión: Supuesto de igualdad de varianzas poblacionales SÍ es válido
 ## Segundo, Prueba de Hipótesis para comparar medias:
-k <- fin %>% 
+k <- fin %>%
+  mutate(sev_WHO=fct_relevel(sev_WHO,"severo")) %>% 
+  # count(sev_WHO)
   t.test(sample_mean ~ sev_WHO, data = ., var.equal=TRUE) %>% 
   broom::tidy() %>% #%>% format(digits=2)
   mutate(test="intensity") %>% 
@@ -963,13 +968,37 @@ k <- fin %>%
 ```{r}
 
 fin %>% 
-  compareGroups(formula = sev_WHO ~ sample_freq + sample_mean,data = .) %>% 
+  compareGroups(formula = sev_WHO ~ sample_freq + sample_mean,
+                data = .) %>% 
   createTable(sd.type = 2,digits = 2) %>% 
-  export2xls("table/04-tab05-severe_compare-subject_response.xls")
+  export2xls("table/12-tab05-severe_compare-subject_response.xls")
 
 j %>% 
   union_all(k) %>% 
-  writexl::write_xlsx("table/04-tab04-severe_compare-subject_response.xlsx")
+  writexl::write_xlsx("table/12-tab04-severe_compare-subject_response.xlsx")
+```
+
+```{r}
+# simple
+
+glm(formula = sample_freq ~ sev_WHO,data = fin,
+    family = gaussian(link = "identity")) %>% 
+  # broom::tidy()
+  epitidy::epi_tidymodel_coef()
+
+glm(formula = sample_mean ~ sev_WHO,data = fin,
+    family = gaussian(link = "identity")) %>% 
+  epitidy::epi_tidymodel_coef()
+
+# multiple with confounding variable 
+
+glm(formula = sample_freq ~ sev_WHO + episodio_previo,data = fin,
+    family = gaussian(link = "identity")) %>% 
+  epitidy::epi_tidymodel_coef()
+
+glm(formula = sample_mean ~ sev_WHO + episodio_previo,data = fin,
+    family = gaussian(link = "identity")) %>% 
+  epitidy::epi_tidymodel_coef()
 ```
 
 
