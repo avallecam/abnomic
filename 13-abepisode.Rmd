@@ -864,7 +864,9 @@ fin <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>%
 ## Conclusión: Supuesto de igualdad de varianzas poblacionales NO es válido
 ## Segundo, Prueba de Hipótesis para comparar medias:
 j <- fin %>% 
-  t.test(sample_freq ~ episodio_previo, data = ., var.equal=FALSE) %>% 
+  filter(!(sample=="LIM2071")) %>% #remove because outlier
+  t.test(sample_freq ~ episodio_previo, 
+         data = ., var.equal=FALSE) %>% 
   broom::tidy() #%>% format(digits=3)
 
 ## Primero, Prueba de Hipótesis para comparar varianzas:
@@ -873,7 +875,8 @@ j <- fin %>%
 ## Conclusión: Supuesto de igualdad de varianzas poblacionales SÍ es válido
 ## Segundo, Prueba de Hipótesis para comparar medias:
 k <- fin %>% 
-  t.test(sample_mean ~ episodio_previo, data = ., var.equal=TRUE) %>% 
+  t.test(sample_mean ~ episodio_previo, 
+         data = ., var.equal=TRUE) %>% 
   broom::tidy() #%>% format(digits=3)
 ```
 
@@ -938,6 +941,7 @@ r_one <- paste0("p",r_pvalue)
 
 
 r <- fin %>% 
+  filter(!(sample=="LIM2071")) %>% #remove because outlier
   filter(!is.na(episodio_previo)) %>% 
   ggplot(aes(episodio_previo,sample_freq)) +
   # ggplot(aes(sev_WHO,sample_freq)) +
@@ -967,7 +971,7 @@ s <- fin %>%
   ggbeeswarm::geom_quasirandom(method = "tukeyDense",alpha=0.2) +
   scale_x_discrete(labels = c("without","with")) +
   xlab("Previous episode") +
-  ylab("Median Intensity") +
+  ylab("Median Antigen Reactivity") +
   labs(title = s_one) + 
   theme_bw()
 

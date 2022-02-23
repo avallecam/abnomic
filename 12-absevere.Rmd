@@ -890,7 +890,8 @@ fin <- biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>%
               dplyr::rename(sample=rowname),
             by="sample") %>% 
   select(-Study,-Group) %>% 
-  mutate(episodio_previo=forcats::fct_relevel(episodio_previo,"con")) %>% 
+  mutate(episodio_previo=forcats::fct_relevel(episodio_previo,
+                                              "con")) %>% 
   mutate(sev_WHO=forcats::fct_relevel(sev_WHO,"no_severo"))
 
 #biobroom::tidy.ExpressionSet(eset,addPheno = TRUE) %>% 
@@ -975,14 +976,24 @@ fin %>%
 
 j %>% 
   union_all(k) %>% 
-  writexl::write_xlsx("table/12-tab04-severe_compare-subject_response.xlsx")
+  writexl::write_xlsx(
+    "table/12-tab04-severe_compare-subject_response.xlsx")
 ```
 
 ```{r}
 # simple
 
-glm(formula = sample_freq ~ sev_WHO,data = fin,
-    family = gaussian(link = "identity")) %>% 
+# fin %>% 
+#   # filter(!(sample=="LIM2071")) %>% 
+#   glm(formula = sample_freq ~ sev_WHO,data = .,
+#       family = gaussian(link = "identity")) %>% 
+#   # broom::tidy()
+#   epitidy::epi_tidymodel_coef()
+
+fin %>% 
+  filter(!(sample=="LIM2071")) %>% #remove because outlier
+  glm(formula = sample_freq ~ sev_WHO,data = .,
+      family = gaussian(link = "identity")) %>% 
   # broom::tidy()
   epitidy::epi_tidymodel_coef()
 
@@ -990,17 +1001,121 @@ glm(formula = sample_mean ~ sev_WHO,data = fin,
     family = gaussian(link = "identity")) %>% 
   epitidy::epi_tidymodel_coef()
 
+# fin %>% 
+#   filter(!(sample=="LIM2071")) %>% 
+#   glm(formula = sample_mean ~ sev_WHO,data = .,
+#       family = gaussian(link = "identity")) %>% 
+#   # broom::tidy()
+#   epitidy::epi_tidymodel_coef()
+
 # multiple with confounding variable 
 
-glm(formula = sample_freq ~ sev_WHO + episodio_previo,data = fin,
+# fin %>% 
+#   # filter(!(sample=="LIM2071")) %>% 
+#   glm(formula = sample_freq ~ sev_WHO + expo_CAT,data = .,
+#       family = gaussian(link = "identity")) %>% 
+#   epitidy::epi_tidymodel_coef()
+
+fin %>% 
+  filter(!(sample=="LIM2071")) %>% #remove because outlier
+  glm(formula = sample_freq ~ sev_WHO + expo_CAT,data = .,
+      family = gaussian(link = "identity")) %>% 
+  epitidy::epi_tidymodel_coef()
+
+glm(formula = sample_mean ~ sev_WHO + expo_CAT,data = fin,
     family = gaussian(link = "identity")) %>% 
   epitidy::epi_tidymodel_coef()
 
-glm(formula = sample_mean ~ sev_WHO + episodio_previo,data = fin,
-    family = gaussian(link = "identity")) %>% 
-  epitidy::epi_tidymodel_coef()
+# fin %>% 
+#   filter(!(sample=="LIM2071")) %>% 
+#   glm(formula = sample_mean ~ sev_WHO + expo_CAT,data = .,
+#       family = gaussian(link = "identity")) %>% 
+#   epitidy::epi_tidymodel_coef()
 ```
 
+```{r,eval=FALSE}
+# test different presentation of stratified data
+# y:     outcome
+# x:     exposure
+# color: confounder to stratify
+# 
+# remove outlier for a better test
+# filter(!(sample=="LIM2071")) %>% 
+fin %>% 
+  ggplot(aes(x = sev_WHO, 
+             y = sample_freq)) +
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.75)) +
+  geom_violin(alpha=0,lwd=0.8,draw_quantiles = c(0.5)) +
+  ggbeeswarm::geom_quasirandom(method = "tukeyDense",alpha=0.8)
+
+fin %>% 
+  filter(!is.na(expo_CAT)) %>%
+  mutate(episodio_previo=fct_relevel(episodio_previo,"sin")) %>% 
+  ggplot(aes(x = sev_WHO, 
+             y = sample_freq)) +
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.75)) +
+  geom_violin(alpha=0,lwd=0.8,draw_quantiles = c(0.5)) +
+  ggbeeswarm::geom_quasirandom(aes(color = episodio_previo), 
+                               method = "tukeyDense",alpha=0.8)
+
+fin %>% 
+  filter(!is.na(expo_CAT)) %>%
+  mutate(episodio_previo=fct_relevel(episodio_previo,"sin")) %>% 
+  ggplot(aes(x = sev_WHO, 
+             y = sample_freq,
+             color = episodio_previo)) +
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.75)) +
+  geom_violin(alpha=0,lwd=0.8,draw_quantiles = c(0.5)) +
+  ggbeeswarm::geom_quasirandom(dodge.width=.8,
+                               method = "tukeyDense",alpha=0.8) +
+  colorspace::scale_color_discrete_qualitative(rev = TRUE)
+
+fin %>% 
+  mutate(episodio_previo=fct_relevel(episodio_previo,"sin")) %>% 
+  filter(!is.na(expo_CAT)) %>%
+  ggplot(aes(x = episodio_previo, #expo_CAT,
+             y = sample_freq,
+             color = sev_WHO)) +
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.75)) +
+  geom_violin(alpha=0,lwd=0.8,draw_quantiles = c(0.5)) +
+  ggbeeswarm::geom_quasirandom(dodge.width=.9,
+                               method = "tukeyDense",alpha=0.8) +
+  colorspace::scale_color_discrete_qualitative(rev = TRUE)
+```
+
+##### [alt plots with strata]
+
+pending: add labels and pvalue
+
+```{r}
+fin %>% 
+  filter(!is.na(expo_CAT)) %>%
+  filter(!(sample=="LIM2071")) %>% 
+  mutate(episodio_previo=fct_relevel(episodio_previo,"sin")) %>% 
+  ggplot(aes(x = sev_WHO, 
+             y = sample_freq,
+             color = episodio_previo)) +
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.75)) +
+  geom_violin(alpha=0,lwd=0.8,draw_quantiles = c(0.5)) +
+  ggbeeswarm::geom_quasirandom(dodge.width=.8,
+                               method = "tukeyDense",alpha=0.8) +
+  colorspace::scale_color_discrete_qualitative(rev = TRUE)
+
+fin %>% 
+  filter(!is.na(expo_CAT)) %>%
+  mutate(episodio_previo=fct_relevel(episodio_previo,"sin")) %>% 
+  ggplot(aes(x = sev_WHO, 
+             y = sample_mean,
+             color = episodio_previo)) +
+  geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.75)) +
+  geom_violin(alpha=0,lwd=0.8,draw_quantiles = c(0.5)) +
+  ggbeeswarm::geom_quasirandom(dodge.width=.8,
+                               method = "tukeyDense",alpha=0.8) +
+  colorspace::scale_color_discrete_qualitative(rev = TRUE)
+```
+
+
+##### plots
 
 ```{r, fig.height=6, fig.width=3}
 
@@ -1046,7 +1161,7 @@ s_severe_plot_01 <- fin %>%
   ggbeeswarm::geom_quasirandom(method = "tukeyDense",alpha=0.2) +
   scale_x_discrete(labels = c("Non-severe","Severe")) +
   xlab("P. vivax malaria") + 
-  ylab("Median Intensity") +
+  ylab("Median Antigen Reactivity") +
   labs(title = s_one) + 
   theme_bw()
 
