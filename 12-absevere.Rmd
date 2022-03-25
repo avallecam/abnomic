@@ -1012,6 +1012,9 @@ fin %>%
 # t.test and purrr::map
 # https://robertamezquita.github.io/post/2017-05-23-using-map-with-generic-functions-like-t-test/
 
+# aim:
+# generate a tidy long dataset
+# without outliers
 ab_subject <- fin %>% 
   mutate(sev_WHO=fct_relevel(sev_WHO,"severo")) %>% 
   mutate(episodio_previo=fct_relevel(episodio_previo,"sin")) %>% 
@@ -1021,7 +1024,22 @@ ab_subject <- fin %>%
   pivot_longer(cols = sample_freq:sample_mean,
                names_to = "ab_variable",
                values_to = "ab_value")
-### whole
+
+ab_subject %>% count(ab_variable,sev_WHO)
+ab_subject %>% count(ab_variable,sev_WHO,episodio_previo)
+ab_subject %>% 
+  filter(!is.na(episodio_previo)) %>%
+  group_by(ab_variable,episodio_previo) %>% 
+  skimr::skim()
+ab_subject %>% 
+  group_by(ab_variable,sev_WHO) %>% 
+  skimr::skim()
+ab_subject %>% 
+  group_by(ab_variable,sev_WHO,episodio_previo) %>% 
+  skimr::skim()
+
+### whole ---
+# aim: reject Ho of equal variance
 ab_subject %>% 
   group_by(ab_variable) %>% 
   nest() %>% 
@@ -1036,6 +1054,16 @@ ab_subject %>%
   select(ab_variable,p.value) %>% 
   identity()
 
+# aim: measurement of dispersion
+ab_subject_whole_sd <- ab_subject %>% 
+  group_by(ab_variable,sev_WHO) %>% 
+  summarise(sd=sd(ab_value)) %>% 
+  pivot_wider(id_cols = ab_variable,
+              names_from = sev_WHO,
+              names_glue = "{sev_WHO}_sd",
+              values_from = sd)
+
+# aim: measurement of location and test
 ab_subject_whole <- ab_subject %>% 
   group_by(ab_variable) %>% 
   nest() %>% 
@@ -1056,9 +1084,14 @@ ab_subject_whole <- ab_subject %>%
   mutate(analysis="complete") %>% 
   select(analysis,everything()) %>% 
   # view()
-  identity()
+  identity() %>% 
+  left_join(ab_subject_whole_sd)
 
 ### stratified
+
+# aim
+# generate nested data set 
+# without missings
 ab_subject_nested <- ab_subject %>% 
   filter(!is.na(episodio_previo)) %>%
   group_by(ab_variable,episodio_previo) %>% 
@@ -1066,6 +1099,7 @@ ab_subject_nested <- ab_subject %>%
   select(ab_variable,episodio_previo,data) %>% 
   arrange(ab_variable) 
 
+# aim: reject Ho of equal variance
 ab_subject_nested %>% 
   mutate(vtest=map(.x = data,
                    .f = stats:::var.test.formula,
@@ -1078,6 +1112,17 @@ ab_subject_nested %>%
   select(ab_variable,episodio_previo,p.value) %>% 
   identity()
 
+# aim: measurement of dispersion
+ab_subject_stratas_sd <- ab_subject %>% 
+  filter(!is.na(episodio_previo)) %>%
+  group_by(ab_variable,episodio_previo,sev_WHO) %>% 
+  summarise(sd=sd(ab_value)) %>% 
+  pivot_wider(id_cols = c(ab_variable,episodio_previo),
+              names_from = sev_WHO,
+              names_glue = "{sev_WHO}_sd",
+              values_from = sd)
+
+# aim: measurement of location and test
 ab_subject_stratas <- ab_subject_nested %>% 
   mutate(ttest=map(.x = data,
                    .f = stats:::t.test.formula,
@@ -1096,18 +1141,25 @@ ab_subject_stratas <- ab_subject_nested %>%
   mutate(analysis="stratified") %>% 
   select(analysis,everything()) %>% 
   # view()
-  identity()
+  identity() %>% 
+  left_join(ab_subject_stratas_sd)
 
 #### one table
 ab_subject_table <- 
   ab_subject_stratas %>% 
   bind_rows(ab_subject_whole) %>% 
-  arrange(ab_variable,analysis,episodio_previo)
+  arrange(ab_variable,analysis,episodio_previo) %>% 
+  select(analysis,ab_variable,episodio_previo,
+         starts_with("no_severo"),starts_with("severo"),everything())
 
 ab_subject_table %>% 
   writexl::write_xlsx(
     "table/12-tab07-severe_compare-subject_response-stratified.xlsx"
     )
+
+# to use in stratified plot
+ab_subject_table %>% 
+  select(analysis:episodio_previo,p.value)
 ```
 
 
