@@ -366,7 +366,15 @@ adj_pval_limit <- td %>%
 severe_plot02_b <- td %>% 
   ggplot(aes(logFC,-log10(P.Value))) +
   geom_point(aes(colour=adj.P.Val)) + 
-  scale_color_binned(type = "viridis",show.limits = TRUE) +
+  # scale_color_continuous(type = "viridis") +
+  colorspace::scale_color_continuous_sequential(
+    # name="Mean\nantigen\nreactivity",
+    palette = "Viridis",
+    end = 0.9,
+    # begin = 0.2#,
+    rev = FALSE
+  ) +
+  # scale_color_binned(type = "viridis",show.limits = TRUE) +
   ggrepel::geom_text_repel(
     data = td %>% 
       filter((adj.P.Val<=adj_pval_limit)) %>% 
@@ -1158,10 +1166,10 @@ ab_subject_table %>%
     )
 
 # to use in stratified plot
-ab_subject_table %>% 
-  select(analysis:episodio_previo,p.value)
+ab_subject_table_value <- ab_subject_table %>% 
+  select(analysis:episodio_previo,p.value) %>% 
+  filter(!is.na(episodio_previo))
 ```
-
 
 ```{r}
 # simple
@@ -1274,27 +1282,93 @@ pending: add labels and pvalue
 ab_subject_freq <- fin %>% 
   filter(!is.na(expo_CAT)) %>%
   filter(!(sample=="LIM2071")) %>% 
-  mutate(episodio_previo=fct_relevel(episodio_previo,"sin")) %>% 
-  ggplot(aes(x = sev_WHO, 
+  mutate(episodio_previo=
+           fct_relevel(episodio_previo,"sin")) %>% 
+  ggplot(aes(x = episodio_previo, 
              y = sample_freq,
-             color = episodio_previo)) +
+             color = sev_WHO)) +
   geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.75)) +
   geom_violin(alpha=0,lwd=0.8,draw_quantiles = c(0.5)) +
-  ggbeeswarm::geom_quasirandom(dodge.width=.8,
-                               method = "tukeyDense",alpha=0.4) +
-  colorspace::scale_color_discrete_qualitative(rev = TRUE)
+  ggbeeswarm::geom_quasirandom(
+    dodge.width=.8,
+    method = "tukeyDense",alpha=0.4) +
+  colorspace::scale_color_discrete_qualitative(
+    rev = TRUE,
+    labels = c("Non-severe","Severe")) +
+  ggsignif::geom_signif(
+    annotation = formatC(ab_subject_table_value %>% 
+                           filter(ab_variable=="sample_freq",
+                                  episodio_previo=="con") %>% 
+                           pull(p.value), 
+                         digits = 2) %>% 
+      paste0("p=",.),
+    textsize = 3.3,
+    y_position = 330, xmin = 1.8, xmax = 2.2,
+    tip_length = c(0.01, 0.01),
+    color="black"
+  ) +
+  ggsignif::geom_signif(
+    annotation = formatC(ab_subject_table_value %>% 
+                           filter(ab_variable=="sample_freq",
+                                  episodio_previo=="sin") %>% 
+                           pull(p.value), 
+                         digits = 3) %>% 
+      paste0("p=",.),
+    textsize = 3.3,
+    y_position = 330, xmin = 0.8, xmax = 1.2,
+    tip_length = c(0.01, 0.01),
+    color="black"
+  ) +
+  ylim(0,345) +
+  scale_x_discrete(labels = c("Without","With")) +
+  xlab("Previous Malaria Episodes") + 
+  ylab("No. of Reactive Antigens") +
+  labs(color = "P. vivax\nmalaria")
 
 ab_subject_mean <- fin %>% 
   filter(!is.na(expo_CAT)) %>%
-  mutate(episodio_previo=fct_relevel(episodio_previo,"sin")) %>% 
-  ggplot(aes(x = sev_WHO, 
+  mutate(episodio_previo=
+           fct_relevel(episodio_previo,"sin")) %>% 
+  ggplot(aes(x = episodio_previo, 
              y = sample_mean,
-             color = episodio_previo)) +
+             color = sev_WHO)) +
   geom_violin(alpha=0,lwd=0.4,draw_quantiles = c(0.25,0.75)) +
   geom_violin(alpha=0,lwd=0.8,draw_quantiles = c(0.5)) +
-  ggbeeswarm::geom_quasirandom(dodge.width=.8,
-                               method = "tukeyDense",alpha=0.4) +
-  colorspace::scale_color_discrete_qualitative(rev = TRUE)
+  ggbeeswarm::geom_quasirandom(
+    dodge.width=.8,
+    method = "tukeyDense",alpha=0.4) +
+  colorspace::scale_color_discrete_qualitative(
+    rev = TRUE,
+    labels = c("Non-severe","Severe")) +
+  ggsignif::geom_signif(
+    annotation = formatC(ab_subject_table_value %>% 
+                           filter(ab_variable=="sample_mean",
+                                  episodio_previo=="con") %>% 
+                           pull(p.value), 
+                         digits = 2) %>% 
+      paste0("p=",.),
+    textsize = 3.3,
+    y_position = 2.05, xmin = 1.8, xmax = 2.2,
+    tip_length = c(0.01, 0.01),
+    color="black"
+  ) +
+  ggsignif::geom_signif(
+    annotation = formatC(ab_subject_table_value %>% 
+                           filter(ab_variable=="sample_mean",
+                                  episodio_previo=="sin") %>% 
+                           pull(p.value), 
+                         digits = 3) %>% 
+      paste0("p=",.),
+    textsize = 3.3,
+    y_position = 2.05, xmin = 0.8, xmax = 1.2,
+    tip_length = c(0.01, 0.01),
+    color="black"
+  ) +
+  ylim(-0.2,2.15) +
+  scale_x_discrete(labels = c("Without","With")) +
+  xlab("Previous Malaria Episodes") + 
+  ylab("Median Antigen Reactivity") +
+  labs(color = "P. vivax\nmalaria")
 
 ab_subject_freq +
   ab_subject_mean +
@@ -1302,7 +1376,7 @@ ab_subject_freq +
   plot_annotation(tag_levels = "A")
 ggsave(
   "figure/04-fig06-severe_compare-subject_response-stratified.png",
-       height = 3,width = 6,dpi = "retina")
+       height = 3,width = 6.2,dpi = "retina")
 ```
 
 
@@ -1367,10 +1441,11 @@ ggsave("figure/04-fig06-severe_compare-subject_response.png",
 ```
 
 ```{r}
-severe_subject_a +
-  severe_subject_b +
+ab_subject_freq +
+  ab_subject_mean +
   severe_antigen_a +
   severe_antigen_b +
+  plot_layout(guides = 'collect') +
   plot_layout(ncol = 2,nrow = 2) +
   plot_annotation(tag_levels = "A")
 ggsave("figure/04-fig06-severe_compare-mix-subject_antigen.png",
